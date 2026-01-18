@@ -12,6 +12,16 @@
     </div>
 </div>
 
+<style>
+    .t-mark{
+        background: linear-gradient(135deg, #c96bff 0%, #7a2bf2 48%, #35a8ff 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 12px rgba(153, 91, 255, 0.35);
+    }
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid px-3 px-lg-4">
         <div class="d-flex align-items-center w-100 d-lg-none">
@@ -20,7 +30,7 @@
                     class="navbar-toggler border-0 text-decoration-none"
                     href="{{ config('app.url') }}"
                     aria-label="Go to home">
-                    <i class="bi bi-house-door-fill fs-4" aria-hidden="true"></i>
+                    <span class="fw-bold fs-4 t-mark" aria-hidden="true">TH</span>
                 </a>
             @else
                 <button 
@@ -39,7 +49,7 @@
             </button>
         </div>
         <a class="d-none d-lg-inline-flex align-items-center text-decoration-none me-3 text-white" href="{{ config('app.url') }}" aria-label="Go to home">
-            <i class="bi bi-house-door-fill fs-5" aria-hidden="true"></i>
+            <span class="fw-bold fs-5 t-mark" aria-hidden="true">TH</span>
         </a>
         
         <a class="navbar-brand fw-semibold d-none d-lg-inline-flex text-decoration-none" href="{{ config('app.url') }}">
