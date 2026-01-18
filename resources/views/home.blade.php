@@ -159,6 +159,7 @@
         background: rgba(15, 23, 42, .72) !important;
         border: 1px solid rgba(148,163,184,.28) !important;
         color: rgba(248,250,252,.95) !important;
+        resize: none;
     }
     .home-landing .form-control::placeholder,
     .home-landing textarea::placeholder{ color: rgba(226,232,240,.6); }
