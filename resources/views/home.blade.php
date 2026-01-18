@@ -207,6 +207,28 @@
         border-radius: var(--cardRadius);
     }
 
+    .home-landing .map-shell{
+        min-height: 520px;
+        border-radius: calc(var(--cardRadius) + 8px);
+        border: 1px solid rgba(148,163,184,.22);
+        background:
+            linear-gradient(135deg, rgba(106,166,255,.16), rgba(56,210,255,.08)),
+            rgba(15, 23, 42, .55);
+        position: relative;
+        overflow: hidden;
+    }
+    .home-landing .map-placeholder{
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: rgba(226,232,240,.85);
+        text-transform: uppercase;
+        letter-spacing: .18em;
+        font-weight: 800;
+        font-size: .95rem;
+    }
+
     .home-landing .reveal{
         opacity: 0;
         transform: translateY(14px);
@@ -230,6 +252,9 @@
         }
         .home-landing .image-card{
             padding: 14px;
+        }
+        .home-landing .map-shell{
+            min-height: 360px;
         }
     }
 </style>
@@ -606,6 +631,17 @@
                           <button class="btn btn-accent" data-bs-toggle="modal" data-bs-target="#contactModal">문의하기</button>
                       </div>
                   </div>
+            </div>
+        </section>
+
+        <section id="map" class="section-pad anchor-offset">
+            <div class="container reveal">
+                <span class="kicker mb-2">Location</span>
+                <h2 class="fw-bold mb-3">찾아오는 길</h2>
+                <p class="muted mb-4">경기도 안산시 단원구 시화호수로633 (반달섬)</p>
+                <div class="map-shell soft-card">
+                    <div class="map-placeholder">Map Area</div>
+                </div>
             </div>
         </section>
 

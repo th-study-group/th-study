@@ -1,6 +1,12 @@
 html, body {
     overscroll-behavior: none;
     touch-action: pan-x pan-y; /* 줌 금지 */
+
+    /* 마우스 드래그 방지*/
+    -webkit-user-select: none; /* 크롬, 사파리 */
+    -moz-user-select: none;    /* 파이어폭스 */
+    -ms-user-select: none;     /* 엣지 */
+    user-select: none;
 }
 
 @media (max-width: 991.98px) {
