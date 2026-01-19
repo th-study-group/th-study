@@ -8,12 +8,12 @@
     "theme_color": "#6200EA",
     "icons": [
       {
-        "src": "/images/th_android_chrome_192.png",
+        "src": "/images/th_favicon_and_192.png",
         "sizes": "192x192",
         "type": "image/png"
       },
       {
-        "src": "/images/th_android_chrome_512.png",
+        "src": "/images/th_favicon_and_512.png",
         "sizes": "512x512",
         "type": "image/png"
       }

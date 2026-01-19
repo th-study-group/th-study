@@ -218,6 +218,10 @@
         position: relative;
         overflow: hidden;
     }
+    .home-landing .map-canvas{
+        position: absolute;
+        inset: 0;
+    }
     .home-landing .map-placeholder{
         position: absolute;
         inset: 0;
@@ -641,6 +645,7 @@
                 <h2 class="fw-bold mb-3">찾아오는 길</h2>
                 <p class="muted mb-4">경기도 안산시 단원구 시화호수로633 (반달섬)</p>
                 <div class="map-shell soft-card">
+                    <div id="kakao-map" class="map-canvas" aria-label="Kakao Map"></div>
                     <div class="map-placeholder">Map Area</div>
                 </div>
             </div>
@@ -703,122 +708,144 @@
 @endsection
 
 @section('script')
-<script>
-    (function initHomeScroll(){
-        const backToTopBtn = document.getElementById('backToTop');
-        const sentinel = document.getElementById('topSentinel');
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey={{ config('services.kakao.app_key') }}"></script>
+    <script>
+        $(function(){
+            const mapContainer = document.getElementById('kakao-map');
+            if (!mapContainer || !window.kakao || !window.kakao.maps) return;
 
-        function smoothScrollTo(targetY, durationMs) {
-            const startY = window.scrollY;
-            const diff = targetY - startY;
-            const start = performance.now();
+            const lat = parseFloat("{{ env('SITE_MAP_LAT') }}") || 37.3032595;
+            const lng = parseFloat("{{ env('SITE_MAP_LNG') }}") || 126.7381093;
 
-              function ease(t){
-                  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-              }
+            const options = {
+                center: new kakao.maps.LatLng(lat, lng),
+                level: 3,
+            };
 
-              function step(now){
-                  const p = Math.min(1, (now - start) / durationMs);
-                  window.scrollTo(0, startY + diff * ease(p));
-                  if (p < 1) requestAnimationFrame(step);
-              }
-              requestAnimationFrame(step);
-          }
+            const map = new kakao.maps.Map(mapContainer, options);
+            const markerPosition = new kakao.maps.LatLng(lat, lng);
+            const marker = new kakao.maps.Marker({ position: markerPosition });
+            marker.setMap(map);
 
-          document.querySelectorAll('.home-landing a[href^="#"]').forEach((anchor) => {
-              anchor.addEventListener('click', (event) => {
-                  const id = anchor.getAttribute('href');
-                  if (!id || id.length < 2) return;
-                  const el = document.querySelector(id);
-                  if (!el) return;
-                  event.preventDefault();
-                  const y = el.getBoundingClientRect().top + window.scrollY - 96;
-                  smoothScrollTo(y, 720);
-            });
+            const placeholder = mapContainer.parentElement.querySelector('.map-placeholder');
+            if (placeholder) placeholder.style.display = 'none';
         });
-   
-        /*(function enableWheelSmooth(){
-            let current = window.scrollY;
-            let target = window.scrollY;
-            let ticking = false;
 
-            const strength = 0.1;
-            const maxStep = 220;
+        (function initHomeScroll(){
+            const backToTopBtn = document.getElementById('backToTop');
+            const sentinel = document.getElementById('topSentinel');
 
-            function animate(){
-                ticking = true;
-                current += (target - current) * strength;
-                window.scrollTo(0, current);
+            function smoothScrollTo(targetY, durationMs) {
+                const startY = window.scrollY;
+                const diff = targetY - startY;
+                const start = performance.now();
 
-                if (Math.abs(target - current) < 0.6) {
-                    ticking = false;
-                    return;
+                function ease(t){
+                    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
                 }
-                requestAnimationFrame(animate);
+
+                function step(now){
+                    const p = Math.min(1, (now - start) / durationMs);
+                    window.scrollTo(0, startY + diff * ease(p));
+                    if (p < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
             }
 
-            window.addEventListener('wheel', (event) => {
-                const inModal = document.querySelector('.modal.show');
-                if (inModal) return;
-                event.preventDefault();
+            document.querySelectorAll('.home-landing a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener('click', (event) => {
+                    const id = anchor.getAttribute('href');
+                    if (!id || id.length < 2) return;
+                    const el = document.querySelector(id);
+                    if (!el) return;
+                    event.preventDefault();
+                    const y = el.getBoundingClientRect().top + window.scrollY - 96;
+                    smoothScrollTo(y, 720);
+                });
+            });
+    
+            /*(function enableWheelSmooth(){
+                let current = window.scrollY;
+                let target = window.scrollY;
+                let ticking = false;
 
-                const delta = Math.max(-maxStep, Math.min(maxStep, event.deltaY));
-                target = Math.max(0, target + delta);
+                const strength = 0.1;
+                const maxStep = 220;
 
-                if (!ticking) {
-                    current = window.scrollY;
+                function animate(){
+                    ticking = true;
+                    current += (target - current) * strength;
+                    window.scrollTo(0, current);
+
+                    if (Math.abs(target - current) < 0.6) {
+                        ticking = false;
+                        return;
+                    }
                     requestAnimationFrame(animate);
                 }
-            }, { passive: false });
 
-            window.addEventListener('scroll', () => {
-                if (!ticking) {
-                    current = window.scrollY;
-                    target = window.scrollY;
+                window.addEventListener('wheel', (event) => {
+                    const inModal = document.querySelector('.modal.show');
+                    if (inModal) return;
+                    event.preventDefault();
+
+                    const delta = Math.max(-maxStep, Math.min(maxStep, event.deltaY));
+                    target = Math.max(0, target + delta);
+
+                    if (!ticking) {
+                        current = window.scrollY;
+                        requestAnimationFrame(animate);
+                    }
+                }, { passive: false });
+
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        current = window.scrollY;
+                        target = window.scrollY;
+                    }
+                }, { passive: true });
+            })();
+            */
+
+            if (backToTopBtn && sentinel) {
+                if ('IntersectionObserver' in window) {
+                    const io = new IntersectionObserver((entries) => {
+                        const isTopVisible = entries[0].isIntersecting;
+                        backToTopBtn.style.display = isTopVisible ? 'none' : 'flex';
+                    }, { threshold: 0 });
+
+                    io.observe(sentinel);
+                } else {
+                    function toggleBackToTop(){
+                        const y = window.pageYOffset || document.documentElement.scrollTop || 0;
+                        backToTopBtn.style.display = (y > 200) ? 'flex' : 'none';
+                    }
+                    window.addEventListener('scroll', toggleBackToTop, { passive: true });
+                    window.addEventListener('resize', toggleBackToTop, { passive: true });
+                    toggleBackToTop();
                 }
-            }, { passive: true });
+
+                backToTopBtn.addEventListener('click', () => {
+                    smoothScrollTo(0, 780);
+                });
+            }
+
+            const revealTargets = document.querySelectorAll('.home-landing .reveal');
+            if (revealTargets.length) {
+                if ('IntersectionObserver' in window) {
+                    const revealObserver = new IntersectionObserver((entries, observer) => {
+                        entries.forEach((entry) => {
+                            if (!entry.isIntersecting) return;
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        });
+                    }, { threshold: 0.12 });
+
+                    revealTargets.forEach((el) => revealObserver.observe(el));
+                } else {
+                    revealTargets.forEach((el) => el.classList.add('is-visible'));
+                }
+            }
         })();
-        */
-
-        if (backToTopBtn && sentinel) {
-            if ('IntersectionObserver' in window) {
-                const io = new IntersectionObserver((entries) => {
-                    const isTopVisible = entries[0].isIntersecting;
-                    backToTopBtn.style.display = isTopVisible ? 'none' : 'flex';
-                }, { threshold: 0 });
-
-                io.observe(sentinel);
-            } else {
-                function toggleBackToTop(){
-                    const y = window.pageYOffset || document.documentElement.scrollTop || 0;
-                    backToTopBtn.style.display = (y > 200) ? 'flex' : 'none';
-                }
-                window.addEventListener('scroll', toggleBackToTop, { passive: true });
-                window.addEventListener('resize', toggleBackToTop, { passive: true });
-                toggleBackToTop();
-            }
-
-            backToTopBtn.addEventListener('click', () => {
-                smoothScrollTo(0, 780);
-            });
-        }
-
-        const revealTargets = document.querySelectorAll('.home-landing .reveal');
-        if (revealTargets.length) {
-            if ('IntersectionObserver' in window) {
-                const revealObserver = new IntersectionObserver((entries, observer) => {
-                    entries.forEach((entry) => {
-                        if (!entry.isIntersecting) return;
-                        entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target);
-                    });
-                }, { threshold: 0.12 });
-
-                revealTargets.forEach((el) => revealObserver.observe(el));
-            } else {
-                revealTargets.forEach((el) => el.classList.add('is-visible'));
-            }
-        }
-    })();
-</script>
+    </script>
 @endsection

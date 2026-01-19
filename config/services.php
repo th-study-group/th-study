@@ -31,4 +31,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'kakao' => [
+        'app_key' => env('KAKAO_MAP_API_KEY')
+    ],
 ];
