@@ -20,6 +20,12 @@ $(function () {
 
     window.showLoading = function () {
         loadingModal.show();
+        setTimeout(function () {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            if (backdrops.length) {
+                backdrops[backdrops.length - 1].classList.add('loading-backdrop');
+            }
+        }, 0);
     };
     
     window.hideLoading = function () {
@@ -27,6 +33,9 @@ $(function () {
             document.activeElement.blur();
         }
         loadingModal.hide();
+        document.querySelectorAll('.modal-backdrop.loading-backdrop').forEach(function (el) {
+            el.classList.remove('loading-backdrop');
+        });
     };
 
     const minVisibleMs = 300;

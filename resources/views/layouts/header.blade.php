@@ -13,6 +13,29 @@
 </div>
 
 <style>
+    .navbar .navbar-toggler:focus{
+        box-shadow: none;
+    }
+
+    #loadingModal .modal-content{
+        background: rgba(9, 12, 22, 0.96);
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        color: rgba(248, 250, 252, 0.96);
+        box-shadow: 0 18px 40px rgba(2, 6, 23, 0.55);
+    }
+    #loadingModal .spinner-border{
+        color: #38d2ff;
+    }
+    #loadingModal .progress{
+        background: rgba(148, 163, 184, 0.2);
+    }
+    #loadingModal .progress-bar{
+        background: linear-gradient(135deg, #6aa6ff, #38d2ff);
+    }
+    .modal-backdrop.loading-backdrop{
+        background: rgba(2, 6, 23, 0.75);
+    }
+
     .t-mark{
         background: linear-gradient(135deg, #c96bff 0%, #7a2bf2 48%, #35a8ff 100%);
         -webkit-background-clip: text;

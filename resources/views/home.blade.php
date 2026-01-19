@@ -148,10 +148,32 @@
       }
 
     .home-landing .modal-content{
-        background: rgba(15, 23, 42, .92);
+        background: rgba(12, 18, 32, .96);
         border: 1px solid rgba(148,163,184,.22);
         border-radius: var(--cardRadius);
         color: var(--text);
+    }
+    .home-landing .modal-header .btn-close{
+        filter: brightness(0) invert(1);
+        opacity: .95;
+    }
+    .home-landing .modal-header .btn-close:focus{
+        box-shadow: none;
+    }
+    #loadingModal{
+        z-index: 2000;
+    }
+    #loadingModal .modal-dialog{
+        z-index: 2001;
+    }
+    #loadingModal .modal-content{
+        background: rgba(10, 16, 30, 0.98);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        box-shadow: 0 28px 60px rgba(2, 6, 23, 0.7);
+    }
+    .modal-backdrop.loading-backdrop{
+        background: #000 !important;
+        opacity: 0.78 !important;
     }
     .home-landing .form-control,
     .home-landing .form-select,
@@ -670,35 +692,90 @@
 
                       <div class="modal-body">
                           <p class="muted small mb-3">
-                              지금은 UI만 연결해둔 상태. 라라벨 라우팅/메일/DB 저장으로 붙이면 바로 실사용 가능.
+                              문의 내용을 남겨주시면 확인 후 빠르게 연락드리겠습니다.
                           </p>
 
-                          <div class="mb-3">
-                              <label class="form-label">이름</label>
-                              <input class="form-control" placeholder="홍길동" />
-                          </div>
+                          <div id="contactErrors" class="alert alert-danger d-none" role="alert"></div>
 
-                          <div class="mb-3">
-                              <label class="form-label">연락처 또는 이메일</label>
-                              <input class="form-control" placeholder="010-0000-0000 / email@example.com" />
-                          </div>
+                          <form id="contact_form" method="post" action="/contact">
+                              <div class="mb-3">
+                                  <label class="form-label" for="name">이름</label>
+                                  <input class="form-control" id="name" name="name" placeholder="홍길동" />
+                                  <div id="error-name" class="invalid-feedback d-block small text-break d-none"></div>
+                              </div>
 
-                          <div class="mb-3">
-                              <label class="form-label">문의 내용</label>
-                              <textarea class="form-control" rows="4" placeholder="내용을 입력해 주세요."></textarea>
-                          </div>
+                              <div class="mb-3">
+                                  <label class="form-label">연락 방법</label>
+                                  <div class="d-flex flex-wrap gap-3">
+                                      <div class="form-check">
+                                          <input class="form-check-input" type="radio" name="contact_method" id="contact_phone" value="phone" checked>
+                                          <label class="form-check-label" for="contact_phone">핸드폰</label>
+                                      </div>
+                                      <div class="form-check">
+                                          <input class="form-check-input" type="radio" name="contact_method" id="contact_mail" value="email">
+                                          <label class="form-check-label" for="contact_mail">이메일</label>
+                                      </div>
+                                  </div>
+                                  <div id="error-contact_method" class="invalid-feedback d-block small text-break d-none"></div>
+                              </div>
 
-                          <div class="form-check">
-                              <input class="form-check-input" type="checkbox" value="" id="agree">
-                              <label class="form-check-label small muted" for="agree">
-                                  개인정보 수집 및 이용에 동의합니다.
-                              </label>
-                          </div>
+                              <div class="mb-3" id="contactPhoneGroup">
+                                  <label class="form-label" for="phone">핸드폰 번호</label>
+                                  <input type="tel"
+                                         id="phone" 
+                                         name="phone"
+                                         class="form-control"
+                                         placeholder="010-0000-0000" />
+                                  <div id="error-phone" class="invalid-feedback d-block small text-break d-none"></div>
+                              </div>
+
+                              <div class="mb-3 d-none" id="contactEmailGroup">
+                                  <label class="form-label" for="email">이메일</label>
+                                  <input type="email" 
+                                         id="email" 
+                                         name="email" 
+                                         class="form-control"
+                                         placeholder="email@example.com" />
+                                  <div id="error-email" class="invalid-feedback d-block small text-break d-none"></div>
+                              </div>
+
+                              <div class="mb-3">
+                                  <label class="form-label" for="inquire_memo">문의 내용</label>
+                                  <textarea id="inquire_memo" name="inquire_memo" class="form-control" rows="4" placeholder="내용을 입력해 주세요."></textarea>
+                                  <div id="error-inquire_memo" class="invalid-feedback d-block small text-break d-none"></div>
+                              </div>
+
+                              <div class="form-check">
+                                  <input type="checkbox" value="1" id="personal_info_agree" name="personal_info_agree" class="form-check-input" >
+                                  <label class="form-check-label small muted" for="personal_info_agree">
+                                      개인정보 수집 및 이용에 동의합니다.
+                                  </label>
+                              </div>
+                              <div id="error-personal_info_agree" class="invalid-feedback d-block small text-break d-none"></div>
+                          </form>
                       </div>
 
                       <div class="modal-footer border-0">
                           <button class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
-                          <button class="btn btn-accent" type="button">문의 제출(연결 예정)</button>
+                          <button type="button" id="contactSubmitBtn" class="btn btn-accent">문의하기</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <div class="modal fade" id="contactConfirmModal" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                      <div class="modal-header border-0">
+                          <h5 class="modal-title fw-bold">문의 확인</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                      </div>
+                      <div class="modal-body">
+                          작성하신 내용으로 문의를 진행하시겠습니까?
+                      </div>
+                      <div class="modal-footer border-0">
+                          <button type="button" id="btn_cancel" class="btn btn-outline-secondary" data-bs-dismiss="modal">아니오</button>
+                          <button type="button" id="btn_save_inquire" class="btn btn-accent">예</button>
                       </div>
                   </div>
               </div>
@@ -711,27 +788,28 @@
     <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey={{ config('services.kakao.app_key') }}"></script>
     <script>
         $(function(){
-            const mapContainer = document.getElementById('kakao-map');
-            if (!mapContainer || !window.kakao || !window.kakao.maps) return;
 
-            const lat = parseFloat("{{ env('SITE_MAP_LAT') }}") || 37.3032595;
-            const lng = parseFloat("{{ env('SITE_MAP_LNG') }}") || 126.7381093;
+            $('input[name="contact_method"]').on('change', updateContactMethodVisibility);
 
-            const options = {
-                center: new kakao.maps.LatLng(lat, lng),
-                level: 3,
-            };
+            $('#contact_form').on('submit', function(e) {
+                e.preventDefault();
+            });
 
-            const map = new kakao.maps.Map(mapContainer, options);
-            const markerPosition = new kakao.maps.LatLng(lat, lng);
-            const marker = new kakao.maps.Marker({ position: markerPosition });
-            marker.setMap(map);
+            $('#contactSubmitBtn').on('click',function() {
+                $('#contactConfirmModal').modal('show');
+            });
 
-            const placeholder = mapContainer.parentElement.querySelector('.map-placeholder');
-            if (placeholder) placeholder.style.display = 'none';
+            $('#btn_save_inquire').on('click', function() {
+                $('#contactConfirmModal').modal('hide');
+                submitContactForm();
+            });
+
+            initKakaoMap();
+            initHomeScroll();
+            updateContactMethodVisibility();
         });
 
-        (function initHomeScroll(){
+        function initHomeScroll(){
             const backToTopBtn = document.getElementById('backToTop');
             const sentinel = document.getElementById('topSentinel');
 
@@ -764,7 +842,7 @@
                 });
             });
     
-            /*(function enableWheelSmooth(){
+            /*function enableWheelSmooth(){
                 let current = window.scrollY;
                 let target = window.scrollY;
                 let ticking = false;
@@ -804,7 +882,8 @@
                         target = window.scrollY;
                     }
                 }, { passive: true });
-            })();
+            }
+            enableWheelSmooth();
             */
 
             if (backToTopBtn && sentinel) {
@@ -846,6 +925,117 @@
                     revealTargets.forEach((el) => el.classList.add('is-visible'));
                 }
             }
-        })();
+        }
+
+        function initKakaoMap(){
+            const mapContainer = document.getElementById('kakao-map');
+            if (!mapContainer || !window.kakao || !window.kakao.maps) return;
+
+            const lat = parseFloat("{{ env('SITE_MAP_LAT') }}") || 37.3032595;
+            const lng = parseFloat("{{ env('SITE_MAP_LNG') }}") || 126.7381093;
+
+            const options = {
+                center: new kakao.maps.LatLng(lat, lng),
+                level: 3,
+            };
+
+            const map = new kakao.maps.Map(mapContainer, options);
+            const markerPosition = new kakao.maps.LatLng(lat, lng);
+            const marker = new kakao.maps.Marker({ position: markerPosition });
+            marker.setMap(map);
+
+            const placeholder = mapContainer.parentElement.querySelector('.map-placeholder');
+            if (placeholder) placeholder.style.display = 'none';
+        }
+
+        function submitContactForm() {
+            const $form = $('#contact_form');
+            const $errors = $('#contactErrors');
+            const $errorFields = $('#error-name, #error-contact_method, #error-phone, #error-email, #error-inquire_memo, #error-personal_info_agree');
+            const $invalidInputs = $('#name, #phone, #email, #inquire_memo');
+            const payload = {
+                name: $('#name').val(),
+                contact_method: $('input[name="contact_method"]:checked').val(),
+                phone: $('#phone').val(),
+                email: $('#email').val(),
+                inquire_memo: $('#inquire_memo').val(),
+                personal_info_agree: $('#personal_info_agree').is(':checked') ? 1 : 0,
+            };
+
+            $errors.addClass('d-none').text('');
+            $errorFields.addClass('d-none').text('');
+            $invalidInputs.removeClass('is-invalid');
+            $('input[name="contact_method"]').removeClass('is-invalid');
+            $('#personal_info_agree').removeClass('is-invalid');
+
+            $.ajax({
+                method: 'POST',
+                url: $form.attr('action'),
+                data: payload,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                beforeSend: function () {
+                    if (typeof window.showLoading === 'function') {
+                        window.showLoading();
+                    }
+                },
+            }).done(function() {
+                $('#contactConfirmModal').modal('hide');
+                $('#contactModal').modal('hide');
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading();
+                }
+            }).fail(function(xhr) {
+                const res = xhr.responseJSON || {};
+                const errors = res.errors || {};
+                const messages = Object.values(errors).flat();
+                if (messages.length) {
+                    const fieldMap = {
+                        name: '#name',
+                        contact_method: 'input[name="contact_method"]',
+                        phone: '#phone',
+                        email: '#email',
+                        inquire_memo: '#inquire_memo',
+                        personal_info_agree: '#personal_info_agree',
+                    };
+                    const errorMap = {
+                        name: '#error-name',
+                        contact_method: '#error-contact_method',
+                        phone: '#error-phone',
+                        email: '#error-email',
+                        inquire_memo: '#error-inquire_memo',
+                        personal_info_agree: '#error-personal_info_agree',
+                    };
+
+                    $.each(errors, function(field, fieldMessages){
+                        const selector = fieldMap[field];
+                        const errorSelector = errorMap[field];
+                        if (selector) {
+                            $(selector).addClass('is-invalid');
+                        }
+                        if (errorSelector) {
+                            $(errorSelector).removeClass('d-none').text(fieldMessages.join(' '));
+                        }
+                    });
+                } else {
+                    $errors.removeClass('d-none').text('문의사항 등록 실패 사유를 확인해주세요.');
+                }
+            });
+        }
+
+        function updateContactMethodVisibility(){
+            const $phoneGroup = $('#contactPhoneGroup');
+            const $emailGroup = $('#contactEmailGroup');
+            const method = $('input[name="contact_method"]:checked').val();
+            
+            if (method === 'email') {
+                $emailGroup.removeClass('d-none');
+                $phoneGroup.addClass('d-none');
+            } else {
+                $phoneGroup.removeClass('d-none');
+                $emailGroup.addClass('d-none');
+            }
+        }
     </script>
 @endsection
