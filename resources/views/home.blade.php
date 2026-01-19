@@ -931,8 +931,8 @@
             const mapContainer = document.getElementById('kakao-map');
             if (!mapContainer || !window.kakao || !window.kakao.maps) return;
 
-            const lat = parseFloat("{{ env('SITE_MAP_LAT') }}") || 37.3032595;
-            const lng = parseFloat("{{ env('SITE_MAP_LNG') }}") || 126.7381093;
+            const lat = parseFloat("{{ config('services.kakao.map_lat') }}" || 37.055779);
+            const lng = parseFloat("{{ config('services.kakao.map_lng') }}" || 129.4282108);
 
             const options = {
                 center: new kakao.maps.LatLng(lat, lng),

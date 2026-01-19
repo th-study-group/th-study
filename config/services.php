@@ -32,6 +32,8 @@ return [
     ],
 
     'kakao' => [
-        'app_key' => env('KAKAO_MAP_API_KEY')
+        'app_key' => env('KAKAO_MAP_API_KEY'),
+        'map_lat' => env('SITE_MAP_LAT'),
+        'map_lng' => env('SITE_MAP_LNG'),
     ],
 ];
