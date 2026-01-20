@@ -5,6 +5,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailVerifyController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\GuestPostController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
@@ -27,7 +28,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     // 라라벨 인덱스
-    return view('home');
+    return view('home', [
+        'postType' => 'inquiry'
+    ]);
 })->name('home')->defaults('hideSide', true);
 
 // sidebar 없는 정적 페이지들
@@ -97,33 +100,45 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
 // 관리자, 사용자가 모두 접속해야 해서 컨트롤러에서 관리자, 로그인 여부 체크 
 Route::prefix("users")->name("users.")->group(function() {
     Route::get("/", [UserController::class, 'index'])->name('index'); // 회원목록 (관리자 권한 필수)
-    Route::get("/{idx}", [UserController::class, 'show'])->name('show');
-    Route::get("/{idx}/edit", [UserController::class, 'edit'])->name("edit"); // 관리자 전용 (컨트롤러 체크 필수)
-    Route::put("/{idx}", [UserController::class, 'update'])->name('update');
-    Route::patch("/{idx}/soft-delete", [UserController::class, 'destroy'])->name('destroy');
+    Route::get("/{idx}", [UserController::class, 'show'])->whereNumber('idx')->name('show');
+    Route::post("/", [UserController::class, 'store'])->name('store');
+    Route::get("/{idx}/edit", [UserController::class, 'edit'])->whereNumber('idx')->name("edit"); // 관리자 전용 (컨트롤러 체크 필수)
+    Route::put("/{idx}", [UserController::class, 'update'])->whereNumber('idx')->name('update');
+    Route::patch("/{idx}/soft-delete", [UserController::class, 'destroy'])->whereNumber('idx')->name('destroy');
 });
 
 // 게시글 라우팅
-Route::prefix("posts")->name("posts.")->group(function() {
-    Route::get("/", [PostController::class, 'index'])->name('index');
-    Route::get("/create", [PostController::class, 'create'])->name('create');
-    Route::get("/{idx}", [PostController::class, 'show'])->name('show');
-    Route::post("/", [PostController::class, 'store'])->name('store');
-    Route::get("/{idx}/edit", [PostController::class, 'edit'])->name("edit");
-    Route::put("/{idx}", [PostController::class, 'update'])->name('update');
-    Route::patch("/{idx}/soft-delete", [PostController::class, 'destroy'])->name('destroy');
-});
+Route::prefix("posts/{post_type}")
+    ->name("posts.")
+    ->whereIn('post_type', array_keys(config('board.post_type')))
+    ->group(function() {
+        Route::get("/", [PostController::class, 'index'])->name('index');
+        Route::get("/create", [PostController::class, 'create'])->name('create');
+        Route::get("/{idx}", [PostController::class, 'show'])->whereNumber('idx')->name('show');
+        Route::post("/", [PostController::class, 'store'])->name('store');
+        Route::get("/{idx}/edit", [PostController::class, 'edit'])->whereNumber('idx')->name("edit");
+        Route::put("/{idx}", [PostController::class, 'update'])->whereNumber('idx')->name('update');
+        Route::patch("/{idx}/soft-delete", [PostController::class, 'destroy'])->whereNumber('idx')->name('destroy');
+    });
 
 // 댓글 라우팅
 Route::prefix("comments")->name("comments.")->group(function() {
     Route::get("/", [CommentController::class, 'index'])->name('index');
     Route::get("/create", [CommentController::class, 'create'])->name('create');
-    Route::get("/{idx}", [CommentController::class, 'show'])->name('show');
+    Route::get("/{idx}", [CommentController::class, 'show'])->whereNumber('idx')->name('show');
     Route::post("/", [CommentController::class, 'store'])->name('store');
-    Route::get("/{idx}/edit", [CommentController::class, 'edit'])->name("edit");
-    Route::put("/{idx}", [CommentController::class, 'update'])->name('update');
-    Route::patch("/{idx}/soft-delete", [CommentController::class, 'destroy'])->name('destroy');
+    Route::get("/{idx}/edit", [CommentController::class, 'edit'])->whereNumber('idx')->name("edit");
+    Route::put("/{idx}", [CommentController::class, 'update'])->whereNumber('idx')->name('update');
+    Route::patch("/{idx}/soft-delete", [CommentController::class, 'destroy'])->whereNumber('idx')->name('destroy');
 });
+
+// 미인증 게시글 라우팅
+Route::prefix("guest-posts/{post_type}")
+    ->name("guest_posts.")
+    ->whereIn('post_type', array_keys(config('board.post_type')))
+    ->group(function() {
+        Route::post("/", [GuestPostController::class, 'store'])->name('store');
+    });
 
 // 사진 라우팅
 Route::prefix('photo')->name('photo.')->group(function () {

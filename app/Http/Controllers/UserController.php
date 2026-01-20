@@ -50,14 +50,13 @@ class UserController extends Controller
         return view('users.create');
     }
 
-    /**
-     * 사용자 등록 처리 (관리자)
+     /**
+     * 사용자 등록 처리
      *
-     * @param RegisterUserRequest $request
-     * @param EmailVerificationService $evs
+     * @param Request $request
      * @return void
      */
-    public function register()
+    public function store(Request $request)
     {
     }
 

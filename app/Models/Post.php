@@ -11,15 +11,17 @@ class Post extends Base
     protected $table = 'th_posts';
 
     protected $fillable = [
-        'user_idx',
+        //'user_idx',
         'title',
         'content',
-        'create_datetime',
-        'create_user_idx',
-        'update_datetime',
-        'update_user_idx',
-        'delete_datetime',
-        'delete_user_idx',
+        //'status',
+        //'post_type',
+        //'create_datetime',
+        //'create_user_idx',
+        //'update_datetime',
+        //'update_user_idx',
+        //'delete_datetime',
+        //'delete_user_idx',
     ];
 
     public function user() : BelongsTo

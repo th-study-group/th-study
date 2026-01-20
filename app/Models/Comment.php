@@ -10,15 +10,15 @@ class Comment extends Base
     protected $table = 'th_comments';
 
     protected $fillable = [
-        'user_idx',
-        'post_idx',
+        //'user_idx',
+        //'post_idx',
         'content',
-        'create_datetime',
-        'create_user_idx',
-        'update_datetime',
-        'update_user_idx',
-        'delete_datetime',
-        'delete_user_idx',
+        //'create_datetime',
+        //'create_user_idx',
+        //'update_datetime',
+        //'update_user_idx',
+        //'delete_datetime',
+        //'delete_user_idx',
     ];
 
     public function user() : BelongsTo

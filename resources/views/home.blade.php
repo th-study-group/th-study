@@ -697,7 +697,7 @@
 
                           <div id="contactErrors" class="alert alert-danger d-none" role="alert"></div>
 
-                          <form id="contact_form" method="post" action="/contact">
+                          <form id="contact_form" method="post" action="{{ route('guest_posts.store', ['post_type' => $postType]) }}">
                               <div class="mb-3">
                                   <label class="form-label" for="name">이름</label>
                                   <input class="form-control" id="name" name="name" placeholder="홍길동" />
@@ -746,12 +746,28 @@
                               </div>
 
                               <div class="form-check">
-                                  <input type="checkbox" value="1" id="personal_info_agree" name="personal_info_agree" class="form-check-input" >
+                                  <input type="checkbox" 
+                                         id="personal_info_agree" 
+                                         name="personal_info_agree" 
+                                         class="form-check-input" 
+                                         value="Y" 
+                                         checked>
                                   <label class="form-check-label small muted" for="personal_info_agree">
                                       개인정보 수집 및 이용에 동의합니다.
                                   </label>
                               </div>
                               <div id="error-personal_info_agree" class="invalid-feedback d-block small text-break d-none"></div>
+                              <div class="form-check mt-2">
+                                  <input type="checkbox" 
+                                         id="marketing_info_agree" 
+                                         name="marketing_info_agree"
+                                         class="form-check-input" 
+                                         value="Y">
+                                  <label class="form-check-label small muted" for="marketing_info_agree">
+                                      마케팅 정보 수신에 동의합니다.
+                                  </label>
+                              </div>
+                              <div id="error-marketing_info_agree" class="invalid-feedback d-block small text-break d-none"></div>
                           </form>
                       </div>
 
@@ -931,8 +947,8 @@
             const mapContainer = document.getElementById('kakao-map');
             if (!mapContainer || !window.kakao || !window.kakao.maps) return;
 
-            const lat = parseFloat("{{ config('services.kakao.map_lat') }}" || 37.055779);
-            const lng = parseFloat("{{ config('services.kakao.map_lng') }}" || 129.4282108);
+            const lat = parseFloat("{{ config('services.kakao.map_lat') }}");
+            const lng = parseFloat("{{ config('services.kakao.map_lng') }}");
 
             const options = {
                 center: new kakao.maps.LatLng(lat, lng),
@@ -951,7 +967,7 @@
         function submitContactForm() {
             const $form = $('#contact_form');
             const $errors = $('#contactErrors');
-            const $errorFields = $('#error-name, #error-contact_method, #error-phone, #error-email, #error-inquire_memo, #error-personal_info_agree');
+            const $errorFields = $('#error-name, #error-contact_method, #error-phone, #error-email, #error-inquire_memo, #error-personal_info_agree, #error-marketing_info_agree');
             const $invalidInputs = $('#name, #phone, #email, #inquire_memo');
             const payload = {
                 name: $('#name').val(),
@@ -960,6 +976,7 @@
                 email: $('#email').val(),
                 inquire_memo: $('#inquire_memo').val(),
                 personal_info_agree: $('#personal_info_agree').is(':checked') ? 1 : 0,
+                marketing_info_agree: $('#marketing_info_agree').is(':checked') ? 1 : 0,
             };
 
             $errors.addClass('d-none').text('');
@@ -967,6 +984,7 @@
             $invalidInputs.removeClass('is-invalid');
             $('input[name="contact_method"]').removeClass('is-invalid');
             $('#personal_info_agree').removeClass('is-invalid');
+            $('#marketing_info_agree').removeClass('is-invalid');
 
             $.ajax({
                 method: 'POST',
@@ -998,6 +1016,7 @@
                         email: '#email',
                         inquire_memo: '#inquire_memo',
                         personal_info_agree: '#personal_info_agree',
+                        marketing_info_agree: '#marketing_info_agree',
                     };
                     const errorMap = {
                         name: '#error-name',
@@ -1006,6 +1025,7 @@
                         email: '#error-email',
                         inquire_memo: '#error-inquire_memo',
                         personal_info_agree: '#error-personal_info_agree',
+                        marketing_info_agree: '#error-marketing_info_agree',
                     };
 
                     $.each(errors, function(field, fieldMessages){
