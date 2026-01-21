@@ -4,8 +4,6 @@ namespace App\Models;
 
 class GuestPost extends Base
 {
-    protected $table = 'th_guest_posts';
-
     protected $fillable = [
         //'user_idx',
         'title',
@@ -18,6 +16,8 @@ class GuestPost extends Base
         'contact_value',
         'memo',
         'writer',
+        'ip',
+        'user_agent',
         //'update_user_idx',
         //'delete_user_idx',
         //'create_datetime',

@@ -7,8 +7,6 @@ use App\Models\BaseModel;
 
 class Comment extends Base
 {
-    protected $table = 'th_comments';
-
     protected $fillable = [
         //'user_idx',
         //'post_idx',

@@ -146,6 +146,26 @@ return [
         'password' => [
             'regex' => '비밀번호는 영문 대문자, 소문자, 숫자, 특수문자를 모두 포함해야 합니다.',
         ],
+        'name' => [
+            'regex' => '이름은 한글과 영문만 입력할 수 있습니다.',
+        ],
+        'contact_method' => [
+            'required' => '연락 방법을 선택해주세요.',
+            'in' => '연락 방법이 올바르지 않습니다.',
+        ],
+        'phone' => [
+            'required_if' => '연락 방법이 핸드폰인 경우 핸드폰 번호는 필수입니다.',
+        ],
+        'email' => [
+            'required_if' => '연락 방법이 이메일인 경우 이메일은 필수입니다.',
+        ],
+        'personal_info_agree' => [
+            'required' => '개인정보 수집 및 이용에 동의해주세요.',
+            'in' => '개인 정보 수집 및 동의 값이 올바르지 않습니다.',
+        ],
+        'marketing_info_agree' => [
+            'in' => '마케팅 정보 수신 동의 값이 올바르지 않습니다.',
+        ],
     ],
 
     'attributes' => [
@@ -157,9 +177,11 @@ return [
         'nick_name' => '닉네임',
         'birth_date' => '생년월일',
         'sex' => '성별',
-        'phone' => '핸드폰번호',
+        'contact_method' => '연락 방법',
+        'phone' => '핸드폰 번호',
         'address' => '주소',
-        'personal_info_agree' => '개인정보동의',
-        'marketing_info_agree' => '마케팅동의',
+        'inquiry_memo' => '문의 내용',
+        'personal_info_agree' => '개인정보 수집 및 이용 동의',
+        'marketing_info_agree' => '마케팅 정보 수신 동의',
     ],
 ];

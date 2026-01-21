@@ -725,7 +725,7 @@
                                          id="phone" 
                                          name="phone"
                                          class="form-control"
-                                         placeholder="010-0000-0000" />
+                                         placeholder="하이픈 없이 숫자만 입력해 주세요. 예) 01012345678" />
                                   <div id="error-phone" class="invalid-feedback d-block small text-break d-none"></div>
                               </div>
 
@@ -741,12 +741,12 @@
 
                               <div class="mb-3">
                                   <label class="form-label" for="inquire_memo">문의 내용</label>
-                                  <textarea id="inquire_memo" name="inquire_memo" class="form-control" rows="4" placeholder="내용을 입력해 주세요."></textarea>
-                                  <div id="error-inquire_memo" class="invalid-feedback d-block small text-break d-none"></div>
+                                  <textarea id="inquiry_memo" name="inquiry_memo" class="form-control" rows="4" placeholder="내용을 입력해 주세요."></textarea>
+                                  <div id="error-inquiry_memo" class="invalid-feedback d-block small text-break d-none"></div>
                               </div>
 
                               <div class="form-check">
-                                  <input type="checkbox" 
+                                 <input type="checkbox" 
                                          id="personal_info_agree" 
                                          name="personal_info_agree" 
                                          class="form-check-input" 
@@ -758,7 +758,7 @@
                               </div>
                               <div id="error-personal_info_agree" class="invalid-feedback d-block small text-break d-none"></div>
                               <div class="form-check mt-2">
-                                  <input type="checkbox" 
+                                 <input type="checkbox" 
                                          id="marketing_info_agree" 
                                          name="marketing_info_agree"
                                          class="form-check-input" 
@@ -811,6 +811,13 @@
                 e.preventDefault();
             });
 
+            $('#contact_form').on('keydown', function(e) {
+                if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+
             $('#contactSubmitBtn').on('click',function() {
                 $('#contactConfirmModal').modal('show');
             });
@@ -818,6 +825,28 @@
             $('#btn_save_inquire').on('click', function() {
                 $('#contactConfirmModal').modal('hide');
                 submitContactForm();
+            });
+
+            $('#contactConfirmModal').on('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+            $('#contactConfirmModal').on('show.bs.modal', function() {
+                $(document).on('keydown.contactConfirm', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+            });
+            $('#contactConfirmModal').on('hidden.bs.modal', function() {
+                $(document).off('keydown.contactConfirm');
+            });
+
+            $('#contactModal').on('hidden.bs.modal', function() {
+                resetContactForm();
             });
 
             initKakaoMap();
@@ -974,9 +1003,9 @@
                 contact_method: $('input[name="contact_method"]:checked').val(),
                 phone: $('#phone').val(),
                 email: $('#email').val(),
-                inquire_memo: $('#inquire_memo').val(),
-                personal_info_agree: $('#personal_info_agree').is(':checked') ? 1 : 0,
-                marketing_info_agree: $('#marketing_info_agree').is(':checked') ? 1 : 0,
+                inquiry_memo: $('#inquiry_memo').val(),
+                personal_info_agree: $('#personal_info_agree').is(':checked') ? $('#personal_info_agree').val() : 'N',
+                marketing_info_agree: $('#marketing_info_agree').is(':checked') ? $('#marketing_info_agree').val() : 'N',
             };
 
             $errors.addClass('d-none').text('');
@@ -989,6 +1018,7 @@
             $.ajax({
                 method: 'POST',
                 url: $form.attr('action'),
+                dataType: 'json',
                 data: payload,
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -998,23 +1028,32 @@
                         window.showLoading();
                     }
                 },
-            }).done(function() {
-                $('#contactConfirmModal').modal('hide');
-                $('#contactModal').modal('hide');
-                if (typeof window.hideLoading === 'function') {
-                    window.hideLoading();
-                }
-            }).fail(function(xhr) {
-                const res = xhr.responseJSON || {};
-                const errors = res.errors || {};
-                const messages = Object.values(errors).flat();
-                if (messages.length) {
+                success: function () {
+                    $('#contactConfirmModal').modal('hide');
+                    $('#contactModal').modal('hide');
+                    if (typeof window.hideLoading === 'function') {
+                        window.hideLoading();
+                    }
+                },
+                error: function (xhr) {
+                    let res = xhr.responseJSON;
+                    if (!res && xhr.responseText) {
+                        try {
+                            res = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            res = null;
+                        }
+                    }
+                    res = res || {};
+                    const errors = res.errors || {};
+                    const statusMessages = errors.status || [];
+                    const isValidationError = xhr.status === 422;
                     const fieldMap = {
                         name: '#name',
                         contact_method: 'input[name="contact_method"]',
                         phone: '#phone',
                         email: '#email',
-                        inquire_memo: '#inquire_memo',
+                        inquiry_memo: '#inquiry_memo',
                         personal_info_agree: '#personal_info_agree',
                         marketing_info_agree: '#marketing_info_agree',
                     };
@@ -1023,25 +1062,57 @@
                         contact_method: '#error-contact_method',
                         phone: '#error-phone',
                         email: '#error-email',
-                        inquire_memo: '#error-inquire_memo',
+                        inquiry_memo: '#error-inquiry_memo',
                         personal_info_agree: '#error-personal_info_agree',
                         marketing_info_agree: '#error-marketing_info_agree',
                     };
+                    let hasFieldErrors = false;
 
                     $.each(errors, function(field, fieldMessages){
-                        const selector = fieldMap[field];
-                        const errorSelector = errorMap[field];
-                        if (selector) {
-                            $(selector).addClass('is-invalid');
+                        const baseField = field.split('.')[0];
+                        const selector = fieldMap[baseField];
+                        const errorSelector = errorMap[baseField];
+                        if (!selector || !errorSelector) {
+                            return;
                         }
-                        if (errorSelector) {
-                            $(errorSelector).removeClass('d-none').text(fieldMessages.join(' '));
-                        }
+                        hasFieldErrors = true;
+                        $(selector).addClass('is-invalid');
+                        $(errorSelector).removeClass('d-none').text(fieldMessages.join(' '));
                     });
-                } else {
-                    $errors.removeClass('d-none').text('문의사항 등록 실패 사유를 확인해주세요.');
-                }
+
+                    if (statusMessages.length) {
+                        $errors.removeClass('d-none').text(statusMessages.join(' '));
+                    }
+
+                    if (!hasFieldErrors && !statusMessages.length) {
+                        $errors.removeClass('d-none').text('문의사항 등록 실패 사유를 확인해주세요.');
+                    }
+
+                    if ((isValidationError || hasFieldErrors) && typeof window.hideLoading === 'function') {
+                        window.hideLoading();
+                    }
+                },
             });
+        }
+
+        function resetContactForm() {
+            const $form = $('#contact_form');
+            if ($form.length && $form[0]) {
+                $form[0].reset();
+            }
+
+            const $errors = $('#contactErrors');
+            const $errorFields = $('#error-name, #error-contact_method, #error-phone, #error-email, #error-inquire_memo, #error-personal_info_agree, #error-marketing_info_agree');
+            const $invalidInputs = $('#name, #phone, #email, #inquire_memo');
+
+            $errors.addClass('d-none').text('');
+            $errorFields.addClass('d-none').text('');
+            $invalidInputs.removeClass('is-invalid');
+            $('input[name="contact_method"]').removeClass('is-invalid');
+            $('#personal_info_agree').removeClass('is-invalid');
+            $('#marketing_info_agree').removeClass('is-invalid');
+
+            updateContactMethodVisibility();
         }
 
         function updateContactMethodVisibility(){

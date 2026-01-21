@@ -31,7 +31,7 @@ class RegisterUserRequest extends FormRequest
                 'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/',
             ],
             'password_confirm' => ['required', 'same:password'],
-            'name' => ['required', 'min:2', 'max:8'],
+            'name' => ['required', 'min:2', 'max:15', 'regex:/^[A-Za-z가-힣]+$/u'],
             'nick_name' => [
                 'required', 
                 'min:2', 
@@ -62,7 +62,7 @@ class RegisterUserRequest extends FormRequest
         ]);
 
         throw new HttpResponseException(
-            to_route('register')->withErrors($validator)->withInput()
+            to_route('register.form')->withErrors($validator)->withInput()
         );
     }
 }

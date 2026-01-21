@@ -8,8 +8,6 @@ use App\Models\BaseModel;
 
 class Post extends Base
 {
-    protected $table = 'th_posts';
-
     protected $fillable = [
         //'user_idx',
         'title',

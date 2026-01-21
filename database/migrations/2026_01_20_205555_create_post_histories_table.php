@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('user_agent', 512)->comment('User Agent');
             $table->string('job_type', 20)->comment('작업구분 (등록, 수정, 삭제, 조회)');
             $table->string('table_name', 64)->nullable()->comment('테이블 유형 (테이블명 그대로)');
+            $table->string('status', 15)->nullable()->comment('현재 진행상태');
+            $table->string('post_type', 20)->nullable()->comment('게시판 유형');
             $table->dateTime('view_datetime')->comment('조회시각');
             $table->unsignedBigInteger('view_user_idx')->comment('조회자');
 
