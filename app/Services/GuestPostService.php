@@ -17,7 +17,6 @@ class GuestPostService
         $payload = $request->validated();
         $ip = $request->ip();
         $userAgent = (string) $request->userAgent();
-        $postType = config('board.post_type.inquiry') ?? '';
 
         $contactValue = $payload['contact_method'] === 'phone'
             ? $payload['phone']
@@ -34,7 +33,7 @@ class GuestPostService
         ]);
 
         try {
-            $guestPost = DB::transaction(function () use ($payload, $ip, $userAgent, $contactValue, $writer, $title, $postType) {
+            $guestPost = DB::transaction(function () use ($payload, $ip, $userAgent, $contactValue, $writer, $title) {
                 $guestPost = GuestPost::create([
                     'title' => $title,
                     'content' => $payload['inquiry_memo'],
@@ -48,7 +47,7 @@ class GuestPostService
                 ]);
 
                 $guestPost->forceFill([
-                    'post_type' => $postType,
+                    'post_type' => 'inquiry',
                 ])->saveQuietly();
 
                 return $guestPost;
