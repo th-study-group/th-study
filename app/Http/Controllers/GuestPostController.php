@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Posts\GuestPostRequest;
-use App\Services\PostService;
+use App\Services\GuestPostService;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
  */
 class GuestPostController extends Controller
 {
-    public function __construct(private PostService $postService)
+    public function __construct(private GuestPostService $guestPostService)
     {
     }
 
@@ -24,7 +24,7 @@ class GuestPostController extends Controller
     public function store(GuestPostRequest $request): JsonResponse
     {
         try {
-            $this->postService->guestCreatePost($request);
+            $this->guestPostService->create($request);
             return response()->json(['result' => true]);
         } catch (\Throwable $e) {
             return response()->json([

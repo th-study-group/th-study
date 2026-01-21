@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Log;
 /**
  * 게시글 서비스 
  */
-class PostService
+class GuestPostService
 {
-    public function guestCreatePost(GuestPostRequest $request): GuestPost
+    public function create(GuestPostRequest $request): GuestPost
     {
         $payload = $request->validated();
         $ip = $request->ip();
