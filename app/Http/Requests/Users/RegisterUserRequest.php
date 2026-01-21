@@ -42,8 +42,7 @@ class RegisterUserRequest extends FormRequest
             'sex' => ['required', 'in:M,W'],
             'phone' => [
                 'required',
-                'digits_between:10,11',
-                'regex:/^(010|011|016|017|018|019)\d{7,8}$/',
+                'regex:/^(010\\d{8}|01[16789]\\d{7})$/',
             ],
             'address' => ['required', 'min:5', 'max:30'],
             'personal_info_agree' => ['required', 'in:Y'],

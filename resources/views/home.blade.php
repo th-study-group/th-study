@@ -906,7 +906,9 @@
             $('#personal_info_agree').removeClass('is-invalid');
             $('#marketing_info_agree').removeClass('is-invalid');
 
-            $.ajax({
+            let shouldHideLoading = true;
+
+            requestAjax({
                 method: 'POST',
                 url: $form.attr('action'),
                 dataType: 'json',
@@ -914,19 +916,15 @@
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
-                beforeSend: function () {
-                    if (typeof window.showLoading === 'function') {
-                        window.showLoading();
-                    }
+                shouldHideLoading: function () {
+                    return shouldHideLoading;
                 },
-                success: function () {
+                onSuccess: function () {
                     $('#contactConfirmModal').modal('hide');
                     $('#contactModal').modal('hide');
-                    if (typeof window.hideLoading === 'function') {
-                        window.hideLoading();
-                    }
                 },
-                error: function (xhr) {
+                onError: function (xhr) {
+                    shouldHideLoading = false;
                     $('#personal_info_agree').prop('checked', checkboxState.personalInfo);
                     $('#marketing_info_agree').prop('checked', checkboxState.marketingInfo);
 
@@ -982,8 +980,8 @@
                         $errors.removeClass('d-none').text('문의사항 등록 실패 사유를 확인해주세요.');
                     }
 
-                    if ((isValidationError || hasFieldErrors) && typeof window.hideLoading === 'function') {
-                        window.hideLoading();
+                    if (isValidationError || hasFieldErrors) {
+                        shouldHideLoading = true;
                     }
                 },
             });

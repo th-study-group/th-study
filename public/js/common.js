@@ -18,6 +18,63 @@ $(function () {
         keyboard: false
     });
 
+    window.requestAjax = function (options) {
+        const settings = $.extend(true, {
+            url: '',
+            method: 'GET',
+            dataType: 'json',
+            data: {},
+            headers: {},
+            showLoading: true,
+            shouldHideLoading: null,
+            onSuccess: null,
+            onError: null,
+            onComplete: null,
+        }, options);
+    
+        if (settings.showLoading && typeof window.showLoading === 'function') {
+            window.showLoading();
+        }
+    
+        const xhr = $.ajax({
+            url: settings.url,
+            method: settings.method,
+            dataType: settings.dataType,
+            data: settings.data,
+            headers: settings.headers,
+        });
+    
+        xhr.then(
+            function (data, textStatus, jqXHR) {
+                if (typeof settings.onSuccess === 'function') {
+                    settings.onSuccess(data, textStatus, jqXHR);
+                }
+            },
+            function (jqXHR, textStatus, errorThrown) {
+                if (typeof settings.onError === 'function') {
+                    settings.onError(jqXHR, textStatus, errorThrown);
+                }
+            }
+        );
+    
+        xhr.always(function (dataOrXhr, textStatus, jqXHR) {
+            const xhrObj = dataOrXhr && dataOrXhr.status !== undefined ? dataOrXhr : jqXHR;
+            const shouldHide = typeof settings.shouldHideLoading === 'function'
+                ? settings.shouldHideLoading(xhrObj, textStatus)
+                : true;
+    
+            if (settings.showLoading && typeof window.hideLoading === 'function' && shouldHide) {
+                window.hideLoading();
+            }
+    
+            if (typeof settings.onComplete === 'function') {
+                settings.onComplete(dataOrXhr, textStatus, jqXHR);
+            }
+        });
+    
+        return xhr;
+    };    
+
     window.showLoading = function () {
         loadingModal.show();
         setTimeout(function () {
