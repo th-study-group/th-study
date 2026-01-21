@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
  */
 class PostService
 {
-    public function create(GuestPostRequest $request): GuestPost
+    public function guestCreatePost(GuestPostRequest $request): GuestPost
     {
         $payload = $request->validated();
         $ip = $request->ip();

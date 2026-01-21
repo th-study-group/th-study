@@ -24,7 +24,7 @@ class GuestPostController extends Controller
     public function store(GuestPostRequest $request): JsonResponse
     {
         try {
-            $this->postService->create($request);
+            $this->postService->guestCreatePost($request);
             return response()->json(['result' => true]);
         } catch (\Throwable $e) {
             return response()->json([

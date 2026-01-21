@@ -823,6 +823,11 @@
             });
 
             $('#btn_save_inquire').on('click', function() {
+                const isValid = validateContactForm();
+                if (!isValid) {
+                    $('#contactConfirmModal').modal('hide');
+                    return;
+                }
                 $('#contactConfirmModal').modal('hide');
                 submitContactForm();
             });
@@ -853,124 +858,6 @@
             initHomeScroll();
             updateContactMethodVisibility();
         });
-
-        function initHomeScroll(){
-            const backToTopBtn = document.getElementById('backToTop');
-            const sentinel = document.getElementById('topSentinel');
-
-            function smoothScrollTo(targetY, durationMs) {
-                const startY = window.scrollY;
-                const diff = targetY - startY;
-                const start = performance.now();
-
-                function ease(t){
-                    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-                }
-
-                function step(now){
-                    const p = Math.min(1, (now - start) / durationMs);
-                    window.scrollTo(0, startY + diff * ease(p));
-                    if (p < 1) requestAnimationFrame(step);
-                }
-                requestAnimationFrame(step);
-            }
-
-            document.querySelectorAll('.home-landing a[href^="#"]').forEach((anchor) => {
-                anchor.addEventListener('click', (event) => {
-                    const id = anchor.getAttribute('href');
-                    if (!id || id.length < 2) return;
-                    const el = document.querySelector(id);
-                    if (!el) return;
-                    event.preventDefault();
-                    const y = el.getBoundingClientRect().top + window.scrollY - 96;
-                    smoothScrollTo(y, 720);
-                });
-            });
-    
-            /*function enableWheelSmooth(){
-                let current = window.scrollY;
-                let target = window.scrollY;
-                let ticking = false;
-
-                const strength = 0.1;
-                const maxStep = 220;
-
-                function animate(){
-                    ticking = true;
-                    current += (target - current) * strength;
-                    window.scrollTo(0, current);
-
-                    if (Math.abs(target - current) < 0.6) {
-                        ticking = false;
-                        return;
-                    }
-                    requestAnimationFrame(animate);
-                }
-
-                window.addEventListener('wheel', (event) => {
-                    const inModal = document.querySelector('.modal.show');
-                    if (inModal) return;
-                    event.preventDefault();
-
-                    const delta = Math.max(-maxStep, Math.min(maxStep, event.deltaY));
-                    target = Math.max(0, target + delta);
-
-                    if (!ticking) {
-                        current = window.scrollY;
-                        requestAnimationFrame(animate);
-                    }
-                }, { passive: false });
-
-                window.addEventListener('scroll', () => {
-                    if (!ticking) {
-                        current = window.scrollY;
-                        target = window.scrollY;
-                    }
-                }, { passive: true });
-            }
-            enableWheelSmooth();
-            */
-
-            if (backToTopBtn && sentinel) {
-                if ('IntersectionObserver' in window) {
-                    const io = new IntersectionObserver((entries) => {
-                        const isTopVisible = entries[0].isIntersecting;
-                        backToTopBtn.style.display = isTopVisible ? 'none' : 'flex';
-                    }, { threshold: 0 });
-
-                    io.observe(sentinel);
-                } else {
-                    function toggleBackToTop(){
-                        const y = window.pageYOffset || document.documentElement.scrollTop || 0;
-                        backToTopBtn.style.display = (y > 200) ? 'flex' : 'none';
-                    }
-                    window.addEventListener('scroll', toggleBackToTop, { passive: true });
-                    window.addEventListener('resize', toggleBackToTop, { passive: true });
-                    toggleBackToTop();
-                }
-
-                backToTopBtn.addEventListener('click', () => {
-                    smoothScrollTo(0, 780);
-                });
-            }
-
-            const revealTargets = document.querySelectorAll('.home-landing .reveal');
-            if (revealTargets.length) {
-                if ('IntersectionObserver' in window) {
-                    const revealObserver = new IntersectionObserver((entries, observer) => {
-                        entries.forEach((entry) => {
-                            if (!entry.isIntersecting) return;
-                            entry.target.classList.add('is-visible');
-                            observer.unobserve(entry.target);
-                        });
-                    }, { threshold: 0.12 });
-
-                    revealTargets.forEach((el) => revealObserver.observe(el));
-                } else {
-                    revealTargets.forEach((el) => el.classList.add('is-visible'));
-                }
-            }
-        }
 
         function initKakaoMap(){
             const mapContainer = document.getElementById('kakao-map');
@@ -1007,6 +894,10 @@
                 personal_info_agree: $('#personal_info_agree').is(':checked') ? $('#personal_info_agree').val() : 'N',
                 marketing_info_agree: $('#marketing_info_agree').is(':checked') ? $('#marketing_info_agree').val() : 'N',
             };
+            const checkboxState = {
+                personalInfo: $('#personal_info_agree').is(':checked'),
+                marketingInfo: $('#marketing_info_agree').is(':checked'),
+            };
 
             $errors.addClass('d-none').text('');
             $errorFields.addClass('d-none').text('');
@@ -1036,6 +927,9 @@
                     }
                 },
                 error: function (xhr) {
+                    $('#personal_info_agree').prop('checked', checkboxState.personalInfo);
+                    $('#marketing_info_agree').prop('checked', checkboxState.marketingInfo);
+
                     let res = xhr.responseJSON;
                     if (!res && xhr.responseText) {
                         try {
@@ -1093,6 +987,69 @@
                     }
                 },
             });
+        }
+
+        function validateContactForm() {
+            const $errors = $('#contactErrors');
+            const $name = $('#name');
+            const $phone = $('#phone');
+            const $memo = $('#inquiry_memo');
+            const $personalInfo = $('#personal_info_agree');
+            const method = $('input[name="contact_method"]:checked').val();
+
+            const $errorName = $('#error-name');
+            const $errorPhone = $('#error-phone');
+            const $errorMemo = $('#error-inquiry_memo');
+            const $errorPersonal = $('#error-personal_info_agree');
+
+            $errors.addClass('d-none').text('');
+            $errorName.addClass('d-none').text('');
+            $errorPhone.addClass('d-none').text('');
+            $errorMemo.addClass('d-none').text('');
+            $errorPersonal.addClass('d-none').text('');
+
+            $name.removeClass('is-invalid');
+            $phone.removeClass('is-invalid');
+            $memo.removeClass('is-invalid');
+            $personalInfo.removeClass('is-invalid');
+
+            let isValid = true;
+            const name = $.trim($name.val());
+            const phone = $.trim($phone.val());
+            const memo = $.trim($memo.val());
+            const personalChecked = $personalInfo.is(':checked');
+
+            if (!name) {
+                $errorName.removeClass('d-none').text('이름을 입력해주세요.');
+                $name.addClass('is-invalid');
+                isValid = false;
+            }
+
+            if (method === 'phone' && !phone) {
+                $errorPhone.removeClass('d-none').text('핸드폰 번호를 입력해주세요.');
+                $phone.addClass('is-invalid');
+                isValid = false;
+            }
+
+            if (method === 'email' && !$.trim($('#email').val())) {
+                $('#error-email').removeClass('d-none').text('이메일을 입력해주세요.');
+                $('#email').addClass('is-invalid');
+                isValid = false;
+            }
+
+            if (!memo) {
+                $errorMemo.removeClass('d-none').text('문의 내용을 입력해주세요.');
+                $memo.addClass('is-invalid');
+                isValid = false;
+            }
+
+            if (!personalChecked) {
+                $errorPersonal.removeClass('d-none').text('개인정보 수집 및 이용에 동의해주세요.');
+                $personalInfo.addClass('is-invalid');
+                isValid = false;
+            }
+
+            return isValid;
         }
 
         function resetContactForm() {
