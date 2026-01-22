@@ -144,35 +144,45 @@ Route::prefix("guest-posts/{post_type}")
 Route::prefix('photo')->name('photo.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('photo.index');
-    })->name('index')->defaults('showSide', true);
+    })->name('index')
+      ->middleware('note.slug')
+      ->defaults('showSide', true);
 });
 
 // 영상 라우팅
 Route::prefix('video')->name('video.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('video.index');
-    })->name('index')->defaults('showSide', true);
+    })->name('index')
+      ->middleware('note.slug')
+      ->defaults('showSide', true);
 });
 
 // 정보 라우팅
 Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('blog.index');
-    })->name('index')->defaults('showSide', true);
+    })->name('index')
+      ->middleware('note.slug')
+      ->defaults('showSide', true);
 });
 
 // 장소 라우팅
 Route::prefix('map')->name('map.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('map.index');
-    })->name('index')->defaults('showSide', true);
+    })->name('index')
+      ->middleware('note.slug')
+      ->defaults('showSide', true);
 });
 
 // 문서 라우팅
 Route::prefix('document')->name('document.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('document.index');
-    })->name('index')->defaults('showSide', true);
+    })->name('index')
+      ->middleware('note.slug')
+      ->defaults('showSide', true);
 });
 
 Route::post('/send', [ChatController::class, 'send']);
