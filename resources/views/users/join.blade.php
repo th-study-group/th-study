@@ -164,7 +164,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label text-secondary fw-semibold small">주소</label>
+                                <label class="form-label text-secondary fw-semibold small">주소 <span class="text-danger">(선택)</span></label>
                                 <input
                                     type="text"
                                     id="address"
@@ -275,12 +275,6 @@
                 if ($.trim($('#phone').val()) === '') {
                     alert('핸드폰을 입력해주세요.');
                     $('#phone').focus();
-                    return;
-                }
-
-                if ($.trim($('#address').val()) === '') {
-                    alert('주소을 입력해주세요.');
-                    $('#address').focus();
                     return;
                 }
 

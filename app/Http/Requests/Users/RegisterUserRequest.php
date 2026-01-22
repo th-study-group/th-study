@@ -31,22 +31,28 @@ class RegisterUserRequest extends FormRequest
                 'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/',
             ],
             'password_confirm' => ['required', 'same:password'],
-            'name' => ['required', 'min:2', 'max:15', 'regex:/^[A-Za-z가-힣]+$/u'],
+            'name' => [
+                'required', 
+                'min:2', 
+                'max:15', 
+                'regex:/^[A-Za-z가-힣\\s-]+$/u'
+            ],
             'nick_name' => [
                 'required', 
                 'min:2', 
+                'string',
                 'max:10',
                 'unique:users,nick_name',
             ],
-            'birth_date' => ['required', 'date_format:Y-m-d'],
+            'birth_date' => ['required', 'date_format:Y-m-d', 'before_or_equal:today'],
             'sex' => ['required', 'in:M,W'],
             'phone' => [
                 'required',
                 'regex:/^(010\\d{8}|01[16789]\\d{7})$/',
             ],
-            'address' => ['required', 'min:5', 'max:30'],
-            'personal_info_agree' => ['required', 'in:Y'],
-            'marketing_info_agree' => ['nullable', 'in:Y,N'],
+            'address' => ['nullable', 'string', 'max:30'],
+            'personal_info_agree' => ['required', 'string', 'in:Y'],
+            'marketing_info_agree' => ['nullable', 'string', 'in:Y,N'],
         ];
     }
 
