@@ -75,3 +75,15 @@ footer {
     top: 0;
     z-index: 1030;
 }
+
+.navbar .navbar-toggler:focus{
+    box-shadow: none;
+}
+
+.t-mark{
+    background: linear-gradient(135deg, #c96bff 0%, #7a2bf2 48%, #35a8ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 12px rgba(153, 91, 255, 0.35);
+}

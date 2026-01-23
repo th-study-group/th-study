@@ -61,8 +61,8 @@
                         <div class="sidebar-panel text-white rounded-3 p-4 h-100">
                             <h6 class="text-uppercase text-secondary small">메뉴</h6>
                             <nav class="nav flex-column gap-2 mt-3">
-                                @foreach($sideMenus as $menu)
-                                    <a class="nav-link text-white" href="{{ $menu['url'] }} ">{{ $menu['title'] }}</a>
+                                @foreach($sideNotes as $note)
+                                    <a class="nav-link text-white" href="{{ $note['url'] }} ">{{ $note['title'] }}</a>
                                 @endforeach
                             </nav>
                         </div>

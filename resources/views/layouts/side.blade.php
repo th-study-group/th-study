@@ -5,8 +5,8 @@
     </div>
     <div class="offcanvas-body">
         <nav class="nav flex-column gap-2">
-            @foreach($sideMenus as $menu)
-                <a class="nav-link text-white" href="{{ $menu['url'] }}">{{ $menu['title'] }}</a>
+            @foreach($sideNotes as $note)
+                <a class="nav-link text-white" href="{{ $note['url'] }}">{{ $note['title'] }}</a>
             @endforeach
         </nav>
     </div>
