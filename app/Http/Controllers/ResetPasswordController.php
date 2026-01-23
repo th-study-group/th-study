@@ -65,6 +65,7 @@ class ResetPasswordController extends Controller
             function ($user) use ($request) {
                 $this->userService->changePassword($user, $request->password, $request->ip(), [
                     'change_password_flag' => 0,
+                    'session_version' => $user->session_version + 1
                 ]);
             }
         );

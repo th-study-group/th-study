@@ -87,6 +87,9 @@ class UserService
             'ip' => $ip,
         ])->saveQuietly();
 
+        // 개인정보 시 강제 로그아웃 위한 변수
+        session(['session_version' => $user->session_version]);
+
         Log::info('User login succeeded', [
             'action' => 'login',
             'model' => 'User',
