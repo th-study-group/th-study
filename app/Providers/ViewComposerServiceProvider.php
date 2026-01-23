@@ -15,8 +15,8 @@ class ViewComposerServiceProvider extends ServiceProvider
     {
         View::composer('layouts.*', function ($view) {
             $routeName = optional(request()->route())->getName();
-            $menus = config('note', []);
-            $view->with('sideMenus', $menus[$routeName] ?? []);
+            $notes = config('note', []);
+            $view->with('sideNotes', $notes[$routeName] ?? []);
         });
     }
 }
