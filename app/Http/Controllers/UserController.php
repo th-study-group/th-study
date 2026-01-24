@@ -65,7 +65,7 @@ class UserController extends Controller
      * @param integer $idx
      * @return void
      */
-    public function edit(int $idx)
+    public function edit()
     {
         return view('users.edit');
     }

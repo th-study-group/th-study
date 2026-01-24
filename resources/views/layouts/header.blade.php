@@ -66,7 +66,7 @@
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('dashboard') }}">대시보드</a></li>
-                            <li><a class="dropdown-item" href="{{ route('users.edit', ['idx' => $accountIdx]) }}">내 정보 변경</a></li>
+                            <li><a class="dropdown-item" href="{{ route('users.account.edit') }}">내 정보 변경</a></li>
                             <li><a class="dropdown-item" href="{{ url('/mypage/inquiries') }}">문의내역</a></li>
                         </ul>
                     </li>
