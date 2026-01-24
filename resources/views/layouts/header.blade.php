@@ -66,19 +66,19 @@
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('dashboard') }}">대시보드</a></li>
-                            <li><a class="dropdown-item" href="{{ route('mypage.profile') }}">내정보변경</a></li>
+                            <li><a class="dropdown-item" href="{{ route('users.edit', ['idx' => $accountIdx]) }}">내 정보 변경</a></li>
                             <li><a class="dropdown-item" href="{{ url('/mypage/inquiries') }}">문의내역</a></li>
                         </ul>
                     </li>
 
-                    @if (auth()->user()?->level === 'admin')
-                    <li class="nav-item dropdown nav-dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">테스트</a></li>
-                        </ul>
-                    </li>
-                    @endif
+                        @if (auth()->user()?->level === 'admin')
+                        <li class="nav-item dropdown nav-dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">테스트</a></li>
+                            </ul>
+                        </li>
+                        @endif
                     @endif
                 @endauth
             </ul>

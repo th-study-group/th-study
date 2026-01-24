@@ -49,25 +49,13 @@
         {{-- 레이아웃 헤더 --}}
         @include('layouts.header')
 
-        {{-- 레이아웃 사이드바 (모바일) --}}
-        @if (request()->route('showSide'))
-            @include('layouts.side')
-        @endif
-
         <div class="container-fluid px-3 px-lg-4 py-4 flex-grow-1">
             <div class="row g-4">
-                @if (request()->route('showSide'))
-                    <aside class="col-lg-2 sidebar-col d-none d-lg-block">
-                        <div class="sidebar-panel text-white rounded-3 p-4 h-100">
-                            <h6 class="text-uppercase text-secondary small">메뉴</h6>
-                            <nav class="nav flex-column gap-2 mt-3">
-                                @foreach($sideNotes as $note)
-                                    <a class="nav-link text-white" href="{{ $note['url'] }} ">{{ $note['title'] }}</a>
-                                @endforeach
-                            </nav>
-                        </div>
-                    </aside>
-                @endif
+                {{-- 레이아웃 메뉴 사이드바 --}}
+                @include('layouts.menu')
+
+                {{-- 레이아웃 노트 사이드바 --}}
+                @include('layouts.note')
 
                 {{-- 본문 컨텐츠 --}}
                 @yield('content')

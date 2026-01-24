@@ -83,7 +83,9 @@
                                     <h5 class="mb-1">요약</h5>
                                     <div class="text-muted">프로필 주변 핵심 정보를 한눈에 확인하세요.</div>
                                 </div>
-                                <a href="{{ route('mypage.profile') }}" class="btn btn-outline-primary btn-sm">내정보변경</a>
+                                <a href="{{ route('users.edit', ['idx' => $accountIdx]) }}" class="btn btn-outline-primary btn-sm">
+                                    내정보변경
+                                </a>
                             </div>
                         </div>
                     </div>

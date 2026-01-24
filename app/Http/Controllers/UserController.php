@@ -60,22 +60,7 @@ class UserController extends Controller
     {
     }
 
-    /**
-     * 로그인한 유저가 사용하는 내 정보 변경
-     *
-     * @return void
-     */
-    public function profile() 
-    {
-        // Auth::user, auth()->user()로 계정 체크 
-
-        echo "email = " . auth()->user()->email;
-
-        return view('users.profile');
-    }
-
-    /**
-     * 수정 폼 (관리자, 사용자)
+    /* 수정 폼 
      *
      * @param integer $idx
      * @return void
