@@ -15,6 +15,7 @@ $postTypes = [
     'inquiry' => '문의사항',
 ];
 
+// 관리자, 회원 등 권한이 필요할 때 적용
 $postTypeExcluded = ['inquiry'];
 
 return [
