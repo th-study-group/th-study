@@ -20,9 +20,9 @@
                     <div class="border rounded-3 bg-light p-3 mb-4">
                         <div class="fw-semibold text-secondary mb-2">비밀번호 변경 안내</div>
                         <ul class="small text-secondary mb-0">
-                            <li>비밀번호 변경은 이메일 인증 후에만 가능합니다.</li>
-                            <li>요청 시 자동으로 로그아웃되며, 등록된 이메일로 인증 링크가 발송됩니다.</li>
-                            <li>메일에서 인증 링크를 확인한 뒤 새 비밀번호를 설정할 수 있습니다.</li>
+                            <li>비밀번호 변경하기 버튼을 클릭하면 자동으로 로그아웃됩니다.</li>
+                            <li>다시 로그인하면 비밀번호 변경 화면으로 이동합니다.</li>
+                            <li>정상적으로 변경되면 안내 메일이 발송됩니다.</li>
                         </ul>
                     </div>
 
@@ -45,7 +45,7 @@
                         @enderror
                     </div>
 
-                    <button type="button" class="btn btn-dark border-0 w-100">비밀번호 변경 메일 발송</button>
+                    <button type="button" class="btn btn-dark border-0 w-100">비밀번호 변경 하기</button>
                 </div>
             </form>
         </section>
