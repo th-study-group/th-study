@@ -8,10 +8,11 @@
             <nav class="nav flex-column gap-2">
                 @foreach ($sideMenus as $route => $menu)
                     @php
-                        $params = isset($menu['param_key']) ? [$menu['param_key'] => $accountIdx] : [];
+                        $params = $menu['params'] ?? [];
+                        $hasParams = empty($params) || !in_array(null, $params, true);
                     @endphp
 
-                    @if (!isset($menu['param_key']) || $accountIdx)
+                    @if ($hasParams)
                         <a class="nav-link text-white" href="{{ route($route, $params) }}">
                             {{ $menu['title'] }}
                         </a>
@@ -27,10 +28,11 @@
             <nav class="nav flex-column gap-2 mt-3">
                 @foreach ($sideMenus as $route => $menu)
                     @php
-                        $params = isset($menu['param_key']) ? [$menu['param_key'] => $accountIdx] : [];
+                        $params = $menu['params'] ?? [];
+                        $hasParams = empty($params) || !in_array(null, $params, true);
                     @endphp
 
-                    @if (!isset($menu['param_key']) || $accountIdx)
+                    @if ($hasParams)
                         <a class="nav-link text-white" href="{{ route($route, $params) }}">
                             {{ $menu['title'] }}
                         </a>
