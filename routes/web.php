@@ -95,11 +95,11 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     });
 });
 
-// 회원 라우팅
+// 회원 기반  로그인을 해야 하는 메뉴 
 // 관리자, 사용자가 모두 접속해야 해서 컨트롤러에서 관리자, 로그인 여부 체크 
-// 관리는 별도 라우팅 이용
+// 관리자는 별도 라우팅 이용
 Route::middleware(['auth', 'email.verified'])->prefix('users')->name('users.')->group(function () {
-    Route::get("/", [UserController::class, 'index'])->name('index'); // 회원목록
+    Route::get("/", [UserController::class, 'index'])->name('index'); 
     Route::get("account", [UserController::class, 'show'])->name('account.show');
     Route::get("/edit", [UserController::class, 'edit'])->name("account.edit"); 
     Route::put("/update", [UserController::class, 'update'])->name('account.update');
