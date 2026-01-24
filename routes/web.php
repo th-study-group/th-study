@@ -105,6 +105,7 @@ Route::middleware(['auth', 'email.verified'])->prefix('users')->name('users.')->
     Route::put("/update", [UserController::class, 'update'])->name('account.update');
     Route::get("/withdrawal", [UserController::class, 'withdrawal'])->name('account.withdrawal');
     Route::patch("/destroy", [UserController::class, 'destroy'])->name('account.destroy');
+    Route::get("/password-reset", [UserController::class, 'passwordReset'])->name('account.password_reset');
 });
 
 // 게시글 라우팅

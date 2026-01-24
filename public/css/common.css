@@ -55,6 +55,17 @@ html, body {
     background: #3c4147;
 }
 
+.no-scrollbar {
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
 body {
     min-height: 100vh;
     display: flex;

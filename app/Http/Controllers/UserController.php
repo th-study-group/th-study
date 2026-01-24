@@ -40,26 +40,6 @@ class UserController extends Controller
         return view('users.show');
     }
 
-    /**
-     * 사용자 등록 화면 (관리자)
-     *
-     * @return void
-     */
-    public function create()
-    {
-        return view('users.create');
-    }
-
-     /**
-     * 사용자 등록 처리
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function store(Request $request)
-    {
-    }
-
     /* 수정 폼 
      *
      * @param integer $idx
@@ -81,6 +61,16 @@ class UserController extends Controller
     }
 
     /**
+     * 탈퇴화면
+     *
+     * @return void
+     */
+    public function withdrawal()
+    {
+        return view('users.withdrawal');
+    }
+
+    /**
      * 삭제 (관리자, 사용자)
      *
      * @param integer $idx
@@ -88,5 +78,15 @@ class UserController extends Controller
      */
     public function destroy(int $idx)
     {
+    }
+
+    /**
+     * 비밀번호 변경을 위해 동의 화면 
+     *
+     * @return void
+     */
+    public function passwordReset() 
+    {
+        return view('users.password_reset');
     }
 }
