@@ -1076,9 +1076,11 @@
             const method = $('input[name="contact_method"]:checked').val();
             
             if (method === 'email') {
+                $('#phone').val('');
                 $emailGroup.removeClass('d-none');
                 $phoneGroup.addClass('d-none');
             } else {
+                $('#email').val('');
                 $phoneGroup.removeClass('d-none');
                 $emailGroup.addClass('d-none');
             }
