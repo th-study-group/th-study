@@ -42,7 +42,6 @@ class UserController extends Controller
 
     /* 수정 폼 
      *
-     * @param integer $idx
      * @return void
      */
     public function edit()
@@ -73,10 +72,9 @@ class UserController extends Controller
     /**
      * 삭제 (관리자, 사용자)
      *
-     * @param integer $idx
      * @return void
      */
-    public function destroy(int $idx)
+    public function destroy()
     {
     }
 

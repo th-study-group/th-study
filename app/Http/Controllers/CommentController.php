@@ -49,10 +49,10 @@ class CommentController extends Controller
     /**
      * 수정 폼
      *
-     * @param integer $idx
+     * @param string $idx
      * @return void
      */
-    public function edit(int $idx)
+    public function edit(string $idx)
     {
         return view('comments.edit');
     }
@@ -70,10 +70,10 @@ class CommentController extends Controller
     /**
      * 삭제 (soft delete)
      *
-     * @param integer $idx
+     * @param string $idx
      * @return void
      */
-    public function destroy(int $idx)
+    public function destroy(string $idx)
     {
     }
 }

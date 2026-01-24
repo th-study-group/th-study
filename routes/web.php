@@ -111,26 +111,26 @@ Route::middleware(['auth', 'email.verified'])->prefix('users')->name('users.')->
 // 게시글 라우팅
 Route::prefix("posts/{post_type}")
     ->name("posts.")
-    ->whereIn('post_type', array_keys(config('board.post_type')))
+    ->whereIn('post_type', config('board.post_type_for_route'))
     ->group(function() {
         Route::get("/", [PostController::class, 'index'])->name('index');
         Route::get("/create", [PostController::class, 'create'])->name('create');
-        Route::get("/{idx}", [PostController::class, 'show'])->whereNumber('idx')->name('show');
+        Route::get("/{idx}", [PostController::class, 'show'])->name('show');
         Route::post("/", [PostController::class, 'store'])->name('store');
-        Route::get("/{idx}/edit", [PostController::class, 'edit'])->whereNumber('idx')->name("edit");
-        Route::put("/{idx}", [PostController::class, 'update'])->whereNumber('idx')->name('update');
-        Route::patch("/{idx}/soft-delete", [PostController::class, 'destroy'])->whereNumber('idx')->name('destroy');
+        Route::get("/{idx}/edit", [PostController::class, 'edit'])->name("edit");
+        Route::put("/{idx}", [PostController::class, 'update'])->name('update');
+        Route::patch("/{idx}/soft-delete", [PostController::class, 'destroy'])->name('destroy');
     });
 
 // 댓글 라우팅
 Route::prefix("comments")->name("comments.")->group(function() {
     Route::get("/", [CommentController::class, 'index'])->name('index');
     Route::get("/create", [CommentController::class, 'create'])->name('create');
-    Route::get("/{idx}", [CommentController::class, 'show'])->whereNumber('idx')->name('show');
+    Route::get("/{idx}", [CommentController::class, 'show'])->name('show');
     Route::post("/", [CommentController::class, 'store'])->name('store');
-    Route::get("/{idx}/edit", [CommentController::class, 'edit'])->whereNumber('idx')->name("edit");
-    Route::put("/{idx}", [CommentController::class, 'update'])->whereNumber('idx')->name('update');
-    Route::patch("/{idx}/soft-delete", [CommentController::class, 'destroy'])->whereNumber('idx')->name('destroy');
+    Route::get("/{idx}/edit", [CommentController::class, 'edit'])->name("edit");
+    Route::put("/{idx}", [CommentController::class, 'update'])->name('update');
+    Route::patch("/{idx}/soft-delete", [CommentController::class, 'destroy'])->name('destroy');
 });
 
 // 미인증 게시글 라우팅
