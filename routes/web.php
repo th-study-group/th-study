@@ -91,7 +91,6 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard'); // 마이페이지 (로그인 후 진입페이지)   
        
     Route::prefix("mypage")->name("mypage.")->group(function() {
-        //Route::get("/profile", [UserController::class, 'profile'])->name('profile'); // 로그인 후 보여지는 페이지  
         Route::view('/inquiries', 'inquiries.index'); // 문의내역 (글쓰기, 상세, 목록 나올 경우 컨트롤러 생성)
     });
 });
@@ -99,13 +98,13 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
 // 회원 라우팅
 // 관리자, 사용자가 모두 접속해야 해서 컨트롤러에서 관리자, 로그인 여부 체크 
 // 관리는 별도 라우팅 이용
-Route::prefix("users")->name("users.")->group(function() {
+Route::middleware(['auth', 'email.verified'])->prefix('users')->name('users.')->group(function () {
     Route::get("/", [UserController::class, 'index'])->name('index'); // 회원목록
-    Route::get("/{idx}", [UserController::class, 'show'])->whereNumber('idx')->name('show');
-    Route::post("/", [UserController::class, 'store'])->name('store');
-    Route::get("/{idx}/edit", [UserController::class, 'edit'])->whereNumber('idx')->name("edit"); 
-    Route::put("/{idx}", [UserController::class, 'update'])->whereNumber('idx')->name('update');
-    Route::patch("/{idx}/soft-delete", [UserController::class, 'destroy'])->whereNumber('idx')->name('destroy');
+    Route::get("account", [UserController::class, 'show'])->name('account.show');
+    Route::get("/edit", [UserController::class, 'edit'])->name("account.edit"); 
+    Route::put("/update", [UserController::class, 'update'])->name('account.update');
+    Route::get("/withdrawal", [UserController::class, 'withdrawal'])->name('account.withdrawal');
+    Route::patch("/destroy", [UserController::class, 'destroy'])->name('account.destroy');
 });
 
 // 게시글 라우팅
