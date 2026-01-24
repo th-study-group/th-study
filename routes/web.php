@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailVerifyController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\GuestPostController;
+use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
@@ -86,26 +87,33 @@ Route::get('/reset-password/{token}', [ResetPasswordController::class,'index'])
 Route::post('/reset-password', [ResetPasswordController::class,'store'])
     ->name('password.reset.mail_update');
 
-// 로그인 후 보여야 하는 메뉴
-Route::middleware(['auth', 'email.verified'])->group(function () {
-    Route::get('/dashboard', DashboardController::class)->name('dashboard'); // 마이페이지 (로그인 후 진입페이지)   
-       
-    Route::prefix("mypage")->name("mypage.")->group(function() {
-        Route::view('/inquiries', 'inquiries.index'); // 문의내역 (글쓰기, 상세, 목록 나올 경우 컨트롤러 생성)
-    });
-});
-
 // 회원 기반  로그인을 해야 하는 메뉴 
 // 관리자, 사용자가 모두 접속해야 해서 컨트롤러에서 관리자, 로그인 여부 체크 
 // 관리자는 별도 라우팅 이용
-Route::middleware(['auth', 'email.verified'])->prefix('users')->name('users.')->group(function () {
-    Route::get("/", [UserController::class, 'index'])->name('index'); 
-    Route::get("account", [UserController::class, 'show'])->name('account.show');
-    Route::get("/edit", [UserController::class, 'edit'])->name("account.edit"); 
-    Route::put("/update", [UserController::class, 'update'])->name('account.update');
-    Route::get("/withdrawal", [UserController::class, 'withdrawal'])->name('account.withdrawal');
-    Route::patch("/destroy", [UserController::class, 'destroy'])->name('account.destroy');
-    Route::get("/password-reset", [UserController::class, 'passwordReset'])->name('account.password_reset');
+Route::middleware(['auth', 'email.verified'])->group(function () {
+
+    Route::get('/dashboard', DashboardController::class)->name('dashboard'); // 마이페이지 (로그인 후 진입페이지)   
+
+    Route::prefix('users')->name('users.')->group(function() {
+        Route::get("/", [UserController::class, 'index'])->name('index'); 
+        Route::get("/show", [UserController::class, 'show'])->name('account.show');
+        Route::get("/edit", [UserController::class, 'edit'])->name("account.edit"); 
+        Route::put("/update", [UserController::class, 'update'])->name('account.update');
+        Route::get("/withdrawal", [UserController::class, 'withdrawal'])->name('account.withdrawal');
+        Route::patch("/destroy", [UserController::class, 'destroy'])->name('account.destroy');
+        Route::get("/password-reset", [UserController::class, 'passwordReset'])->name('account.password_reset');
+    });
+
+    Route::prefix('inquiry')->name('inquiry.')->group(function () {
+        Route::get('/', [InquiryController::class, 'index'])->name('index');
+        Route::get('/create', [InquiryController::class, 'create'])->name('inquiry.create');
+        Route::post('/', [InquiryController::class, 'store'])->name('inquiry.store');
+        Route::get('/show', [InquiryController::class, 'show'])->name('inquiry.show');
+        Route::get('/edit', [InquiryController::class, 'edit'])->name('inquiry.edit');
+        Route::put('/', [InquiryController::class, 'update'])->name('inquiry.update');
+        Route::patch('/{idx}/soft-delete', [InquiryController::class, 'destroy'])->name('inquiry.destroy');
+    });
+    
 });
 
 // 게시글 라우팅

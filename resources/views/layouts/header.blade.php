@@ -67,7 +67,7 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('dashboard') }}">대시보드</a></li>
                             <li><a class="dropdown-item" href="{{ route('users.account.edit') }}">내 정보 변경</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/mypage/inquiries') }}">문의내역</a></li>
+                            <li><a class="dropdown-item" href="{{ route('inquiry.index') }}">문의내역</a></li>
                         </ul>
                     </li>
 

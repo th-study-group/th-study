@@ -4,7 +4,7 @@ return [
         'users.account.edit' => 'mypage',
         'users.account.withdrawal' => 'mypage',
         'users.account.password_reset' => 'mypage',
-        'mypage.inquiries' => 'mypage',
+        'inquiry.index' => 'mypage',
     ],
 
     'menus' => [
@@ -17,10 +17,13 @@ return [
                 //],
             ],
             'users.account.password_reset' => [
-                'title' => '비밀번호 변경'
+                'title' => '비밀번호 변경',
             ],
             'users.account.withdrawal' => [
-                'title' => '회원 탈퇴 '
+                'title' => '회원 탈퇴 ',
+            ],
+            'inquiry.index' => [
+                'title' => '나의 문의 내역',
             ],
         ],
     ],
