@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\TestController;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,5 +41,3 @@ Route::view('/chat', 'chat');
 Route::prefix("tests")->name("test.")->group(function() {
     Route::get("mail_queue", [TestController::class, 'mailQueue'])->name('mail_queue');
 });
-
-Log::debug("테스트 라라벨 노비");
