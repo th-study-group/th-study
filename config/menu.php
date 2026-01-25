@@ -30,7 +30,7 @@ return [
                 'title' => '회원 현황',
             ],
             'admins.inquiries.index' => [
-                'title' => '고객 문의 내역'
+                'title' => '문의내역'
             ],
             'admins.posts.index' => [
                 'title' => '공지사항',
