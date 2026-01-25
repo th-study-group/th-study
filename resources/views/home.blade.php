@@ -812,7 +812,7 @@
                           <p class="muted mb-3">깃허브 소스 공유 및 협업은 아래 요청 바랍니다.</p>
                           <ol class="mb-0 muted">
                               <li>사이트 소개 &gt; 문의하기</li>
-                              <li>회원 가입 후</li>
+                              <li>회원 가입 후 나의 문의내역에 요청해주세요.</li>
                           </ol>
                       </div>
                       <div class="modal-footer border-0">
