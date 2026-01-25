@@ -61,6 +61,12 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('admins')
                 ->name('admins.')
                 ->group(base_path('routes/admin.php'));
+
+            // 개발 테스트
+            Route::middleware(['web','local.only'])
+	            ->prefix('_dev')
+	            ->name('dev.')
+	            ->group(base_path('routes/dev.php'));
         });
     }
 }
