@@ -1,9 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admins;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
+/**
+ * 댓글관리
+ */
 class CommentController extends Controller
 {
     /**
@@ -11,33 +16,30 @@ class CommentController extends Controller
      *
      * @return void
      */
-    public function show()
+    public function show() : View
     {
-        return view('comments.show');
+        return view('admins.comments.show');
     }
 
     /**
-     * 댓글 등록 처리 
-     *
-     * @param Request $request
-     * @return void
+     * 댓글 작성 처리 
      */
-    public function store(Request $request)
+    public function store(Request $reuqest)
     {
     }
 
     /**
      * 댓글 수정 처리 
      *
-     * @param Request $reequest
+     * @param Request $request
      * @return void
      */
-    public function update(Request $reequest)
+    public function update(Request $request)
     {
     }
 
     /**
-     * 삭제 (soft delete)
+     * 댓글 삭제 처리 
      *
      * @param string $idx
      * @return void

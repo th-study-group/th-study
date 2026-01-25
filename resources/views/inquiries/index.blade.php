@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '나의 문의내역')
+@section('title', '조회')
 
 @section('content')
 @endsection

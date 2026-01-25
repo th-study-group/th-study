@@ -47,7 +47,7 @@ class GuestPostService
                 ]);
 
                 $guestPost->forceFill([
-                    'post_type' => 'inquiry',
+                    'post_type' => 'inquiries',
                 ])->saveQuietly();
 
                 return $guestPost;

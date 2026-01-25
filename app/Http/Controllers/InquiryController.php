@@ -16,7 +16,7 @@ class InquiryController extends Controller
      */
     public function index() 
     {
-        return view('inquiry.index');
+        return view('inquiries.index');
     }
 
     /**
@@ -26,7 +26,7 @@ class InquiryController extends Controller
      */
     public function create()
     {
-        return view('inquiry.create');
+        return view('inquiries.create');
     }
 
     /**
@@ -46,7 +46,7 @@ class InquiryController extends Controller
      */
     public function show()
     {
-        return view('inquiry.show');
+        return view('inquiries.show');
     }
 
     /**
@@ -56,24 +56,26 @@ class InquiryController extends Controller
      */
     public function edit()
     {
-        return view('inquiry.edit');
+        return view('inquiries.edit');
     }
 
     /**
      * 글 수정 처리 
      *
+     * @param Requst $request
      * @return void
      */
-    public function update()
+    public function update(Request $request)
     {
     }
 
     /**
-     * 글 삭제 (소프트삭제)
+     * 글 삭제 (soft delete)
      *
+     * @param string $idx
      * @return void
      */
-    public function destroy()
+    public function destroy(string $idx)
     {
     }
 }

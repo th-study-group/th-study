@@ -12,11 +12,11 @@ $postTypes = [
     'free' => '잡담',
     'my_question' => '1:1문의',
     'support' => '지원',
-    'inquiry' => '문의사항',
+    'inquiries' => '문의사항',
 ];
 
 // 관리자, 회원 등 권한이 필요할 때 적용
-$postTypeExcluded = ['inquiry'];
+$postTypeExcluded = ['inquiries'];
 
 return [
     'status' => $status,

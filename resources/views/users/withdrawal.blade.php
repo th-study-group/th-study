@@ -14,7 +14,7 @@
                 </div>
             @endif
 
-            <form id="form_account_withdrawal" name="form_account_withdrawal" method="POST" action="{{ route('users.account.destroy') }}">
+            <form id="form_account_withdrawal" name="form_account_withdrawal" method="POST" action="{{ route('users.account.soft.delete') }}">
                 @csrf
                 @method('PATCH')
                 <div class="w-100">

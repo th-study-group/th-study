@@ -52,14 +52,17 @@
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">소개</a>
                     <ul class="dropdown-menu">
                          <li><a class="dropdown-item" href="{{ route('home') }}">사이트소개</a></li>
-                         <li><a class="dropdown-item" href="#">공지사항</a></li>
+                         <li><a class="dropdown-item" href="{{ route('posts.index', ['post_type' => 'notice']) }}">공지사항</a></li>
                     </ul>
-                </li>    
+                </li>
+                {{--
                 <li class="nav-item"><a class="nav-link" href="{{ route('photo.index') }}">사진관리</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('video.index') }}">영상관리</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">정보관리</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('map.index') }}">장소관리</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('document.index') }}">문서관리</a></li>
+                --}}
+                <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">정보관리</a></li>
                 @auth
                     @if (auth()->user()?->email_verify_datetime)
                     <li class="nav-item dropdown nav-dropdown">
@@ -67,7 +70,7 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('dashboard') }}">대시보드</a></li>
                             <li><a class="dropdown-item" href="{{ route('users.account.edit') }}">내 정보 변경</a></li>
-                            <li><a class="dropdown-item" href="{{ route('inquiry.index') }}">문의내역</a></li>
+                            <li><a class="dropdown-item" href="{{ route('inquiries.index') }}">문의내역</a></li>
                         </ul>
                     </li>
 
@@ -75,7 +78,9 @@
                         <li class="nav-item dropdown nav-dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">테스트</a></li>
+                                <li><a class="dropdown-item" href="{{ route('admins.members.index') }}">회원조회</a></li>
+                                <li><a class="dropdown-item" href="{{ route('admins.inquiries.index') }}">문의조회</a></li>
+                                <li><a class="dropdown-item" href="{{ route('admins.posts.index', ['post_type' => 'notice']) }}">공지사항</a></li>
                             </ul>
                         </li>
                         @endif

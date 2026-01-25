@@ -36,8 +36,31 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
+            // 기본 web (홈/정적페이지 같은 최소)
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+
+            // 게시판, 댓글, 문의사항 등 고객 관리
+            Route::middleware('web')
+                ->group(base_path('routes/user.php'));
+
+            // 계정/인증(회원가입/비번재설정/이메일인증 등)
+			Route::middleware('web')
+                ->group(base_path('routes/auth.php'));
+            
+            // 컨텐츠항목(정보관리,문서관리)
+			Route::middleware('web')
+                ->group(base_path('routes/content.php'));
+
+            // 로그인한 유저에게 보이는 항목 
+            Route::middleware(['web', 'auth', 'email.verified'])
+                ->group(base_path('routes/login.php'));
+
+            // 관리자
+            Route::middleware(['web','auth','email.verified','level:admin'])
+                ->prefix('admins')
+                ->name('admins.')
+                ->group(base_path('routes/admin.php'));
         });
     }
 }
