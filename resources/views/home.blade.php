@@ -526,7 +526,9 @@
                               <div class="fw-bold">“감”이 아니라 “데이터”로 개선한다</div>
                               <div class="muted">유입·행동·성능·운영 로그를 기반으로 개선 포인트를 찾는다.</div>
                           </div>
-                          <a class="btn btn-outline-dark" href="https://github.com/leetaehee/laravel-app" target="_blank" rel="noopener">Repository 보기</a>
+                          <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#githubShareModal">
+                              Repository 보기
+                          </button>
                       </div>
                   </div>
               </div>
@@ -591,7 +593,9 @@
                                       <div class="fw-bold"><i class="bi bi-github me-2"></i>GitHub</div>
                                       <div class="muted">소스는 GitHub에서 확인 가능.</div>
                                   </div>
-                                  <a class="btn btn-accent" href="https://github.com/leetaehee/laravel-app" target="_blank" rel="noopener">Repository 열기</a>
+                                  <button class="btn btn-accent" data-bs-toggle="modal" data-bs-target="#githubShareModal">
+                                      Repository 열기
+                                  </button>
                               </div>
                           </div>
 
@@ -792,6 +796,30 @@
                       <div class="modal-footer border-0">
                           <button type="button" id="btn_cancel" class="btn btn-outline-secondary" data-bs-dismiss="modal">아니오</button>
                           <button type="button" id="btn_save_inquire" class="btn btn-accent">예</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <div class="modal fade" id="githubShareModal" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                      <div class="modal-header border-0">
+                          <h5 class="modal-title fw-bold">깃허브 소스 공유 안내</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                      </div>
+                      <div class="modal-body">
+                          <p class="muted mb-3">깃허브 소스 공유 및 협업은 아래 요청 바랍니다.</p>
+                          <ol class="mb-0 muted">
+                              <li>사이트 소개 &gt; 문의하기</li>
+                              <li>회원 가입 후</li>
+                          </ol>
+                      </div>
+                      <div class="modal-footer border-0">
+                          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
+                          <button class="btn btn-accent" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#contactModal">
+                              문의하기 이동
+                          </button>
                       </div>
                   </div>
               </div>
