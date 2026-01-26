@@ -10,9 +10,11 @@
                     @php
                         $params = $menu['params'] ?? [];
                         $hasParams = empty($params) || !in_array(null, $params, true);
+                        $menuLevel = $menu['level'] ?? null;
+                        $isAllowed = $menuLevel === null || $menuLevel === $sideMenuFlag;
                     @endphp
 
-                    @if ($hasParams)
+                    @if ($hasParams && $isAllowed)
                         <a class="nav-link text-white" href="{{ route($route, $params) }}">
                             {{ $menu['title'] }}
                         </a>
@@ -30,9 +32,11 @@
                     @php
                         $params = $menu['params'] ?? [];
                         $hasParams = empty($params) || !in_array(null, $params, true);
+                        $menuLevel = $menu['level'] ?? null;
+                        $isAllowed = $menuLevel === null || $menuLevel === $sideMenuFlag;
                     @endphp
 
-                    @if ($hasParams)
+                    @if ($hasParams && $isAllowed)
                         <a class="nav-link text-white" href="{{ route($route, $params) }}">
                             {{ $menu['title'] }}
                         </a>

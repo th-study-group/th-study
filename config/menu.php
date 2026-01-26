@@ -20,6 +20,7 @@ return [
             ],
             'users.account.withdrawal' => [
                 'title' => '회원 탈퇴 ',
+                'level' => 'normal',
             ],
             'inquiries.index' => [
                 'title' => '나의 문의 내역',

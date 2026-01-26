@@ -22,11 +22,24 @@ class ViewComposerServiceProvider extends ServiceProvider
             $menus = config('menu.menus', []);
 
             $sideMenuKey = $menuAuths[$routeName] ?? '';
+
+            $userLevel = auth()->user()?->level ?? 'normal';
+
+            $menuFlag = array_filter(
+                $menus[$sideMenuKey] ?? [],
+                function ($menu) use ($userLevel) {
+                    if (!isset($menu['level'])) {
+                        return true; // level 없으면 기본 노출
+                    }
+                    return $menu['level'] === $userLevel;
+                }
+            );
             
             $view->with([
                 'sideNotes' => $notes[$routeName] ?? [],
+                'sideMenuFlag' => $userLevel,
                 'sideMenuAuth' => array_keys($menuAuths),
-                'sideMenus' => $menus[$sideMenuKey] ?? [],
+                'sideMenus' => $menuFlag,
                 'accountIdx' => auth()->user()?->idx,
             ]);
         });
