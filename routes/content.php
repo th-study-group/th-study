@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 // 사진 라우팅
-Route::prefix('photo')->name('photo.')->group(function () {
+Route::prefix('photos')->name('photos.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('photos.index');
     })->name('index')
@@ -12,7 +12,7 @@ Route::prefix('photo')->name('photo.')->group(function () {
 });
 
 // 영상 라우팅
-Route::prefix('video')->name('video.')->group(function () {
+Route::prefix('videos')->name('videos.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('videos.index');
     })->name('index')
@@ -21,7 +21,7 @@ Route::prefix('video')->name('video.')->group(function () {
 });
 
 // 정보 라우팅
-Route::prefix('blog')->name('blog.')->group(function () {
+Route::prefix('blogs')->name('blogs.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('blogs.index');
     })->name('index')
@@ -30,7 +30,7 @@ Route::prefix('blog')->name('blog.')->group(function () {
 });
 
 // 장소 라우팅
-Route::prefix('map')->name('map.')->group(function () {
+Route::prefix('maps')->name('maps.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('maps.index');
     })->name('index')
@@ -39,7 +39,7 @@ Route::prefix('map')->name('map.')->group(function () {
 });
 
 // 문서 라우팅
-Route::prefix('document')->name('document.')->group(function () {
+Route::prefix('documents')->name('documents.')->group(function () {
     Route::get('/{slug?}', function ($slug = null) {
         return view('documents.index');
     })->name('index')

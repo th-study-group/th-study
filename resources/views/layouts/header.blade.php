@@ -56,13 +56,13 @@
                     </ul>
                 </li>
                 {{--
-                <li class="nav-item"><a class="nav-link" href="{{ route('photo.index') }}">사진관리</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('video.index') }}">영상관리</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">정보관리</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('map.index') }}">장소관리</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('document.index') }}">문서관리</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('photos.index') }}">사진관리</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('videos.index') }}">영상관리</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">정보관리</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('maps.index') }}">장소관리</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('documents.index') }}">문서관리</a></li>
                 --}}
-                <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">정보관리</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">정보관리</a></li>
                 @auth
                     @if (auth()->user()?->email_verify_datetime)
                     <li class="nav-item dropdown nav-dropdown">

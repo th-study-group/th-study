@@ -64,18 +64,21 @@ class UserController extends Controller
      *
      * @return void
      */
-    public function withdrawal()
+    public function withdrawal(Request $request)
     {
+        $this->authorize('withdraw', $request->user());
+
         return view('users.withdrawal');
     }
 
     /**
-     * 삭제 (관리자, 사용자)
+     * 삭제 (사용자)
      *
      * @return void
      */
-    public function destroy()
+    public function destroy(Request $request)
     {
+        $this->authorize('withdraw', $request->user());
     }
 
     /**

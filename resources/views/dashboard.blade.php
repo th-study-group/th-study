@@ -10,13 +10,15 @@
                 <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3">
                     <div>
                         <span class="badge rounded-pill text-bg-light text-dark mb-2">로그인 완료</span>
-                        <h1 class="h4 mb-2">태희님, 환영합니다</h1>
+                        <h1 class="h4 mb-2">{{ auth()->user()->name ?? 'NONE' }}님, 환영합니다</h1>
                         <p class="mb-0 text-white-50">프로필과 최근 활동을 한눈에 확인할 수 있는 대시보드입니다.</p>
                     </div>
+                    {{--
                     <div class="d-flex flex-wrap gap-2">
-                        <span class="badge rounded-pill text-bg-light text-dark">이번 달 문의 12건</span>
+                        <span class="badge rounded-pill text-bg-light text-dark">이번 달 문의 -건</span>
                         <span class="badge rounded-pill text-bg-light text-dark">등급: 일반</span>
                     </div>
+                    --}}
                 </div>
             </div>
         </div>
@@ -30,10 +32,12 @@
                                 <h5 class="mb-1">프로필</h5>
                                 <span class="badge rounded-pill text-bg-primary">MEMBER</span>
                             </div>
+                            {{--
                             <button class="btn btn-outline-secondary btn-sm position-relative" type="button" data-bs-toggle="modal" data-bs-target="#notificationModal" aria-label="알림">
                                 <i class="bi bi-bell"></i>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
                             </button>
+                            --}}
                         </div>
 
                         <div class="d-flex align-items-center gap-3 mb-4">
@@ -45,8 +49,8 @@
                                 src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23dbeafe'/><stop offset='1' stop-color='%23e0f2fe'/></linearGradient></defs><rect width='160' height='160' rx='80' fill='url(%23g)'/><circle cx='80' cy='66' r='34' fill='%2393c5fd'/><rect x='36' y='106' width='88' height='36' rx='18' fill='%2393c5fd'/></svg>"
                             />
                             <div>
-                                <div class="fw-semibold fs-5">태희</div>
-                                <div class="text-muted">등급: 일반 회원</div>
+                                <div class="fw-semibold fs-5">{{ auth()->user()->nick_name ?? 'NONE' }}</div>
+                                <div class="text-muted">등급: {{ auth()->user()->level_label }}</div>
                             </div>
                         </div>
 
@@ -54,19 +58,19 @@
                             <div class="col-12 col-md-4">
                                 <div class="border rounded-3 p-2 bg-light">
                                     <div class="small text-muted">최초 가입일</div>
-                                    <div class="fw-semibold">2024.01.15</div>
+                                    <div class="fw-semibold">{{ auth()->user()->create_datetime->diffForHumans() }}</div>
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <div class="border rounded-3 p-2 bg-light">
                                     <div class="small text-muted">문의내역</div>
-                                    <div class="fw-semibold">7건</div>
+                                    <div class="fw-semibold">- 건</div>
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <div class="border rounded-3 p-2 bg-light">
                                     <div class="small text-muted">작성글</div>
-                                    <div class="fw-semibold">14개</div>
+                                    <div class="fw-semibold">- 개</div>
                                 </div>
                             </div>
                         </div>
@@ -92,20 +96,28 @@
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm h-100">
                             <div class="card-body">
-                                <div class="text-muted small mb-1">최근 활동</div>
-                                <div class="fw-semibold mb-3">게시판 최신글</div>
+                                <div class="text-muted small mb-1">홍보</div>
+                                <div class="fw-semibold mb-3">공지 · 이벤트 · 신규기능</div>
+                                
+                                {{--
+                                    예시)
+                                    운영 정책 개편안내 | 3/20
+                                    봄맞이 활동 이베트 진행 | 이벤트 상세 링크
+                                    문의 히스토리 필터 기능 추가 | 업데이트 
+                                --}}
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <div>자유게시판 글이 없습니다</div>
-                                    <span class="text-muted small">방금</span>
+                                    <div>준비중!</div>
+                                    <span class="text-muted small">YY/MM/DD</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <div>공지사항 글이 없습니다</div>
-                                    <span class="text-muted small">오늘</span>
+                                    <div>준비중!</div>
+                                    <a class="text-muted small" href="#">이벤트 상세</a>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div>문의게시판 글이 없습니다</div>
-                                    <span class="text-muted small">이번 주</span>
+                                    <div>준비중!</div>
+                                    <span class="text-muted small">업데이트</span>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -114,11 +126,12 @@
                             <div class="card-body">
                                 <div class="text-muted small mb-1">알림 요약</div>
                                 <div class="fw-semibold mb-3">읽지 않은 알림</div>
+                                
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <div class="display-6 fw-bold">3</div>
-                                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#notificationModal">알림 확인</button>
+                                    <div class="display-6 fw-bold">-</div>
+                                    {{-- #notificationModal 모달이름 --}}
+                                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="">알림 확인</button>
                                 </div>
-                                <div class="text-muted small mt-2">새 답변과 공지 알림을 실시간으로 보여줄 영역입니다.</div>
                             </div>
                         </div>
                     </div>
@@ -135,25 +148,11 @@
             <div class="col">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body d-flex flex-column">
-                        <div class="fw-semibold mb-3">자유게시판</div>
-                        <div class="list-group list-group-flush border rounded-3">
-                            <div class="list-group-item">
-                                <div class="fw-semibold text-truncate">주말 번개모임 후기 공유합니다</div>
-                                <div class="small text-muted">5분 전 · 댓글 2</div>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="fw-semibold text-truncate">신규 기능 의견 수렴합니다</div>
-                                <div class="small text-muted">1시간 전 · 댓글 5</div>
-                            </div>
-                        </div>
-                        <a href="#" class="text-decoration-none d-inline-flex align-items-center gap-1 small mt-3 text-primary">바로가기 <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body d-flex flex-column">
                         <div class="fw-semibold mb-3">공지사항</div>
+                        <div class="list-group list-group-flush border rounded-3">
+                            <div class="list-group-item text-muted text-center">등록된 글이 없습니다.</div>
+                        </div>
+                        {{--
                         <div class="list-group list-group-flush border rounded-3">
                             <div class="list-group-item">
                                 <div class="fw-semibold text-truncate">3월 시스템 점검 안내</div>
@@ -168,7 +167,8 @@
                                 <div class="small text-muted">2일 전 · 조회 210</div>
                             </div>
                         </div>
-                        <a href="#" class="text-decoration-none d-inline-flex align-items-center gap-1 small mt-3 text-primary">바로가기 <i class="bi bi-arrow-right"></i></a>
+                        --}}
+                        <a href="{{ route('posts.index', ['post_type' => 'notice']) }}" class="text-decoration-none d-inline-flex align-items-center gap-1 small mt-3 text-primary">바로가기 <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -177,15 +177,44 @@
                     <div class="card-body d-flex flex-column">
                         <div class="fw-semibold mb-3">문의게시판</div>
                         <div class="list-group list-group-flush border rounded-3">
+                            <div class="list-group-item text-muted text-center">등록된 글이 없습니다.</div>
+                        </div>
+                        {{--
+                        <div class="list-group list-group-flush border rounded-3">
                             <div class="list-group-item">
                                 <div class="fw-semibold text-truncate">결제 오류 문의드립니다</div>
                                 <div class="small text-muted">답변 대기</div>
                             </div>
                         </div>
-                        <a href="#" class="text-decoration-none d-inline-flex align-items-center gap-1 small mt-3 text-primary">바로가기 <i class="bi bi-arrow-right"></i></a>
+                        --}}
+                        <a href="{{ route('inquiries.index') }}" class="text-decoration-none d-inline-flex align-items-center gap-1 small mt-3 text-primary">바로가기 <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
+            <div class="col">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body d-flex flex-column">
+                        <div class="fw-semibold mb-3">콘텐츠게시판</div>
+                        <div class="list-group list-group-flush border rounded-3">
+                            <div class="list-group-item text-muted text-center">등록된 글이 없습니다.</div>
+                        </div>
+                        {{--
+                        <div class="list-group list-group-flush border rounded-3">
+                            <div class="list-group-item">
+                                <div class="fw-semibold text-truncate">주말 번개모임 후기 공유합니다</div>
+                                <div class="small text-muted">5분 전 · 댓글 2</div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="fw-semibold text-truncate">신규 기능 의견 수렴합니다</div>
+                                <div class="small text-muted">1시간 전 · 댓글 5</div>
+                            </div>
+                        </div>
+                        --}}
+                        <a href="{{ route('blogs.index') }}" class="text-decoration-none d-inline-flex align-items-center gap-1 small mt-3 text-primary">바로가기 <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            {{--
             <div class="col">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body d-flex flex-column">
@@ -233,6 +262,7 @@
                     </div>
                 </div>
             </div>
+            --}}
         </div>
     </div>
 </div>

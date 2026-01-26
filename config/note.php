@@ -1,86 +1,86 @@
 <?php
 
 return [
-    'photo.index' => [
+    'photos.index' => [
         'food' => [
             'title' => '음식',
-            'url'   => '/photo/food',
+            'url'   => '/photos/food',
         ],
         'cafe' => [
             'title' => '카페',
-            'url'   => '/photo/cafe',
+            'url'   => '/photos/cafe',
         ],
         'tour' => [
             'title' => '여행',
-            'url'   => '/photo/tour',
+            'url'   => '/photos/tour',
         ],
         'music' => [
             'title' => '음악',
-            'url'   => '/photo/music',
+            'url'   => '/photos/music',
         ],
     ],
-    'video.index' => [
+    'videos.index' => [
         'develop' => [
             'title' => '개발',
-            'url'   => '/video/develop',
+            'url'   => '/videos/develop',
         ],
         'tour' => [
             'title' => '여행',
-            'url'   => '/video/tour',
+            'url'   => '/videos/tour',
         ],
         'music' => [
             'title' => '음악',
-            'url'   => '/video/music',
+            'url'   => '/videos/music',
         ],
     ],
-    'blog.index' => [
+    'blogs.index' => [
         'develop' => [
             'title' => '개발',
-            'url'   => '/blog/develop',
+            'url'   => '/blogs/develop',
         ],
         'tour' => [
             'title' => '여행',
-            'url'   => '/blog/tour',
+            'url'   => '/blogs/tour',
         ],
         'music' => [
             'title' => '음악',
-            'url'   => '/blog/music',
+            'url'   => '/blogs/music',
         ],
     ],
-    'map.index' => [
+    'maps.index' => [
         'food' => [
             'title' => '음식',
-            'url'   => '/map/food',
+            'url'   => '/maps/food',
         ],
         'cafe' => [
             'title' => '카페',
-            'url'   => '/map/cafe',
+            'url'   => '/maps/cafe',
         ],
         'tour' => [
             'title' => '여행',
-            'url'   => '/map/tour',
+            'url'   => '/maps/tour',
         ],
         'music' => [
             'title' => '음악',
-            'url'   => '/map/music',
+            'url'   => '/maps/music',
         ],
         'history' => [
             'title' => '추억',
-            'url'   => '/map/history',
+            'url'   => '/maps/history',
         ],
     ],
-    'document.index' => [
+    'documents.index' => [
         'work' => [
             'title' => '회사자료',
-            'url'   => '/document/work',
+            'url'   => '/documents/work',
         ],
         'study' => [
             'title' => '학습자료',
-            'url'   => '/document/study',
+            'url'   => '/documents/study',
         ],
         'laravel' => [
             'title' => '라라벨',
-            'url'   => '/document/laravel',
+            'url'   => '/documents/laravel',
         ],
     ],
 ];

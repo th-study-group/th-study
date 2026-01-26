@@ -51,6 +51,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'password' => 'hashed', // 라라벨 10 이상에서 지원하는 해시드 캐스트 
+        'create_datetime' => 'datetime'
     ];
 
     protected $hidden = [
@@ -97,4 +98,9 @@ class User extends Authenticatable
     {
         return (int) $value === 1 ? 'Y' : 'N';
     }
+
+    public function getLevelLabelAttribute()
+{
+    return config('member.levels.' . $this->level, 'NONE');
+}
 }
