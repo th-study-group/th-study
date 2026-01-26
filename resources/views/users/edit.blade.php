@@ -4,8 +4,10 @@
 
 @section('content')
     <main class="col-lg-10 content-col">
-        <section class="bg-white p-4 p-lg-5 rounded-3 shadow-sm" style="font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', var(--bs-font-sans-serif);">
-            <div class="text-center fs-3 fw-bold text-secondary mb-4" style="letter-spacing: 0;">Profile</div>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-11 col-lg-9 col-xl-7">
+                <section class="border border-2 border-secondary-subtle rounded-4 bg-white p-4 p-md-5 shadow-sm" style="font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', var(--bs-font-sans-serif);">
+                    <div class="text-center fs-3 fw-bold text-secondary mb-4" style="letter-spacing: 0;">Profile</div>
 
             @if ($errors->any())
                 <div class="alert alert-warning d-flex align-items-center gap-2 small mb-4" role="alert">
@@ -187,7 +189,9 @@
                     </div>
                     <button type="submit" class="btn btn-dark border-0 w-100">회원정보 수정</button>
                 </div>
-            </form>
-        </section>
+                    </form>
+                </section>
+            </div>
+        </div>
     </main>
 @endsection
