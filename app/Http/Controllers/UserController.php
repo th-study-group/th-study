@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Users\RegisterUserRequest;
-use App\Http\Requests\Users\LoginUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
-use App\Services\EmailVerificationService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 사용자 컨트롤러
@@ -106,6 +104,40 @@ class UserController extends Controller
     public function destroy(Request $request)
     {
         $this->authorize('withdraw', $request->user());
+
+        $withdrawalConfirm = $request->input('withdrawal_confirm');
+
+        if (!$withdrawalConfirm) {
+            return to_route('users.account.withdrawal')
+                ->withErrors([
+                    'withdrawal_confirm' => '회원탈퇴 동의가 필요합니다.'
+                ])->withInput();
+        }
+
+        if (!in_array($withdrawalConfirm, ['Y', 'N'], true)) {
+            return to_route('users.account.withdrawal')
+                ->withErrors([
+                    'withdrawal_confirm' => '유효하지 않은 값입니다.'
+                ])->withInput();
+        }
+
+        if ($withdrawalConfirm !== 'Y') {
+            return to_route('users.account.withdrawal')
+                ->withErrors([
+                    'withdrawal_confirm' => '회원탈퇴 동의가 필요합니다.'
+                ])->withInput();
+        }
+
+        $this->userService->withdraw([
+            'user_idx' => $request->user()->idx,
+            'ip' => $request->ip(),
+        ]);
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return to_route('login')->with('status', '회원탈퇴가 정상적으로 되었습니다.');
     }
 
     /**

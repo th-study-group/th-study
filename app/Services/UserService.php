@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Events\UserLoginAttemptedEvent;
+use App\Mail\UserNoticeMail;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Jobs\SendMailJob;
 use Throwable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -193,6 +195,86 @@ class UserService
                 'model' => 'User',
                 'user_idx' => $id,
                 'ip' => $ip,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * 회원탈퇴 처리
+     *
+     * @param array $payload
+     * @return bool
+     */
+    public function withdraw(array $payload = []): bool
+    {
+        try {
+            if (empty($payload['user_idx']) || empty($payload['ip'])) {
+                Log::warning('User withdrawal failed', [
+                    'action' => 'withdraw',
+                    'model' => 'User',
+                    'reason' => 'missing_payload',
+                ]);
+
+                return false;
+            }
+
+            $user = $this->userRepository->findById((int) $payload['user_idx']);
+
+            if (!$user) {
+                Log::warning('User withdrawal failed', [
+                    'action' => 'withdraw',
+                    'model' => 'User',
+                    'user_idx' => $payload['user_idx'],
+                    'ip' => $payload['ip'],
+                    'reason' => 'not_found',
+                ]);
+
+                return false;
+            }
+
+            DB::transaction(function () use ($user, $payload) {
+                $user->update([
+                    'delete_user_idx' => $user->idx,
+                ]);
+                $user->delete();
+
+                Log::info('User withdrawal succeeded', [
+                    'action' => 'withdraw',
+                    'model' => 'User',
+                    'user_idx' => $user->idx,
+                    'email' => $user->email,
+                    'ip' => $payload['ip'],
+                ]);
+            });
+
+            $subject = sprintf('[%s] %s님 회원탈퇴가 정상적으로 완료되었습니다.', config('app.name'), $user->name);
+
+            $params =  [
+                'name' => $user->name,
+            ];
+
+            SendMailJob::dispatch(
+                $user->email,
+                new UserNoticeMail(
+                    mailSubject: $subject,
+                    bladeName: 'withdrawal_notice',
+                    params: $params,
+                ),
+                '회원탈퇴알림',
+                null,
+                $user->idx
+            );
+
+            return true;
+        } catch (Throwable $e) {
+            Log::error('User withdrawal failed', [
+                'action' => 'withdraw',
+                'model' => 'User',
+                'user_idx' => $payload['user_idx'] ?? null,
+                'ip' => $payload['ip'] ?? null,
                 'error' => $e->getMessage(),
             ]);
 

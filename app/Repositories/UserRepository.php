@@ -4,6 +4,9 @@ namespace App\Repositories;
 
 use App\Models\User;
 
+/**
+ * 사용자 레퍼지토리
+ */
 class UserRepository
 {
     /**

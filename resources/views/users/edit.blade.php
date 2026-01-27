@@ -225,7 +225,11 @@
                     return;
                 }
 
-      
+                if ($('input[name="sex"]').is(':checked') === false) {
+                    alert('성별 값을 입력해주세요.');
+                    $('#sex_man').focus();
+                    return;
+                }
 
                 if (!$('#personal_info_agree').is(':checked')) {
                     alert('개인정보동의 체크해주세요.');

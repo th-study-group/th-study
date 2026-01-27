@@ -39,7 +39,7 @@
                                 @checked(old('password_reset_confirm'))
                             >
                             <label class="form-check-label" for="password_reset_confirm">
-                                위 내용을 확인하였으며, 이메일 인증을 진행합니다. (필수)
+                                위 내용을 확인하였으며, 이메일 인증을 진행합니다. <span class="text-danger fw-bold">(필수)</span>
                             </label>
                         </div>
                         @error('password_reset_confirm')
