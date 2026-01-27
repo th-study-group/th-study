@@ -15,6 +15,7 @@ Route::prefix('users')->name('users.')->group(function() {
     Route::get("/withdrawal", [UserController::class, 'withdrawal'])->name('account.withdrawal');
     Route::delete("/destroy", [UserController::class, 'destroy'])->name('account.soft.delete');
     Route::get("/password-reset", [UserController::class, 'passwordReset'])->name('account.password_reset');
+    Route::patch("/password/change-request", [UserController::class, 'passwordResetRequest'])->name('account.password_reset.request');
 });
 
 Route::prefix('inquiries')->name('inquiries.')->group(function () {

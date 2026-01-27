@@ -254,6 +254,7 @@ class UserService
 
             $params =  [
                 'name' => $user->name,
+                'siteUrl' => config('app.url'),
             ];
 
             SendMailJob::dispatch(
@@ -272,6 +273,87 @@ class UserService
         } catch (Throwable $e) {
             Log::error('User withdrawal failed', [
                 'action' => 'withdraw',
+                'model' => 'User',
+                'user_idx' => $payload['user_idx'] ?? null,
+                'ip' => $payload['ip'] ?? null,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * 비밀번호 변경 요청 처리
+     *
+     * @param array $payload
+     * @return bool
+     */
+    public function requestPasswordChange(array $payload = []): bool
+    {
+        try {
+            if (empty($payload['user_idx']) || empty($payload['ip'])) {
+                Log::warning('Password change request failed', [
+                    'action' => 'password_change_request',
+                    'model' => 'User',
+                    'reason' => 'missing_payload',
+                ]);
+
+                return false;
+            }
+
+            $user = $this->userRepository->findById((int) $payload['user_idx']);
+
+            if (!$user) {
+                Log::warning('Password change request failed', [
+                    'action' => 'password_change_request',
+                    'model' => 'User',
+                    'user_idx' => $payload['user_idx'],
+                    'ip' => $payload['ip'],
+                    'reason' => 'not_found',
+                ]);
+
+                return false;
+            }
+
+            DB::transaction(function () use ($user, $payload) {
+                $user->forceFill([
+                    'change_password_flag' => 1,
+                ])->saveQuietly();
+
+                Log::info('Password change request succeeded', [
+                    'action' => 'password_change_request',
+                    'model' => 'User',
+                    'user_idx' => $user->idx,
+                    'email' => $user->email,
+                    'ip' => $payload['ip'],
+                ]);
+
+                $subject = sprintf('[%s] %s님 비밀번호 변경 요청', config('app.name'), $user->name);
+
+                $params = [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'siteUrl' => route('login'),
+                ];
+
+                SendMailJob::dispatchSync(
+                    $user->email,
+                    new UserNoticeMail(
+                        mailSubject: $subject,
+                        bladeName: 'password_change_request',
+                        params: $params,
+                    ),
+                    '비밀번호변경',
+                    null,
+                    $user->idx
+                );
+            });
+
+            return true;
+        } catch (Throwable $e) {
+            Log::error('Password change request failed', [
+                'action' => 'password_change_request',
                 'model' => 'User',
                 'user_idx' => $payload['user_idx'] ?? null,
                 'ip' => $payload['ip'] ?? null,
@@ -308,6 +390,26 @@ class UserService
                     'email' => $user->email,
                     'ip' => $ip,
                 ]);
+
+                $subject = sprintf('[%s] %s님 비밀번호 변경이 완료되었습니다.', config('app.name'), $user->name);
+
+                $params = [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'siteUrl' => route('login'),
+                ];
+
+                SendMailJob::dispatch(
+                    $user->email,
+                    new UserNoticeMail(
+                        mailSubject: $subject,
+                        bladeName: 'password_change_complete',
+                        params: $params,
+                    ),
+                    '비밀번호변경완료',
+                    null,
+                    $user->idx
+                );
 
                 return true;
             });

@@ -21,26 +21,6 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    /**
-     * 회원가입 목록 (관리자)
-     *
-     * @return void
-     */
-    public function index()
-    {
-        return view('users.index');
-    }
-
-    /**
-     * 회원정보 상세내역 (관리자)
-     *
-     * @return void
-     */
-    public function show()
-    {
-        return view('users.show');
-    }
-
     /* 수정 폼 
      *
      * @return void
@@ -147,6 +127,56 @@ class UserController extends Controller
      */
     public function passwordReset() 
     {
-        return view('users.password_reset');
+        return view('users.password_request');
+    }
+
+    /**
+     * 비밀번호 변경을 위한 메일 요청 
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function passwordResetRequest(Request $request) 
+    {
+        $passwordResetConfirm = $request->input('password_reset_confirm');
+
+        if (!$passwordResetConfirm) {
+            return to_route('users.account.password_reset')
+                ->withErrors([
+                    'password_reset_confirm' => '비밀번호 변경 동의가 필요합니다.'
+                ])->withInput();
+        }
+
+        if (!in_array($passwordResetConfirm, ['Y', 'N'], true)) {
+            return to_route('users.account.password_reset')
+                ->withErrors([
+                    'password_reset_confirm' => '유효하지 않은 값입니다.'
+                ])->withInput();
+        }
+
+        if ($passwordResetConfirm !== 'Y') {
+            return to_route('users.account.password_reset')
+                ->withErrors([
+                    'password_reset_confirm' => '비밀번호 변경 동의가 필요합니다.'
+                ])->withInput();
+        }
+
+        $ok = $this->userService->requestPasswordChange([
+            'user_idx' => $request->user()->idx,
+            'ip' => $request->ip(),
+        ]);
+
+        if (!$ok) {
+            return to_route('users.account.password_reset')
+                ->with('status', '비밀번호 변경 요청에 실패했습니다. 잠시 후 다시 시도해 주세요.')
+                ->withInput();
+        }
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return to_route('login')
+                ->with('status', '비밀번호 변경 요청이 접수되었습니다. 메일을 확인해 주세요.');
     }
 }
