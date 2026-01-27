@@ -28,10 +28,9 @@
                             name="email"
                             class="form-control @error('email') is-invalid @enderror"
                             placeholder="example@email.com"
-                            value="{{ old('email', optional(auth()->user())->email) }}"
+                            value="{{ old('email', $user->email) }}"
                             disabled
                         >
-                        <div class="form-text small text-muted">이메일은 변경할 수 없습니다.</div>
                         @error('email')
                             <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
                         @enderror
@@ -45,7 +44,7 @@
                             name="name"
                             class="form-control @error('name') is-invalid @enderror"
                             placeholder="홍길동"
-                            value="{{ old('name', optional(auth()->user())->name) }}"
+                            value="{{ old('name', $user->name) }}"
                         >
                         @error('name')
                             <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
@@ -60,7 +59,7 @@
                             name="nick_name"
                             class="form-control @error('nick_name') is-invalid @enderror"
                             placeholder="닉네임을 입력해주세요"
-                            value="{{ old('nick_name', optional(auth()->user())->nick_name) }}"
+                            value="{{ old('nick_name', $user->nick_name) }}"
                         >
                         @error('nick_name')
                             <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
@@ -79,7 +78,7 @@
                                 name="birth_date"
                                 class="form-control @error('birth_date') is-invalid @enderror"
                                 placeholder="1990-01-01"
-                                value="{{ old('birth_date', optional(auth()->user())->birth_date) }}"
+                                value="{{ old('birth_date', $user->birth_date) }}"
                             >
                         </div>
                         @error('birth_date')
@@ -97,7 +96,7 @@
                                     name="sex"
                                     class="form-check-input @error('sex') is-invalid @enderror"
                                     value="M"
-                                    @checked(old('sex', optional(auth()->user())->sex) === 'M')
+                                    @checked(old('sex', $user->sex) === 'M')
                                 >
                                 <label class="form-check-label" for="sex_man">남성</label>
                             </div>
@@ -108,7 +107,7 @@
                                     name="sex"
                                     class="form-check-input @error('sex') is-invalid @enderror"
                                     value="W"
-                                    @checked(old('sex', optional(auth()->user())->sex) === 'W')
+                                    @checked(old('sex', $user->sex) === 'W')
                                 >
                                 <label class="form-check-label" for="sex_woman">여성</label>
                             </div>
@@ -128,7 +127,7 @@
                             placeholder="01012345678"
                             inputmode="numeric"
                             pattern="[0-9]*"
-                            value="{{ old('phone', optional(auth()->user())->phone) }}"
+                            value="{{ old('phone', $user->phone) }}"
                         >
                         @error('phone')
                             <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
@@ -143,7 +142,7 @@
                             name="address"
                             class="form-control @error('address') is-invalid @enderror"
                             placeholder="서울특별시 강남구 테헤란로 123"
-                            value="{{ old('address', optional(auth()->user())->address) }}"
+                            value="{{ old('address', $user->address) }}"
                         >
                         @error('address')
                             <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
@@ -158,7 +157,7 @@
                                 name="personal_info_agree"
                                 class="form-check-input @error('personal_info_agree') is-invalid @enderror"
                                 value="Y"
-                                @checked(old('personal_info_agree', optional(auth()->user())->personal_info_agree) === 'Y')
+                            @checked(session()->hasOldInput() ? (old('personal_info_agree') === 'Y') : ($user->personal_info_agree === 'Y'))
                             >
                             <label class="form-check-label" for="personal_info_agree">개인정보동의(필수)</label>
                         </div>
@@ -175,7 +174,7 @@
                                 name="marketing_info_agree"
                                 class="form-check-input"
                                 value="Y"
-                                @checked(old('marketing_info_agree', optional(auth()->user())->marketing_info_agree) === 'Y')
+                            @checked(old('marketing_info_agree', $user->marketing_info_agree) === 'Y')
                             >
                             <label class="form-check-label" for="marketing_info_agree">마케팅동의</label>
                         </div>
@@ -187,11 +186,55 @@
                     <div class="d-flex justify-content-end align-items-center mb-2">
                         <a href="{{ route('users.account.withdrawal') }}" class="link-danger small text-decoration-none">회원탈퇴</a>
                     </div>
-                    <button type="submit" class="btn btn-dark border-0 w-100">회원정보 수정</button>
+                    <button type="button" id="btn_account_edit" class="btn btn-dark border-0 w-100">회원정보 수정</button>
                 </div>
                     </form>
                 </section>
             </div>
         </div>
     </main>
+@endsection
+
+@section('script')
+    <script>
+        $(function() {
+            initBirthDatePicker('#birth_date');
+
+            $("#btn_account_edit").on("click", function() {
+                if ($.trim($('#name').val()) === '') {
+                    alert('이름을 입력해주세요.');
+                    $('#name').focus();
+                    return;
+                }
+
+                if ($.trim($('#nick_name').val()) === '') {
+                    alert('닉네임을 입력해주세요.');
+                    $('#nick_name').focus();
+                    return;
+                }
+
+                if ($.trim($('#birth_date').val()) === '') {
+                    alert('생년월일을 입력해주세요.');
+                    $('#birth_date').focus();
+                    return;
+                }
+
+                if ($.trim($('#phone').val()) === '') {
+                    alert('핸드폰을 입력해주세요.');
+                    $('#phone').focus();
+                    return;
+                }
+
+      
+
+                if (!$('#personal_info_agree').is(':checked')) {
+                    alert('개인정보동의 체크해주세요.');
+                    $('#personal_info_agree').focus();
+                    return;
+                }
+
+                $("#form_account_edit").submit();
+            });
+        });
+    </script>
 @endsection

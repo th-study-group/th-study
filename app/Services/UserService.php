@@ -6,6 +6,7 @@ use App\Events\UserLoginAttemptedEvent;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Throwable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -108,6 +109,95 @@ class UserService
         ));
 
         return true;
+    }
+
+    /**
+     * 아이디로 사용자 조회 (공통)
+     *
+     * @param int $id
+     * @return User
+     */
+    public function findById(int $id): User
+    {
+        $user = $this->userRepository->findById($id);
+
+        if (!$user) {
+            throw new ModelNotFoundException();
+        }
+
+        return $user;
+    }
+
+    /**
+     * 사용자 수정 처리
+     *
+     * @param array $payload
+     * @return bool
+     */
+    public function update(array $payload = []): bool
+    {
+        try {
+            if (empty($payload['user_idx']) || empty($payload['ip'])) {
+                Log::warning('User update failed', [
+                    'action' => 'update',
+                    'model' => 'User',
+                    'reason' => 'missing_payload',
+                ]);
+
+                return false;
+            }
+
+            $id = (int) $payload['user_idx'];
+            $ip = $payload['ip'];
+            $user = $this->userRepository->findById($id);
+
+            if (!$user) {
+                Log::warning('User update failed', [
+                    'action' => 'update',
+                    'model' => 'User',
+                    'user_idx' => $id,
+                    'ip' => $ip,
+                    'reason' => 'not_found',
+                ]);
+
+                return false;
+            }
+
+            return DB::transaction(function () use ($user, $payload, $ip, $id) {
+                $user->update([
+                    'name' => $payload['name'],
+                    'nick_name' => $payload['nick_name'],
+                    'birth_date' => $payload['birth_date'],
+                    'sex' => $payload['sex'],
+                    'phone' => $payload['phone'],
+                    'address' => $payload['address'] ?? null,
+                    'personal_info_agree' => $payload['personal_info_agree'],
+                    'marketing_info_agree' => $payload['marketing_info_agree'] ?? null,
+                    'update_user_idx' => $id,
+                ]);
+
+                Log::info('User update succeeded', [
+                    'action' => 'update',
+                    'model' => 'User',
+                    'user_idx' => $user->idx,
+                    'email' => $user->email,
+                    'ip' => $ip,
+                    'payload' => $payload,
+                ]);
+
+                return true;
+            });
+        } catch (Throwable $e) {
+            Log::error('User update failed', [
+                'action' => 'update',
+                'model' => 'User',
+                'user_idx' => $id,
+                'ip' => $ip,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
     }
 
     /**

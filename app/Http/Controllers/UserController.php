@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Users\RegisterUserRequest;
 use App\Http\Requests\Users\LoginUserRequest;
+use App\Http\Requests\Users\UpdateUserRequest;
 use App\Services\EmailVerificationService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 /**
  * 사용자 컨트롤러
@@ -46,17 +49,41 @@ class UserController extends Controller
      */
     public function edit()
     {
-        return view('users.edit');
+        try {
+            $user = $this->userService->findById(auth()->user()->idx);
+
+            return view('users.edit', [
+                'user' => $user
+            ]);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
     }
 
     /**
      * 수정 처리 (관리자, 사용자)
      *
-     * @param Request $reequest
+     * @param UpdateUserRequest $request
      * @return void
      */
-    public function update(Request $reequest)
+    public function update(UpdateUserRequest $request)
     {
+        $payload = $request->safe()->all();
+        $payload['user_idx'] = $request->user()->idx;
+        $payload['ip'] = $request->ip();
+
+        Log::info('User update validation passed', [
+            'action' => 'validate',
+            'model' => 'User',
+            'user_idx' => $request->user()?->idx,
+            'email' => $request->user()?->email,
+            'ip' => $request->ip(),
+            'payload' => $payload,
+        ]);
+
+        $this->userService->update($payload);
+
+        return to_route('users.account.edit');
     }
 
     /**

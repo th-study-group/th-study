@@ -27,4 +27,15 @@ class UserRepository
     {
         return User::where('email', $email)->first();
     }
+
+    /**
+     * 아이디로 사용자 조회
+     *
+     * @param int $id
+     * @return User|null
+     */
+    public function findById(int $id): ?User
+    {
+        return User::where('idx', $id)->first();
+    }
 }
