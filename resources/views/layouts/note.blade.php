@@ -7,7 +7,10 @@
         <div class="offcanvas-body no-scrollbar">
             <nav class="nav flex-column gap-2">
                 @foreach($sideNotes as $note)
-                    <a class="nav-link text-white" href="{{ $note['url'] }}">{{ $note['title'] }}</a>
+                    @php
+                        $isActive = request()->is(ltrim($note['url'], '/'));
+                    @endphp
+                    <a class="nav-link text-white {{ $isActive ? 'active' : '' }}" href="{{ $note['url'] }}">{{ $note['title'] }}</a>
                 @endforeach
             </nav>
         </div>
@@ -18,7 +21,10 @@
             <h6 class="text-uppercase text-secondary small">노트</h6>
             <nav class="nav flex-column gap-2 mt-3">
                 @foreach($sideNotes as $note)
-                    <a class="nav-link text-white" href="{{ $note['url'] }}">{{ $note['title'] }}</a>
+                    @php
+                        $isActive = request()->is(ltrim($note['url'], '/'));
+                    @endphp
+                    <a class="nav-link text-white {{ $isActive ? 'active' : '' }}" href="{{ $note['url'] }}">{{ $note['title'] }}</a>
                 @endforeach
             </nav>
         </div>

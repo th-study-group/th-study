@@ -98,3 +98,10 @@ footer {
     color: transparent;
     text-shadow: 0 0 12px rgba(153, 91, 255, 0.35);
 }
+
+/* sidebar menu active */
+.nav-link.active {
+    background-color: #2b3035;
+    font-weight: 600;
+    border-radius: 0.375rem;
+}

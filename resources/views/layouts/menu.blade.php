@@ -12,10 +12,11 @@
                         $hasParams = empty($params) || !in_array(null, $params, true);
                         $menuLevel = $menu['level'] ?? null;
                         $isAllowed = $menuLevel === null || $menuLevel === $sideMenuFlag;
+                        $isActive = request()->routeIs($route);
                     @endphp
 
                     @if ($hasParams && $isAllowed)
-                        <a class="nav-link text-white" href="{{ route($route, $params) }}">
+                        <a class="nav-link text-white {{ $isActive ? 'active' : '' }}" href="{{ route($route, $params) }}">
                             {{ $menu['title'] }}
                         </a>
                     @endif
@@ -34,10 +35,11 @@
                         $hasParams = empty($params) || !in_array(null, $params, true);
                         $menuLevel = $menu['level'] ?? null;
                         $isAllowed = $menuLevel === null || $menuLevel === $sideMenuFlag;
+                        $isActive = request()->routeIs($route);
                     @endphp
 
                     @if ($hasParams && $isAllowed)
-                        <a class="nav-link text-white" href="{{ route($route, $params) }}">
+                        <a class="nav-link text-white {{ $isActive ? 'active' : '' }}" href="{{ route($route, $params) }}">
                             {{ $menu['title'] }}
                         </a>
                     @endif
