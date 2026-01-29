@@ -1,0 +1,159 @@
+/* Board layout */
+.board-card {
+    border: 1px solid #e9ecef;
+}
+
+.board-title {
+    letter-spacing: -0.02em;
+}
+
+.board-head-top {
+    width: 100%;
+}
+
+.board-head-text {
+    max-width: 100%;
+}
+
+.board-min-w-0 {
+    min-width: 0;
+}
+
+.board-filter-box {
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #f8f9fa;
+}
+
+.board-filter-title {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.board-filter-toggle {
+    white-space: nowrap;
+}
+
+.board-filter-toggle .bi {
+    transition: transform 0.2s ease;
+}
+
+.board-filter-toggle.collapsed .bi {
+    transform: rotate(180deg);
+}
+
+.board-date-range {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.board-textarea {
+    resize: none;
+}
+
+.board-field {
+    line-height: 1.6;
+}
+
+.board-content {
+    min-height: 180px;
+    display: block;
+}
+
+.board-content-text {
+    width: 100%;
+    white-space: pre-wrap;
+    text-align: left;
+}
+
+@media (max-width: 767.98px) {
+    .board-status-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .board-status-actions .btn {
+        width: 100%;
+    }
+
+    .board-status-select {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+.board-meta {
+    border-top: 1px dashed #dee2e6;
+    padding-top: 0.5rem;
+}
+
+.board-status-select {
+    min-width: 140px;
+    max-width: 120px;
+    width: 120px;
+}
+
+.comment-section .comment-author {
+    font-weight: 600;
+}
+
+.board-meta .badge {
+    font-size: 0.75em;
+    padding: 0.25em 0.55em;
+    vertical-align: text-top;
+}
+
+/* Single-line truncation */
+.board-ellipsis {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Horizontal scroll for table on mobile */
+.board-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.board-table-wrap::-webkit-scrollbar {
+    height: 0;
+}
+
+.board-table {
+    table-layout: fixed;
+    min-width: 720px;
+}
+
+@media (max-width: 767.98px) {
+    .board-card {
+        border-radius: 0.75rem;
+    }
+
+    .board-table {
+        min-width: 620px;
+    }
+
+    .board-head-text {
+        max-width: calc(100% - 88px);
+    }
+
+    .board-ellipsis-mobile {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+        max-width: min(100%, 16rem);
+    }
+
+    /* Utility: hide columns on mobile only */
+    .board-col-hidden {
+        display: none !important;
+    }
+}

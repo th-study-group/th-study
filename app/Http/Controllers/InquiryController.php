@@ -56,7 +56,7 @@ class InquiryController extends Controller
      */
     public function edit()
     {
-        return view('inquiries.edit');
+        return view('inquiries.create');
     }
 
     /**
