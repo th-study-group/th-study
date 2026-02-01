@@ -11,9 +11,9 @@ class PostController extends Controller
      *
      * @return void
      */
-    public function index()
+    public function index(string $postType)
     {
-        return view('posts.index');
+        return view("{$postType}.index");
     }
 
     /**
@@ -21,9 +21,9 @@ class PostController extends Controller
      *
      * @return void
      */
-    public function show()
+    public function show(string $postType)
     {
-        return view('posts.show');
+        return view("{$postType}.show");
     }
 
     /**
@@ -31,9 +31,9 @@ class PostController extends Controller
      *
      * @return void
      */
-    public function create()
+    public function create(string $postType)
     {
-        return view('posts.create');
+        return view("{$postType}.create");
     }
 
     /**
@@ -42,7 +42,7 @@ class PostController extends Controller
      * @param Request $request
      * @return void
      */
-    public function store(Request $request)
+    public function store(Request $request, string $postType)
     {
     }
 
@@ -52,18 +52,18 @@ class PostController extends Controller
      * @param string $idx
      * @return void
      */
-    public function edit(string $idx)
+    public function edit(string $postType, string $idx)
     {
-        return view('posts.create');
+        return view("{$postType}.create");
     }
 
     /**
      * 수정 처리 
      *
-     * @param Request $reequest
+     * @param Request $request
      * @return void
      */
-    public function update(Request $reequest)
+    public function update(Request $request)
     {
     }
 

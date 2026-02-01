@@ -7,6 +7,13 @@ $status = [
     'completed' => '완료'
 ];
 
+$statusBadgeClasses = [
+    'wait' => 'secondary',
+    'in_progress' => 'warning',
+    'on_hold' => 'dark',
+    'completed' => 'success',
+];
+
 $postTypes = [
     'notice' => '공지사항',
     'free' => '잡담',
@@ -20,6 +27,7 @@ $postTypeExcluded = ['inquiries'];
 
 return [
     'status' => $status,
+    'status_badge_classes' => $statusBadgeClasses,
     'post_type' => $postTypes,
     'post_type_excluded' => $postTypeExcluded,
     'post_type_for_route' => array_values(

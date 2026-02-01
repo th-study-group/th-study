@@ -121,6 +121,24 @@ function initBirthDatePicker(selector, options = {})
     return flatpickr(selector, baseOptions);
 }
 
+function updateEmptyRowColspan(tableSelector, cellSelector)
+{
+    var $table = $(tableSelector);
+    if (!$table.length) {
+        return;
+    }
+
+    var $cell = $(cellSelector);
+    if (!$cell.length) {
+        return;
+    }
+
+    var visibleCols = $table.find('thead th:visible').length;
+    if (visibleCols > 0) {
+        $cell.attr('colspan', visibleCols);
+    }
+}
+
 function initHomeScroll(){
     const backToTopBtn = document.getElementById('backToTop');
     const sentinel = document.getElementById('topSentinel');

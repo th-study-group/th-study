@@ -78,9 +78,9 @@
                         <li class="nav-item dropdown nav-dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ route('admins.members.index') }}">회원조회</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admins.posts.index', ['post_type' => 'notice']) }}">공지사항</a></li>
+                                <li><a class="dropdown-item" href="{{ route('admins.members.index') }}">회원현황</a></li>
                                 <li><a class="dropdown-item" href="{{ route('admins.inquiries.index') }}">문의내역</a></li>
-                                <li><a class="dropdown-item" href="{{ route('admins.posts.index', ['post_type' => 'notice']) }}">공지사항</a></li>
                             </ul>
                         </li>
                         @endif

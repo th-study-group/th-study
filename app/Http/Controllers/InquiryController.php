@@ -16,7 +16,10 @@ class InquiryController extends Controller
      */
     public function index() 
     {
-        return view('inquiries.index');
+        return view('inquiries.index', [
+            'statusList' => config('board.status'),
+            'statusBadgeClasses' => config('board.status_badge_classes'),
+        ]);
     }
 
     /**
@@ -46,7 +49,9 @@ class InquiryController extends Controller
      */
     public function show()
     {
-        return view('inquiries.show');
+        return view('inquiries.show', [
+            'statusList' => config('board.status'),
+        ]);
     }
 
     /**

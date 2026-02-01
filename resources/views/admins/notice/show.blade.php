@@ -7,8 +7,8 @@
         <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm">
             <div class="board-head d-flex flex-column gap-2 gap-lg-3">
                 <div>
-                    <h2 class="board-title h5 mb-1">상세내역</h2>
-                    <p class="text-secondary small mb-0">문의 내용을 확인할 수 있습니다.</p>
+                    <h2 class="board-title h5 mb-1">문의하기</h2>
+                    <p class="text-secondary small mb-0">고객 문의 내용을 확인할 수 있습니다.</p>
                 </div>
             </div>
 
@@ -30,8 +30,6 @@
                 <div class="board-meta d-flex flex-wrap gap-2 text-secondary small align-items-baseline">
                     <span>등록시각: 2026-01-29 10:20:22</span>
                     <span class="text-danger">(수정시각: 2026-01-29 11:05:22)</span>
-                    <span class="ms-auto text-nowrap">진행상태:</span>
-                    <span class="badge text-bg-warning">처리중</span>
                 </div>
             </div>
 
@@ -44,17 +42,14 @@
                 <a href="{{ route('inquiries.index') }}" class="btn btn-secondary">목록</a>
             </div>
         </div>
-
-        <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm mt-3">
-            @include('comments.show')
-        </div>
     </section>
 @endsection
 
 @section('script')
     <script>
         $(function(){
-            $('#btn_post_modify').on('click', function(){
+
+            $("#btn_post_modify").on("click", function() {
                 if (!confirm('수정하시겠습니까?')) {
                     return;
                 }
@@ -64,6 +59,10 @@
                 if (!confirm('삭제하시겠습니까?')) {
                     return;
                 }
+            });
+
+            $("#btn_change_status").on('click', function(){
+                alert('ok');
             });
         });
     </script>

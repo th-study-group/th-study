@@ -7,12 +7,12 @@
         <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm">
             <div class="board-head d-flex flex-column gap-2 gap-lg-3">
                 <div>
-                    <h2 class="board-title h5 mb-1">문의내역</h2>
-                    <p class="text-secondary small mb-0">문의내역을 작성할 수 있습니다.</p>
+                    <h2 class="board-title h5 mb-1">공지사항</h2>
+                    <p class="text-secondary small mb-0">공지사항 작성할 수 있습니다.</p>
                 </div>
             </div>
 
-            <form class="board-form mt-3" method="post" action="{{ route('inquiries.store') }}">
+            <form class="board-form mt-3" method="post" action="{{ route('admins.posts.create', ['post_type' => 'notice']) }}">
                 @csrf
                 <div class="mb-3">
                     <label for="title" class="form-label small text-secondary">제목</label>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="d-flex justify-content-end gap-2 mt-4">
                     <button type="button" id="btn_save" class="btn btn-primary">적용</button>
-                    <a href="{{ route('inquiries.index') }}" class="btn btn-outline-secondary">목록</a>
+                    <a href="{{ route('admins.posts.index', ['post_type' => 'notice']) }}" class="btn btn-outline-secondary">목록</a>
                 </div>
             </form>
         </div>
@@ -40,7 +40,7 @@
     <script>
         $(function(){
             $("#btn_save").on("click", function(){ 
-                if (!confirm("적용하시겠습니까?")) {
+                if (!confirm('적용하시겠습니까')) { 
                     return;
                 }
                 alert('ok!!');

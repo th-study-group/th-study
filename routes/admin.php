@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admins\CommentController;
+use App\Http\Controllers\Admins\GuestPostController;
 use App\Http\Controllers\Admins\InquiryController;
 use App\Http\Controllers\Admins\MemberController;
 use App\Http\Controllers\Admins\PostController;
@@ -9,7 +10,8 @@ use Illuminate\Support\Facades\Route;
 // 회원라우팅 
 Route::prefix('members')->name('members.')->group(function () {
     Route::get("/", [MemberController::class, 'index'])->name('index'); 
-    Route::get("/{idx}/show", [MemberController::class, 'show'])->name('show');
+    Route::get("/{idx}/edit", [MemberController::class, 'edit'])->name("edit");
+    Route::put("/{idx}", [MemberController::class, 'update'])->name('update');
 });
 
 // 게시글 라우팅
@@ -32,6 +34,18 @@ Route::prefix('inquiries')->name('inquiries.')->group(function () {
     Route::get("/{idx}/show", [InquiryController::class, 'show'])->name('show');
     Route::patch("/{idx}/status", [InquiryController::class, 'updateStatus'])->name('status.update');
     Route::delete("/{idx}", [InquiryController::class, 'destroy'])->name('soft.delete');
+});
+
+// 홈페이지 상담내역 라우팅 
+Route::prefix("guest-posts/{post_type}")
+    ->name("guest_posts.")
+    ->whereIn('post_type', array_keys(config('board.post_type')))
+    ->group(function() {
+    Route::get("/", [GuestPostController::class, 'index'])->name('index'); 
+    Route::get("/{idx}/edit", [GuestPostController::class, 'edit'])->name("edit");
+    Route::put("/{idx}", [GuestPostController::class, 'update'])->name('update');
+    Route::delete("/{idx}", [GuestPostController::class, 'destroy'])->name('soft.delete');
+    
 });
 
 // 댓글 라우팅

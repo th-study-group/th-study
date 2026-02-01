@@ -100,7 +100,7 @@ class User extends Authenticatable
     }
 
     public function getLevelLabelAttribute()
-{
-    return config('member.levels.' . $this->level, 'NONE');
-}
+    {
+        return config('member.levels.' . $this->level, 'NONE');
+    }
 }

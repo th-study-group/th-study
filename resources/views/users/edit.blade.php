@@ -237,6 +237,10 @@
                     return;
                 }
 
+                if (!confirm('회원정보를 변경하시겠습니까?')) {
+                    return;
+                }
+
                 $("#form_account_edit").submit();
             });
         });

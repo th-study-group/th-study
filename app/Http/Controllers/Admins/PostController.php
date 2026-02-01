@@ -16,9 +16,9 @@ class PostController extends Controller
      *
      * @return View
      */
-    public function index() : View
+    public function index(string $postType) : View
     {
-        return view('admins.posts.index');
+        return view("admins.{$postType}.index");
     }
 
     /**
@@ -26,9 +26,9 @@ class PostController extends Controller
      *
      * @return View
      */
-    public function create() : View
+    public function create(string $postType) : View
     {
-        return view('admins.posts.create');
+        return view("admins.{$postType}.create");
     }
 
     /**
@@ -46,9 +46,9 @@ class PostController extends Controller
      *
      * @return View
      */
-    public function show() : View
+    public function show(string $postType, string $idx) : View
     {
-        return view('admins.posts.show');
+        return view("admins.{$postType}.show");
     }
 
     /**
@@ -57,9 +57,9 @@ class PostController extends Controller
      * @param string $idx
      * @return View
      */
-    public function edit(string $idx) : View
+    public function edit(string $postType, string $idx) : View
     {
-        return view('admins.posts.create');
+        return view("admins.{$postType}.create");
     }
 
     /**
