@@ -6,7 +6,7 @@
     <main class="container-fluid px-3 px-lg-4 py-4 flex-grow-1">
         <section class="p-4 p-lg-5 rounded-3 shadow-sm" style="background:#f1e8dd; border:1px solid #e2d4c3;">
             <h1 class="h3 fw-bold mb-3">개인정보처리방침</h1>
-            <p class="mb-4">티에이치스터디그룹은(는) 개인정보 보호법 등 관련 법령을 준수하며, 이용자의 개인정보 보호를 중요하게 생각합니다.</p>
+            <p class="mb-4">{{ config('app.name') }}은(는) 개인정보 보호법 등 관련 법령을 준수하며, 이용자의 개인정보 보호를 중요하게 생각합니다.</p>
 
             <ol class="mb-4">
             <li class="mb-3">

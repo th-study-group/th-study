@@ -48,13 +48,8 @@
         
         <div class="collapse navbar-collapse mt-3 mt-lg-0" id="topNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown nav-dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">소개</a>
-                    <ul class="dropdown-menu">
-                         <li><a class="dropdown-item" href="{{ route('home') }}">사이트소개</a></li>
-                         <li><a class="dropdown-item" href="{{ route('posts.index', ['post_type' => 'notice']) }}">공지사항</a></li>
-                    </ul>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">소개</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('posts.index', ['post_type' => 'notice']) }}">공지사항</a>
                 {{--
                 <li class="nav-item"><a class="nav-link" href="{{ route('photos.index') }}">사진관리</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('videos.index') }}">영상관리</a></li>
@@ -65,24 +60,24 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">정보관리</a></li>
                 @auth
                     @if (auth()->user()?->email_verify_datetime)
-                    <li class="nav-item dropdown nav-dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('dashboard') }}">대시보드</a></li>
-                            <li><a class="dropdown-item" href="{{ route('users.account.edit') }}">내 정보 변경</a></li>
-                            <li><a class="dropdown-item" href="{{ route('inquiries.index') }}">나의 문의 내역</a></li>
-                        </ul>
-                    </li>
-
-                        @if (auth()->user()?->level === 'admin')
                         <li class="nav-item dropdown nav-dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자</a>
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
                             <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('admins.posts.index', ['post_type' => 'notice']) }}">공지사항</a></li>
-                                <li><a class="dropdown-item" href="{{ route('admins.members.index') }}">회원현황</a></li>
-                                <li><a class="dropdown-item" href="{{ route('admins.inquiries.index') }}">문의내역</a></li>
+                                <li><a class="dropdown-item" href="{{ route('dashboard') }}">대시보드</a></li>
+                                <li><a class="dropdown-item" href="{{ route('users.account.edit') }}">내 정보 변경</a></li>
+                                <li><a class="dropdown-item" href="{{ route('inquiries.index') }}">나의 문의 내역</a></li>
                             </ul>
                         </li>
+
+                        @if (auth()->user()?->level === 'admin')
+                            <li class="nav-item dropdown nav-dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자</a>
+                                <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ route('admins.posts.index', ['post_type' => 'notice']) }}">공지사항</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('admins.members.index') }}">회원현황</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('admins.inquiries.index') }}">문의내역</a></li>
+                                </ul>
+                            </li>
                         @endif
                     @endif
                 @endauth
