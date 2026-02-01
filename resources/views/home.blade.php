@@ -297,7 +297,7 @@
                 <div class="row align-items-center g-4">
                       <div class="col-lg-6">
                           <span class="kicker mb-3">Developer Growth Platform</span>
-                          <h1 class="display-5 fw-black mb-3 grad-title">티에이치스터디그룹</h1>
+                          <h1 class="display-5 fw-black mb-3 grad-title">{{ config('app.name') }}</h1>
                           <p class="lead mb-4 muted">
                               성장하는 개발자가 장인정신을 지닌 리더로 나아가는 과정을 기록하고 확장하는 개발자 성장 플랫폼.
                           </p>
@@ -338,7 +338,7 @@
                           <span class="kicker mb-3">프로젝트 소개</span>
                           <h2 class="fw-bold mb-3">기록이 쌓이고, 운영이 경험이 되고, 경험이 자산이 된다</h2>
                           <p class="mb-3">
-                              티에이치스터디그룹은 개발자로 살아온 시간과 앞으로의 성장을 담아내기 위해 시작된 개발자 성장 플랫폼이다.
+                            {{ config('app.name') }}은 개발자로 살아온 시간과 앞으로의 성장을 담아내기 위해 시작된 개발자 성장 플랫폼이다.
                               학습, 경험, 기록, 실험, 서비스 운영을 하나의 흐름으로 연결한다.
                           </p>
                           <p class="mb-0 muted">
