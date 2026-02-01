@@ -43,6 +43,7 @@
                     <option value="{{ $statusValue }}">{{ $statusLabel }}</option>
                 @endforeach
             </select>
+            <button type="button" id="btn_change_status" class="btn btn-primary">상태변경</button>
             <button type="button" id="btn_post_delete" class="btn btn-outline-danger">삭제</button>
             <a href="{{ route('inquiries.index') }}" class="btn btn-secondary">목록</a>
         </div>
@@ -59,6 +60,12 @@
 
             $('#btn_post_delete').on('click', function(){
                 if (!confirm('삭제하시겠습니까?')) {
+                    return;
+                }
+            });
+
+            $('#btn_change_status').on('click', function(){
+                if (!confirm('상태를 변경하시겠습니까?')) {
                     return;
                 }
             });
