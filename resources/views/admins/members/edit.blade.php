@@ -87,7 +87,7 @@
         <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mt-3 board-status-actions">
             <div class="d-flex flex-wrap align-items-center gap-2">
                 <button type="button" id="btn_post_save" class="btn btn-primary">적용</button>
-                <a href="{{ route('admins.members.index') }}" class="btn btn-secondary">목록</a>
+                <button type="button" id="btn_post_list" class="btn btn-secondary">목록</button>
             </div>
         </div>
         </form>
@@ -97,6 +97,12 @@
 @section('script')
     <script>
         $(function(){
+
+            const listUrl = "{{ route('admins.members.index') }}";
+
+            $("#btn_post_list").on("click", function() {
+                location.href = listUrl;
+            });
 
             $("#btn_post_save").on("click", function() {
                 if (!confirm('적용하시겠습니까?')) {

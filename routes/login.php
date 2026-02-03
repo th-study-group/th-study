@@ -22,8 +22,8 @@ Route::prefix('inquiries')->name('inquiries.')->group(function () {
     Route::get('/', [InquiryController::class, 'index'])->name('index');
     Route::get('/create', [InquiryController::class, 'create'])->name('create');
     Route::post('/', [InquiryController::class, 'store'])->name('store');
-    Route::get('/show', [InquiryController::class, 'show'])->name('show');
-    Route::get('/edit', [InquiryController::class, 'edit'])->name('edit');
-    Route::put('/', [InquiryController::class, 'update'])->name('update');
+    Route::get('/{idx}/show', [InquiryController::class, 'show'])->name('show');
+    Route::get('/{idx}/edit', [InquiryController::class, 'edit'])->name('edit');
+    Route::put('/{idx}', [InquiryController::class, 'update'])->name('update');
     Route::delete('/{idx}', [InquiryController::class, 'destroy'])->name('soft.delete');
 });

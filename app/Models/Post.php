@@ -8,6 +8,10 @@ use App\Models\BaseModel;
 
 class Post extends Base
 {
+    protected $casts = [
+        'create_datetime' => 'datetime',
+    ];
+
     protected $fillable = [
         //'user_idx',
         'title',

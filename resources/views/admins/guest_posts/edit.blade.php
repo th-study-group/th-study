@@ -56,7 +56,7 @@
                 </select>
                 <button type="button" id="btn_post_save" class="btn btn-primary">적용</button>
                 <button type="button" id="btn_post_delete" class="btn btn-outline-danger">삭제</button>
-                <a href="{{ route('admins.guest_posts.index', ['post_type' => 'inquiries']) }}" class="btn btn-secondary">목록</a>
+                <button type="button" id="btn_post_list" class="btn btn-secondary">목록</button>
             </div>
         </div>
         </form>
@@ -66,6 +66,12 @@
 @section('script')
     <script>
         $(function(){
+
+            const listUrl = "{{ route('admins.guest_posts.index', ['post_type' => 'inquiries']) }}";
+
+            $("#btn_post_list").on("click", function() {
+                location.href = listUrl;
+            });
 
             $("#btn_post_save").on("click", function() {
                 if (!confirm('적용하시겠습니까?')) {

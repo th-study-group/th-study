@@ -1,7 +1,7 @@
 <div class="comment-section">
     <h3 class="h6 mb-3">댓글</h3>
 
-    <form id="form_register_commtent" name="form_register_commtent" class="comment-form" method="POST" action="{{ route('comments.store') }}">
+    <form id="form_register_commtent" name="form_register_commtent" class="comment-form" method="POST" action="{{ route('admins.comments.store') }}">
         @csrf
         <div class="mb-2">
             <textarea id="content" name="content" class="form-control board-textarea" rows="3" placeholder="댓글을 입력해 주세요"></textarea>

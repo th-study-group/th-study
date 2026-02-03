@@ -39,7 +39,7 @@
             <div class="d-flex gap-2 ms-auto">
                 <button type="button" id="btn_post_modify" class="btn btn-outline-secondary">수정</button>
                 <button type="button" id="btn_post_delete" class="btn btn-outline-danger">삭제</button>
-                <a href="{{ route('inquiries.index') }}" class="btn btn-secondary">목록</a>
+                <button type="button" id="btn_post_list" class="btn btn-secondary">목록</button>
             </div>
         </div>
     </section>
@@ -48,6 +48,12 @@
 @section('script')
     <script>
         $(function(){
+
+            const listUrl = "{{ route('admins.posts.index', ['post_type' => 'notice']) }}";
+
+            $("#btn_post_list").on("click", function() {
+                location.href = listUrl;
+            });
 
             $("#btn_post_modify").on("click", function() {
                 if (!confirm('수정하시겠습니까?')) {

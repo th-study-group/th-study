@@ -20,12 +20,14 @@ Route::prefix("posts/{post_type}")
     });
 
 // 댓글 라우팅
+/*
 Route::prefix("comments")->name("comments.")->group(function() {
     Route::get("/show", [CommentController::class, 'show'])->name('show');
     Route::post("/", [CommentController::class, 'store'])->name('store');
     Route::put("/{idx}", [CommentController::class, 'update'])->name('update');
     Route::delete("/{idx}", [CommentController::class, 'destroy'])->name('soft.delete');
 });
+*/
 
 // 미인증 게시글 라우팅
 Route::prefix("guest-posts/{post_type}")

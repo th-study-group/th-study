@@ -28,6 +28,12 @@
                     </div>
 
                     <div id="inquiryFilters" class="collapse show mt-2">
+                        @if ($errors->any())
+                            <div class="alert alert-warning d-flex align-items-center gap-2 small mb-3" role="alert">
+                                <span class="badge text-bg-warning text-dark">경고</span>
+                                <span>검색 조건을 확인해 주세요.</span>
+                            </div>
+                        @endif
                         <form id="form_search" name="form_search" method="GET" action="{{ route('inquiries.index') }}">
                             @csrf
                             <div class="row g-2 g-md-3">
@@ -37,18 +43,20 @@
                                         <input type="text"
                                                id="search_start_date" 
                                                name="search_start_date" 
-                                               class="form-control form-control-sm">
+                                               class="form-control form-control-sm"
+                                               value="{{ old('search_start_date', $filters['search_start_date'] ?? '') }}">
                                         <span class="text-secondary small">~</span>
                                         <input type="text"
                                                id="search_end_date"
-                                               name="search_end_date" 
-                                               class="form-control form-control-sm">
+                                                name="search_end_date" 
+                                               class="form-control form-control-sm"
+                                               value="{{ old('search_end_date', $filters['search_end_date'] ?? '') }}">
                                     </div>
                                 </div>
 
                             </div>
                             <div class="d-grid mt-3">
-                                <button type="button" id="btn_search" class="btn btn-primary">검색</button>
+                                <button type="submit" id="btn_search" class="btn btn-primary">검색</button>
                             </div>
                         </form>
                     </div>
@@ -58,23 +66,44 @@
             <div class="board-table-wrap mt-3">
                 <table id="inquiry_table" class="table table-bordered table-hover align-middle mb-0 board-table">
                     <colgroup>
-                        <col style="width: 35px;">
                         <col style="width: 45px;">
+                        <col style="width: 65px;">
                         <col style="width: 220px;">
-                        <col class="board-col-hidden" style="width: 80px;">
+                        <col style="width: 80px;" class="board-col-hidden">
                     </colgroup>
                     <thead class="table-light">
                         <tr class="text-center">
                             <th scope="col" class="text-nowrap">번호</th>
                             <th scope="col" class="text-nowrap">상태</th>
                             <th scope="col" class="text-nowrap">제목</th>
-                            <th scope="col" class="board-col-hidden text-nowrap">등록일</th>
+                            <th scope="col" class="text-nowrap board-col-hidden">등록일</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="1">등록된 글이 없습니다.</td>
-                        </tr>
+                        @forelse ($posts as $post)
+                            @php
+                                $statusKey = $post->status ?? 'wait';
+                                $badgeClass = $statusBadgeClasses[$statusKey] ?? 'secondary';
+                                $statusLabel = $statusList[$statusKey] ?? $statusKey;
+                                $number = $posts->total() - (($posts->currentPage() - 1) * $posts->perPage()) - $loop->index;
+                            @endphp
+                            <tr class="text-center inquiry-row" data-href="{{ route('inquiries.show', ['idx' => $post->idx]) }}" style="cursor: pointer;">
+                                <td class="text-nowrap">{{ $number }}</td>
+                                <td class="text-nowrap">
+                                    <span class="badge text-bg-{{ $badgeClass }}">{{ $statusLabel }}</span>
+                                </td>
+                                <td class="text-start">
+                                    <span class="text-decoration-none board-ellipsis d-block">
+                                        {{ $post->title }}
+                                    </span>
+                                </td>
+                                <td class="text-nowrap board-col-hidden">{{ $post->create_datetime?->diffForHumans() ?? '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="4">등록된 글이 없습니다.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -84,15 +113,7 @@
             </div>
 
             <nav class="board-pagination d-flex justify-content-center mt-4" aria-label="문의내역 페이지네이션">
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled"><span class="page-link">이전</span></li>
-                    <li class="page-item active"><span class="page-link">1</span></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    <li class="page-item"><a class="page-link" href="#">5</a></li>
-                    <li class="page-item"><a class="page-link" href="#">다음</a></li>
-                </ul>
+                {{ $posts->links() }}
             </nav>
         </div>
     </section>
@@ -101,8 +122,9 @@
 @section('script')
     <script>
         $(function(){
-            var today = new Date();
-            var oneYearAgo = new Date();
+            const today = new Date();
+            const oneYearAgo = new Date();
+           
             oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
             initBirthDatePicker('#search_start_date', {
@@ -114,8 +136,15 @@
                 maxDate: today
             });
 
-            $("#btn_search").on("click", function() {
-                alert('ok!!');
+            $('.inquiry-row').on('click', function(e){
+                if ($(e.target).closest('a, button, input, select, textarea').length) {
+                    return;
+                }
+                
+                const href = $(this).data('href');
+                if (href) {
+                    location.href = href;
+                }
             });
 
             $(window).on('resize', function(){

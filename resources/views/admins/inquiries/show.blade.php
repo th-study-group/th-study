@@ -45,7 +45,7 @@
             </select>
             <button type="button" id="btn_change_status" class="btn btn-primary">상태변경</button>
             <button type="button" id="btn_post_delete" class="btn btn-outline-danger">삭제</button>
-            <a href="{{ route('inquiries.index') }}" class="btn btn-secondary">목록</a>
+            <button type="button" id="btn_post_list" class="btn btn-secondary">목록</button>
         </div>
 
         <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm mt-3">
@@ -57,6 +57,12 @@
 @section('script')
     <script>
         $(function(){
+
+            const listUrl = "{{ route('admins.inquiries.index') }}";
+
+            $("#btn_post_list").on("click", function() {
+                location.href = listUrl;
+            });
 
             $('#btn_post_delete').on('click', function(){
                 if (!confirm('삭제하시겠습니까?')) {

@@ -169,6 +169,8 @@ return [
     ],
 
     'attributes' => [
+        'title' => '제목',
+        'content' => '내용',
         'email' => '이메일',
         'current_password' => '현재 비밀번호',
         'password' => '비밀번호',
