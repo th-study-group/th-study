@@ -1,20 +1,24 @@
 <div class="comment-section">
     @php($openCommentEditIdx = session('open_comment_edit_idx'))
+    @php($postTypeExcluded = config('board.post_type_excluded', []))
+    @php($isCommentActionHidden = in_array($post->post_type, $postTypeExcluded, true))
     <h3 class="h6 mb-3">댓글</h3>
 
-    <form id="form_register_commtent" name="form_register_commtent" class="comment-form" method="POST" action="{{ route('comments.store') }}">
-        @csrf
-        <input type="hidden" name="post_idx" value="{{ $post->idx }}">
-        <div class="mb-2">
-            <textarea id="content" name="content" class="form-control board-textarea @error('content') is-invalid @enderror" rows="3" placeholder="댓글을 입력해 주세요">{{ $openCommentEditIdx ? '' : old('content') }}</textarea>
-            @error('content')
-            <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
-            @enderror
-        </div>
-        <div class="d-flex justify-content-end">
-            <button type="button" id="btn_comment_register" class="btn btn-primary btn-sm">댓글 등록</button>
-        </div>
-    </form>
+    @can('create', [\App\Models\Comment::class, $post])
+        <form id="form_register_commtent" name="form_register_commtent" class="comment-form" method="POST" action="{{ route('comments.store') }}">
+            @csrf
+            <input type="hidden" name="post_idx" value="{{ $post->idx }}">
+            <div class="mb-2">
+                <textarea id="content" name="content" class="form-control board-textarea @error('content') is-invalid @enderror" rows="3" placeholder="댓글을 입력해 주세요">{{ $openCommentEditIdx ? '' : old('content') }}</textarea>
+                @error('content')
+                <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" id="btn_comment_register" class="btn btn-primary btn-sm">댓글 등록</button>
+            </div>
+        </form>
+    @endcan
 
     <div class="comment-list mt-4">
         @if (!empty($comments) && $comments->count() > 0)
@@ -27,46 +31,56 @@
                                 {{ $comment->create_datetime?->diffForHumans() ?? '-' }}
                             </span>
                         </div>
-                        <div class="comment-actions d-flex gap-1">
-                            <button
-                                type="button"
-                                class="btn btn_comment_edit_choice btn-outline-secondary btn-sm"
-                                data-comment-idx="{{ $comment->idx }}">
-                                수정
-                            </button>
-                            <form class="form_delete_comment d-inline" method="POST" action="{{ route('comments.soft.delete', ['idx' => $comment->idx]) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="btn btn_comment_delete btn-outline-danger btn-sm">삭제</button>
-                            </form>
-                        </div>
+                        @if (!$isCommentActionHidden)
+                            <div class="comment-actions d-flex gap-1">
+                                @can('update', $comment)
+                                    <button
+                                        type="button"
+                                        class="btn btn_comment_edit_choice btn-outline-secondary btn-sm"
+                                        data-comment-idx="{{ $comment->idx }}">
+                                        수정
+                                    </button>
+                                @endcan
+                                @can('delete', $comment)
+                                    <form class="form_delete_comment d-inline" method="POST" action="{{ route('comments.soft.delete', ['idx' => $comment->idx]) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn_comment_delete btn-outline-danger btn-sm">삭제</button>
+                                    </form>
+                                @endcan
+                            </div>
+                        @endif
                     </div>
                     <p class="comment-content-text mb-0 mt-2">{{ $comment->content }}</p>
                     <textarea class="comment-origin-content d-none">{{ $comment->content }}</textarea>
 
-                    <div class="comment_edit_inline border-top pt-3 mt-3 {{ $openCommentEditIdx === $comment->idx ? '' : 'd-none' }}">
-                        <h4 class="h6 mb-2">댓글 수정</h4>
-                        <form class="form_update_comment comment-form" method="POST" action="{{ route('comments.update', ['idx' => $comment->idx]) }}">
-                            @csrf
-                            @method('PUT')
-                            <div class="mb-2">
-                                <textarea
-                                    class="edit_content form-control board-textarea {{ $openCommentEditIdx === $comment->idx && $errors->commentUpdate->has('content') ? 'is-invalid' : '' }}"
-                                    name="content"
-                                    rows="3"
-                                    placeholder="수정할 내용을 입력해 주세요">{{ $openCommentEditIdx === $comment->idx ? old('content') : '' }}</textarea>
-                                @if ($openCommentEditIdx === $comment->idx)
-                                    @error('content', 'commentUpdate')
-                                        <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
-                                    @enderror
-                                @endif
+                    @if (!$isCommentActionHidden)
+                        @can('update', $comment)
+                            <div class="comment_edit_inline border-top pt-3 mt-3 {{ $openCommentEditIdx === $comment->idx ? '' : 'd-none' }}">
+                                <h4 class="h6 mb-2">댓글 수정</h4>
+                                <form class="form_update_comment comment-form" method="POST" action="{{ route('comments.update', ['idx' => $comment->idx]) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-2">
+                                        <textarea
+                                            class="edit_content form-control board-textarea {{ $openCommentEditIdx === $comment->idx && $errors->commentUpdate->has('content') ? 'is-invalid' : '' }}"
+                                            name="content"
+                                            rows="3"
+                                            placeholder="수정할 내용을 입력해 주세요">{{ $openCommentEditIdx === $comment->idx ? old('content') : '' }}</textarea>
+                                        @if ($openCommentEditIdx === $comment->idx)
+                                            @error('content', 'commentUpdate')
+                                                <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
+                                            @enderror
+                                        @endif
+                                    </div>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button" class="btn btn_comment_edit_cancel btn-outline-secondary btn-sm">취소</button>
+                                        <button type="button" class="btn btn_comment_modify btn-primary btn-sm">수정 적용</button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="d-flex justify-content-end gap-2">
-                                <button type="button" class="btn btn_comment_edit_cancel btn-outline-secondary btn-sm">취소</button>
-                                <button type="button" class="btn btn_comment_modify btn-primary btn-sm">수정 적용</button>
-                            </div>
-                        </form>
-                    </div>
+                        @endcan
+                    @endif
                 </div>
             @endforeach
         @else

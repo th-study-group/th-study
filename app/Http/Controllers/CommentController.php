@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Comments\StoreCommentRequest;
 use App\Http\Requests\Comments\UpdateCommentRequest;
+use App\Models\Comment;
+use App\Models\Post;
 use App\Services\CommentService;
 use Illuminate\Http\RedirectResponse;
 
@@ -32,6 +34,8 @@ class CommentController extends Controller
     public function store(StoreCommentRequest $request): RedirectResponse
     {
         $payload = $request->validated();
+        $post = Post::findOrFail($payload['post_idx']);
+        $this->authorize('create', [Comment::class, $post]);
 
         $this->commentService->create([
             'user_idx' => auth()->id(),

@@ -33,7 +33,9 @@ class CommentRepository
      */
     public function findByIdx(int $idx): Comment
     {
-        return Comment::where('idx', $idx)->firstOrFail();
+        return Comment::with('post')
+            ->where('idx', $idx)
+            ->firstOrFail();
     }
 
     /**
