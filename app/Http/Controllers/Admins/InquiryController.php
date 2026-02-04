@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admins;
 
 use App\Http\Requests\Inquiries\Admin\InquirySearchRequest;
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 use App\Services\CommentService;
 use App\Services\InquiryService;
 use Illuminate\Http\Request;
@@ -26,9 +27,7 @@ class InquiryController extends Controller
      */
     public function index(InquirySearchRequest $request) : View
     {
-        if (auth()->user()?->level !== 'admin') {
-            abort(403);
-        }
+        $this->authorize('viewAny', Post::class);
 
         $filters = $request->validated();
         $posts = $this->inquiryService->getInquiries($filters);
@@ -49,9 +48,7 @@ class InquiryController extends Controller
      */
     public function show(string $idx)
     {
-        if (auth()->user()?->level !== 'admin') {
-            abort(403);
-        }
+        $this->authorize('viewAny', Post::class);
         $post = $this->inquiryService->getByIdxWithHistory(
             $idx,
             'inquiries',
@@ -74,9 +71,7 @@ class InquiryController extends Controller
     public function updateStatus(Request $request, string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-        if (auth()->user()?->level !== 'admin' || $post->post_type !== 'inquiries') {
-            abort(403);
-        }
+        $this->authorize('updateStatus', $post);
 
         $statusKeys = array_keys(config('board.status', []));
         $validated = $request->validate([
@@ -105,15 +100,7 @@ class InquiryController extends Controller
     public function destroy(string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-        if (
-            auth()->user()?->level !== 'admin'
-            || $post->post_type !== 'inquiries'
-            || $post->status !== 'wait'
-        ) {
-            return response()->json([
-                'message' => '삭제할 수 없는 문의입니다. 상태를 확인해 주세요.',
-            ], 403);
-        }
+        $this->authorize('delete', $post);
 
         $payload = [
             'ip' => request()->ip(),

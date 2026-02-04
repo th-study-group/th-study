@@ -45,15 +45,17 @@
         </div>
 
         <div class="d-flex flex-wrap align-items-center justify-content-end gap-2 mt-3 board-status-actions">
-            <select id="status" name="status" class="form-select form-select-sm board-status-select">
-                @foreach ($statusList ?? [] as $statusValue => $statusLabel)
-                    <option value="{{ $statusValue }}" @selected(($post->status ?? 'wait') === $statusValue)>{{ $statusLabel }}</option>
-                @endforeach
-            </select>
-            <button type="button" id="btn_change_status" class="btn btn-primary">상태변경</button>
-            @if (($post->status ?? 'wait') === 'wait')
+            @can('updateStatus', $post)
+                <select id="status" name="status" class="form-select form-select-sm board-status-select">
+                    @foreach ($statusList ?? [] as $statusValue => $statusLabel)
+                        <option value="{{ $statusValue }}" @selected(($post->status ?? 'wait') === $statusValue)>{{ $statusLabel }}</option>
+                    @endforeach
+                </select>
+                <button type="button" id="btn_change_status" class="btn btn-primary">상태변경</button>
+            @endcan
+            @can('delete', $post)
                 <button type="button" id="btn_post_delete" class="btn btn-outline-danger">삭제</button>
-            @endif
+            @endcan
             <button type="button" id="btn_post_list" class="btn btn-secondary">목록</button>
         </div>
 

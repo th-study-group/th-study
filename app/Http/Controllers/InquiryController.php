@@ -74,9 +74,7 @@ class InquiryController extends Controller
             request()->ip(),
             request()->userAgent()
         );
-        if ($post->post_type !== 'inquiries' || (int) $post->user_idx !== (int) auth()->id()) {
-            abort(403);
-        }
+        $this->authorize('view', $post);
         $comments = $this->commentService->getByPostIdx($post->idx);
 
         return view('inquiries.show', [
@@ -95,13 +93,7 @@ class InquiryController extends Controller
     public function edit(string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-        if (
-            $post->post_type !== 'inquiries'
-            || (int) $post->user_idx !== (int) auth()->id()
-            || $post->status !== 'wait'
-        ) {
-            abort(403);
-        }
+        $this->authorize('update', $post);
 
         return view('inquiries.create', [
             'post' => $post,
@@ -118,13 +110,7 @@ class InquiryController extends Controller
     public function update(UpdateInquiryRequest $request, string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-        if (
-            $post->post_type !== 'inquiries'
-            || (int) $post->user_idx !== (int) auth()->id()
-            || $post->status !== 'wait'
-        ) {
-            abort(403);
-        }
+        $this->authorize('update', $post);
 
         $payload = $request->safe()->only(['title', 'content']);
         $payload['ip'] = $request->ip();
@@ -143,17 +129,7 @@ class InquiryController extends Controller
     public function destroy(string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-
-        $userIdx = auth()->id();
-        if (
-            $post->post_type !== 'inquiries'
-            || (int) $post->user_idx !== (int) $userIdx
-            || $post->status !== 'wait'
-        ) {
-            return response()->json([
-                'message' => '삭제할 수 없는 문의입니다. 상태를 확인해 주세요.',
-            ], 403);
-        }
+        $this->authorize('delete', $post);
 
         $payload = [
             'ip' => request()->ip(),
