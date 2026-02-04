@@ -74,7 +74,7 @@ class InquiryController extends Controller
             request()->ip(),
             request()->userAgent()
         );
-        $this->authorize('view', $post);
+ 
         $comments = $this->commentService->getByPostIdx($post->idx);
 
         return view('inquiries.show', [

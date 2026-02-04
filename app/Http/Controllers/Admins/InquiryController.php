@@ -27,8 +27,6 @@ class InquiryController extends Controller
      */
     public function index(InquirySearchRequest $request) : View
     {
-        $this->authorize('viewAny', Post::class);
-
         $filters = $request->validated();
         $posts = $this->inquiryService->getInquiries($filters);
         $posts->appends($filters);
@@ -48,7 +46,6 @@ class InquiryController extends Controller
      */
     public function show(string $idx)
     {
-        $this->authorize('viewAny', Post::class);
         $post = $this->inquiryService->getByIdxWithHistory(
             $idx,
             'inquiries',

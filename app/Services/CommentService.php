@@ -5,8 +5,6 @@ namespace App\Services;
 use App\Jobs\SendMailJob;
 use App\Mail\InquiryAnsweredMail;
 use App\Models\Comment;
-use App\Models\Post;
-use App\Models\User;
 use App\Repositories\CommentRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
@@ -95,45 +93,44 @@ class CommentService
     }
 
     /**
-     * 관리자에게 댓글 등록 알림 메일 발송
+     * 게시글 작성자에게 댓글 등록 알림 메일 발송
      *
      * @param Comment $comment
      * @return void
      */
     private function notifyAdmins(Comment $comment): void
     {
-        $post = Post::query()->find($comment->post_idx);
+        $commentWithRelations = Comment::with(['post.user'])->find($comment->idx);
+        if (!$commentWithRelations) {
+            return;
+        }
+
+        $post = $commentWithRelations->post;
         if (!$post || $post->post_type !== 'inquiries') {
             return;
         }
 
-        $admins = User::where('level', 'admin')
-            ->orderBy('idx')
-            ->limit(3)
-            ->get();
-
-        if ($admins->isEmpty()) {
+        $writer = $post->user;
+        if (!$writer || empty($writer->email)) {
             return;
         }
 
         $titlePreview = Str::limit($post->title, 30, '...');
-        $commentPreview = Str::limit($comment->content, 80, '...');
+        $commentPreview = Str::limit($commentWithRelations->content, 80, '...');
         $subjectTitle = sprintf('%s에 답변이 등록되었습니다.', $titlePreview);
         $bodyText = sprintf('%s에 답변 "%s"', $titlePreview, $commentPreview);
-        $link = route('admins.inquiries.show', ['idx' => $post->idx]);
+        $link = route('inquiries.show', ['idx' => $post->idx]);
 
-        foreach ($admins as $admin) {
-            SendMailJob::dispatch(
-                $admin->email,
-                new InquiryAnsweredMail(
-                    subjectTitle: $subjectTitle,
-                    bodyText: $bodyText,
-                    link: $link
-                ),
-                '문의답변알림',
-                null,
-                $admin->idx
-            );
-        }
+        SendMailJob::dispatch(
+            $writer->email,
+            new InquiryAnsweredMail(
+                subjectTitle: $subjectTitle,
+                bodyText: $bodyText,
+                link: $link
+            ),
+            '문의답변알림',
+            null,
+            $writer->idx
+        );
     }
 }
