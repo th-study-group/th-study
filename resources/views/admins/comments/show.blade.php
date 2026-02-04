@@ -13,7 +13,6 @@
 
     <div class="comment-list mt-4">
        {{-- 등록된거 보여줄 때 --}}
-       {{--
         <div class="comment-item border rounded-3 p-3 mb-2">
             <div class="d-flex justify-content-between align-items-start gap-2">
                 <div>
@@ -27,23 +26,19 @@
             </div>
             <p class="mb-0 mt-2">댓글 더미 텍스트입니다. 댓글 더미 텍스트입니다.</p>
         </div>
-        --}}
-
+        {{--
         <div class="comment-empty border rounded-3 p-3 text-center text-secondary small">
             등록된 댓글이 없습니다.
         </div>
+        --}}
     </div>
 </div>
 
 @push('scripts')
     <script>
         $(function(){
-           $("#btn_register").on("click", function() {
-                alert('ok!');
-           });
-
            $("#btn_comment_register").on("click", function() {
-                alert("ok!!");
+                alert('ok!');
            });
 
            $(document).on("click", ".btn_comment_modify", function() {

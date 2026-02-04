@@ -109,7 +109,7 @@ class InquiryService
      */
     public function getByIdxWithHistory(string $idx, string $postType, string $ip, string $userAgent): Post
     {
-        $userIdx = (int) auth()->id();
+        $userIdx = auth()->id();
         $post = $this->postRepository->findByIdxAndType($idx, $postType);
 
         event(new PostHistoryEvent(

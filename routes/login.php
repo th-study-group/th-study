@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\UserController;
@@ -26,4 +27,12 @@ Route::prefix('inquiries')->name('inquiries.')->group(function () {
     Route::get('/{idx}/edit', [InquiryController::class, 'edit'])->name('edit');
     Route::put('/{idx}', [InquiryController::class, 'update'])->name('update');
     Route::delete('/{idx}', [InquiryController::class, 'destroy'])->name('soft.delete');
+});
+
+// 댓글 라우팅
+Route::prefix("comments")->name("comments.")->group(function() {
+    //Route::get("/show", [CommentController::class, 'show'])->name('show');
+    Route::post("/", [CommentController::class, 'store'])->name('store');
+    Route::put("/{idx}", [CommentController::class, 'update'])->name('update');
+    Route::delete("/{idx}", [CommentController::class, 'destroy'])->name('soft.delete');
 });

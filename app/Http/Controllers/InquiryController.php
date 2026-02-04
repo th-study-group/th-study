@@ -76,7 +76,7 @@ class InquiryController extends Controller
             request()->userAgent()
         );
         $this->authorize('view', $post);
-        $comments = $this->commentService->getByPostIdx((int) $post->idx);
+        $comments = $this->commentService->getByPostIdx($post->idx);
 
         return view('inquiries.show', [
             'post' => $post,
