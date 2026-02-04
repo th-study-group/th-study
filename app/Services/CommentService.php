@@ -106,7 +106,12 @@ class CommentService
         }
 
         $post = $commentWithRelations->post;
-        if (!$post || $post->post_type !== 'inquiries') {
+        if (!$post) {
+            return;
+        }
+
+        $postTypeExcluded = config('board.postTypeExcluded', []);
+        if (!empty($postTypeExcluded) && in_array($post->post_type, $postTypeExcluded, true)) {
             return;
         }
 

@@ -30,6 +30,7 @@ return [
     'status_badge_classes' => $statusBadgeClasses,
     'post_type' => $postTypes,
     'post_type_excluded' => $postTypeExcluded,
+    'post_type_inquiry' => 'inquiries',
     'post_type_for_route' => array_values(
         array_diff(array_keys($postTypes), $postTypeExcluded)
     ),
