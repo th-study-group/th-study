@@ -35,7 +35,6 @@
                             </div>
                         @endif
                         <form id="form_search" name="form_search" method="GET" action="{{ route('inquiries.index') }}">
-                            @csrf
                             <div class="row g-2 g-md-3">
                                 <div class="col-12 col-md-4">
                                     <label for="search_start_date" class="form-label small text-secondary mb-1">기간</label>

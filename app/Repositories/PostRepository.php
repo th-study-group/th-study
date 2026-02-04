@@ -84,4 +84,43 @@ class PostRepository
             ->orderByDesc('idx')
             ->paginate($perPage);
     }
+
+    /**
+     * 관리자 문의내역 목록 (페이징)
+     *
+     * @param string $postType
+     * @param array $filters
+     * @param integer $perPage
+     * @return LengthAwarePaginator
+     */
+    public function paginateByType(string $postType, array $filters, int $perPage = 20): LengthAwarePaginator
+    {
+        $startDate = $filters['search_start_date'] ?? null;
+        $endDate = $filters['search_end_date'] ?? null;
+        $status = $filters['search_status'] ?? null;
+        $searchName = $filters['search_name'] ?? null;
+        $start = $startDate ? Carbon::parse($startDate)->startOfDay() : null;
+        $end = $endDate ? Carbon::parse($endDate)->endOfDay() : null;
+
+        return Post::with('user')
+            ->where('post_type', $postType)
+            ->when($start, function ($q) use ($start) {
+                $q->where('create_datetime', '>=', $start);
+            })
+            ->when($end, function ($q) use ($end) {
+                $q->where('create_datetime', '<=', $end);
+            })
+            ->when($status, function ($q) use ($status) {
+                $q->where('status', $status);
+            })
+            ->when($searchName, function ($q) use ($searchName) {
+                $q->whereHas('user', function ($subQuery) use ($searchName) {
+                    $subQuery->where('name', 'like', '%' . $searchName . '%')
+                        ->orWhere('nick_name', 'like', '%' . $searchName . '%');
+                });
+            })
+            ->orderByDesc('idx')
+            ->paginate($perPage);
+    }
+
 }

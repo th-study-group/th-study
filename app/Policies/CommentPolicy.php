@@ -18,6 +18,9 @@ class CommentPolicy
     public function create(User $user, Post $post): bool
     {
         $postTypeExcluded = config('board.post_type_excluded', []);
+        if ($post->post_type === 'inquiries') {
+            return false;
+        }
 
         return !in_array($post->post_type, $postTypeExcluded, true);
     }
@@ -33,6 +36,9 @@ class CommentPolicy
     {
         $postTypeExcluded = config('board.post_type_excluded', []);
         $postType = $comment->post?->post_type ?? $comment->post()->value('post_type');
+        if ($postType === 'inquiries') {
+            return false;
+        }
         if (in_array($postType, $postTypeExcluded, true)) {
             return false;
         }
@@ -51,6 +57,9 @@ class CommentPolicy
     {
         $postTypeExcluded = config('board.post_type_excluded', []);
         $postType = $comment->post?->post_type ?? $comment->post()->value('post_type');
+        if ($postType === 'inquiries') {
+            return false;
+        }
         if (in_array($postType, $postTypeExcluded, true)) {
             return false;
         }

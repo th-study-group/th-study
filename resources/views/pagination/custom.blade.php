@@ -62,7 +62,7 @@
                 </a>
             </li>
             <li class="page-item {{ $paginator->onFirstPage() ? 'disabled' : '' }}">
-                <a class="page-link" href="{{ $paginator->previousPageUrl() ?? '#' }}" rel="prev">« Previous</a>
+                <a class="page-link" href="{{ $paginator->previousPageUrl() ?? '#' }}" rel="prev">« 이전</a>
             </li>
             @if ($mobileStart > 1)
                 <li class="page-item disabled"><span class="page-link">…</span></li>
@@ -76,7 +76,7 @@
                 <li class="page-item disabled"><span class="page-link">…</span></li>
             @endif
             <li class="page-item {{ $paginator->hasMorePages() ? '' : 'disabled' }}">
-                <a class="page-link" href="{{ $paginator->nextPageUrl() ?? '#' }}" rel="next">Next »</a>
+                <a class="page-link" href="{{ $paginator->nextPageUrl() ?? '#' }}" rel="next">다음 »</a>
             </li>
             <li class="page-item {{ $current === $last ? 'disabled' : '' }}">
                 <a class="page-link" href="{{ $current === $last ? '#' : $paginator->url($last) }}" aria-label="Last">

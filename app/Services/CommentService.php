@@ -2,9 +2,14 @@
 
 namespace App\Services;
 
+use App\Jobs\SendMailJob;
+use App\Mail\InquiryAnsweredMail;
 use App\Models\Comment;
+use App\Models\Post;
+use App\Models\User;
 use App\Repositories\CommentRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
 
 /**
  * 댓글 서비스
@@ -35,12 +40,16 @@ class CommentService
      */
     public function create(array $payload): Comment
     {
-        return $this->commentRepository->create([
+        $comment = $this->commentRepository->create([
             'user_idx' => $payload['user_idx'],
             'post_idx' => $payload['post_idx'],
             'content' => $payload['content'],
             'create_user_idx' => $payload['user_idx'],
         ]);
+
+        $this->notifyAdmins($comment);
+
+        return $comment;
     }
 
     /**
@@ -83,5 +92,48 @@ class CommentService
         ]);
 
         $comment->delete();
+    }
+
+    /**
+     * 관리자에게 댓글 등록 알림 메일 발송
+     *
+     * @param Comment $comment
+     * @return void
+     */
+    private function notifyAdmins(Comment $comment): void
+    {
+        $post = Post::query()->find($comment->post_idx);
+        if (!$post || $post->post_type !== 'inquiries') {
+            return;
+        }
+
+        $admins = User::where('level', 'admin')
+            ->orderBy('idx')
+            ->limit(3)
+            ->get();
+
+        if ($admins->isEmpty()) {
+            return;
+        }
+
+        $titlePreview = Str::limit($post->title, 30, '...');
+        $commentPreview = Str::limit($comment->content, 80, '...');
+        $subjectTitle = sprintf('%s에 답변이 등록되었습니다.', $titlePreview);
+        $bodyText = sprintf('%s에 답변 "%s"', $titlePreview, $commentPreview);
+        $link = route('admins.inquiries.show', ['idx' => $post->idx]);
+
+        foreach ($admins as $admin) {
+            SendMailJob::dispatch(
+                $admin->email,
+                new InquiryAnsweredMail(
+                    subjectTitle: $subjectTitle,
+                    bodyText: $bodyText,
+                    link: $link
+                ),
+                '문의답변알림',
+                null,
+                $admin->idx
+            );
+        }
     }
 }

@@ -87,6 +87,31 @@ class InquiryService
     }
 
     /**
+     * 관리자 문의내역 목록
+     *
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getInquiries(array $filters): LengthAwarePaginator
+    {
+        $page = $filters['page'] ?? 1;
+
+        $posts = $this->postRepository->paginateByType(
+            'inquiries',
+            $filters,
+            20
+        );
+
+        Log::info('[Admin][Inquiry][List] 조회 완료', [
+            'user_idx' => auth()->id(),
+            'post_type' => 'inquiries',
+            'page' => $page,
+        ]);
+
+        return $posts;
+    }
+
+    /**
      * 게시글 상세 조회
      *
      * @param string $idx
@@ -205,6 +230,48 @@ class InquiryService
                 'post_idx' => $post->idx,
                 'post_type' => $post->post_type,
             ]);
+        });
+    }
+
+    /**
+     * 관리자 문의 상태 변경
+     *
+     * @param Post $post
+     * @param array $payload
+     * @return Post
+     */
+    public function updateStatus(Post $post, array $payload): Post
+    {
+        $userIdx = (int) auth()->id();
+        $status = $payload['status'] ?? 'wait';
+        $ip = $payload['ip'] ?? '';
+        $userAgent = $payload['user_agent'] ?? '';
+
+        return DB::transaction(function () use ($post, $userIdx, $status, $ip, $userAgent) {
+            $post->forceFill([
+                'status' => $status,
+                'update_user_idx' => $userIdx,
+            ])->save();
+
+            event(new PostHistoryEvent(
+                postIdx: $post->idx,
+                jobType: '수정',
+                tableName: $post->getTable(),
+                postType: $post->post_type,
+                createUserIdx: $userIdx,
+                ip: $ip,
+                userAgent: $userAgent,
+                status: $post->status,
+            ));
+
+            Log::info('[Admin][Inquiry][Status] 상태 변경 완료', [
+                'user_idx' => $userIdx,
+                'post_idx' => $post->idx,
+                'post_type' => $post->post_type,
+                'status' => $post->status,
+            ]);
+
+            return $post;
         });
     }
 
