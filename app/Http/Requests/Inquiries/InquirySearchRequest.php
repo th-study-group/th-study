@@ -30,6 +30,10 @@ class InquirySearchRequest extends FormRequest
             $start = $this->input('search_start_date');
             $end = $this->input('search_end_date');
 
+            if (!$start && $end) {
+                $validator->errors()->add('search_start_date', '시작일을 입력해 주세요.');
+            }
+
             if ($start && $end && $start > $end) {
                 $validator->errors()->add('search_end_date', '종료일은 시작일 이후여야 합니다.');
             }

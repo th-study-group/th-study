@@ -99,6 +99,8 @@ class PostRepository
         $endDate = $filters['search_end_date'] ?? null;
         $status = $filters['search_status'] ?? null;
         $searchName = $filters['search_name'] ?? null;
+        $searchTitle = $filters['search_title'] ?? ($filters['search_subject'] ?? null);
+        $useFlag = array_key_exists('use_flag', $filters) ? $filters['use_flag'] : null;
         $start = $startDate ? Carbon::parse($startDate)->startOfDay() : null;
         $end = $endDate ? Carbon::parse($endDate)->endOfDay() : null;
 
@@ -118,6 +120,12 @@ class PostRepository
                     $subQuery->where('name', 'like', '%' . $searchName . '%')
                         ->orWhere('nick_name', 'like', '%' . $searchName . '%');
                 });
+            })
+            ->when($searchTitle, function ($q) use ($searchTitle) {
+                $q->where('title', 'like', '%' . $searchTitle . '%');
+            })
+            ->when($useFlag !== null, function ($q) use ($useFlag) {
+                $q->where('use_flag', $useFlag);
             })
             ->orderByDesc('idx')
             ->paginate($perPage);

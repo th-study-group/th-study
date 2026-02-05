@@ -28,8 +28,13 @@
                     </div>
 
                     <div id="inquiryFilters" class="collapse show mt-2">
-                        <form id="form_search" name="form_search" method="GET" action="{{ route('admins.inquiries.index') }}">
-                            @csrf
+                        @if ($errors->any())
+                            <div class="alert alert-warning d-flex align-items-center gap-2 small mb-3" role="alert">
+                                <span class="badge text-bg-warning text-dark">경고</span>
+                                <span>검색 조건을 확인해 주세요.</span>
+                            </div>
+                        @endif
+                        <form id="form_search" name="form_search" method="GET" action="{{ route('admins.posts.index', ['post_type' => 'notice']) }}">
                             <div class="row g-2 g-md-3">
                                 <div class="col-12 col-md-4">
                                     <label for="search_start_date" class="form-label small text-secondary mb-1">기간</label>
@@ -37,12 +42,14 @@
                                         <input type="text"
                                                id="search_start_date" 
                                                name="search_start_date" 
-                                               class="form-control form-control-sm">
+                                               class="form-control form-control-sm"
+                                               value="{{ old('search_start_date', $filters['search_start_date'] ?? '') }}">
                                         <span class="text-secondary small">~</span>
                                         <input type="text"
                                                id="search_end_date"
                                                name="search_end_date" 
-                                               class="form-control form-control-sm">
+                                               class="form-control form-control-sm"
+                                               value="{{ old('search_end_date', $filters['search_end_date'] ?? '') }}">
                                     </div>
                                 </div>
                                 
@@ -50,22 +57,24 @@
                                     <label for="search_name" class="form-label small text-secondary mb-1">작성자</label>
                                     <input type="text" 
                                            id="search_name"
-                                           name="seach_name"
+                                           name="search_name"
                                            class="form-control form-control-sm" 
-                                           placeholder="이름">
+                                           placeholder="이름"
+                                           value="{{ old('search_name', $filters['search_name'] ?? '') }}">
                                 </div>
 
                                 <div class="col-12 col-md-4">
-                                    <label for="search_subject" class="form-label small text-secondary mb-1">제목</label>
+                                    <label for="search_title" class="form-label small text-secondary mb-1">제목</label>
                                     <input type="text" 
-                                           id="search_subject"
-                                           name="search_subject"
+                                           id="search_title"
+                                           name="search_title"
                                            class="form-control form-control-sm" 
-                                           placeholder="제목">
+                                           placeholder="제목"
+                                           value="{{ old('search_title', $filters['search_title'] ?? '') }}">
                                 </div>
                             </div>
                             <div class="d-grid mt-3">
-                                <button type="button" id="btn_search" class="btn btn-primary">검색</button>
+                                <button type="submit" id="btn_search" class="btn btn-primary">검색</button>
                             </div>
                         </form>
                     </div>
@@ -75,21 +84,43 @@
             <div class="board-table-wrap mt-3">
                 <table id="notice_table" class="table table-bordered table-hover align-middle mb-0 board-table">
                     <colgroup>
-                        <col style="width: 35px;">
+                        <col style="width: 48px;">
                         <col style="width: 220px;">
+                        <col style="width: 66px;">
                         <col style="width: 80px;" class="board-col-hidden">
                     </colgroup>
                     <thead class="table-light">
                         <tr class="text-center">
-                            <th scope="col" class="text-nowrap">No</th>
+                            <th scope="col" class="text-nowrap">번호</th>
                             <th scope="col" class="text-nowrap">제목</th>
+                            <th scope="col" class="text-nowrap">공개여부</th>
                             <th scope="col" class="text-nowrap board-col-hidden">등록일</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td id="notice_empty_row_cell" class="text-center text-secondary py-4" colspan="1">등록된 공지 내역이 없습니다.</td>
-                        </tr>
+                        @forelse ($posts as $post)
+                            @php
+                                $number = $posts->total() - (($posts->currentPage() - 1) * $posts->perPage()) - $loop->index;
+                            @endphp
+                            <tr class="text-center notice-row" data-href="{{ route('admins.posts.show', ['post_type' => 'notice', 'idx' => $post->idx]) }}" style="cursor: pointer;">
+                                <td class="text-nowrap">{{ $number }}</td>
+                                <td class="text-start">
+                                    <span class="text-decoration-none board-ellipsis d-block">
+                                        {{ $post->title }}
+                                    </span>
+                                </td>
+                                <td class="text-nowrap">
+                                    <span class="badge use-flag use-flag-{{ $post->use_flag ?? 0 }}">
+                                        {{ $useFlagLabels[$post->use_flag ?? 0] ?? '-' }}
+                                    </span>
+                                </td>
+                                <td class="board-col-hidden text-nowrap">{{ $post->create_datetime?->diffForHumans() ?? '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td id="notice_empty_row_cell" class="text-center text-secondary py-4" colspan="4">등록된 공지 내역이 없습니다.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -99,13 +130,7 @@
             </div>
 
             <nav class="board-pagination d-flex justify-content-center mt-4" aria-label="공지사항 페이지네이션">
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled"><span class="page-link">이전</span></li>
-                    <li class="page-item active"><span class="page-link">1</span></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">다음</a></li>
-                </ul>
+                {{ $posts->links() }}
             </nav>
         </div>
     </section>
@@ -114,9 +139,33 @@
 @section('script')
     <script>
         $(function(){
+            var today = new Date();
+            var oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+            initBirthDatePicker('#search_start_date', {
+                defaultDate: oneYearAgo,
+                maxDate: today
+            });
+            initBirthDatePicker('#search_end_date', {
+                defaultDate: today,
+                maxDate: today
+            });
+
             updateEmptyRowColspan('#notice_table', '#notice_empty_row_cell');
             $(window).on('resize', function(){
                 updateEmptyRowColspan('#notice_table', '#notice_empty_row_cell');
+            });
+
+            $('.notice-row').on('click', function(e){
+                if ($(e.target).closest('a, button, input, select, textarea').length) {
+                    return;
+                }
+
+                const href = $(this).data('href');
+                if (href) {
+                    location.href = href;
+                }
             });
         });
     </script>

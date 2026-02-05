@@ -121,6 +121,22 @@
     vertical-align: text-top;
 }
 
+.use-flag {
+    border: 1px solid transparent;
+}
+
+.use-flag-1 {
+    color: var(--bs-success-text-emphasis);
+    background-color: var(--bs-success-bg-subtle);
+    border-color: var(--bs-success-border-subtle);
+}
+
+.use-flag-0 {
+    color: var(--bs-secondary-color);
+    background-color: var(--bs-secondary-bg-subtle);
+    border-color: var(--bs-secondary-border-subtle);
+}
+
 /* Single-line truncation */
 .board-ellipsis {
     display: block;

@@ -41,6 +41,15 @@ class CommentController extends Controller
             'content' => $payload['content'],
         ]);
 
+        $postType = $payload['post_type'] ?? null;
+        $routeTypes = config('board.post_type_for_route', []);
+        if (!empty($postType) && in_array($postType, $routeTypes, true)) {
+            return to_route('admins.posts.show', [
+                'post_type' => $postType,
+                'idx' => $payload['post_idx'],
+            ]);
+        }
+
         return to_route('admins.inquiries.show', [
             'idx' => $payload['post_idx'],
         ]);
@@ -62,6 +71,15 @@ class CommentController extends Controller
             'update_user_idx' => auth()->id(),
         ]);
 
+        $postType = $comment->post?->post_type ?? $comment->post()->value('post_type');
+        $routeTypes = config('board.post_type_for_route', []);
+        if (!empty($postType) && in_array($postType, $routeTypes, true)) {
+            return to_route('admins.posts.show', [
+                'post_type' => $postType,
+                'idx' => $comment->post_idx,
+            ]);
+        }
+
         return to_route('admins.inquiries.show', [
             'idx' => $comment->post_idx,
         ]);
@@ -80,6 +98,15 @@ class CommentController extends Controller
         $this->commentService->delete($comment, [
             'delete_user_idx' => auth()->id(),
         ]);
+
+        $postType = $comment->post?->post_type ?? $comment->post()->value('post_type');
+        $routeTypes = config('board.post_type_for_route', []);
+        if (!empty($postType) && in_array($postType, $routeTypes, true)) {
+            return to_route('admins.posts.show', [
+                'post_type' => $postType,
+                'idx' => $comment->post_idx,
+            ]);
+        }
 
         return to_route('admins.inquiries.show', [
             'idx' => $comment->post_idx,

@@ -93,7 +93,7 @@ class InquiryController extends Controller
     public function edit(string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-        $this->authorize('update', $post);
+        $this->authorize('inquiryUpdate', $post);
 
         return view('inquiries.create', [
             'post' => $post,
@@ -110,7 +110,7 @@ class InquiryController extends Controller
     public function update(UpdateInquiryRequest $request, string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-        $this->authorize('update', $post);
+        $this->authorize('inquiryUpdate', $post);
 
         $payload = $request->safe()->only(['title', 'content']);
         $payload['ip'] = $request->ip();
@@ -129,7 +129,7 @@ class InquiryController extends Controller
     public function destroy(string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-        $this->authorize('delete', $post);
+        $this->authorize('inquiryDelete', $post);
 
         $payload = [
             'ip' => request()->ip(),

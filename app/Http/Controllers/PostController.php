@@ -2,18 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Posts\PostSearchRequest;
+use App\Services\PostService;
 use Illuminate\Http\Request;
 
+/**
+ * 사용자 게시판 컨트롤러
+ */
 class PostController extends Controller
 {
+    public function __construct(
+        private PostService $postService
+    ) {}
+
     /**
      * 글 목록
      *
      * @return void
      */
-    public function index(string $postType)
+    public function index(PostSearchRequest $request, string $postType)
     {
-        return view("{$postType}.index");
+        $filters = $request->validated();
+        $posts = $this->postService->getPublicPosts($postType, $filters);
+        $posts->appends($filters);
+
+        return view("{$postType}.index", [
+            'posts' => $posts,
+            'filters' => $filters,
+        ]);
     }
 
     /**
@@ -21,9 +37,18 @@ class PostController extends Controller
      *
      * @return void
      */
-    public function show(string $postType)
+    public function show(string $postType, string $idx)
     {
-        return view("{$postType}.show");
+        $post = $this->postService->getPublicByIdxWithHistory(
+            $idx,
+            $postType,
+            request()->ip(),
+            request()->userAgent()
+        );
+
+        return view("{$postType}.show", [
+            'post' => $post,
+        ]);
     }
 
     /**

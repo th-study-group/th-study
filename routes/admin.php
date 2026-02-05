@@ -25,6 +25,7 @@ Route::prefix('posts/{post_type}')
     Route::post("/", [PostController::class, 'store'])->name('store');
     Route::get("/{idx}/edit", [PostController::class, 'edit'])->name("edit");
     Route::put("/{idx}", [PostController::class, 'update'])->name('update');
+    Route::patch("/{idx}/use-flag", [PostController::class, 'updateUseFlag'])->name('use_flag.update');
     Route::delete("/{idx}", [PostController::class, 'destroy'])->name('soft.delete');
 });
 

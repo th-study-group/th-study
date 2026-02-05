@@ -12,7 +12,7 @@ Route::prefix("posts/{post_type}")
         Route::get("/", [PostController::class, 'index'])->name('index');
         //Route::get("/create", [PostController::class, 'create'])->name('create');
         Route::get("/{idx}/show", [PostController::class, 'show'])->name('show');
-        Route::post("/", [PostController::class, 'store'])->name('store');
+        //Route::post("/", [PostController::class, 'store'])->name('store');
         //Route::get("/{idx}/edit", [PostController::class, 'edit'])->name("edit");
         //Route::put("/{idx}", [PostController::class, 'update'])->name('update');
         //Route::delete("/{idx}", [PostController::class, 'destroy'])->name('soft.delete');

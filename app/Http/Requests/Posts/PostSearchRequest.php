@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Inquiries\Admin;
+namespace App\Http\Requests\Posts;
 
 use Illuminate\Contracts\Validation\Validator as ValidationValidator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -8,7 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Validator;
 
-class InquirySearchRequest extends FormRequest
+class PostSearchRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -20,8 +20,6 @@ class InquirySearchRequest extends FormRequest
         return [
             'search_start_date' => ['nullable', 'date'],
             'search_end_date' => ['nullable', 'date'],
-            'search_status' => ['nullable', 'in:' . implode(',', array_keys(config('board.status')))],
-            'search_name' => ['nullable', 'string', 'max:50'],
             'page' => ['nullable', 'integer', 'min:1'],
         ];
     }
@@ -44,7 +42,7 @@ class InquirySearchRequest extends FormRequest
 
     protected function failedValidation(ValidationValidator $validator): void
     {
-        Log::info('[Admin][Inquiry][Search] validation failed', [
+        Log::info('[Post][Search] validation failed', [
             'ip' => $this->ip(),
             'user_idx' => $this->user()?->idx,
             'errors' => $validator->errors()->toArray(),

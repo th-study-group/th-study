@@ -68,7 +68,7 @@ class InquiryController extends Controller
     public function updateStatus(Request $request, string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-        $this->authorize('updateStatus', $post);
+        $this->authorize('inquiryUpdateStatus', $post);
 
         $statusKeys = array_keys(config('board.status', []));
         $validated = $request->validate([
@@ -97,7 +97,7 @@ class InquiryController extends Controller
     public function destroy(string $idx)
     {
         $post = $this->inquiryService->getByIdx($idx, 'inquiries');
-        $this->authorize('delete', $post);
+        $this->authorize('inquiryDelete', $post);
 
         $payload = [
             'ip' => request()->ip(),
