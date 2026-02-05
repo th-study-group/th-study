@@ -25,6 +25,10 @@ class GuestPost extends Base
         //'delete_datetime',
     ];
 
+    protected $casts = [
+        'create_datetime' => 'datetime',
+    ];
+
     public function setPersonalInfoAgreeAttribute($value)
     {
         $this->attributes['personal_info_agree'] = $value === 'Y' ? 1 : 0;

@@ -13,51 +13,6 @@
                     </div>
                 </div>
 
-                <div class="board-filter-box">
-                    <div class="d-flex align-items-center justify-content-between gap-2">
-                        <h3 class="board-filter-title small text-secondary mb-0">검색조건 설정</h3>
-                        <button class="board-filter-toggle btn btn-outline-secondary btn-sm collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#noticeFilters"
-                                aria-expanded="false"
-                                aria-controls="noticeFilters">
-                            접기
-                        </button>
-                    </div>
-
-                    <div id="noticeFilters" class="collapse show mt-2">
-                        @if ($errors->any())
-                            <div class="alert alert-warning d-flex align-items-center gap-2 small mb-3" role="alert">
-                                <span class="badge text-bg-warning text-dark">경고</span>
-                                <span>검색 조건을 확인해 주세요.</span>
-                            </div>
-                        @endif
-                        <form id="form_search" name="form_search" method="GET" action="{{ route('posts.index', ['post_type' => 'notice']) }}">
-                            <div class="row g-2 g-md-3">
-                                <div class="col-12 col-md-4">
-                                    <label for="search_start_date" class="form-label small text-secondary mb-1">기간</label>
-                                    <div class="board-date-range">
-                                        <input type="text"
-                                               id="search_start_date" 
-                                               name="search_start_date" 
-                                               class="form-control form-control-sm"
-                                               value="{{ old('search_start_date', $filters['search_start_date'] ?? '') }}">
-                                        <span class="text-secondary small">~</span>
-                                        <input type="text"
-                                               id="search_end_date"
-                                               name="search_end_date" 
-                                               class="form-control form-control-sm"
-                                               value="{{ old('search_end_date', $filters['search_end_date'] ?? '') }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-grid mt-3">
-                                <button type="submit" id="btn_search" class="btn btn-primary">검색</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
             </div>
 
             <div class="board-table-wrap mt-3">
@@ -104,20 +59,6 @@
 @section('script')
     <script>
         $(function(){
-            const today = new Date();
-            const oneYearAgo = new Date();
-
-            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-            initBirthDatePicker('#search_start_date', {
-                defaultDate: oneYearAgo,
-                maxDate: today
-            });
-            initBirthDatePicker('#search_end_date', {
-                defaultDate: today,
-                maxDate: today
-            });
-
             $('.notice-row').on('click', function(e){
                 if ($(e.target).closest('a, button, input, select, textarea').length) {
                     return;

@@ -1,9 +1,9 @@
 <?php
 
 $status = [
-    'wait' => '대기중',
-    'in_progress' => '진행중',
-    'on_hold' => '보류중',
+    'wait' => '대기',
+    'in_progress' => '진행',
+    'on_hold' => '보류',
     'completed' => '완료'
 ];
 
