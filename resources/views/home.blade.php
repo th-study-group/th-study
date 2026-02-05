@@ -1115,3 +1115,7 @@
         }
     </script>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/intro/main.js') }}"></script> 
+@endpush
