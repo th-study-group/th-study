@@ -8,7 +8,7 @@
             <div class="board-head d-flex flex-column gap-2 gap-lg-3">
                 <div class="d-flex align-items-start justify-content-between gap-2 board-head-top">
                     <div class="flex-grow-1 board-min-w-0 board-head-text">
-                        <h2 class="board-title h5 mb-1">홈페이지 상담문의</h2>
+                        <h2 class="board-title h5 mb-1">홈페이지 문의내역</h2>
                         <p class="text-secondary small mb-0 board-ellipsis-mobile">로그인 없이 홈페이지에서 상담 신청한 내역을 조회 할 수 있습니다.</p>
                     </div>
                 </div>
