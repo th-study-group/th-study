@@ -47,7 +47,7 @@
                 @can('delete', $post)
                     <button type="button" id="btn_post_delete" class="btn btn-outline-danger">삭제</button>
                 @endcan
-                @can('update', $post)
+                @can('updateUseFlag', $post)
                     <button type="button" id="btn_use_flag" class="btn btn-outline-primary">공개설정</button>
                 @endcan
                 <button type="button" id="btn_post_list" class="btn btn-secondary">목록</button>

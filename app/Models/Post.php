@@ -18,6 +18,7 @@ class Post extends Base
         'content',
         //'status',
         //'post_type',
+        //'use_flag',
         //'create_datetime',
         //'create_user_idx',
         //'update_datetime',

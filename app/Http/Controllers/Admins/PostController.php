@@ -149,7 +149,7 @@ class PostController extends Controller
     public function updateUseFlag(Request $request, string $postType, string $idx)
     {
         $post = $this->postService->getByIdx($idx, $postType);
-        $this->authorize('update', $post);
+        $this->authorize('updateUseFlag', $post);
 
         $current = $post->use_flag ?? 0;
         $payload = [
