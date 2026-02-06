@@ -102,6 +102,24 @@ $(function () {
     }, minVisibleMs);
 });
 
+function updateEmptyRowColspan(tableSelector, cellSelector)
+{
+    var $table = $(tableSelector);
+    if (!$table.length) {
+        return;
+    }
+
+    var $cell = $(cellSelector);
+    if (!$cell.length) {
+        return;
+    }
+
+    var visibleCols = $table.find('thead th:visible').length;
+    if (visibleCols > 0) {
+        $cell.attr('colspan', visibleCols);
+    }
+}
+
 function initBirthDatePicker(selector, options = {}) 
 {
     const input = document.querySelector(selector);

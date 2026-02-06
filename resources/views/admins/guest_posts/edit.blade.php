@@ -29,12 +29,10 @@
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">연락처</span>
-                        @php
-                            $contactValue = $post->contact_value ?? '';
-                            $contactValue = preg_replace('/^(email|phone)\s+/i', '', $contactValue);
-                        @endphp
                         <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">
-                            {{ $contactValue !== '' ? $contactValue : '-' }}
+                            {{ ($post->contact_value ?? '') !== ''
+                                ? preg_replace('/^(email|phone)\s+/i', '', $post->contact_value)
+                                : '-' }}
                         </div>
                     </div>
                     <div class="mb-3">
@@ -54,18 +52,27 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                    <div class="mb-3">
+                        <span class="form-label small text-secondary d-block mb-1">개인정보방침 동의</span>
+                        <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">
+                            {{ $terms[(($post->personal_info_agree ?? 'N') === 'Y') ? 1 : 0] ?? '-' }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <span class="form-label small text-secondary d-block mb-1">마케팅 동의</span>
+                        <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">
+                            {{ $terms[(($post->marketing_info_agree ?? 'N') === 'Y') ? 1 : 0] ?? '-' }}
+                        </div>
+                    </div>
                     <div class="board-meta d-flex flex-wrap gap-2 text-secondary small align-items-baseline">
                         <span>등록시각: {{ $post->create_datetime }}</span>
                         @if (!empty($post->update_datetime))
                             <span class="text-danger">(수정시각: {{ $post->update_datetime }})</span>
                         @endif
                         <span class="ms-auto text-nowrap">진행상태:</span>
-                        @php
-                            $statusKey = $post->status ?? 'wait';
-                            $badgeClass = $statusBadgeClasses[$statusKey] ?? 'secondary';
-                            $statusLabel = $statusList[$statusKey] ?? $statusKey;
-                        @endphp
-                        <span id="guest_post_status_badge" class="badge text-bg-{{ $badgeClass }}">{{ $statusLabel }}</span>
+                        <span id="guest_post_status_badge" class="badge text-bg-{{ $statusBadgeClasses[$post->status ?? 'wait'] ?? 'secondary' }}">
+                            {{ $statusList[$post->status ?? 'wait'] ?? ($post->status ?? 'wait') }}
+                        </span>
                     </div>
                 </div>
 

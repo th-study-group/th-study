@@ -12,7 +12,7 @@
             @enderror
         </div>
         <div class="d-flex justify-content-end">
-            <button type="button" id="btn_comment_register" class="btn btn-primary btn-sm">댓글 등록</button>
+            <button type="button" id="btn_comment_register" class="btn btn-primary btn-sm">등록</button>
         </div>
     </form>
 
@@ -63,7 +63,7 @@
                             </div>
                             <div class="d-flex justify-content-end gap-2">
                                 <button type="button" class="btn btn_comment_edit_cancel btn-outline-secondary btn-sm">취소</button>
-                                <button type="button" class="btn btn_comment_modify btn-primary btn-sm">수정 적용</button>
+                                <button type="button" class="btn btn_comment_modify btn-primary btn-sm">적용</button>
                             </div>
                         </form>
                     </div>

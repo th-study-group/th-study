@@ -54,6 +54,7 @@ class GuestPostController extends Controller
             'postType' => $postType,
             'statusList' => config('board.status'),
             'statusBadgeClasses' => config('board.status_badge_classes'),
+            'terms' => config('const.terms'),
         ]);
     }
 
