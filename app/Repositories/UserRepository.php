@@ -52,38 +52,31 @@ class UserRepository
      */
     public function paginate(array $filters, int $perPage = 20): LengthAwarePaginator
     {
-        $query = User::orderByDesc('create_datetime');
+        return User::orderByDesc('create_datetime')
+            ->when(!empty($filters['search_name']), function ($q) use ($filters) {
+                $q->where('name', 'like', '%' . $filters['search_name'] . '%');
+            })
+            ->when(!empty($filters['search_nickname']), function ($q) use ($filters) {
+                $q->where('nick_name', 'like', '%' . $filters['search_nickname'] . '%');
+            })
+            ->when(!empty($filters['search_gender']), function ($q) use ($filters) {
+                $q->where('sex', $filters['search_gender']);
+            })
+            ->when(isset($filters['search_marketing']) && $filters['search_marketing'] !== '', function ($q) use ($filters) {
+                $q->where('marketing_info_agree', (int) $filters['search_marketing']);
+            })
+            ->when(!empty($filters['search_grade']), function ($q) use ($filters) {
+                $q->where('level', $filters['search_grade']);
+            })
+            ->when(!empty($filters['search_status']), function ($q) use ($filters) {
+                if ($filters['search_status'] === 'email_pending') {
+                    $q->whereNull('email_verify_datetime');
+                }
 
-        if (!empty($filters['search_name'])) {
-            $query->where('name', 'like', '%' . $filters['search_name'] . '%');
-        }
-
-        if (!empty($filters['search_nickname'])) {
-            $query->where('nick_name', 'like', '%' . $filters['search_nickname'] . '%');
-        }
-
-        if (!empty($filters['search_gender'])) {
-            $query->where('sex', $filters['search_gender']);
-        }
-
-        if (isset($filters['search_marketing']) && $filters['search_marketing'] !== '') {
-            $query->where('marketing_info_agree', (int) $filters['search_marketing']);
-        }
-
-        if (!empty($filters['search_grade'])) {
-            $query->where('level', $filters['search_grade']);
-        }
-
-        if (!empty($filters['search_status'])) {
-            if ($filters['search_status'] === 'email_pending') {
-                $query->whereNull('email_verify_datetime');
-            }
-
-            if ($filters['search_status'] === 'password_reset') {
-                $query->where('change_password_flag', 1);
-            }
-        }
-
-        return $query->paginate($perPage);
+                if ($filters['search_status'] === 'password_reset') {
+                    $q->where('change_password_flag', 1);
+                }
+            })
+            ->paginate($perPage);
     }
 }
