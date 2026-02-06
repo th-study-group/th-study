@@ -14,7 +14,7 @@ class GuestPostUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'memo' => ['nullable', 'string'],
+            'memo' => ['nullable', 'string', 'min:3'],
             'status' => ['required', 'in:' . implode(',', array_keys(config('board.status')))],
         ];
     }

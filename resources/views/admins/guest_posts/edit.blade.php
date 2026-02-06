@@ -17,7 +17,7 @@
 
                 <div class="mt-3">
                     @if ($errors->any())
-                        <div class="alert alert-warning">에러가 있습니다. 확인해 주세요.</div>
+                        <div class="alert alert-warning">상담 추가 정보 수정 실패 사유를 확인해주세요.</div>
                     @endif
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">제목</span>
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <span class="form-label small text-secondary d-block mb-1">처리결과</span>
+                        <span class="form-label small text-secondary d-block mb-1">비고(처리결과)</span>
                         <textarea id="memo"
                                   name="memo"
                                   class="form-control board-textarea bg-light rounded-3 px-3 py-2 border-0 @error('memo') is-invalid @enderror"

@@ -27,16 +27,22 @@
                     </div>
 
                     <div id="searchFilters" class="collapse show mt-2">
+                        @if ($errors->any())
+                            <div class="alert alert-warning d-flex align-items-center gap-2 small mb-3" role="alert">
+                                <span class="badge text-bg-warning text-dark">경고</span>
+                                <span>검색 조건을 확인해 주세요.</span>
+                            </div>
+                        @endif
                         <form id="form_search" name="form_search" method="GET" action="{{ route('admins.members.index') }}">
-                            @csrf
                             <div class="row g-2 g-md-3">
                                 <div class="col-12 col-md-4">
                                     <label for="search_name" class="form-label small text-secondary mb-1">이름</label>
                                     <input type="text"
                                            id="search_name"
-                                           name="seach_name"
+                                           name="search_name"
                                            class="form-control form-control-sm"
-                                           placeholder="이름">
+                                           placeholder="이름"
+                                           value="{{ old('search_name', $filters['search_name'] ?? '') }}">
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label for="search_nickname" class="form-label small text-secondary mb-1">닉네임</label>
@@ -44,43 +50,47 @@
                                            id="search_nickname"
                                            name="search_nickname"
                                            class="form-control form-control-sm"
-                                           placeholder="닉네임">
+                                           placeholder="닉네임"
+                                           value="{{ old('search_nickname', $filters['search_nickname'] ?? '') }}">
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label for="search_gender" class="form-label small text-secondary mb-1">성별</label>
                                     <select id="search_gender" name="search_gender" class="form-select form-select-sm">
                                         <option value="">전체</option>
-                                        <option value="M">남</option>
-                                        <option value="W">여</option>
+                                        @foreach ($sexList as $sexValue => $sexLabel)
+                                            <option value="{{ $sexValue }}" @selected(old('search_gender', $filters['search_gender'] ?? '') === $sexValue)>{{ $sexLabel }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label for="search_marketing" class="form-label small text-secondary mb-1">마케팅동의여부</label>
                                     <select id="search_marketing" name="search_marketing" class="form-select form-select-sm">
                                         <option value="">전체</option>
-                                        <option value="Y">동의</option>
-                                        <option value="N">미동의</option>
+                                        @foreach ($terms as $termValue => $termLabel)
+                                            <option value="{{ $termValue }}" @selected((string) old('search_marketing', $filters['search_marketing'] ?? '') === (string) $termValue)>{{ $termLabel }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label for="search_grade" class="form-label small text-secondary mb-1">회원등급</label>
                                     <select id="search_grade" name="search_grade" class="form-select form-select-sm">
                                         <option value="">전체</option>
-                                        <option value="general">일반</option>
-                                        <option value="admin">관리자</option>
+                                        @foreach ($gradeList as $gradeValue => $gradeLabel)
+                                            <option value="{{ $gradeValue }}" @selected(old('search_grade', $filters['search_grade'] ?? '') === $gradeValue)>{{ $gradeLabel }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label for="search_status" class="form-label small text-secondary mb-1">회원상태</label>
                                     <select id="search_status" name="search_status" class="form-select form-select-sm">
                                         <option value="">전체</option>
-                                        <option value="email_pending">메일인증대기</option>
-                                        <option value="password_reset">비밀번호재설정</option>
+                                        <option value="email_pending" @selected(old('search_status', $filters['search_status'] ?? '') === 'email_pending')>메일인증대기</option>
+                                        <option value="password_reset" @selected(old('search_status', $filters['search_status'] ?? '') === 'password_reset')>비밀번호재설정</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="d-grid mt-3">
-                                <button type="button" id="btn_search" class="btn btn-primary">검색</button>
+                                <button type="submit" id="btn_search" class="btn btn-primary">검색</button>
                             </div>
                         </form>
                     </div>
@@ -114,23 +124,33 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="9">등록된 글이 없습니다.</td>
-                        </tr>
+                        @forelse ($members as $member)
+                            @php
+                                $number = $members->total() - (($members->currentPage() - 1) * $members->perPage()) - $loop->index;
+                                $isVerified = !empty($member->email_verify_datetime);
+                            @endphp
+                            <tr class="text-center inquiry-row" data-href="{{ route('admins.members.edit', ['idx' => $member->idx]) }}" style="cursor: pointer;">
+                                <td class="text-nowrap">{{ $number }}</td>
+                                <td class="text-nowrap">{{ $member->name }}</td>
+                                <td class="text-nowrap">{{ $member->nick_name }}</td>
+                                <td class="text-nowrap text-start">{{ $member->email }}</td>
+                                <td class="text-nowrap">{{ $member->birth_date ?? '-' }}</td>
+                                <td class="text-nowrap">{{ $sexList[$member->sex ?? ''] ?? '-' }}</td>
+                                <td class="text-nowrap">{{ $terms[(int) $member->getRawOriginal('marketing_info_agree')] ?? '-' }}</td>
+                                <td class="text-nowrap">{{ $gradeList[$member->level ?? ''] ?? '-' }}</td>
+                                <td class="text-nowrap">{{ $isVerified ? '인증' : '미인증' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="9">등록된 글이 없습니다.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
             <nav class="board-pagination d-flex justify-content-center mt-4" aria-label="문의내역 페이지네이션">
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled"><span class="page-link">이전</span></li>
-                    <li class="page-item active"><span class="page-link">1</span></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    <li class="page-item"><a class="page-link" href="#">5</a></li>
-                    <li class="page-item"><a class="page-link" href="#">다음</a></li>
-                </ul>
+                {{ $members->links() }}
             </nav>
         </div>
     </section>
@@ -139,9 +159,15 @@
 @section('script')
     <script>
         $(function(){
+            $('.inquiry-row').on('click', function(e){
+                if ($(e.target).closest('a, button, input, select, textarea').length) {
+                    return;
+                }
 
-            $("#btn_search").on("click", function() {
-                alert('ok!!');
+                const href = $(this).data('href');
+                if (href) {
+                    location.href = href;
+                }
             });
 
             $(window).on('resize', function(){

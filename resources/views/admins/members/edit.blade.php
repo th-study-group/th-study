@@ -6,7 +6,7 @@
     <section class="col-12 col-lg-8 mx-auto">
         <form id="guest_post_form" method="POST" action="{{ route('admins.members.update', ['idx' => $idx]) }}">
             @csrf
-            @method('PATCH')
+            @method('PUT')
             <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm">
                 <div class="board-head d-flex flex-column gap-2 gap-lg-3">
                     <div>
@@ -16,69 +16,79 @@
                 </div>
 
                 <div class="mt-3">
+                    @if ($errors->any())
+                        <div class="alert alert-warning">회원 정보 수정 실패 사유를 확인해주세요.</div>
+                    @endif
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">이름</span>
-                        <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">심수민</div>
+                        <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">{{ $member->name ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">닉네임</span>
-                        <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">수민짱</div>
+                        <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">{{ $member->nick_name ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">이메일</span>
-                        <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">sumin@example.com</div>
+                        <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">{{ $member->email ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">생년월일</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">1992-03-21</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $member->birth_date ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">성별</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">여</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $sexList[$member->sex ?? ''] ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">연락처</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">010-1234-5678</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $member->phone_formatted }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">주소</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">서울특별시 강남구 테헤란로 123</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $member->address ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">개인정보동의여부</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">동의</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $terms[(int) $member->getRawOriginal('personal_info_agree')] ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">마케팅동의여부</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">미동의</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $terms[(int) $member->getRawOriginal('marketing_info_agree')] ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">회원등급</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">일반</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $gradeList[$member->level ?? ''] ?? '-' }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <span class="form-label small text-secondary d-block mb-1">인증여부</span>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ !empty($member->email_verify_datetime) ? '인증' : '미인증' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">최근접속일자</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">2026-01-31 19:22:10</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $member->last_access_datetime ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">회원가입일시</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">2025-10-12 09:01:02</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $member->create_datetime ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">회원인증일시</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">2025-10-12 09:05:22</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $member->email_verify_datetime ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">비밀번호 변경진행여부</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">진행중</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ (int) ($member->change_password_flag ?? 0) === 1 ? '진행중' : '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">비고</span>
                         <textarea id="memo"
                                   name="memo"
-                                  class="form-control board-textarea bg-light rounded-3 px-3 py-2 border-0"
+                                  class="form-control board-textarea bg-light rounded-3 px-3 py-2 border-0 @error('memo') is-invalid @enderror"
                                   rows="6"
-                                  placeholder="비고를 입력해 주세요"></textarea>
+                                  placeholder="비고를 입력해 주세요">{{ old('memo', $member->memo ?? '') }}</textarea>
+                        @error('memo')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
@@ -108,6 +118,7 @@
                 if (!confirm('적용하시겠습니까?')) {
                     return;
                 }
+                $('#guest_post_form').submit();
             });
         });
     </script>

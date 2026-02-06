@@ -103,4 +103,37 @@ class User extends Authenticatable
     {
         return config('member.levels.' . $this->level, 'NONE');
     }
+
+    public function getPhoneFormattedAttribute(): string
+    {
+        $phone = preg_replace('/\D+/', '', (string) $this->phone);
+
+        if ($phone === '') {
+            return '-';
+        }
+
+        $length = strlen($phone);
+
+        if ($length === 11) {
+            return substr($phone, 0, 3) . '-' . substr($phone, 3, 4) . '-' . substr($phone, 7);
+        }
+
+        if ($length === 10) {
+            if (str_starts_with($phone, '02')) {
+                return substr($phone, 0, 2) . '-' . substr($phone, 2, 4) . '-' . substr($phone, 6);
+            }
+
+            return substr($phone, 0, 3) . '-' . substr($phone, 3, 3) . '-' . substr($phone, 6);
+        }
+
+        if ($length === 9 && str_starts_with($phone, '02')) {
+            return substr($phone, 0, 2) . '-' . substr($phone, 2, 3) . '-' . substr($phone, 5);
+        }
+
+        if ($length === 8) {
+            return substr($phone, 0, 4) . '-' . substr($phone, 4);
+        }
+
+        return $this->phone ?? '-';
+    }
 }

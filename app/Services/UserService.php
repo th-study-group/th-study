@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserService
 {
@@ -126,6 +127,61 @@ class UserService
         if (!$user) {
             throw new ModelNotFoundException();
         }
+
+        return $user;
+    }
+
+    /**
+     * 관리자 회원 목록 조회
+     *
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getMembers(array $filters): LengthAwarePaginator
+    {
+        $page = $filters['page'] ?? 1;
+
+        $members = $this->userRepository->paginate($filters, 20);
+
+        Log::info('[Admin][Member][List] 조회 완료', [
+            'user_idx' => auth()->id(),
+            'page' => $page,
+        ]);
+
+        return $members;
+    }
+
+    /**
+     * 관리자 회원 상세 조회
+     *
+     * @param int $id
+     * @return User
+     */
+    public function getMemberById(int $id): User
+    {
+        return $this->findById($id);
+    }
+
+    /**
+     * 관리자 메모 수정
+     *
+     * @param User $user
+     * @param array $payload
+     * @return User
+     */
+    public function updateMemo(User $user, array $payload): User
+    {
+        $userIdx = auth()->id();
+
+        $user->forceFill([
+            'memo' => $payload['memo'] ?? null,
+            'update_user_idx' => $userIdx,
+        ])->saveQuietly();
+
+        Log::info('[Admin][Member][Update] 메모 수정 완료', [
+            'user_idx' => $userIdx,
+            'target_user_idx' => $user->idx,
+        ]);
 
         return $user;
     }

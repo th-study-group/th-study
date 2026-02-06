@@ -183,6 +183,7 @@ return [
         'phone' => '핸드폰 번호',
         'address' => '주소',
         'inquiry_memo' => '문의 내용',
+        'memo' => '비고',
         'personal_info_agree' => '개인정보 수집 및 이용 동의',
         'marketing_info_agree' => '마케팅 정보 수신 동의',
     ],
