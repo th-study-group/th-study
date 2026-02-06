@@ -12,7 +12,7 @@
                 <p style="font-size: 14px; line-height: 1.6; margin: 0 0 12px;">
                     {{ $bodyText }}
                 </p>
-                <div style="text-align: center; margin: 20px 0 22px;">
+                <div style="text-align: center; margin: 20px 0 0;">
                     <a href="{{ $link }}" target="_blank" rel="noopener" style="display: inline-block; background: #2563eb; color: #ffffff !important; text-decoration: none; padding: 12px 18px; border-radius: 8px; font-weight: 600; font-size: 14px;">
                         문의글 확인하기
                     </a>
@@ -21,6 +21,10 @@
                     버튼이 열리지 않으면 아래 링크를 복사해 브라우저에 붙여넣어 주세요.
                 </p>
                 <a href="{{ $link }}" style="font-size: 12px; word-break: break-all; color: #2563eb;">{{ $link }}</a>
+            </div>
+
+            <div style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 18px;">
+                본 메일은 문의 답변 안내를 위해 발송되었습니다.
             </div>
         </div>
     </body>

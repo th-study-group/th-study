@@ -30,10 +30,9 @@ class MemberUpdateRequest extends FormRequest
         ]);
 
         throw new HttpResponseException(
-            redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput()
+            to_route('admins.members.edit', ['idx' => $this->route('idx')])
+            ->withErrors($validator)
+            ->withInput()
         );
     }
 }

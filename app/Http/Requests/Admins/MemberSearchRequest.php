@@ -36,8 +36,7 @@ class MemberSearchRequest extends FormRequest
         ]);
 
         throw new HttpResponseException(
-            redirect()
-                ->back()
+                to_route('admins.members.index')
                 ->withErrors($validator)
                 ->withInput()
         );
