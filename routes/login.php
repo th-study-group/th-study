@@ -6,7 +6,7 @@ use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/dashboard', DashboardController::class)->name('dashboard'); // 마이페이지 (로그인 후 진입페이지)   
+Route::get('/dashboard', DashboardController::class)->name('dashboard')->defaults('hideSide', true); // 마이페이지 (로그인 후 진입페이지)   
 
 Route::prefix('users')->name('users.')->group(function() {
     Route::get("/", [UserController::class, 'index'])->name('index'); 

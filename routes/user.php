@@ -9,9 +9,9 @@ Route::prefix("posts/{post_type}")
     ->name("posts.")
     ->whereIn('post_type', config('board.post_type_for_route'))
     ->group(function() {
-        Route::get("/", [PostController::class, 'index'])->name('index');
+        Route::get("/", [PostController::class, 'index'])->name('index')->defaults('hideSide', true);;
         //Route::get("/create", [PostController::class, 'create'])->name('create');
-        Route::get("/{idx}/show", [PostController::class, 'show'])->name('show');
+        Route::get("/{idx}/show", [PostController::class, 'show'])->name('show')->defaults('hideSide', true);;
         //Route::post("/", [PostController::class, 'store'])->name('store');
         //Route::get("/{idx}/edit", [PostController::class, 'edit'])->name("edit");
         //Route::put("/{idx}", [PostController::class, 'update'])->name('update');

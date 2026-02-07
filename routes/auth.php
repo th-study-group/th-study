@@ -8,9 +8,9 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 
-Route::get("/register", [RegisterController::class, 'create'])->name('register.form'); // 회원가입 폼
+Route::get("/register", [RegisterController::class, 'create'])->name('register.form')->defaults('hideSide', true); // 회원가입 폼
 Route::post("/register", [RegisterController::class, 'register'])->name('register.submit'); // 회원가입 처리
-Route::get("/login", [LoginController::class, 'login'])->name('login'); // 로그인 폼
+Route::get("/login", [LoginController::class, 'login'])->name('login')->defaults('hideSide', true); // 로그인 폼
 Route::post("/login", [LoginController::class, 'authenticate'])->name('authenticate'); // 로그인 처리 
 Route::get("/logout", [LoginController::class, 'logout'])->name('logout'); // 로그아웃 처리
 
@@ -35,7 +35,8 @@ Route::middleware('auth')->group(function () {
 
 // 계정찾기 화면
 Route::get('/find-account', [ForgotPasswordController::class,'index'])
-    ->name('password.find.account');
+    ->name('password.find.account')
+    ->defaults('hideSide', true);
 
 // 비밀번호 초기화 메일 발송 (쓰로틀: 1분 5회)
 Route::post('/find-password', [ForgotPasswordController::class,'requestAccountEmail'])
