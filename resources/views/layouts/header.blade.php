@@ -48,7 +48,7 @@
         
         <div class="collapse navbar-collapse mt-3 mt-lg-0" id="topNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">소개</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('intro') }}">소개</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('posts.index', ['post_type' => 'notice']) }}">공지사항</a>
                 {{--
                 <li class="nav-item"><a class="nav-link" href="{{ route('photos.index') }}">사진관리</a></li>
@@ -56,8 +56,8 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">정보관리</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('maps.index') }}">장소관리</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('documents.index') }}">문서관리</a></li>
-                --}}
                 <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">정보관리</a></li>
+                --}}
                 @auth
                     @if (auth()->user()?->email_verify_datetime)
                         <li class="nav-item dropdown nav-dropdown">

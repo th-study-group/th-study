@@ -11,16 +11,16 @@
         <meta property="og:type" content="website">
 
         {{-- Favicon :: WEB --}}
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/th_favicon_16.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/th_favicon_32.png') }}">
-        <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('images/th_favicon_48.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon/th_favicon_16.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon/th_favicon_32.png') }}">
+        <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('images/favicon/th_favicon_48.png') }}">
 
         {{-- Favicon :: Apple Touch --}}
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/th_favicon_ios_108.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon/th_favicon_ios_108.png') }}">
 
         {{-- Favicon :: Android / PWA Icons --}}
-        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/th_favicon_and_256.png') }}">
-        <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/th_favicon_and_512.png') }}">
+        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/favicon/th_favicon_and_256.png') }}">
+        <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/favicon/th_favicon_and_512.png') }}">
 
         {{-- PWA --}}
         <link rel="manifest" href="{{ asset('site.webmanifest') }}">

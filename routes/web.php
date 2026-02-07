@@ -22,6 +22,11 @@ Route::get('/', function () {
     ]);
 })->name('home')->defaults('hideSide', true);
 
+// 소개페이지
+Route::get('/intro', function () {
+    return view('intro');
+})->name('intro')->defaults('hideSide', true);
+
 // sidebar 없는 정적 페이지들
 Route::group([], function() {
     Route::view('/privacy-policy', 'privacy')
