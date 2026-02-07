@@ -32,7 +32,7 @@
 
                           <div class="d-flex gap-2 flex-wrap">
                               <a class="btn btn-accent btn-lg" href="#highlights">핵심 요약 보기</a>
-                              <a class="btn btn-outline-dark btn-lg" href="#about">프로젝트 소개</a>
+                              <a class="btn btn-outline-dark btn-lg" href="{{ route('intro') }}">사이트 소개</a>
                           </div>
                       </div>
 
