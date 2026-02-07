@@ -40,7 +40,7 @@
       <div class="bg" aria-hidden="true" id="heroBg"></div>
 
       <div class="inner">
-        <div class="kicker reveal delay-1">TH-Study · 함께 성장하는 기록과 실전의 공간</div>
+        <div class="kicker reveal delay-1">{{ config('app.name')}} · 함께 성장하는 기록과 실전의 공간</div>
 
         <h1 class="title reveal delay-2">
           <span id="typing"></span><span class="typing-caret" aria-hidden="true"></span>
@@ -48,7 +48,7 @@
 
         <p class="subtitle reveal delay-3">
           성장하는 개발자에서 장인정신을 지닌 리더로 나아가고자 합니다.
-          TH-Study는 나만의 블로그 서비스를 기반으로 지식을 정리하고 공유하며,
+          {{ config('app.name') }}는 나만의 블로그 서비스를 기반으로 지식을 정리하고 공유하며,
           콘텐츠와 광고를 통해 오래 가는 수익 구조를 조금씩 만들어가는 공간입니다.
           누군가의 시행착오를 줄여주는 기록을 남기는 과정 자체가, 자연스럽게 사회에 보탬이 된다고 믿습니다.
         </p>
@@ -83,7 +83,7 @@
           </p>
 
           <p class="p reveal delay-3">
-            TH-Study는 혼자만의 기록으로 끝나지 않도록,
+            {{ config('app.name') }}는 혼자만의 기록으로 끝나지 않도록,
             처음 보는 사람도 따라올 수 있는 설명과 실전 기준을 함께 남기려 합니다.
             쉽게 설명된 기록이 하나씩 늘어나는 과정이 곧 사회에 도움이 된다고 생각합니다.
           </p>
@@ -119,7 +119,7 @@
 
           <p class="p reveal delay-3">
             특히 PHP는 빠르고 경제적인 개발이 가능하지만 국내에서는 자료와 교육이 부족한 편입니다.
-            TH-Study에서는 PHP 장인 개발자의 관점으로 구버전과 레거시, 프레임워크 운영 노하우를 정리해 공유하려 합니다.
+            {{ config('app.name') }}에서는 PHP 장인 개발자의 관점으로 구버전과 레거시, 프레임워크 운영 노하우를 정리해 공유하려 합니다.
             또한 AI를 활용해 학습과 정리를 더 쉽게 만들고, 개발자 양성에 도움이 되는 기준을 만들어가겠습니다.
           </p>
 
@@ -150,7 +150,7 @@
 
           <p class="p reveal delay-2">
             거창한 말보다, 실무에서 진짜 도움이 되는 내용을 차근차근 쌓아가고자 합니다.
-            TH-Study는 “처음 보는 사람도 따라할 수 있는 글”을 기준으로,
+            {{ config('app.name') }}는 “처음 보는 사람도 따라할 수 있는 글”을 기준으로,
             막히는 지점을 줄이고 시행착오를 덜어주는 노하우를 만들고자 합니다.
           </p>
 
@@ -188,7 +188,7 @@
           </p>
 
           <p class="p reveal delay-3">
-            TH-Study에서는 PHP 레거시, Laravel, CodeIgniter를 중심으로
+            {{ config('app.name') }}에서는 PHP 레거시, Laravel, CodeIgniter를 중심으로
             왜 이렇게 구성하는지까지 담아 차근차근 정리해 나가겠습니다.
           </p>
 
@@ -216,7 +216,7 @@
           <p class="p reveal delay-2">
             Spring Boot, Node.js, Python처럼 배울 것이 많아지는 시대에는
             단순한 기능 나열보다 어떻게 접근하는지가 더 큰 차이를 만듭니다.
-            TH-Study는 AI를 활용하되, 사람의 감각이 담긴 정리 방식으로 함께 성장할 수 있도록 돕고자 합니다.
+            {{ config('app.name') }}는 AI를 활용하되, 사람의 감각이 담긴 정리 방식으로 함께 성장할 수 있도록 돕고자 합니다.
           </p>
 
           <p class="p reveal delay-3">
@@ -252,7 +252,7 @@
           </p>
 
           <p class="p reveal delay-3">
-            TH-Study는 개발뿐 아니라 여행, 맛집, 카페, 대중교통, 신기술, 미래, 경제 같은
+            {{ config('app.name') }}는 개발뿐 아니라 여행, 맛집, 카페, 대중교통, 신기술, 미래, 경제 같은
             일상의 기록까지 함께 모아 검색 가능한 데이터로 정리해 나가는 방향을 지향합니다.
           </p>
 
