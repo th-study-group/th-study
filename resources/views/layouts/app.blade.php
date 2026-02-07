@@ -64,6 +64,8 @@
 
         {{-- 레이아웃 풋터 --}}
         @include('layouts.footer')
+
+        @include('layouts.back-to-top')
         
         {{-- 스크립트 단일 페이지 --}}
         @yield('script')

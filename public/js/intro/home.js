@@ -1,7 +1,4 @@
 function initHomeScroll(){
-    const backToTopBtn = document.getElementById('backToTop');
-    const sentinel = document.getElementById('topSentinel');
-
     function smoothScrollTo(targetY, durationMs) {
         const startY = window.scrollY;
         const diff = targetY - startY;
@@ -74,29 +71,6 @@ function initHomeScroll(){
     }
     enableWheelSmooth();
     */
-
-    if (backToTopBtn && sentinel) {
-        if ('IntersectionObserver' in window) {
-            const io = new IntersectionObserver((entries) => {
-                const isTopVisible = entries[0].isIntersecting;
-                backToTopBtn.style.display = isTopVisible ? 'none' : 'flex';
-            }, { threshold: 0 });
-
-            io.observe(sentinel);
-        } else {
-            function toggleBackToTop(){
-                const y = window.pageYOffset || document.documentElement.scrollTop || 0;
-                backToTopBtn.style.display = (y > 200) ? 'flex' : 'none';
-            }
-            window.addEventListener('scroll', toggleBackToTop, { passive: true });
-            window.addEventListener('resize', toggleBackToTop, { passive: true });
-            toggleBackToTop();
-        }
-
-        backToTopBtn.addEventListener('click', () => {
-            smoothScrollTo(0, 780);
-        });
-    }
 
     const revealTargets = document.querySelectorAll('.home-landing .reveal');
     if (revealTargets.length) {

@@ -180,20 +180,6 @@ body{
 .home-landing .form-control::placeholder,
 .home-landing textarea::placeholder{ color: rgba(226,232,240,.6); }
 
-.home-landing #backToTop{
-    width: 52px;
-    height: 52px;
-    border-radius: 999px;
-    display: none;
-    z-index: 1060;
-    box-shadow: 0 10px 26px rgba(2, 6, 23, .45);
-    border: 1px solid rgba(148,163,184,.22);
-    background: rgba(15, 23, 42, .88);
-    color: rgba(248,250,252,.95);
-    touch-action: manipulation;
-}
-.home-landing #backToTop:hover{ background: rgba(15, 23, 42, .96); }
-
 .home-landing .profile-image{
     display: flex;
     justify-content: center;

@@ -1,4 +1,5 @@
 $(function () {
+    initGlobalBackToTop();
 
     $(document).on("contextmenu", function (e) {
         e.preventDefault();
@@ -137,4 +138,17 @@ function initBirthDatePicker(selector, options = {})
     }
 
     return flatpickr(selector, baseOptions);
+}
+
+function initGlobalBackToTop()
+{
+    const btn = document.getElementById('globalBackToTop');
+    if (!btn) {
+        return;
+    }
+    btn.classList.add('is-visible');
+
+    btn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 }

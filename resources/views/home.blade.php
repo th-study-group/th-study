@@ -12,8 +12,6 @@
 @section('content')
 <main class="col-12">
     <div class="home-landing">
-        <div id="topSentinel" style="position:absolute; top:0; left:0; width:1px; height:1px;"></div>
-
         <header id="top" class="section-pad">
             <div class="container reveal">
                 <div class="row align-items-center g-4">
@@ -398,15 +396,6 @@
                 </div>
             </div>
         </section>
-
-        <button id="backToTop"
-                class="position-fixed d-flex align-items-center justify-content-center"
-                style="bottom: calc(18px + env(safe-area-inset-bottom)); bottom: calc(18px + constant(safe-area-inset-bottom)); right: 16px;"
-                aria-label="맨 위로">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M6 14l6-6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </button>
 
         <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
