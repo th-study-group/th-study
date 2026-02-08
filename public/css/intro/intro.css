@@ -12,6 +12,24 @@
     margin-left:calc(50% - 50vw);
     margin-right:calc(50% - 50vw);
 }
+body:has(.intro-page){
+    background:var(--bg);
+}
+body:has(.intro-page) > .container-fluid{
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+    background:var(--bg) !important;
+}
+body:has(.intro-page) > .container-fluid > .row{
+    --bs-gutter-x:0;
+    --bs-gutter-y:0;
+    margin:0 !important;
+}
+body:has(.intro-page) > .container-fluid > .row > *{
+    padding-left:0 !important;
+    padding-right:0 !important;
+    margin-top:0 !important;
+}
 body.intro-mode{
     background:var(--bg);
 }
