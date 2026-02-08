@@ -1,6 +1,7 @@
 function initIntroPage() {
     const wrap = document.getElementById("wrap");
     if (!wrap) return;
+    document.body.classList.add("intro-mode");
 
     const sections = Array.from(wrap.querySelectorAll(".section"));
     const dotnav = document.getElementById("dotnav");
