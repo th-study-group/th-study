@@ -40,12 +40,24 @@ function initIntroPage() {
 
     function canScrollUp(section) {
         if (!section) return false;
+        if (section.classList.contains("hero")) return false;
         return section.scrollTop > 6;
     }
 
     function canScrollDown(section) {
         if (!section) return false;
+        if (section.classList.contains("hero")) return false;
         return section.scrollHeight - (section.scrollTop + section.clientHeight) > 6;
+    }
+
+    function isAtTop(section) {
+        if (!section) return true;
+        return !canScrollUp(section);
+    }
+
+    function isAtBottom(section) {
+        if (!section) return true;
+        return !canScrollDown(section);
     }
 
     function setActive(n) {
@@ -102,6 +114,8 @@ function initIntroPage() {
     let lastY = null;
     let boundaryPull = 0;
     let gestureConsumed = false;
+    let startAtTop = false;
+    let startAtBottom = false;
 
     wrap.addEventListener(
         "touchstart",
@@ -112,6 +126,9 @@ function initIntroPage() {
             lastY = startY;
             boundaryPull = 0;
             gestureConsumed = false;
+            const activeSection = getActiveSection();
+            startAtTop = isAtTop(activeSection);
+            startAtBottom = isAtBottom(activeSection);
         },
         { passive: true }
     );
@@ -150,6 +167,9 @@ function initIntroPage() {
             // 경계에서만 기본 동작 차단해 탄성 스크롤을 줄이고 섹션 전환 감각 유지
             e.preventDefault();
 
+            if (diffY > 0 && !startAtBottom) return;
+            if (diffY < 0 && !startAtTop) return;
+
             boundaryPull += Math.abs(stepY);
             if (boundaryPull < 26) return;
 
@@ -187,11 +207,13 @@ function initIntroPage() {
             const activeSection = getActiveSection();
             if (diff > 0) {
                 if (canScrollDown(activeSection)) return;
+                if (!startAtBottom) return;
                 go(idx + 1);
                 return;
             }
 
             if (canScrollUp(activeSection)) return;
+            if (!startAtTop) return;
             go(idx - 1);
         },
         { passive: true }
@@ -205,6 +227,8 @@ function initIntroPage() {
             lastY = null;
             boundaryPull = 0;
             gestureConsumed = false;
+            startAtTop = false;
+            startAtBottom = false;
         },
         { passive: true }
     );
