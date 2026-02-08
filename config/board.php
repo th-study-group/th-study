@@ -30,6 +30,9 @@ $postUseFlag = [
 // 관리자, 회원 등 권한이 필요할 때 적용
 $postTypeExcluded = ['inquiries'];
 
+// 미노출이 기본값 설정되어야 하는 경우 
+$forceUseFlagSecretTypes = ['notice'];
+
 return [
     'status' => $status,
     'status_badge_classes' => $statusBadgeClasses,
@@ -39,5 +42,8 @@ return [
     'post_type_inquiry' => 'inquiries',
     'post_type_for_route' => array_values(
         array_diff(array_keys($postTypes), $postTypeExcluded)
+    ),
+    'force_use_flag_secret_type' => array_values(
+        array_diff(array_keys($postTypes), $forceUseFlagSecretTypes)
     ),
 ];

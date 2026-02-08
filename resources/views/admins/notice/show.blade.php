@@ -96,7 +96,7 @@
                     onError: function (xhr) {
                         let message = '삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
                         if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
-                            message = xhr.responseJSON.message;
+                           //message = xhr.responseJSON.message;
                         }
                         alert(message);
                     },

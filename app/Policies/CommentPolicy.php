@@ -6,6 +6,9 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 
+/**
+ * 댓글 권한 정책
+ */
 class CommentPolicy
 {
     /**
