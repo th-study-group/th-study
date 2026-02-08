@@ -4,10 +4,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <meta name="description" content="티에이치스터디그룹은 성장하는 개발자가 기록과 실험을 통해 실력을 확장하고, 서비스 운영과 수익화를 경험하는 개발자 성장 플랫폼입니다.">
-        <meta property="og:title" content="티에이치스터디그룹 - 개발자 성장 플랫폼">
+        {{-- og image --}}
+        <meta name="description" content="{{ config('app.name') }}은 성장하는 개발자가 기록과 실험을 통해 실력을 확장하고, 서비스 운영과 수익화를 경험하는 개발자 성장 플랫폼입니다.">
+        <meta property="og:title" content="{{ config('app.name') }} 개발자 성장 플랫폼">
         <meta property="og:description" content="개발자의 기록, 실험, 운영, 수익화를 기반으로 성장하는 플랫폼">
-        <meta property="og:image" content="{{ asset('images/main_logo.png') }}">
+        <meta property="og:image" content="{{ asset('images/og/001.png') }}">
         <meta property="og:type" content="website">
 
         {{-- Favicon :: WEB --}}
