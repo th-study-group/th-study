@@ -18,4 +18,6 @@ yarn-error.log
 /.idea
 /.vscode
 .DS_Store
+
+# 해당 프로젝트에서 메모 사용 (업로드금지)
 .dev_memo
