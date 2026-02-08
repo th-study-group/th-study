@@ -39,8 +39,8 @@ class PostService
                 'create_user_idx' => $userIdx,
             ];
 
-            $routeTypes = config('board.post_type_for_route', []);
-            if (in_array($postType, $routeTypes, true)) {
+            $forceUseFlagSecretTypes = config('board.force_use_flag_secret_type', []);
+            if (!in_array($postType, $forceUseFlagSecretTypes, true)) {
                 $payload['use_flag'] = 0;
             }
 
