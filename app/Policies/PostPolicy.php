@@ -72,7 +72,10 @@ class PostPolicy
             return false;
         }
 
-        if (($post->use_flag ?? 0) == 1) {
+        $forceUseFlagSecretTypes = config('board.force_use_flag_secret_type', []);
+        $isForceUseFlagSecretType = !in_array($post->post_type, $forceUseFlagSecretTypes, true);
+
+        if ($isForceUseFlagSecretType && ($post->use_flag ?? 0) === 1) {
             return false;
         }
 
