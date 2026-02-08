@@ -21,8 +21,8 @@ class PasswordChangeRequest extends FormRequest
             'password' => [
                 'required',
                 'min:8',
-                'max:15',
-                'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/',
+                'max:25',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d).+$/',
             ],
             'password_confirm' => ['required', 'same:password'],
         ];
