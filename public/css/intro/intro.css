@@ -67,7 +67,6 @@ body.intro-mode > .container-fluid{
     overflow-y:auto;
     overscroll-behavior-y:contain;
     -webkit-overflow-scrolling:touch;
-    padding-bottom:max(12px, env(safe-area-inset-bottom));
 }
 .intro-page .section.active{
     opacity:1;
@@ -166,6 +165,7 @@ body.intro-mode > .container-fluid{
     flex-direction:column;
     justify-content:center;
     padding: clamp(24px, 6vw, 72px);
+    padding-bottom: calc(clamp(24px, 6vw, 72px) + env(safe-area-inset-bottom));
     gap:16px;
 }
 .intro-page .kicker{
@@ -239,6 +239,7 @@ body.intro-mode > .container-fluid{
     grid-template-columns: 1.05fr .95fr;
     gap:28px;
     padding: clamp(16px, 5vw, 64px);
+    padding-bottom: calc(clamp(16px, 5vw, 64px) + env(safe-area-inset-bottom));
     align-items:center;
 }
 .intro-page .imgbox{

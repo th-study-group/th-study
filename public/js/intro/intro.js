@@ -40,12 +40,12 @@ function initIntroPage() {
 
     function canScrollUp(section) {
         if (!section) return false;
-        return section.scrollTop > 1;
+        return section.scrollTop > 24;
     }
 
     function canScrollDown(section) {
         if (!section) return false;
-        return section.scrollTop + section.clientHeight < section.scrollHeight - 1;
+        return section.scrollHeight - (section.scrollTop + section.clientHeight) > 24;
     }
 
     function setActive(n) {
