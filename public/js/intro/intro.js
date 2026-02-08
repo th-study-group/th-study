@@ -40,18 +40,20 @@ function initIntroPage() {
 
     function canScrollUp(section) {
         if (!section) return false;
-        return section.scrollTop > 24;
+        return section.scrollTop > 6;
     }
 
     function canScrollDown(section) {
         if (!section) return false;
-        return section.scrollHeight - (section.scrollTop + section.clientHeight) > 24;
+        return section.scrollHeight - (section.scrollTop + section.clientHeight) > 6;
     }
 
     function setActive(n) {
         sections.forEach((s, i) => s.classList.toggle("active", i === n));
         Array.from(dotnav.children).forEach((d, i) => d.classList.toggle("active", i === n));
         idx = n;
+        const active = sections[idx];
+        if (active) active.scrollTop = 0;
         requestAnimationFrame(updateParallax);
     }
 
@@ -97,12 +99,19 @@ function initIntroPage() {
 
     let startY = null;
     let startX = null;
-    window.addEventListener(
+    let lastY = null;
+    let boundaryPull = 0;
+    let gestureConsumed = false;
+
+    wrap.addEventListener(
         "touchstart",
         (e) => {
             if (!e.touches || !e.touches.length) return;
             startY = e.touches[0].clientY;
             startX = e.touches[0].clientX;
+            lastY = startY;
+            boundaryPull = 0;
+            gestureConsumed = false;
         },
         { passive: true }
     );
@@ -112,10 +121,13 @@ function initIntroPage() {
         "touchmove",
         (e) => {
             if (startY === null || !e.touches || !e.touches.length) return;
+            if (lock || gestureConsumed) return;
 
             const touch = e.touches[0];
             const diffY = startY - touch.clientY;
             const diffX = startX === null ? 0 : startX - touch.clientX;
+            const stepY = lastY === null ? 0 : touch.clientY - lastY;
+            lastY = touch.clientY;
 
             // 가로 스와이프는 무시
             if (Math.abs(diffX) > Math.abs(diffY)) return;
@@ -124,18 +136,36 @@ function initIntroPage() {
             if (!activeSection) return;
 
             // 위로 스와이프(다음 섹션 방향)인데 아직 내부 내용이 남아 있으면 스크롤 허용
-            if (diffY > 0 && canScrollDown(activeSection)) return;
+            if (diffY > 0 && canScrollDown(activeSection)) {
+                boundaryPull = 0;
+                return;
+            }
 
             // 아래로 스와이프(이전 섹션 방향)인데 아직 위 내용이 남아 있으면 스크롤 허용
-            if (diffY < 0 && canScrollUp(activeSection)) return;
+            if (diffY < 0 && canScrollUp(activeSection)) {
+                boundaryPull = 0;
+                return;
+            }
 
             // 경계에서만 기본 동작 차단해 탄성 스크롤을 줄이고 섹션 전환 감각 유지
             e.preventDefault();
+
+            boundaryPull += Math.abs(stepY);
+            if (boundaryPull < 26) return;
+
+            if (diffY > 0) {
+                go(idx + 1);
+            } else if (diffY < 0) {
+                go(idx - 1);
+            }
+
+            gestureConsumed = true;
+            boundaryPull = 0;
         },
         { passive: false }
     );
 
-    window.addEventListener(
+    wrap.addEventListener(
         "touchend",
         (e) => {
             if (startY === null) return;
@@ -144,8 +174,14 @@ function initIntroPage() {
             const diff = startY - endY;
             startY = null;
             startX = null;
+            lastY = null;
+            boundaryPull = 0;
 
             if (lock) return;
+            if (gestureConsumed) {
+                gestureConsumed = false;
+                return;
+            }
             if (Math.abs(diff) < 40) return;
 
             const activeSection = getActiveSection();
@@ -157,6 +193,18 @@ function initIntroPage() {
 
             if (canScrollUp(activeSection)) return;
             go(idx - 1);
+        },
+        { passive: true }
+    );
+
+    wrap.addEventListener(
+        "touchcancel",
+        () => {
+            startY = null;
+            startX = null;
+            lastY = null;
+            boundaryPull = 0;
+            gestureConsumed = false;
         },
         { passive: true }
     );
