@@ -2,6 +2,7 @@ function initIntroPage() {
     const wrap = document.getElementById("wrap");
     if (!wrap) return;
     document.body.classList.add("intro-mode");
+    setViewportHeightVar();
 
     const sections = Array.from(wrap.querySelectorAll(".section"));
     const dotnav = document.getElementById("dotnav");
@@ -27,6 +28,25 @@ function initIntroPage() {
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
     let mouseX = 0;
     let mouseY = 0;
+
+    function setViewportHeightVar() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--intro-vh", `${vh}px`);
+    }
+
+    function getActiveSection() {
+        return sections[idx] || null;
+    }
+
+    function canScrollUp(section) {
+        if (!section) return false;
+        return section.scrollTop > 1;
+    }
+
+    function canScrollDown(section) {
+        if (!section) return false;
+        return section.scrollTop + section.clientHeight < section.scrollHeight - 1;
+    }
 
     function setActive(n) {
         sections.forEach((s, i) => s.classList.toggle("active", i === n));
@@ -55,31 +75,61 @@ function initIntroPage() {
     });
 
     function onWheel(e) {
-        e.preventDefault();
         if (lock) return;
 
+        const activeSection = getActiveSection();
         const delta = e.deltaY;
         if (Math.abs(delta) < 10) return;
-        if (delta > 0) go(idx + 1);
-        else go(idx - 1);
+
+        if (delta > 0) {
+            if (canScrollDown(activeSection)) return;
+            e.preventDefault();
+            go(idx + 1);
+            return;
+        }
+
+        if (canScrollUp(activeSection)) return;
+        e.preventDefault();
+        go(idx - 1);
     }
 
     window.addEventListener("wheel", onWheel, { passive: false });
 
     let startY = null;
+    let startX = null;
     window.addEventListener(
         "touchstart",
         (e) => {
             if (!e.touches || !e.touches.length) return;
             startY = e.touches[0].clientY;
+            startX = e.touches[0].clientX;
         },
         { passive: true }
     );
 
-    // 모바일에서 문서 자체 스크롤을 막고 섹션 스와이프만 사용
+    // 모바일에서 섹션 내부 스크롤을 우선 허용하고, 경계에서만 섹션 전환
     wrap.addEventListener(
         "touchmove",
         (e) => {
+            if (startY === null || !e.touches || !e.touches.length) return;
+
+            const touch = e.touches[0];
+            const diffY = startY - touch.clientY;
+            const diffX = startX === null ? 0 : startX - touch.clientX;
+
+            // 가로 스와이프는 무시
+            if (Math.abs(diffX) > Math.abs(diffY)) return;
+
+            const activeSection = getActiveSection();
+            if (!activeSection) return;
+
+            // 위로 스와이프(다음 섹션 방향)인데 아직 내부 내용이 남아 있으면 스크롤 허용
+            if (diffY > 0 && canScrollDown(activeSection)) return;
+
+            // 아래로 스와이프(이전 섹션 방향)인데 아직 위 내용이 남아 있으면 스크롤 허용
+            if (diffY < 0 && canScrollUp(activeSection)) return;
+
+            // 경계에서만 기본 동작 차단해 탄성 스크롤을 줄이고 섹션 전환 감각 유지
             e.preventDefault();
         },
         { passive: false }
@@ -93,11 +143,20 @@ function initIntroPage() {
             const endY = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : startY;
             const diff = startY - endY;
             startY = null;
+            startX = null;
 
             if (lock) return;
             if (Math.abs(diff) < 40) return;
-            if (diff > 0) go(idx + 1);
-            else go(idx - 1);
+
+            const activeSection = getActiveSection();
+            if (diff > 0) {
+                if (canScrollDown(activeSection)) return;
+                go(idx + 1);
+                return;
+            }
+
+            if (canScrollUp(activeSection)) return;
+            go(idx - 1);
         },
         { passive: true }
     );
@@ -208,6 +267,10 @@ function initIntroPage() {
     }
 
     updateParallax();
+
+    window.addEventListener("resize", setViewportHeightVar, { passive: true });
+    window.addEventListener("orientationchange", setViewportHeightVar, { passive: true });
+    window.addEventListener("pageshow", setViewportHeightVar, { passive: true });
 }
 
 if (document.readyState === "loading") {
