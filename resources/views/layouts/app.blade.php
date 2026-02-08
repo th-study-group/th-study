@@ -8,8 +8,8 @@
         <meta name="description" content="{{ config('app.name') }}은 성장하는 개발자가 기록과 실험을 통해 실력을 확장하고, 서비스 운영과 수익화를 경험하는 개발자 성장 플랫폼입니다.">
         <meta property="og:title" content="{{ config('app.name') }} 개발자 성장 플랫폼">
         <meta property="og:description" content="개발자의 기록, 실험, 운영, 수익화를 기반으로 성장하는 플랫폼">
-        <meta property="og:image" content="{{ asset('images/og/001.png') }}">
-        <meta property="og:type" content="website">
+        <meta property="og:image" content="https://nonunanimously-unestimable-damian.ngrok-free.dev/images/og/001.png">
+        <meta property="og:type" content="{{ config('app.name') }}">
 
         {{-- Favicon :: WEB --}}
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon/th_favicon_16.png') }}">
