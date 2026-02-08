@@ -76,6 +76,15 @@ function initIntroPage() {
         { passive: true }
     );
 
+    // 모바일에서 문서 자체 스크롤을 막고 섹션 스와이프만 사용
+    wrap.addEventListener(
+        "touchmove",
+        (e) => {
+            e.preventDefault();
+        },
+        { passive: false }
+    );
+
     window.addEventListener(
         "touchend",
         (e) => {

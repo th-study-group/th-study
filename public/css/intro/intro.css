@@ -32,6 +32,8 @@ body:has(.intro-page) > .container-fluid > .row > *{
 }
 body.intro-mode{
     background:var(--bg);
+    overflow:hidden;
+    height:100dvh;
 }
 body.intro-mode > .container-fluid{
     padding-top:0 !important;
