@@ -5,6 +5,7 @@ namespace App\Http\Requests\Comments;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class UpdateCommentRequest extends FormRequest
 {
@@ -19,6 +20,13 @@ class UpdateCommentRequest extends FormRequest
 
     protected function failedValidation(Validator $validator): void
     {
+        Log::info('[Comment][Update] validation failed', [
+            'ip' => $this->ip(),
+            'user_idx' => $this->user()?->idx,
+            'comment_idx' => $this->route('idx'),
+            'errors' => $validator->errors()->toArray(),
+        ]);
+
         throw new HttpResponseException(
             redirect()
                 ->back()
