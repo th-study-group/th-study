@@ -132,3 +132,10 @@ footer {
 .global-back-to-top:hover {
     background: rgba(15, 23, 42, 0.96);
 }
+
+/* Prevent iOS/Safari auto-detected links (email/phone/address) from forced underline/color */
+a[x-apple-data-detectors],
+a[href^="x-apple-data-detectors://"] {
+    color: inherit !important;
+    text-decoration: none !important;
+}
