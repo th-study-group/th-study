@@ -150,10 +150,15 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    cursor: grab;
 }
 
 .board-table-wrap::-webkit-scrollbar {
     height: 0;
+}
+
+.board-table-wrap.is-dragging {
+    cursor: grabbing;
 }
 
 .board-table {

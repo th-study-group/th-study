@@ -1,5 +1,6 @@
 $(function () {
     initGlobalBackToTop();
+    initDragHorizontalScroll();
 
     $(document).on("contextmenu", function (e) {
         e.preventDefault();
@@ -150,5 +151,83 @@ function initGlobalBackToTop()
 
     btn.addEventListener('click', function () {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+function initDragHorizontalScroll()
+{
+    const wrappers = document.querySelectorAll('.board-table-wrap');
+    if (!wrappers.length) {
+        return;
+    }
+
+    wrappers.forEach(function (el) {
+        let isPointerDown = false;
+        let isDragging = false;
+        let startX = 0;
+        let startScrollLeft = 0;
+
+        el.addEventListener('pointerdown', function (e) {
+            if (e.button !== 0) {
+                return;
+            }
+
+            if (el.scrollWidth <= el.clientWidth) {
+                return;
+            }
+
+            if (e.target.closest('a, button, input, select, textarea, label')) {
+                return;
+            }
+
+            isPointerDown = true;
+            isDragging = false;
+            startX = e.clientX;
+            startScrollLeft = el.scrollLeft;
+            el.classList.add('is-dragging');
+        });
+
+        el.addEventListener('pointermove', function (e) {
+            if (!isPointerDown) {
+                return;
+            }
+
+            const diffX = e.clientX - startX;
+            if (!isDragging && Math.abs(diffX) > 5) {
+                isDragging = true;
+            }
+
+            if (!isDragging) {
+                return;
+            }
+
+            el.scrollLeft = startScrollLeft - diffX;
+            e.preventDefault();
+        });
+
+        function stopDragging() {
+            if (!isPointerDown) {
+                return;
+            }
+
+            isPointerDown = false;
+            el.classList.remove('is-dragging');
+
+            if (isDragging) {
+                el.dataset.dragSuppressClickUntil = String(Date.now() + 150);
+            }
+        }
+
+        el.addEventListener('pointerup', stopDragging);
+        el.addEventListener('pointercancel', stopDragging);
+        el.addEventListener('pointerleave', stopDragging);
+
+        el.addEventListener('click', function (e) {
+            const suppressUntil = Number(el.dataset.dragSuppressClickUntil || 0);
+            if (suppressUntil > Date.now()) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
     });
 }
