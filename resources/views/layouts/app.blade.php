@@ -3,6 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        {{-- 아이폰 주소, 날짜, 이메일 등 밑줄 방지 --}}
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
 
         {{-- og image --}}
