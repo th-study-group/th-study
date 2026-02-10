@@ -24,8 +24,6 @@ class LocalOnly
             abort(404);
         }
 
-        Log::debug("ㅇㄹㅇㄹㄴㄹㄹ = " . app()->isLocal());
-
 		$allowedIps = [
 			'127.0.0.1', // 로컬
 			'::1',// 로컬 IPv6
@@ -33,6 +31,7 @@ class LocalOnly
 			'192.168.1.*',
 			'10.0.*',
 			'172.*',
+            '175.212.252.27',
         ];
 
 		$ip = $request->ip();
