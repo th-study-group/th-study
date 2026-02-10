@@ -39,7 +39,7 @@ class UpdateUserRequest extends FormRequest
                 'required',
                 'regex:/^(010\\d{8}|01[16789]\\d{7})$/',
             ],
-            'address' => ['nullable', 'string', 'max:30'],
+            'address' => ['nullable', 'string', 'max:80'],
             'personal_info_agree' => ['required', 'string', 'in:Y'],
             'marketing_info_agree' => ['nullable', 'string', 'in:Y,N'],
         ];
