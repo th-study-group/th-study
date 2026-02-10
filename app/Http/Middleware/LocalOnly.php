@@ -16,7 +16,6 @@ class LocalOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        /*
 		if (!app()->environment('local')) {
 			abort(404);
         }
@@ -24,7 +23,6 @@ class LocalOnly
         if (!app()->isLocal()) {
             abort(404);
         }
-        */
 
 		$allowedIps = [
 			'127.0.0.1', // 로컬
@@ -33,7 +31,6 @@ class LocalOnly
 			'192.168.1.*',
 			'10.0.*',
 			'172.*',
-            '175.212.252.27',
         ];
 
 		$ip = $request->ip();
