@@ -19,7 +19,7 @@
                           <span class="kicker mb-3">Developer Growth Platform</span>
                           <h1 class="display-5 fw-black mb-3 grad-title">{{ config('app.name') }}</h1>
                           <p class="lead mb-4 muted">
-                              성장하는 개발자가 장인정신을 지닌 리더로 나아가는 과정을 기록하고 확장하는 개발자 성장 플랫폼.
+                              ㅇㄹㅇㄹㅇ성장하는 개발자가 장인정신을 지닌 리더로 나아가는 과정을 기록하고 확장하는 개발자 성장 플랫폼.
                           </p>
 
                           <div class="d-flex flex-wrap gap-2 mb-4">
