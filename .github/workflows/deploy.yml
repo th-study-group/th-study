@@ -1,0 +1,49 @@
+name: th-study Laravel
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          script: |
+            set -e
+            cd ${{ secrets.DEPLOY_PATH }}
+            
+            echo "==== Git Pull ===="
+            git fetch --all
+            git reset --hard origin/main
+
+            echo "==== Composer Install ===="
+            composer install --no-dev --optimize-autoloader
+
+            echo "==== Laravel Optimize ===="
+            php artisan config:cache
+            php artisan route:cache || true
+            php artisan view:cache || true
+
+            echo "==== DB Migrate ===="
+            php artisan migrate --force
+
+            echo "==== Permission Fix ===="
+            chown -R ${{ secrets.DEPLOY_USER }}:www-data storage bootstrap/cache || true
+            chmod -R 775 storage bootstrap/cache || true
+
+            echo "==== Restart Services ===="
+            sudo systemctl reload php8.2-fpm || true
+            sudo systemctl reload nginx || true
+
+            echo "==== Restart Queue ===="
+            php artisan queue:restart || true
+
+            echo "🚀 Deployment Done!"
