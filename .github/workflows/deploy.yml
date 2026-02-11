@@ -1,49 +1,45 @@
-name: th-study Laravel
+name: th-study Laravel (Self-hosted)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          script: |
-            set -e
-            cd ${{ secrets.DEPLOY_PATH }}
-            
-            echo "==== Git Pull ===="
-            git fetch --all
-            git reset --hard origin/main
+      - name: Deploy on server
+        shell: bash
+        run: |
+          set -e
+          cd /var/www/th-study
 
-            echo "==== Composer Install ===="
-            composer install --no-dev --optimize-autoloader
+          echo "==== Git Pull ===="
+          git fetch --all
+          git reset --hard origin/main
 
-            echo "==== Laravel Optimize ===="
-            php artisan config:cache
-            php artisan route:cache || true
-            php artisan view:cache || true
+          echo "==== Composer Install ===="
+          composer install --no-dev --optimize-autoloader
 
-            echo "==== DB Migrate ===="
-            php artisan migrate --force
+          echo "==== Laravel Optimize ===="
+          php artisan optimize:clear || true
+          php artisan config:cache
+          php artisan route:cache || true
+          php artisan view:cache || true
 
-            echo "==== Permission Fix ===="
-            chown -R ${{ secrets.DEPLOY_USER }}:www-data storage bootstrap/cache || true
-            chmod -R 775 storage bootstrap/cache || true
+          echo "==== DB Migrate ===="
+          php artisan migrate --force
 
-            echo "==== Restart Services ===="
-            sudo systemctl reload php8.2-fpm || true
-            sudo systemctl reload nginx || true
+          echo "==== Permission Fix ===="
+          sudo chown -R ubuntu:www-data storage bootstrap/cache || true
+          sudo chmod -R 775 storage bootstrap/cache || true
 
-            echo "==== Restart Queue ===="
-            php artisan queue:restart || true
+          echo "==== Restart Services ===="
+          sudo systemctl reload php8.2-fpm || true
+          sudo systemctl reload nginx || true
 
-            echo "🚀 Deployment Done!"
+          echo "==== Restart Queue ===="
+          php artisan queue:restart || true
+
+          echo "🚀 Deployment Done!"
