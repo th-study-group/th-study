@@ -21,3 +21,6 @@ yarn-error.log
 
 # 해당 프로젝트에서 메모 사용 (업로드금지)
 .dev_memo
+
+# 도커에서 사용하는 env 
+.env_docker

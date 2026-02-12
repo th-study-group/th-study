@@ -11,9 +11,16 @@
 |
 */
 
+
+
 $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
+
+// Docker 컨테이너에서만 APP_ENV=docker로 명확히 구분해서 .env_docker 사용
+if (getenv('APP_ENV') === 'docker') {
+    $app->loadEnvironmentFrom('.env_docker');
+}
 
 /*
 |--------------------------------------------------------------------------
