@@ -36,13 +36,3 @@ Route::group([], function() {
         ->name('terms')
         ->defaults('hideSide', true);
 });
-
-// 라라벨 테스트 라우팅
-// 나중에 로컬호스트 미들웨어 설정해야할것 
-Route::post('/send', [ChatController::class, 'send']);
-Route::view('/chat', 'chat');
-
-// TestController
-Route::prefix("tests")->name("test.")->group(function() {
-    Route::get("mail_queue", [TestController::class, 'mailQueue'])->name('mail_queue');
-});
