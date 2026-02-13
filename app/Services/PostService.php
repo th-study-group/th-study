@@ -62,6 +62,7 @@ class PostService
                 'post_type' => $post->post_type,
                 'status' => $post->status,
                 'use_flag' => $post->use_flag,
+                'ip' => $request->ip(),
             ]);
 
             return $post;
@@ -96,6 +97,7 @@ class PostService
             'user_idx' => $userIdx,
             'post_idx' => $post->idx,
             'post_type' => $post->post_type,
+            'ip' => $ip,
         ]);
 
         return $post;
@@ -134,6 +136,7 @@ class PostService
             'user_idx' => auth()->id(),
             'post_type' => $postType,
             'page' => $page,
+            'ip' => request()->ip(),
         ]);
 
         return $posts;
@@ -161,6 +164,7 @@ class PostService
             'user_idx' => auth()->id(),
             'post_type' => $postType,
             'page' => $page,
+            'ip' => request()->ip(),
         ]);
 
         return $posts;
@@ -198,6 +202,7 @@ class PostService
             'user_idx' => $userIdx,
             'post_idx' => $post->idx,
             'post_type' => $post->post_type,
+            'ip' => $ip,
         ]);
 
         return $post;
@@ -235,6 +240,7 @@ class PostService
                 'user_idx' => $userIdx,
                 'post_idx' => $post->idx,
                 'post_type' => $post->post_type,
+                'ip' => $payload['ip'] ?? '',
             ]);
 
             return $post;
@@ -276,6 +282,7 @@ class PostService
                 'user_idx' => $userIdx,
                 'post_idx' => $post->idx,
                 'post_type' => $post->post_type,
+                'ip' => $ip,
             ]);
         });
     }
@@ -313,6 +320,7 @@ class PostService
                 'post_idx' => $post->idx,
                 'post_type' => $post->post_type,
                 'use_flag' => $post->use_flag,
+                'ip' => $payload['ip'] ?? '',
             ]);
 
             return $post;

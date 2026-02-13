@@ -146,6 +146,7 @@ class UserService
         Log::info('[Admin][Member][List] 조회 완료', [
             'user_idx' => auth()->id(),
             'page' => $page,
+            'ip' => request()->ip(),
         ]);
 
         return $members;
@@ -181,6 +182,7 @@ class UserService
         Log::info('[Admin][Member][Update] 메모 수정 완료', [
             'user_idx' => $userIdx,
             'target_user_idx' => $user->idx,
+            'ip' => $payload['ip'] ?? request()->ip(),
         ]);
 
         return $user;
@@ -199,6 +201,7 @@ class UserService
                 Log::warning('User update failed', [
                     'action' => 'update',
                     'model' => 'User',
+                    'ip' => $payload['ip'] ?? request()->ip(),
                     'reason' => 'missing_payload',
                 ]);
 
@@ -271,6 +274,7 @@ class UserService
                 Log::warning('User withdrawal failed', [
                     'action' => 'withdraw',
                     'model' => 'User',
+                    'ip' => $payload['ip'] ?? request()->ip(),
                     'reason' => 'missing_payload',
                 ]);
 
@@ -352,6 +356,7 @@ class UserService
                 Log::warning('Password change request failed', [
                     'action' => 'password_change_request',
                     'model' => 'User',
+                    'ip' => $payload['ip'] ?? request()->ip(),
                     'reason' => 'missing_payload',
                 ]);
 

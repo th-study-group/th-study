@@ -101,6 +101,7 @@ class GuestPostService
             'user_idx' => auth()->id(),
             'post_type' => $postType,
             'page' => $page,
+            'ip' => request()->ip(),
         ]);
 
         return $posts;
@@ -140,6 +141,7 @@ class GuestPostService
             'guest_post_idx' => $updated->idx,
             'post_type' => $updated->post_type,
             'status' => $updated->status,
+            'ip' => request()->ip(),
         ]);
 
         return $updated;
@@ -165,6 +167,7 @@ class GuestPostService
             'user_idx' => $userIdx,
             'guest_post_idx' => $post->idx,
             'post_type' => $post->post_type,
+            'ip' => request()->ip(),
         ]);
     }
 }

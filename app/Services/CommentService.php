@@ -7,6 +7,7 @@ use App\Mail\InquiryAnsweredMail;
 use App\Models\Comment;
 use App\Repositories\CommentRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -27,7 +28,16 @@ class CommentService
      */
     public function getByPostIdx(int $postIdx, int $perPage = 20): LengthAwarePaginator
     {
-        return $this->commentRepository->getByPostIdx($postIdx, $perPage);
+        $comments = $this->commentRepository->getByPostIdx($postIdx, $perPage);
+
+        Log::info('[Comment][List] 조회 완료', [
+            'user_idx' => auth()->id(),
+            'post_idx' => $postIdx,
+            'per_page' => $perPage,
+            'ip' => request()->ip(),
+        ]);
+
+        return $comments;
     }
 
     /**
@@ -38,11 +48,20 @@ class CommentService
      */
     public function create(array $payload): Comment
     {
+        $ip = $payload['ip'] ?? request()->ip();
+
         $comment = $this->commentRepository->create([
             'user_idx' => $payload['user_idx'],
             'post_idx' => $payload['post_idx'],
             'content' => $payload['content'],
             'create_user_idx' => $payload['user_idx'],
+        ]);
+
+        Log::info('[Comment][Create] 등록 완료', [
+            'user_idx' => $payload['user_idx'],
+            'comment_idx' => $comment->idx,
+            'post_idx' => $comment->post_idx,
+            'ip' => $ip,
         ]);
 
         $this->notifyAdmins($comment);
@@ -58,7 +77,16 @@ class CommentService
      */
     public function getByIdx(int $idx): Comment
     {
-        return $this->commentRepository->findByIdx($idx);
+        $comment = $this->commentRepository->findByIdx($idx);
+
+        Log::info('[Comment][View] 조회 완료', [
+            'user_idx' => auth()->id(),
+            'comment_idx' => $comment->idx,
+            'post_idx' => $comment->post_idx,
+            'ip' => request()->ip(),
+        ]);
+
+        return $comment;
     }
 
     /**
@@ -70,10 +98,21 @@ class CommentService
      */
     public function update(Comment $comment, array $payload): Comment
     {
-        return $this->commentRepository->update($comment, [
+        $ip = $payload['ip'] ?? request()->ip();
+
+        $updatedComment = $this->commentRepository->update($comment, [
             'content' => $payload['content'],
             'update_user_idx' => $payload['update_user_idx'],
         ]);
+
+        Log::info('[Comment][Update] 수정 완료', [
+            'user_idx' => $payload['update_user_idx'],
+            'comment_idx' => $updatedComment->idx,
+            'post_idx' => $updatedComment->post_idx,
+            'ip' => $ip,
+        ]);
+
+        return $updatedComment;
     }
 
     /**
@@ -85,11 +124,20 @@ class CommentService
      */
     public function delete(Comment $comment, array $payload): void
     {
+        $ip = $payload['ip'] ?? request()->ip();
+
         $this->commentRepository->update($comment, [
             'delete_user_idx' => $payload['delete_user_idx'],
         ]);
 
         $comment->delete();
+
+        Log::info('[Comment][Delete] 삭제 완료', [
+            'user_idx' => $payload['delete_user_idx'],
+            'comment_idx' => $comment->idx,
+            'post_idx' => $comment->post_idx,
+            'ip' => $ip,
+        ]);
     }
 
     /**

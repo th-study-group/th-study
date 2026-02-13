@@ -81,6 +81,7 @@ class InquiryService
             'user_idx' => $userIdx,
             'post_type' => 'inquiries',
             'page' => $page,
+            'ip' => request()->ip(),
         ]);
 
         return $posts;
@@ -106,6 +107,7 @@ class InquiryService
             'user_idx' => auth()->id(),
             'post_type' => 'inquiries',
             'page' => $page,
+            'ip' => request()->ip(),
         ]);
 
         return $posts;
@@ -151,6 +153,7 @@ class InquiryService
             'user_idx' => $userIdx,
             'post_idx' => $post->idx,
             'post_type' => $post->post_type,
+            'ip' => $ip,
         ]);
 
         return $post;
@@ -188,6 +191,7 @@ class InquiryService
                 'user_idx' => $userIdx,
                 'post_idx' => $post->idx,
                 'post_type' => $post->post_type,
+                'ip' => $payload['ip'] ?? '',
             ]);
 
             return $post;
@@ -229,6 +233,7 @@ class InquiryService
                 'user_idx' => $userIdx,
                 'post_idx' => $post->idx,
                 'post_type' => $post->post_type,
+                'ip' => $ip,
             ]);
         });
     }
@@ -269,6 +274,7 @@ class InquiryService
                 'post_idx' => $post->idx,
                 'post_type' => $post->post_type,
                 'status' => $post->status,
+                'ip' => $ip,
             ]);
 
             return $post;

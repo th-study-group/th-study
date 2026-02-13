@@ -69,6 +69,7 @@ class ForgotPasswordController extends Controller
                 'model' => 'User',
                 'user_idx' => $user->idx,
                 'email' => $user->email,
+                'ip' => $request->ip(),
             ]);
 
             SendMailJob::dispatch(
@@ -85,6 +86,7 @@ class ForgotPasswordController extends Controller
                 'model' => 'User',
                 'user_idx' => $user->idx,
                 'email' => $user->email,
+                'ip' => $request->ip(),
                 'error' => $e->getMessage(),
             ]);
         }
