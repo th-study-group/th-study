@@ -61,7 +61,7 @@ services:
   node:
     image: node:20-alpine
     container_name: th-node
-    working_dir: /var/www
+    working_dir: /var/www/th-study
     environment:
       TZ: Asia/Seoul
     volumes:

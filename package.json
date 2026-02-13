@@ -1,4 +1,5 @@
 {
+    "name": "th-study",
     "private": true,
     "type": "module",
     "scripts": {
