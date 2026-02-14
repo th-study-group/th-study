@@ -246,20 +246,35 @@ npm run dev
 - 프로젝트 마운트 경로를 `/var/www`로 통일
 - nginx root는 `/var/www/public`
 
-5. 실행
+5. 처음 구성(최초 1회 또는 Dockerfile/compose 변경 시)
 ```bash
 docker compose down -v
 docker compose up -d --build
 docker compose ps
 ```
 
-6. 초기화
+6. 초기화(최초 1회)
 ```bash
 docker exec -it th-app php artisan key:generate --force
 docker exec -it th-app php artisan migrate
 ```
 
-7. 접속 포트(기본 예시)
+7. 평상시 시작/종료/재시작
+```bash
+# 시작
+docker compose up -d
+
+# 종료
+docker compose down
+
+# 재시작
+docker compose restart
+
+# 상태 확인
+docker compose ps
+```
+
+8. 접속 포트(기본 예시)
 - Web: `http://localhost:8080`
 - Vite: `http://localhost:5173`
 - MySQL: `127.0.0.1:3307`
