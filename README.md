@@ -288,6 +288,23 @@ docker compose ps
 
 ### 12.2 서버 기본 구성(운영/스테이징 공통 뼈대)
 
+운영 서버 기준:
+- AWS Lightsail (Ubuntu 22.04 LTS)
+- SSH Key 기반 접속
+
+접속 기본 명령(예시):
+```bash
+# 키 권한(최초 1회)
+chmod 400 /path/to/lightsail-key.pem
+
+# Lightsail 서버 접속
+ssh -i /path/to/lightsail-key.pem ubuntu@<LIGHTSAIL_STATIC_IP>
+```
+
+참고:
+- 실제 IP/키 파일명은 문서에 직접 기록하지 않고 로컬/사내 비공개 문서에서 관리합니다.
+- 운영 계정은 일반적으로 `ubuntu`를 사용합니다.
+
 권장 최소 흐름:
 
 1. Ubuntu LTS + 고정 IP + 22/80/443 오픈
@@ -408,6 +425,64 @@ php artisan queue:work --once
 복구 순서(요약):
 1. 최신 풀백업 복원
 2. 해당 시점 이후 binlog 순차 적용
+
+### 12.9 GitHub 조직관리 가이드
+
+프로젝트를 개인 저장소에서 조직(Organization) 기반으로 운영할 때의 최소 절차입니다.
+
+1. 조직 생성
+- GitHub 우상단 프로필 → `Your organizations` → `New organization` → `Free`
+- 예시 조직명: `th-study-group`
+
+2. 저장소를 조직으로 이전
+- 대상 저장소 → `Settings` → `Danger Zone` → `Transfer ownership`
+- 새 Owner를 조직명으로 지정
+
+3. 멤버 초대
+- 조직 페이지 → `People` → `Invite member`
+- 초대된 사용자는 메일/알림에서 `Join` 완료 필요
+
+4. 팀(Team) 구성(선택)
+- 조직 페이지 → `Teams` → `New team`
+- 예: Backend / Frontend / Ops
+- 팀 단위로 저장소 권한 부여
+
+5. 권한 기준(권장)
+- `Read`: 코드 조회/clone
+- `Write`: push/PR 작업
+- `Admin`: 저장소 설정 관리
+- `Owner`: 조직 전체 관리
+
+운영 권장:
+- 실서버 계정은 최소권한 원칙(가능하면 `Read`)
+- 저장소 설정 변경 권한은 소수 인원만 유지
+
+6. 서버 연동용 토큰(PAT) 발급
+- 경로: GitHub `Settings` → `Developer settings` → `Fine-grained tokens`
+- 권장 설정:
+  - Repository access: `Only select repositories` (대상 저장소만 선택)
+  - Permissions: `Contents: Read-only` (서버 pull만 필요 시)
+  - 필요 시에만 `Read and write` 부여
+
+중요:
+- `Contents` 권한이 없으면 clone/pull 실패(403)
+- 토큰은 생성 시 1회만 확인 가능하므로 즉시 안전한 곳에 보관
+
+7. 서버에서 저장소 접근 방식
+- HTTPS + PAT 또는 SSH Key 중 하나로 통일
+- 자동배포 환경(CI/CD)은 SSH 방식 또는 self-hosted runner 권장
+
+8. 브랜치 보호(권장)
+- 저장소 → `Settings` → `Branches` → `Add rule`
+- `main` 보호 예시:
+  - force push 금지
+  - PR 리뷰 후 머지
+  - 필요 시 status check 필수화
+
+9. 운영 보안 체크
+- PAT/SSH 개인키를 README, 코드, 스크립트에 직접 기록하지 않기
+- 배포 토큰 만료 주기 관리
+- 퇴사/권한 변경 시 즉시 토큰 폐기 및 팀 권한 정리
 
 ## 13. 운영 보안 가이드
 
