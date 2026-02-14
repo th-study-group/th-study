@@ -222,14 +222,151 @@ npm run dev
 - `mysql`
 - `node` (vite dev server)
 
-## 12. 운영 보안 가이드
+## 12. 인프라 구축 핵심 (개발환경 중심)
+
+아래는 인프라 문서에서 **개발환경 구축에 직접 필요한 내용만** 압축한 체크리스트입니다.
+
+### 12.1 로컬 Docker 개발환경
+
+목표: 로컬에서 `app + nginx + mysql + node + queue`를 분리 실행
+
+1. 준비
+- Docker Desktop 실행
+- `docker -v`, `docker compose version` 확인
+
+2. 환경 파일
+- `.env_docker` 사용
+- 핵심: `APP_ENV=docker`
+- DB는 컨테이너 서비스명 기준(`DB_HOST=mysql`)
+
+3. 부트스트랩 분기
+- `bootstrap/app.php`에서 Docker 환경일 때 `.env_docker` 로드하도록 구성
+
+4. 컨테이너 경로 규칙
+- 프로젝트 마운트 경로를 `/var/www`로 통일
+- nginx root는 `/var/www/public`
+
+5. 실행
+```bash
+docker compose down -v
+docker compose up -d --build
+docker compose ps
+```
+
+6. 초기화
+```bash
+docker exec -it th-app php artisan key:generate --force
+docker exec -it th-app php artisan migrate
+```
+
+7. 접속 포트(기본 예시)
+- Web: `http://localhost:8080`
+- Vite: `http://localhost:5173`
+- MySQL: `127.0.0.1:3307`
+
+### 12.2 서버 기본 구성(운영/스테이징 공통 뼈대)
+
+권장 최소 흐름:
+
+1. Ubuntu LTS + 고정 IP + 22/80/443 오픈
+2. Nginx, PHP-FPM(8.2 계열), MySQL(8 계열), Node/npm 설치
+3. 타임존 `Asia/Seoul` 통일
+4. 프로젝트 배포 디렉터리 고정(예: `/var/www/th-study`)
+5. Nginx 서버블록 + HTTPS(Let’s Encrypt) 적용
+6. Queue 워커 상시 실행(systemd 또는 Docker queue 서비스)
+
+### 12.3 메모리 안정화(소형 인스턴스 필수)
+
+소형 서버(특히 1~2GB)에서는 스왑 설정이 사실상 필수입니다.
+
+```bash
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+free -h
+```
+
+추가 권장:
+- PHP-FPM 워커 수를 서버 메모리에 맞게 제한
+- 로그 파일 주기 정리(디스크 급증 방지)
+
+### 12.4 CI/CD 핵심 (Self-hosted Runner 방식)
+
+이 프로젝트는 서버에서 직접 작업을 수행하는 self-hosted runner 방식이 적합합니다.
+
+핵심 흐름:
+
+1. 서버에 GitHub Actions runner 설치/서비스 등록
+2. 서버에서 GitHub 접근 가능한 SSH 인증키 구성
+3. 원격 저장소 URL을 SSH 방식으로 사용
+4. `main` push 시 배포 워크플로우 실행:
+   - 코드 동기화
+   - `composer install --no-dev`
+   - `php artisan optimize:*`
+   - `php artisan migrate --force`
+   - 웹서버 reload
+   - `php artisan queue:restart`
+
+주의:
+- 자동배포 스크립트에 민감정보 직접 하드코딩 금지
+- 실제 키/토큰/계정값은 반드시 환경변수 또는 서버 비밀 저장소로 관리
+
+### 12.5 DB 백업/복구 최소 운영안
+
+권장 구조:
+- 풀백업(일 1회)
+- 증분(binlog, 시간 단위)
+- 보관주기(예: 14일) 후 자동삭제
+
+핵심 원칙:
+- 백업 계정 분리
+- 백업 비밀번호는 별도 권한 파일로 관리
+- MySQL 원본 binlog를 수동 삭제하지 않기
+
+복구 기본:
+1. 최신 풀백업 복원
+2. 해당 시점 이후 binlog 순차 적용
+
+### 12.6 빠른 점검 명령어
+
+```bash
+docker compose ps
+php artisan about --only=environment,drivers
+php artisan migrate:status
+php artisan queue:work --once
+```
+
+이 4가지만으로도 로컬/서버 기본 동작 여부를 빠르게 확인할 수 있습니다.
+
+### 12.7 운영 경로 기준(최소 공유용)
+
+운영/복구 대응 속도를 위해 아래 경로는 README에 유지합니다.
+
+- 앱 루트: `/var/www/th-study`
+- Nginx 로그: `/var/log/nginx/access.log`, `/var/log/nginx/error.log`
+- Laravel 로그: `/var/www/th-study/storage/logs`
+- DB 풀백업: `/backup/mysql/full`
+- DB 증분백업(binlog): `/backup/binlog`
+
+백업 정책(예시):
+- 풀백업: 일 1회
+- 증분백업: 시간 단위
+- 보관주기: 14일
+
+복구 순서(요약):
+1. 최신 풀백업 복원
+2. 해당 시점 이후 binlog 순차 적용
+
+## 13. 운영 보안 가이드
 
 - `.env` 및 민감한 키/토큰/패스워드는 저장소에 커밋하지 않습니다.
 - README에는 실제 운영 계정, 실제 도메인 내부정보, 비밀키를 기록하지 않습니다.
 - 로컬 개발용 라우트(`_dev/*`)는 운영에서 노출되지 않도록 환경 정책을 유지합니다.
 - 메일/로그는 운영 추적용으로만 활용하고 개인정보 최소 수집 원칙을 지킵니다.
 
-## 13. 기능 확장 시 체크리스트
+## 14. 기능 확장 시 체크리스트
 
 기능 추가 시 아래 순서로 보면 소스 탐색이 빠릅니다.
 
@@ -243,16 +380,16 @@ npm run dev
 
 이 순서를 기준으로 보면 기능이 커져도 추적 경로가 안정적으로 유지됩니다.
 
-## 14. 홈/인트로 퍼블리싱 가이드
+## 15. 홈/인트로 퍼블리싱 가이드
 
 향후 퍼블리싱 업데이트 시 아래 기준을 유지하면 브랜드 일관성을 지키기 쉽습니다.
 
-### 14.1 페이지 역할 분리
+### 15.1 페이지 역할 분리
 
 - `home`: 서비스 핵심 요약, 신뢰 요소, CTA, 문의 전환
 - `intro`: 섹션 전환 기반 스토리텔링, 약력/철학/확장 방향 강조
 
-### 14.2 콘텐츠 구조 참고
+### 15.2 콘텐츠 구조 참고
 
 - `home` 주요 블록
   - Hero(브랜드 키메시지 + 주요 CTA)
@@ -267,7 +404,7 @@ npm run dev
   - 소개, 약력, 사회공헌, PHP, AI, 수익, 문의
   - 우측 Dot Navigation + 섹션별 이미지/태그/액션 버튼
 
-### 14.3 스타일 시스템 참고
+### 15.3 스타일 시스템 참고
 
 - `public/css/intro/home.css`
   - 다크 톤 그라디언트 배경 + 강조 색상(`--accent`, `--accent2`)
@@ -278,7 +415,7 @@ npm run dev
   - 태그/액션 버튼/리스트의 일관된 시각 규칙
   - 모바일/접근성(`prefers-reduced-motion`) 대응 포함
 
-### 14.4 인터랙션 구현 참고
+### 15.4 인터랙션 구현 참고
 
 - `public/js/intro/home.js`
   - 앵커 스무스 스크롤
@@ -289,7 +426,7 @@ npm run dev
   - 이미지/배경 패럴랙스
   - 내장 SVG 아이콘 동적 주입
 
-### 14.5 브랜드 이미지/자산 운영 가이드
+### 15.5 브랜드 이미지/자산 운영 가이드
 
 - 홈 핵심 이미지: `public/images/main_logo.png`, `public/images/extension_logo.png`, `public/images/intro_project_img.jpg`
 - 소개 섹션 이미지: `public/images/intro/*.avif`
@@ -299,6 +436,6 @@ npm run dev
   - 섹션 삭제/추가 시 `home.js`, `intro.js`의 앵커/네비게이션 동작 동시 점검
   - 문구는 "성장 + 확장 + 운영" 3축을 유지
 
-## 15. 마무리 한 줄
+## 16. 마무리 한 줄
 
 티에이치스터디그룹은 하나의 사이트가 아니라, 개발자로서의 성장 과정을 담는 플랫폼이다.
