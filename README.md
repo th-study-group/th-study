@@ -205,11 +205,18 @@ php artisan serve
 php artisan queue:work
 ```
 
-프론트 자산 개발:
+프론트 자산(개발):
 
 ```bash
 npm install
 npm run dev
+```
+
+프론트 자산(운영 배포용 빌드):
+
+```bash
+npm install
+npm run build
 ```
 
 ## 11. Docker 실행 개요
@@ -290,7 +297,35 @@ docker compose ps
 5. Nginx 서버블록 + HTTPS(Let’s Encrypt) 적용
 6. Queue 워커 상시 실행(systemd 또는 Docker queue 서비스)
 
-### 12.3 메모리 안정화(소형 인스턴스 필수)
+프론트 자산 모드 구분:
+- 개발: `npm run dev` (HMR/개발용)
+- 운영: `npm run build` (정적 빌드 결과 배포)
+
+### 12.3 SSL(운영 필수)
+
+운영 서버는 HTTPS를 기본으로 사용합니다.
+
+1. Certbot 설치
+```bash
+sudo apt update
+sudo apt install -y certbot python3-certbot-nginx
+```
+
+2. 인증서 발급 + Nginx 자동 설정
+```bash
+sudo certbot --nginx -d example.com -d www.example.com
+```
+
+3. 자동 갱신 점검
+```bash
+sudo certbot renew --dry-run
+```
+
+참고:
+- 도메인 A 레코드가 서버 고정 IP를 가리켜야 발급됩니다.
+- 운영 시 80/443 포트가 열려 있어야 합니다.
+
+### 12.4 메모리 안정화(소형 인스턴스 필수)
 
 소형 서버(특히 1~2GB)에서는 스왑 설정이 사실상 필수입니다.
 
@@ -307,7 +342,7 @@ free -h
 - PHP-FPM 워커 수를 서버 메모리에 맞게 제한
 - 로그 파일 주기 정리(디스크 급증 방지)
 
-### 12.4 CI/CD 핵심 (Self-hosted Runner 방식)
+### 12.5 CI/CD 핵심 (Self-hosted Runner 방식)
 
 이 프로젝트는 서버에서 직접 작업을 수행하는 self-hosted runner 방식이 적합합니다.
 
@@ -328,7 +363,7 @@ free -h
 - 자동배포 스크립트에 민감정보 직접 하드코딩 금지
 - 실제 키/토큰/계정값은 반드시 환경변수 또는 서버 비밀 저장소로 관리
 
-### 12.5 DB 백업/복구 최소 운영안
+### 12.6 DB 백업/복구 최소 운영안
 
 권장 구조:
 - 풀백업(일 1회)
@@ -344,7 +379,7 @@ free -h
 1. 최신 풀백업 복원
 2. 해당 시점 이후 binlog 순차 적용
 
-### 12.6 빠른 점검 명령어
+### 12.7 빠른 점검 명령어
 
 ```bash
 docker compose ps
@@ -355,7 +390,7 @@ php artisan queue:work --once
 
 이 4가지만으로도 로컬/서버 기본 동작 여부를 빠르게 확인할 수 있습니다.
 
-### 12.7 운영 경로 기준(최소 공유용)
+### 12.8 운영 경로 기준(최소 공유용)
 
 운영/복구 대응 속도를 위해 아래 경로는 README에 유지합니다.
 
