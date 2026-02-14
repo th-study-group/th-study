@@ -38,6 +38,24 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Realtime(실험): Pusher + Laravel Echo
 - Infra: Docker(app, queue, nginx, mysql, node), self-hosted deploy
 
+### 프론트 라이브러리 구성(`app.blade.php` 기준)
+
+로딩 기준 파일:
+- `resources/views/layouts/app.blade.php`
+- `resources/views/partials/head-styles.blade.php`
+- `resources/views/partials/head-scripts.blade.php`
+
+사용 중인 라이브러리:
+- UI Framework: Bootstrap 5 (`public/css/bootstrap.min.css`, `public/js/bootstrap.bundle.min.js`)
+- DOM/이벤트: jQuery 3.7.1 (`public/js/jquery-3.7.1.min.js`)
+- Date Picker: Flatpickr (CDN)
+- Icon: Bootstrap Icons (CDN)
+- Tech Icon: Devicon (CDN)
+
+외부 에셋/아이콘 출처:
+- Unsplash: `https://unsplash.com/ko`
+- Devicon: `https://devicon.dev/`
+
 ## 3. 디렉터리 빠른 가이드
 
 ```text
@@ -555,6 +573,7 @@ php artisan queue:work --once
 
 - 홈 핵심 이미지: `public/images/main_logo.png`, `public/images/extension_logo.png`, `public/images/intro_project_img.jpg`
 - 소개 섹션 이미지: `public/images/intro/*.avif`
+- 외부 소스 참고: Unsplash(`https://unsplash.com/ko`), Devicon(`https://devicon.dev/`)
 - 업데이트 권장 방식
   - 새 이미지 추가 시 기존 명명 규칙(`intro/001.avif` 형태) 유지
   - 텍스트 변경 시 슬로건/키워드/CTA를 함께 조정
