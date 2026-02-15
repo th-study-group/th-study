@@ -1,0 +1,74 @@
+:root{ --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --hero1:#020617; --hero2:#0f172a; --accent:#3b82f6; --card:rgba(255,255,255,.08); --cardLine:rgba(255,255,255,.14);}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);background:#fff;}
+.portfolio-page{margin:0;padding:0;width:100vw;max-width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);}
+body:has(.portfolio-page) > .container-fluid{padding-top:0 !important;padding-bottom:0 !important;}
+body:has(.portfolio-page) > .container-fluid > .row{--bs-gutter-x:0;--bs-gutter-y:0;margin:0 !important;}
+body:has(.portfolio-page) > .container-fluid > .row > *{padding-left:0 !important;padding-right:0 !important;margin-top:0 !important;}
+.hero{background:radial-gradient(1200px 600px at 15% 15%, rgba(59,130,246,.28), transparent 60%),radial-gradient(900px 500px at 85% 30%, rgba(99,102,241,.22), transparent 55%),linear-gradient(180deg, var(--hero1), var(--hero2));color:#fff;}
+.hero-title{font-size:clamp(1.72rem, 1.9vw + .95rem, 3rem);line-height:1.2;letter-spacing:-.02em;max-width:18ch;}
+.hero-sub{max-width:46ch;}
+.hero-kicker{font-size:clamp(1.18rem, .6vw + 1rem, 1.55rem) !important;}
+.hero-sub{font-size:clamp(1.02rem, .42vw + .9rem, 1.3rem) !important;line-height:1.6;}
+.pill{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--cardLine);background:rgba(255,255,255,.06);padding:.45rem .85rem;border-radius:999px;color:rgba(255,255,255,.82);backdrop-filter: blur(10px);font-size:.92rem;}
+.accent{color:var(--accent);}
+.hero-card{border:1px solid var(--cardLine);background:var(--card);border-radius:18px;box-shadow:0 12px 44px rgba(0,0,0,.35);backdrop-filter: blur(10px);}
+.icons i{font-size:28px;color:rgba(255,255,255,.86);}
+.section{padding:72px 0;}
+.h2x{font-weight:950;letter-spacing:-.02em;}
+.leadx{color:var(--muted);}
+.box{border:1px solid var(--line);background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(2,6,23,.06);}
+.box.pad{padding:24px;}
+.toc ul{list-style:none;padding:0;margin:0;}
+.toc li{display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px dashed #e2e8f0;}
+.toc li:last-child{border-bottom:none;}
+.toc a{text-decoration:none;color:var(--ink);font-weight:800;}
+.toc a:hover{color:var(--accent);}
+.toc-dots{flex:1;border-bottom:1px dotted #cbd5e1;transform: translateY(-2px);}
+.toc-desc{color:#64748b;font-size:.92rem;white-space:nowrap;}
+
+.codeblock{border-radius:14px;overflow:hidden;border:1px solid #11182722;background:#0b1220;margin:14px 0;}
+.codehdr{padding:10px 12px;color:rgba(255,255,255,.70);font-size:12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;}
+.copybtn{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.10);color:#fff;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;}
+.codeblock pre{padding:18px 18px 20px;color:#e5e7eb;font-size:14px;line-height:1.75;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;overflow:auto;white-space:pre;margin:0;tab-size: 2;}
+.table thead th{background:#f8fafc;}
+.callout{border-left:6px solid var(--accent);background:#eff6ff;border-radius:14px;padding:16px 18px;color:var(--ink);}
+.svg-wrap{border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px;}
+.svg-flow{width:100%;height:auto;}
+.readme{color:#1e293b;}
+.readme h1,.readme h2,.readme h3,.readme h4,.readme h5,.readme h6{font-weight:900 !important;letter-spacing:-.02em;line-height:1.28;margin:0 0 .72rem;}
+.readme > h1{font-family:"Trebuchet MS","Segoe UI","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:3rem !important;margin-top:.2rem;color:#0b3a6e;}
+.readme h2{font-size:2.05rem !important;margin-top:2.3rem;padding-bottom:.15rem;border-bottom:1px solid #e2e8f0;color:#0f355f;}
+.readme h3{font-size:1.5rem !important;margin-top:1.45rem;color:#17406b;}
+.readme h4{font-size:1.22rem !important;margin-top:1.1rem;}
+.readme h5,.readme h6{font-size:1.08rem !important;margin-top:.9rem;}
+.readme p{margin:10px 0;font-size:1.08rem;line-height:1.72;color:#334155;}
+.readme ul{margin:10px 0 14px 18px;}
+.readme ol{margin:10px 0 14px;padding-left:1.6rem;}
+.readme ol li{margin:.32rem 0;padding-left:.24rem;line-height:1.6;}
+.readme ol li::marker{font-size:.88em;font-weight:700;color:#64748b;}
+.readme-summary p{color:#334155;margin:0 0 10px;}
+.readme-summary ul{margin:0;padding-left:1.2rem;color:#334155;}
+.readme-summary li{margin:.35rem 0;line-height:1.55;}
+.readme-toggle{border:1px solid var(--line);border-radius:16px;padding:12px 14px;background:#fff;box-shadow:0 10px 30px rgba(2,6,23,.04);}
+.readme-toggle > summary{cursor:pointer;list-style:none;font-weight:900;color:#0f355f;display:flex;align-items:center;gap:.72rem;font-size:1.05rem;line-height:1.2;}
+.readme-toggle > summary::-webkit-details-marker{display:none;}
+.readme-toggle > summary::before{
+    content:"▶";
+    font-size:1.12rem;
+    font-weight:900;
+    color:#1d4ed8;
+    width:1.1rem;
+    text-align:center;
+    transition:transform .18s ease;
+    transform:translateY(-1px);
+}
+.readme-toggle[open] > summary::before{content:"▼";}
+blockquote{border-left:4px solid #cbd5e1;padding-left:12px;color:#334155;}
+@media (max-width: 768px){
+    .readme > h1{font-size:2.2rem !important;}
+    .readme h2{font-size:1.62rem !important;}
+    .readme h3{font-size:1.3rem !important;}
+    .readme p,.readme li{font-size:1rem;}
+}
+
+@media print{.no-print{display:none !important;}.section{padding:34px 0;}a{color:inherit;text-decoration:none;}.hero,.codeblock{-webkit-print-color-adjust:exact;print-color-adjust:exact;}.box{box-shadow:none;}}

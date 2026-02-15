@@ -27,6 +27,11 @@ Route::get('/intro', function () {
     return view('intro');
 })->name('intro')->defaults('hideSide', true);
 
+// 포트폴리오
+Route::get('/portfolio', function() {
+    return view('portfolio');
+})->name('portfolio')->defaults('hideSide', true);
+
 // sidebar 없는 정적 페이지들
 Route::group([], function() {
     Route::view('/privacy-policy', 'privacy')
