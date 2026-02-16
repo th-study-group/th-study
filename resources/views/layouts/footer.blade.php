@@ -9,7 +9,7 @@
                 <h6 class="text-white mb-2">{{ config('app.name') }}</h6>
                 <div class="text-white-50 small">
                 <div>관리자 : 이태희</div>
-                <div>이메일 : developerkimtakgu@gmail.com</div>
+                <div>이메일 : {{ config('mail.from.address') }}</div>
                 <div>주소 : 경기도 안산시 단원구 시화호수로 633 (반달섬)</div>
                 </div>
             </div>

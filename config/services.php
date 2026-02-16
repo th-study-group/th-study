@@ -36,4 +36,10 @@ return [
         'map_lat' => env_default('SITE_MAP_LAT', 37.055779),
         'map_lng' => env_default('SITE_MAP_LNG', 129.4282108),
     ],
+
+    'webpush' => [
+        'vapid_public_key' => env('VAPID_PUBLIC_KEY'),   // 공개키
+        'vapid_private_key' => env('VAPID_PRIVATE_KEY'), // 개인키
+        'vapid_subject' => 'mailto:' . env('APP_ADMIN_EMAIL'), // 이메일
+    ],
 ];

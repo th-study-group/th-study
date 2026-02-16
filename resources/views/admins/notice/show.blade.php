@@ -15,11 +15,11 @@
             <div class="mt-3">
                 <div class="mb-3">
                     <span class="form-label small text-secondary d-block mb-1">제목</span>
-                    <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">{{ $post->title }}</div>
+                    <div class="board-field bg-light rounded-3 px-3 py-2">{{ $post->title }}</div>
                 </div>
                 <div class="mb-3">
                     <span class="form-label small text-secondary d-block mb-1">작성자</span>
-                    <div class="board-field board-ellipsis bg-light rounded-3 px-3 py-2">{{ $post->user?->nick_name ?? '-' }}</div>
+                    <div class="board-field bg-light rounded-3 px-3 py-2">{{ $post->user?->nick_name ?? '-' }}</div>
                 </div>
                 <div class="mb-3">
                     <span class="form-label small text-secondary d-block mb-1">내용</span>

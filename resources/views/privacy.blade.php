@@ -49,7 +49,7 @@
                 <strong>개인정보 보호 책임자</strong>
                 <ul class="mb-0">
                 <li>관리자: 이태희</li>
-                <li>이메일: developerkimtakgu@gmail.com</li>
+                <li>이메일: {{ config('mail.from.address') }}</li>
                 </ul>
             </li>
             <li class="mb-0">
