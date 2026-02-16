@@ -1,11 +1,12 @@
 {
-    "name": "티에이치스터디그룹",
+    "name": "티에이치스터디",
     "short_name": "TH",
-    "description": "개발자 성장 플랫폼 · 티에이치스터디그룹",
+    "description": "개발자 성장 플랫폼 · 티에이치스터디",
     "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#6200EA",
-    "theme_color": "#6200EA",
+    "background_color": "#0f172a",
+    "theme_color": "#0f172a",
     "icons": [
       {
         "src": "/images/favicon/th_favicon_and_192.png",

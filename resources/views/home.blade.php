@@ -10,7 +10,7 @@
 @endpush
 
 @section('content')
-<main class="col-12">
+<main class="col-12 p-0 home-page">
     <div class="home-landing">
         <header id="top" class="section-pad">
             <div class="container reveal">

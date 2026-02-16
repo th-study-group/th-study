@@ -2,6 +2,15 @@ body{
     background: #0b1220;
 }
 
+.home-page{
+    margin: 0;
+    padding: 0;
+}
+
+body:has(.home-page) > .container-fluid{
+    padding-top: 0 !important;
+}
+
 .home-landing{
     --bg: #0c1220;
     --bg2: #0f172a;
@@ -24,10 +33,20 @@ body{
     margin-left: -1rem;
     margin-right: -1rem;
 }
+
+.home-landing .container{
+    padding-left: clamp(16px, 4vw, 28px);
+    padding-right: clamp(16px, 4vw, 28px);
+}
 @media (min-width: 992px){
     .home-landing{
         margin-left: -1.5rem;
         margin-right: -1.5rem;
+    }
+
+    .home-landing .container{
+        padding-left: 24px;
+        padding-right: 24px;
     }
 }
 

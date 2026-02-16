@@ -23,7 +23,7 @@
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon/th_favicon_ios_108.png') }}">
 
         {{-- Favicon :: Android / PWA Icons --}}
-        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/favicon/th_favicon_and_256.png') }}">
+        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/favicon/th_favicon_and_192.png') }}">
         <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/favicon/th_favicon_and_512.png') }}">
 
         {{-- PWA --}}
@@ -69,7 +69,26 @@
         {{-- 레이아웃 풋터 --}}
         @include('layouts.footer')
 
+        {{-- 최상단 버튼 --}}
         @include('layouts.back-to-top')
+
+        {{-- PWA 스플래시 --}}
+        @include('layouts.splash')
+
+        {{-- service-worker.js 등록 --}}
+        <script>
+            if ("serviceWorker" in navigator) { // 지원 브라우저 체크
+            window.addEventListener("load", function () {
+                navigator.serviceWorker.register("/service-worker.js")
+                .then(function (reg) {
+                    console.log("SW 등록 성공:", reg.scope); // 확인용
+                })
+                .catch(function (err) {
+                    console.log("SW 등록 실패:", err);
+                });
+            });
+            }
+        </script>
         
         {{-- 스크립트 단일 페이지 --}}
         @yield('script')
