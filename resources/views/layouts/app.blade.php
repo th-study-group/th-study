@@ -7,6 +7,10 @@
         {{-- 아이폰 주소, 날짜, 이메일 등 밑줄 방지 --}}
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
 
+        {{-- PWA 설정 --}}
+        <meta name="apple-mobile-web-app-capable" content="yes"> {{-- iOS standalone --}}
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> {{-- 상태바 --}}
+
         {{-- og image --}}
         <meta name="description" content="{{ config('app.name') }}은 성장하는 개발자가 기록과 실험을 통해 실력을 확장하고, 서비스 운영과 수익화를 경험하는 개발자 성장 플랫폼입니다.">
         <meta property="og:title" content="{{ config('app.name') }} 개발자 성장 플랫폼">
@@ -20,7 +24,7 @@
         <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('images/favicon/th_favicon_48.png') }}">
 
         {{-- Favicon :: Apple Touch --}}
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon/th_favicon_ios_108.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon/th_favicon_ios_180.png') }}">
 
         {{-- Favicon :: Android / PWA Icons --}}
         <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/favicon/th_favicon_and_192.png') }}">
