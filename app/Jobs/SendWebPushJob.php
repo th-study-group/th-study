@@ -53,6 +53,7 @@ class SendWebPushJob implements ShouldQueue
             $queued = 0;
             $failed = 0;
             $messageRows = [];
+            $clickTokenByEndpoint = [];
 
             foreach ($subscriptions as $subscriptionRow) {
                 $clickToken = Str::random(64);
@@ -69,6 +70,7 @@ class SendWebPushJob implements ShouldQueue
                     'send_datetime' => now(),
                     'click_datetime' => null,
                 ];
+                $clickTokenByEndpoint[$subscriptionRow->endpoint] = $clickToken;
 
                 $payload = json_encode([
                     'title' => $this->title,
@@ -94,16 +96,41 @@ class SendWebPushJob implements ShouldQueue
             $webPushMessageRepository->insertMany($messageRows);
 
             foreach ($client->flush() as $report) {
-                if ($report->isSuccess()) {
+                $endpoint = (string) $report->getRequest()->getUri();
+                $clickToken = $clickTokenByEndpoint[$endpoint] ?? null;
+                if (!$clickToken) {
                     continue;
                 }
 
-                $endpoint = (string) $report->getRequest()->getUri();
+                if ($report->isSuccess()) {
+                    $webPushMessageRepository->updateSendResultByClickToken(
+                        clickToken: $clickToken,
+                        successFlag: 1,
+                        sendErrorMessage: null
+                    );
+                    continue;
+                }
+
+                $responseCode = null;
+                if (method_exists($report, 'getResponse') && $report->getResponse()) {
+                    $responseCode = $report->getResponse()->getStatusCode();
+                }
+
+                $responseMsg = method_exists($report, 'getReason') ? (string) $report->getReason() : 'send_failed';
+                $webPushMessageRepository->updateSendResultByClickToken(
+                    clickToken: $clickToken,
+                    successFlag: 0,
+                    sendErrorMessage: [
+                        'response_code' => $responseCode,
+                        'response_msg' => $responseMsg,
+                    ]
+                );
+
                 Log::warning('[Push][Send][Job] 전송 실패', [
                     'target_user_idx' => $this->userId,
                     'request_user_idx' => $this->requestUserIdx,
                     'endpoint' => $endpoint,
-                    'reason' => method_exists($report, 'getReason') ? $report->getReason() : null,
+                    'reason' => $responseMsg,
                     'ip' => $this->requestIp,
                 ]);
                 $webPushSubScriptionRepository->deleteByEndpoint($endpoint);

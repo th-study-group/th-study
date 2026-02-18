@@ -22,6 +22,8 @@ class WebPushMessage extends Model
         //'endpoint',
         //'click_token',
         //'target_url',
+        //'success_flag',
+        //'send_error_message',
         //'table_name',
         //'user_agent',
         //'send_datetime',
@@ -30,5 +32,7 @@ class WebPushMessage extends Model
     protected $casts = [
         'send_datetime' => 'datetime',
         'click_datetime' => 'datetime',
+        'success_flag' => 'integer',
+        'send_error_message' => 'array',
     ];
 }

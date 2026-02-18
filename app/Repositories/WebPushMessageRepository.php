@@ -40,6 +40,29 @@ class WebPushMessageRepository
     }
 
     /**
+     * 클릭 토큰 기준 전송 결과 업데이트
+     *
+     * @param string $clickToken
+     * @param int|null $successFlag
+     * @param array|null $sendErrorMessage
+     * @return int
+     */
+    public function updateSendResultByClickToken(
+        string $clickToken,
+        ?int $successFlag,
+        ?array $sendErrorMessage = null
+    ): int {
+        $encodedErrorMessage = $sendErrorMessage === null
+            ? null
+            : json_encode($sendErrorMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        return WebPushMessage::where('click_token', $clickToken)->update([
+            'success_flag' => $successFlag,
+            'send_error_message' => $encodedErrorMessage,
+        ]);
+    }
+
+    /**
      * 클릭 토큰으로 조회
      *
      * @param string $clickToken
