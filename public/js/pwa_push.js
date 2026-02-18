@@ -2,6 +2,7 @@ $(function () {
     autoSyncOnLogin();
     bindLogoutPushCleanup();
     bindFirstInteractionSubscribe();
+    debugPushEnvironmentByAlert();
 });
 
 function csrfToken() {
@@ -258,3 +259,35 @@ function bindLogoutPushCleanup() {
 }
 
 window.unsubscribeCurrentPush = unsubscribeCurrentPush;
+
+function debugPushEnvironmentByAlert() {
+    if (!window.IS_LOGGED_IN) {
+        return;
+    }
+
+    if (!('serviceWorker' in navigator)) {
+        alert('serviceWorker 미지원');
+        return;
+    }
+
+    var summary = [];
+    summary.push('isSecureContext: ' + String(window.isSecureContext));
+    summary.push('standalone(iOS): ' + String(window.navigator.standalone === true));
+    summary.push('display-mode standalone: ' + String(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches));
+    summary.push('Notification 지원: ' + String('Notification' in window));
+    summary.push('PushManager 지원: ' + String('PushManager' in window));
+    summary.push('permission: ' + (window.Notification ? Notification.permission : 'N/A'));
+
+    navigator.serviceWorker.getRegistrations()
+        .then(function (regs) {
+            summary.push('SW 등록 개수: ' + regs.length);
+            for (var i = 0; i < regs.length; i++) {
+                summary.push((i + 1) + ') scope: ' + regs[i].scope);
+            }
+            alert(summary.join('\n'));
+        })
+        .catch(function (err) {
+            summary.push('getRegistrations 실패: ' + (err && err.message ? err.message : err));
+            alert(summary.join('\n'));
+        });
+}
