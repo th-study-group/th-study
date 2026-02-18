@@ -16,7 +16,8 @@ use Illuminate\Support\Str;
 class CommentService
 {
     public function __construct(
-        private CommentRepository $commentRepository
+        private CommentRepository $commentRepository,
+        private PushService $pushService
     ) {}
 
     /**
@@ -171,19 +172,35 @@ class CommentService
         $titlePreview = Str::limit($post->title, 30, '...');
         $commentPreview = Str::limit($commentWithRelations->content, 80, '...');
         $subjectTitle = sprintf('%s에 답변이 등록되었습니다.', $titlePreview);
-        $bodyText = sprintf('%s에 답변 "%s"', $titlePreview, $commentPreview);
-        $link = route('inquiries.show', ['idx' => $post->idx]);
+        $pushTitle = sprintf("'%s' 문의를 확인해주세요.", $titlePreview);
+        $link = route('inquiries.show', ['idx' => $post->idx], true);
 
         SendMailJob::dispatch(
             $writer->email,
             new InquiryAnsweredMail(
                 subjectTitle: $subjectTitle,
-                bodyText: $bodyText,
+                bodyText: $commentPreview,
                 link: $link
             ),
             '문의답변알림',
             null,
             $writer->idx
         );
+
+        $pushResult = $this->pushService->sendToUser([
+            'user_id' => $writer->idx,
+            'title' => $pushTitle,
+            'body' => $commentPreview,
+            'target_url' => $link,
+            'table_name' => $commentWithRelations->getTable(),
+        ], request()->userAgent());
+
+        Log::info('[Comment][Push] 작성자 푸시 요청', [
+            'comment_idx' => $comment->idx,
+            'post_idx' => $post->idx,
+            'target_user_idx' => $writer->idx,
+            'result' => $pushResult,
+            'ip' => request()->ip(),
+        ]);
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admins\GuestPostController;
 use App\Http\Controllers\Admins\InquiryController;
 use App\Http\Controllers\Admins\MemberController;
 use App\Http\Controllers\Admins\PostController;
+use App\Http\Controllers\PushController;
 use Illuminate\Support\Facades\Route;
 
 // 회원라우팅 
@@ -55,4 +56,9 @@ Route::prefix("comments")->name("comments.")->group(function() {
     Route::post("/", [CommentController::class, 'store'])->name('store');
     Route::put("/{idx}", [CommentController::class, 'update'])->name('update');
     Route::delete("/{idx}", [CommentController::class, 'destroy'])->name('soft.delete');
+});
+
+// 웹 푸시 발송
+Route::middleware(['throttle:5,1'])->prefix('push')->group(function () {
+    Route::post('/send-to-user', [PushController::class, 'sendToUser'])->name('send.push'); // 발송(다중)
 });

@@ -76,7 +76,22 @@
                     return;
                 }
 
-                $("#form_account_withdrawal").submit();
+                var proceed = function () {
+                    $("#form_account_withdrawal").submit();
+                };
+
+                if (typeof window.unsubscribeCurrentPush !== 'function') {
+                    proceed();
+                    return;
+                }
+
+                Promise.resolve(window.unsubscribeCurrentPush())
+                    .catch(function () {
+                        return false;
+                    })
+                    .finally(function () {
+                        proceed();
+                    });
             });
         });
     </script>

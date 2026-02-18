@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Users\LoginUserRequest;
+use App\Services\PushService;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,10 +13,12 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     private UserService $userService;
+    private PushService $pushService;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, PushService $pushService)
     {
         $this->userService = $userService;
+        $this->pushService = $pushService;
     }
 
     /**
@@ -51,7 +54,7 @@ class LoginController extends Controller
                 ->withInput();
         }
 
-        return to_route('dashboard');
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
@@ -61,6 +64,8 @@ class LoginController extends Controller
      */
     public function logout()
     {
+        $this->pushService->clearSubscriptionsByUserIdx(auth()->id());
+
         Auth::logout();
 
         request()->session()->invalidate();

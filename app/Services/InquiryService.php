@@ -20,7 +20,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class InquiryService
 {
     public function __construct(
-        private PostRepository $postRepository
+        private PostRepository $postRepository,
+        private PushService $pushService
     ) {}
 
     /**
@@ -301,7 +302,7 @@ class InquiryService
 
         $subjectTitle = Str::limit($post->title, 20, '...');
         $contentPreview = Str::limit($post->content, 80, '...');
-        $link = route('inquiries.show', ['idx' => $post->idx]);
+        $userMailInquiryLink = route('inquiries.show', ['idx' => $post->idx]);
 
         foreach ($admins as $admin) {
             SendMailJob::dispatch(
@@ -309,12 +310,35 @@ class InquiryService
                 new InquiryCreatedMail(
                     title: $subjectTitle,
                     content: $contentPreview,
-                    link: $link
+                    link: $userMailInquiryLink
                 ),
                 '문의등록알림',
                 null,
                 $admin->idx
             );
         }
+
+        $pushTitle = sprintf("'%s' 문의를 확인해주세요.", $subjectTitle);
+        $adminPushTargetUrl = route('admins.inquiries.show', [
+            'idx' => $post->idx
+        ], true);
+
+        $pushResult = $this->pushService->sendToUser([
+            'user_ids' => normalize_target_user_ids([
+                'user_ids' => $admins->pluck('idx')->all(),
+            ]),
+            'title' => $pushTitle,
+            'body' => $contentPreview,
+            'target_url' => $adminPushTargetUrl,
+            'table_name' => $post->getTable(),
+        ], request()->userAgent());
+
+        Log::info('[Inquiry][Push] 관리자 푸시 요청', [
+            'writer_idx' => $writerIdx,
+            'post_idx' => $post->idx,
+            'target_user_count' => $admins->count(),
+            'result' => $pushResult,
+            'ip' => request()->ip(),
+        ]);
     }
 }

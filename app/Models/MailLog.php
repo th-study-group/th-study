@@ -23,7 +23,7 @@ class MailLog extends Model
     ];
 
     protected $casts = [
-		'send_datetime' =>'datetime',
-		'receive_datetime' =>'datetime',
+      'send_datetime' => 'datetime',
+      'receive_datetime' => 'datetime',
     ];
 }

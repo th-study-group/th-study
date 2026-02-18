@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Users\UpdateUserRequest;
+use App\Services\PushService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -15,10 +16,12 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     private UserService $userService;
+    private PushService $pushService;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, PushService $pushService)
     {
         $this->userService = $userService;
+        $this->pushService = $pushService;
     }
 
     /* 수정 폼 
@@ -112,6 +115,7 @@ class UserController extends Controller
             'user_idx' => $request->user()->idx,
             'ip' => $request->ip(),
         ]);
+        $this->pushService->clearSubscriptionsByUserIdx($request->user()->idx);
 
         Auth::logout();
         $request->session()->invalidate();

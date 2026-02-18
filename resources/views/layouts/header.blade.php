@@ -98,7 +98,7 @@
 
             @auth
                 @if (auth()->user()?->email_verify_datetime)
-                <a class="btn btn-outline-light d-flex align-items-center auth-btn" href="{{ route('logout') }}">
+                <a class="btn btn-outline-light d-flex align-items-center auth-btn" href="{{ route('logout') }}" data-push-logout="1">
                     <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>로그아웃
                 </a>
                 @endif

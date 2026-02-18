@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\PushController;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,3 +42,7 @@ Route::group([], function() {
         ->name('terms')
         ->defaults('hideSide', true);
 });
+
+// 웹 푸시 발송 후 사용자 클릭 추적
+Route::get('/push/open/{token}', [PushController::class, 'open'])
+  ->middleware(['throttle:120,1']); // 클릭추적

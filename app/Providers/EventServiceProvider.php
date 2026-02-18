@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Events\MailSentEvent;
+use App\Events\PushSentEvent;
 use App\Events\PostHistoryEvent;
 use App\Events\UserLoginAttemptedEvent;
 use App\Listeners\WriteMailLogEventListener;
 use App\Listeners\WriteLoginLogEventListener;
+use App\Listeners\WritePushLogEventListener;
 use App\Listeners\WritePostHistoryEventListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -29,6 +31,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         MailSentEvent::class => [
             WriteMailLogEventListener::class,
+        ],
+        PushSentEvent::class => [
+            WritePushLogEventListener::class,
         ],
         PostHistoryEvent::class => [
             WritePostHistoryEventListener::class,

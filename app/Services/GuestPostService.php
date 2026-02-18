@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Http\Requests\Posts\GuestPostRequest;
 use App\Models\GuestPost;
+use App\Models\User;
 use App\Repositories\GuestPostRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * 미인증 게시글 서비스 
@@ -15,7 +17,8 @@ use Illuminate\Support\Facades\Log;
 class GuestPostService
 {
     public function __construct(
-        private GuestPostRepository $guestPostRepository
+        private GuestPostRepository $guestPostRepository,
+        private PushService $pushService
     ) {}
 
      /**
@@ -71,6 +74,13 @@ class GuestPostService
                 'guest_post_idx' => $guestPost->idx,
                 'ip' => $ip,
             ]);
+
+            $this->notifyAdminsByPush(
+                $title,
+                $payload['inquiry_memo'],
+                $userAgent,
+                $guestPost->idx
+            );
 
             return $guestPost;
         } catch (\Throwable $e) {
@@ -167,6 +177,48 @@ class GuestPostService
             'user_idx' => $userIdx,
             'guest_post_idx' => $post->idx,
             'post_type' => $post->post_type,
+            'ip' => request()->ip(),
+        ]);
+    }
+
+    /**
+     * 관리자 푸시 발송
+     *
+     * @param string $title
+     * @param string $body
+     * @param string $userAgent
+     * @param int $guestPostIdx
+     * @return void
+     */
+    private function notifyAdminsByPush(string $title, string $body, string $userAgent, int $guestPostIdx): void
+    {
+        $admins = User::where('level', 'admin')
+            ->orderBy('idx')
+            ->limit(3)
+            ->get();
+
+        if ($admins->isEmpty()) {
+            return;
+        }
+
+        $targetUrl = route('admins.guest_posts.edit', [
+            'post_type' => 'inquiries',
+            'idx' => $guestPostIdx,
+        ], true);
+
+        $result = $this->pushService->sendToUser([
+            'user_ids' => normalize_target_user_ids([
+                'user_ids' => $admins->pluck('idx')->all(),
+            ]),
+            'title' => $title,
+            'body' => Str::limit($body, 60, '...'),
+            'target_url' => $targetUrl,
+            'table_name' => (new GuestPost())->getTable(),
+        ], $userAgent);
+
+        Log::info('[GuestPost][Push] 관리자 푸시 요청', [
+            'target_user_count' => $admins->count(),
+            'result' => $result,
             'ip' => request()->ip(),
         ]);
     }

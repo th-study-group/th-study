@@ -33,6 +33,13 @@
         {{-- PWA --}}
         <link rel="manifest" href="{{ asset('site.webmanifest') }}">
 
+        {{-- PWA 푸시 정보 --}}
+        <script>
+            window.VAPID_PUBLIC_KEY = "{{ config('services.webpush.vapid_public_key') }}";
+            window.IS_LOGGED_IN = {{ auth()->check() ? 'true' : 'false' }};
+            window.CSRF_TOKEN = "{{ csrf_token() }}";
+        </script>
+
         {{-- 공통 및 외부 라이브러리 스크립트 --}}
         @include('partials.head-scripts')
 
@@ -82,18 +89,18 @@
         {{-- service-worker.js 등록 --}}
         <script>
             if ("serviceWorker" in navigator) { // 지원 브라우저 체크
-            window.addEventListener("load", function () {
-                navigator.serviceWorker.register("/service-worker.js")
-                .then(function (reg) {
-                    console.log("SW 등록 성공:", reg.scope); // 확인용
-                })
-                .catch(function (err) {
-                    console.log("SW 등록 실패:", err);
+                window.addEventListener("load", function () {
+                    navigator.serviceWorker.register("/service-worker.js")
+                        .then(function (reg) {
+                        //console.log("SW 등록 성공:", reg.scope); // 확인용
+                    })
+                    .catch(function (err) {
+                        //console.log("SW 등록 실패:", err);
+                    });
                 });
-            });
             }
         </script>
-        
+
         {{-- 스크립트 단일 페이지 --}}
         @yield('script')
     </body>
