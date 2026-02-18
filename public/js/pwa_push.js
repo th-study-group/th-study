@@ -4,6 +4,12 @@ $(function () {
     openNativePushPermissionPrompt();
 });
 
+function pushDebugAlert(message) {
+    try {
+        alert('[PUSH DEBUG] ' + message);
+    } catch (e) {}
+}
+
 function csrfToken() {
     return window.CSRF_TOKEN || '';
 }
@@ -206,37 +212,48 @@ window.unsubscribeCurrentPush = unsubscribeCurrentPush;
 
 function openNativePushPermissionPrompt() {
     if (!window.IS_LOGGED_IN) {
+        pushDebugAlert('중단: 비로그인 상태');
         return;
     }
 
     if (!isStandalonePwa()) {
+        pushDebugAlert('중단: standalone(PWA 앱 실행) 아님');
         return;
     }
 
     if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+        pushDebugAlert('중단: serviceWorker/PushManager/Notification 미지원');
         return;
     }
 
     if (Notification.permission !== 'default') {
+        pushDebugAlert('중단: Notification.permission=' + Notification.permission);
         return;
     }
 
     if (isPromptSnoozed()) {
+        pushDebugAlert('중단: snooze 상태');
         return;
     }
 
+    pushDebugAlert('진입: 팝업 노출 조건 통과');
+
     navigator.serviceWorker.ready
         .then(function (registration) {
+            pushDebugAlert('serviceWorker.ready 성공');
             return registration.pushManager.getSubscription();
         })
         .then(function (subscription) {
             if (subscription) {
+                pushDebugAlert('중단: 기존 구독 존재');
                 return;
             }
 
+            pushDebugAlert('팝업 표시 시도');
             renderNativePushPrompt();
         })
-        .catch(function () {
+        .catch(function (err) {
+            pushDebugAlert('실패: openNativePushPermissionPrompt catch - ' + (err && err.message ? err.message : err));
             // 팝업 노출 실패는 사용자 흐름을 막지 않는다.
         });
 }
@@ -247,22 +264,27 @@ function renderNativePushPrompt() {
     var allowButton = document.getElementById('btnNativePushPromptAllow');
 
     if (!popup || !closeButton || !allowButton) {
+        pushDebugAlert('중단: popup DOM 없음');
         return;
     }
 
     popup.style.display = 'flex';
     popup.setAttribute('aria-hidden', 'false');
+    pushDebugAlert('성공: 팝업 표시됨');
 
     closeButton.onclick = function () {
+        pushDebugAlert('동작: 나중에 클릭');
         setPromptSnooze();
         hideNativePushPrompt(popup);
     };
 
     allowButton.onclick = function () {
+        pushDebugAlert('동작: 허용 클릭, requestPermission 호출');
         allowButton.disabled = true;
 
         Notification.requestPermission()
             .then(function (permission) {
+                pushDebugAlert('결과: requestPermission=' + permission);
                 if (permission !== 'granted') {
                     setPromptSnooze();
                     hideNativePushPrompt(popup);
@@ -274,10 +296,12 @@ function renderNativePushPrompt() {
                         return pingOncePerDay(subscription.endpoint);
                     })
                     .finally(function () {
+                        pushDebugAlert('성공: 구독 저장 완료');
                         hideNativePushPrompt(popup);
                     });
             })
-            .catch(function () {
+            .catch(function (err) {
+                pushDebugAlert('실패: 허용 처리 catch - ' + (err && err.message ? err.message : err));
                 setPromptSnooze();
                 hideNativePushPrompt(popup);
             })
