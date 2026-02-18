@@ -183,9 +183,11 @@
                         @enderror
                     </div>
 
-                    <div class="d-flex justify-content-end align-items-center mb-2">
-                        <a href="{{ route('users.account.withdrawal') }}" class="link-danger small text-decoration-none">회원탈퇴</a>
-                    </div>
+                    @if (($user->level ?? null) === 'normal')
+                        <div class="d-flex justify-content-end align-items-center mb-2">
+                            <a href="{{ route('users.account.withdrawal') }}" class="link-danger small text-decoration-none">회원탈퇴</a>
+                        </div>
+                    @endif
                     <button type="button" id="btn_account_edit" class="btn btn-dark border-0 w-100">회원정보 수정</button>
                 </div>
                     </form>
