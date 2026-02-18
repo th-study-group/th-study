@@ -11,10 +11,10 @@ function pushDebugAlert(message) {
         console.log(text);
     } catch (e) {}
 
-    pushDebugPanel(text);
+    //pushDebugPanel(text);
 
     try {
-        alert(text);
+        //alert(text);
     } catch (e) {}
 }
 
