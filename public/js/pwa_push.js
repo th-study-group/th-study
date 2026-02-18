@@ -1,4 +1,5 @@
 $(function () {
+    clearPushClientCacheIfJustLoggedOut();
     autoSyncOnLogin();
     bindLogoutPushCleanup();
     openNativePushPermissionPrompt();
@@ -223,6 +224,32 @@ function clearPushPingCache(endpoint) {
     } catch (e) {}
 }
 
+function clearPushClientCacheAll() {
+    try {
+        localStorage.removeItem('push_permission_prompt_snooze_until');
+
+        var keysToDelete = [];
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            if (key && key.indexOf('push_last_ping_') === 0) {
+                keysToDelete.push(key);
+            }
+        }
+
+        keysToDelete.forEach(function (key) {
+            localStorage.removeItem(key);
+        });
+    } catch (e) {}
+}
+
+function clearPushClientCacheIfJustLoggedOut() {
+    if (!window.JUST_LOGGED_OUT) {
+        return;
+    }
+
+    clearPushClientCacheAll();
+}
+
 function unsubscribeCurrentPush() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
         return Promise.resolve(false);
@@ -268,6 +295,7 @@ function bindLogoutPushCleanup() {
                 return false;
             })
             .finally(function () {
+                clearPushClientCacheAll();
                 window.location.href = href;
             });
     });

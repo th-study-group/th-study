@@ -38,6 +38,7 @@
             window.VAPID_PUBLIC_KEY = "{{ config('services.webpush.vapid_public_key') }}";
             window.IS_LOGGED_IN = {{ auth()->check() ? 'true' : 'false' }};
             window.CSRF_TOKEN = "{{ csrf_token() }}";
+            window.JUST_LOGGED_OUT = {{ session('just_logged_out') ? 'true' : 'false' }};
         </script>
 
         {{-- 공통 및 외부 라이브러리 스크립트 --}}
