@@ -121,20 +121,18 @@ function subscribeAndSave() {
                 throw new Error('notification_not_supported');
             }
 
-            return Notification.requestPermission().then(function (permission) {
-                if (permission !== 'granted') {
-                    throw new Error('notification_denied');
-                }
+            if (Notification.permission !== 'granted') {
+                throw new Error('notification_not_granted');
+            }
 
-                var vapid = (window.VAPID_PUBLIC_KEY || '').trim();
-                if (!vapid) {
-                    throw new Error('missing_vapid_key');
-                }
+            var vapid = (window.VAPID_PUBLIC_KEY || '').trim();
+            if (!vapid) {
+                throw new Error('missing_vapid_key');
+            }
 
-                return registration.pushManager.subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: urlBase64ToUint8Array(vapid)
-                });
+            return registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(vapid)
             });
         })
         .then(function (subscription) {
@@ -159,40 +157,40 @@ function autoSyncOnLogin() {
             return registration.pushManager.getSubscription();
         })
         .then(function (subscription) {
-            if (!subscription) {
-                if (requiresIosGestureSubscribe()) {
-                    // iOS는 권한 요청이 사용자 제스처를 요구하므로,
-                    // 최초(default) 상태에서는 자동 구독을 건너뛴다.
-                    if (!isStandalonePwa()) {
-                        return;
-                    }
-
-                    if (!('Notification' in window)) {
-                        return;
-                    }
-
-                    if (Notification.permission === 'default' || Notification.permission === 'denied') {
-                        return;
-                    }
-                }
-
-                return subscribeAndSave().then(function (newSubscription) {
-                    return pingOncePerDay(newSubscription.endpoint);
-                });
+            if (subscription) {
+                return requestPushApi('/push/exists', { endpoint: subscription.endpoint })
+                    .then(function (response) {
+                        if (!response || response.exists !== true) {
+                            var payload = subscription.toJSON ? subscription.toJSON() : subscription;
+                            return requestPushApi('/push/subscribe', payload);
+                        }
+                    })
+                    .then(function () {
+                        return pingOncePerDay(subscription.endpoint);
+                    });
             }
 
-            return requestPushApi('/push/exists', { endpoint: subscription.endpoint })
-                .then(function (response) {
-                    if (!response || response.exists !== true) {
-                        var payload = subscription.toJSON ? subscription.toJSON() : subscription;
-                        return requestPushApi('/push/subscribe', payload);
-                    }
-                })
-                .then(function () {
-                    return pingOncePerDay(subscription.endpoint);
-                });
+            if (!('Notification' in window)) {
+                pushDebugAlert('autoSync skip: notification_not_supported');
+                return;
+            }
+
+            if (Notification.permission !== 'granted') {
+                pushDebugAlert('autoSync skip: permission=' + Notification.permission);
+                return;
+            }
+
+            if (isIosDevice() && !isStandalonePwa()) {
+                pushDebugAlert('autoSync skip: ios_not_standalone');
+                return;
+            }
+
+            return subscribeAndSave().then(function (newSubscription) {
+                return pingOncePerDay(newSubscription.endpoint);
+            });
         })
-        .catch(function () {
+        .catch(function (err) {
+            pushDebugAlert('autoSync fail: ' + (err && err.message ? err.message : err));
             // 자동 동기화 실패는 사용자 흐름을 막지 않는다.
         });
 }
@@ -380,14 +378,14 @@ function renderNativePushPrompt() {
                 if (permission !== 'granted') {
                     setPromptSnooze();
                     hideNativePushPrompt(popup);
-                    return;
+                    return null;
                 }
 
                 return subscribeAndSave()
                     .then(function (subscription) {
                         return pingOncePerDay(subscription.endpoint);
                     })
-                    .finally(function () {
+                    .then(function () {
                         pushDebugAlert('성공: 구독 저장 완료');
                         hideNativePushPrompt(popup);
                     });
