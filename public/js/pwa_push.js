@@ -1,8 +1,7 @@
 $(function () {
     autoSyncOnLogin();
     bindLogoutPushCleanup();
-    bindFirstInteractionSubscribe();
-    debugPushEnvironmentByAlert();
+    openNativePushPermissionPrompt();
 });
 
 function csrfToken() {
@@ -143,61 +142,6 @@ function requiresIosGestureSubscribe() {
     return isIosDevice();
 }
 
-function bindFirstInteractionSubscribe() {
-    if (!window.IS_LOGGED_IN) {
-        return;
-    }
-
-    if (!requiresIosGestureSubscribe()) {
-        return;
-    }
-
-    if (!isStandalonePwa()) {
-        return;
-    }
-
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        return;
-    }
-
-    var triggered = false;
-    var handler = function () {
-        if (triggered) {
-            return;
-        }
-        triggered = true;
-        cleanup();
-
-        navigator.serviceWorker.ready
-            .then(function (registration) {
-                return registration.pushManager.getSubscription();
-            })
-            .then(function (subscription) {
-                if (subscription) {
-                    return;
-                }
-
-                return subscribeAndSave()
-                    .then(function (newSubscription) {
-                        return pingOncePerDay(newSubscription.endpoint);
-                    });
-            })
-            .catch(function () {
-                // 첫 상호작용 기반 자동 구독 실패는 사용자 흐름을 막지 않는다.
-            });
-    };
-
-    var cleanup = function () {
-        document.removeEventListener('pointerdown', handler, true);
-        document.removeEventListener('touchstart', handler, true);
-        document.removeEventListener('keydown', handler, true);
-    };
-
-    document.addEventListener('pointerdown', handler, true);
-    document.addEventListener('touchstart', handler, true);
-    document.addEventListener('keydown', handler, true);
-}
-
 function clearPushPingCache(endpoint) {
     if (!endpoint) {
         return;
@@ -260,34 +204,103 @@ function bindLogoutPushCleanup() {
 
 window.unsubscribeCurrentPush = unsubscribeCurrentPush;
 
-function debugPushEnvironmentByAlert() {
+function openNativePushPermissionPrompt() {
     if (!window.IS_LOGGED_IN) {
         return;
     }
 
-    if (!('serviceWorker' in navigator)) {
-        alert('serviceWorker 미지원');
+    if (!isStandalonePwa()) {
         return;
     }
 
-    var summary = [];
-    summary.push('isSecureContext: ' + String(window.isSecureContext));
-    summary.push('standalone(iOS): ' + String(window.navigator.standalone === true));
-    summary.push('display-mode standalone: ' + String(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches));
-    summary.push('Notification 지원: ' + String('Notification' in window));
-    summary.push('PushManager 지원: ' + String('PushManager' in window));
-    summary.push('permission: ' + (window.Notification ? Notification.permission : 'N/A'));
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+        return;
+    }
 
-    navigator.serviceWorker.getRegistrations()
-        .then(function (regs) {
-            summary.push('SW 등록 개수: ' + regs.length);
-            for (var i = 0; i < regs.length; i++) {
-                summary.push((i + 1) + ') scope: ' + regs[i].scope);
-            }
-            alert(summary.join('\n'));
+    if (Notification.permission !== 'default') {
+        return;
+    }
+
+    if (isPromptSnoozed()) {
+        return;
+    }
+
+    navigator.serviceWorker.ready
+        .then(function (registration) {
+            return registration.pushManager.getSubscription();
         })
-        .catch(function (err) {
-            summary.push('getRegistrations 실패: ' + (err && err.message ? err.message : err));
-            alert(summary.join('\n'));
+        .then(function (subscription) {
+            if (subscription) {
+                return;
+            }
+
+            renderNativePushPrompt();
+        })
+        .catch(function () {
+            // 팝업 노출 실패는 사용자 흐름을 막지 않는다.
         });
+}
+
+function renderNativePushPrompt() {
+    var popup = document.getElementById('nativePushPermissionPopup');
+    var closeButton = document.getElementById('btnNativePushPromptLater');
+    var allowButton = document.getElementById('btnNativePushPromptAllow');
+
+    if (!popup || !closeButton || !allowButton) {
+        return;
+    }
+
+    popup.style.display = 'flex';
+    popup.setAttribute('aria-hidden', 'false');
+
+    closeButton.onclick = function () {
+        setPromptSnooze();
+        hideNativePushPrompt(popup);
+    };
+
+    allowButton.onclick = function () {
+        allowButton.disabled = true;
+
+        Notification.requestPermission()
+            .then(function (permission) {
+                if (permission !== 'granted') {
+                    setPromptSnooze();
+                    hideNativePushPrompt(popup);
+                    return;
+                }
+
+                return subscribeAndSave()
+                    .then(function (subscription) {
+                        return pingOncePerDay(subscription.endpoint);
+                    })
+                    .finally(function () {
+                        hideNativePushPrompt(popup);
+                    });
+            })
+            .catch(function () {
+                setPromptSnooze();
+                hideNativePushPrompt(popup);
+            })
+            .finally(function () {
+                allowButton.disabled = false;
+            });
+    };
+}
+
+function hideNativePushPrompt(popup) {
+    popup.style.display = 'none';
+    popup.setAttribute('aria-hidden', 'true');
+}
+
+function isPromptSnoozed() {
+    var key = 'push_permission_prompt_snooze_until';
+    var snoozeUntil = Number(localStorage.getItem(key) || '0');
+
+    return snoozeUntil > Date.now();
+}
+
+function setPromptSnooze() {
+    var key = 'push_permission_prompt_snooze_until';
+    var oneDayMs = 24 * 60 * 60 * 1000;
+    localStorage.setItem(key, String(Date.now() + oneDayMs));
 }

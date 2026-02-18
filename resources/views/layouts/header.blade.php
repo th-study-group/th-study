@@ -12,6 +12,32 @@
     </div>
 </div>
 
+<div
+    id="nativePushPermissionPopup"
+    aria-hidden="true"
+    style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.45); align-items:center; justify-content:center; padding:20px;">
+    <div style="max-width:420px; width:100%; background:#fff; border-radius:14px; padding:20px; box-shadow:0 14px 38px rgba(0,0,0,0.22);">
+        <h3 style="margin:0 0 10px 0; font-size:18px; font-weight:700; color:#111;">앱 푸시 알림을 허용하시겠습니까?</h3>
+        <p style="margin:0 0 16px 0; font-size:14px; line-height:1.55; color:#444;">
+            허용하시면 문의 상태 변경, 댓글 등록, 관리자 안내 등 앱 사용에 필요한 알림을 빠르게 받아보실 수 있습니다.
+        </p>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button
+                type="button"
+                id="btnNativePushPromptLater"
+                style="border:1px solid #d0d7de; background:#fff; color:#374151; border-radius:8px; padding:9px 14px; cursor:pointer;">
+                나중에
+            </button>
+            <button
+                type="button"
+                id="btnNativePushPromptAllow"
+                style="border:0; background:#111827; color:#fff; border-radius:8px; padding:9px 14px; cursor:pointer;">
+                허용
+            </button>
+        </div>
+    </div>
+</div>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid px-3 px-lg-4">
         <div class="d-flex align-items-center w-100 d-lg-none">
