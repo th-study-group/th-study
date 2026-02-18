@@ -105,8 +105,7 @@ function requestPushApi(url, data) {
         data: data,
         headers: {
             'X-CSRF-TOKEN': csrfToken()
-        },
-        showLoading: false
+        }
     });
 }
 
@@ -152,6 +151,8 @@ function autoSyncOnLogin() {
         return;
     }
 
+    var shouldPingOnThisPage = window.JUST_LOGGED_IN === true;
+
     navigator.serviceWorker.ready
         .then(function (registration) {
             return registration.pushManager.getSubscription();
@@ -166,6 +167,9 @@ function autoSyncOnLogin() {
                         }
                     })
                     .then(function () {
+                        if (!shouldPingOnThisPage) {
+                            return;
+                        }
                         return pingOncePerDay(subscription.endpoint);
                     });
             }
@@ -186,6 +190,9 @@ function autoSyncOnLogin() {
             }
 
             return subscribeAndSave().then(function (newSubscription) {
+                if (!shouldPingOnThisPage) {
+                    return;
+                }
                 return pingOncePerDay(newSubscription.endpoint);
             });
         })

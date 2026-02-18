@@ -84,7 +84,10 @@ class SendWebPushJob implements ShouldQueue
                     ],
                 ]);
 
-                $client->queueNotification($subscription, $payload);
+                $client->queueNotification($subscription, $payload, [
+                    'TTL' => 300,
+                    'urgency' => 'high',
+                ]);
                 $queued++;
             }
 
@@ -96,6 +99,13 @@ class SendWebPushJob implements ShouldQueue
                 }
 
                 $endpoint = (string) $report->getRequest()->getUri();
+                Log::warning('[Push][Send][Job] 전송 실패', [
+                    'target_user_idx' => $this->userId,
+                    'request_user_idx' => $this->requestUserIdx,
+                    'endpoint' => $endpoint,
+                    'reason' => method_exists($report, 'getReason') ? $report->getReason() : null,
+                    'ip' => $this->requestIp,
+                ]);
                 $webPushSubScriptionRepository->deleteByEndpoint($endpoint);
                 $failed++;
             }

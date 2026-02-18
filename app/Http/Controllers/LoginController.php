@@ -54,7 +54,7 @@ class LoginController extends Controller
                 ->withInput();
         }
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('dashboard'))->with('just_logged_in', true);
     }
 
     /**
