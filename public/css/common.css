@@ -39,9 +39,24 @@ html, body {
         display: block;
     }
 
+    .navbar .navbar-brand,
+    .navbar .navbar-nav .nav-link,
+    .navbar .d-none.d-lg-inline-flex {
+        position: relative;
+        top: 3px;
+    }
+
     .navbar .auth-btn {
         margin-top: 0 !important;
+        margin-bottom: 0 !important;
         align-self: center;
+        display: inline-flex;
+        align-items: center;
+        line-height: 1.2;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        position: relative;
+        top: 3px;
     }
 
     .sidebar-col {
