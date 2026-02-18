@@ -32,8 +32,6 @@ class LoginController extends Controller
             return to_route('dashboard');
         }
 
-        request()->session()->regenerateToken();
-
         return view('users.login');
     }
 
