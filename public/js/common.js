@@ -1,4 +1,5 @@
 $(function () {
+    initFixedHeaderOffset();
     initGlobalBackToTop();
     initDragHorizontalScroll();
     initBackdropSafetyGuard();
@@ -101,6 +102,27 @@ $(function () {
     // iOS Safari/PWA에서 초기 backdrop 잔류 이슈를 피하기 위해
     // 페이지 진입 시 강제 로딩 모달 표시를 제거한다.
 });
+
+function initFixedHeaderOffset()
+{
+    const navbar = document.querySelector('nav.navbar.sticky-top');
+    if (!navbar) {
+        document.documentElement.style.setProperty('--app-header-height', '0px');
+        return;
+    }
+
+    const syncHeaderHeight = function () {
+        const rect = navbar.getBoundingClientRect();
+        const height = Math.max(0, Math.ceil(rect.height));
+        document.documentElement.style.setProperty('--app-header-height', `${height}px`);
+    };
+
+    syncHeaderHeight();
+    window.addEventListener('resize', syncHeaderHeight);
+    window.addEventListener('orientationchange', syncHeaderHeight);
+    window.addEventListener('pageshow', syncHeaderHeight);
+    setTimeout(syncHeaderHeight, 60);
+}
 
 function initBackdropSafetyGuard()
 {

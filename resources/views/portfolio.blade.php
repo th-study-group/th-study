@@ -172,6 +172,11 @@
     <h2 class="h2x mb-3">4. PWA 설치/푸시</h2>
     <div class="box pad">
       <p class="leadx mb-3">PWA 설치부터 구독, 발송, 클릭 추적까지 한 흐름으로 운영합니다.</p>
+      <ul class="small text-muted mb-3">
+        <li>로그인 시 <code>exists</code> 확인 후 없으면 재등록, 권한 허용 상태에서만 신규 구독 생성</li>
+        <li><code>ping</code>은 로그인 직후 1회만 수행해 최근접속시각을 갱신</li>
+        <li>발송 이력에 성공/실패와 실패 사유 JSON을 함께 기록</li>
+      </ul>
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
           <thead>
@@ -674,6 +679,71 @@ resources/views/
 <li>수신 확인 시각/아이피(<code>receive_datetime</code>, <code>receive_ip</code>)</li>
 </ul>
 <p>운영자는 발송 이력과 링크 도달 이력을 분리해서 추적할 수 있습니다.</p>
+<h3 id="readme-85-pwa-설치부터-푸시-동작-흐름">8.5 PWA 설치부터 푸시 동작 흐름</h3>
+<p>웹 푸시는 설치/구독/발송/클릭 추적까지 한 흐름으로 동작합니다.</p>
+<ol>
+<li>PWA 설치</li>
+</ol>
+<ul>
+<li>브라우저에서 사이트를 설치(PWA)하면 서비스워커가 활성화됩니다.</li>
+<li>설치 앱과 일반 브라우저 탭은 저장소/세션 컨텍스트가 다를 수 있습니다.</li>
+</ul>
+<ol start="2">
+<li>로그인 시 자동 구독 동기화</li>
+</ol>
+<ul>
+<li><code>public/js/pwa_push.js</code>의 <code>autoSyncOnLogin()</code>이 실행됩니다.</li>
+<li>구독이 있으면 <code>/push/exists</code>로 서버 존재 여부를 확인하고, 없으면 재등록합니다.</li>
+<li>구독이 없고 권한이 허용된 경우 <code>subscribeAndSave()</code>로 새 구독을 만들고 서버(<code>/push/subscribe</code>)에 저장합니다.</li>
+<li><code>/push/ping</code>은 로그인 직후 첫 페이지에서만 최근접속시각 갱신 용도로 1회 호출합니다.</li>
+</ul>
+<p>2-1. 앱 푸시 허용 팝업(Standalone 앱 전용)</p>
+<ul>
+<li><code>public/js/pwa_push.js</code>의 <code>openNativePushPermissionPrompt()</code>가 실행됩니다.</li>
+<li>로그인 상태 + 홈화면 추가로 실행된 PWA 컨텍스트(standalone)에서만 팝업을 노출합니다.</li>
+<li>허용 버튼 클릭 시 <code>Notification.requestPermission()</code> 호출 후 구독 생성/저장을 진행합니다.</li>
+</ul>
+<p>2-2. OS별 푸시 알림 설정 위치(사용자 안내용)</p>
+<ul>
+<li>iOS: <code>설정 &gt; 알림 &gt; 티에이치스터디(PWA 앱명)</code>에서 알림 허용/배너/사운드 설정</li>
+<li>Android(Chrome PWA): <code>설정 &gt; 앱 &gt; TH Study(또는 브라우저 앱) &gt; 알림</code>에서 허용/차단</li>
+<li>Android(브라우저 권한): <code>Chrome &gt; 사이트 설정 &gt; 알림 &gt; th-study.com</code>에서 허용/차단</li>
+<li>최초 PWA 실행 시 허용을 놓친 경우 위 경로에서 수동으로 다시 켤 수 있습니다.</li>
+</ul>
+<ol start="3">
+<li>구독 유지/정리 정책</li>
+</ol>
+<ul>
+<li>활성 구독은 <code>web_push_subscriptions</code>에 저장됩니다.</li>
+<li>계정은 디바이스별 다중 구독을 유지합니다(웹/앱/브라우저별 endpoint 공존).</li>
+<li>로그아웃 시에는 현재 디바이스 endpoint 해제를 우선 시도하고, 다른 디바이스 구독은 유지합니다.</li>
+<li>회원탈퇴 시에는 해당 사용자의 구독을 서버에서 전체 삭제합니다.</li>
+</ul>
+<ol start="4">
+<li>푸시 발송</li>
+</ol>
+<ul>
+<li>서비스 레이어에서 <code>PushService::sendToUser()</code>를 호출합니다.</li>
+<li>대상 사용자별 <code>SendWebPushJob</code>이 큐에 등록되고, Job에서 실제 웹푸시를 전송합니다.</li>
+<li>발송 이력은 <code>web_push_messages</code>에 기록되며, <code>success_flag(1/0)</code>와 <code>send_error_message(JSON)</code>에 전송 결과를 남깁니다.</li>
+</ul>
+<ol start="5">
+<li>클릭 추적 및 이동</li>
+</ol>
+<ul>
+<li>푸시 payload URL은 <code>/push/open/{click_token}</code> 형태로 전달됩니다.</li>
+<li>클릭 시 <code>click_datetime</code>이 기록되고, <code>target_url</code>로 리다이렉트됩니다.</li>
+<li>로그인 만료 시에는 로그인 후 intended 경로로 복귀합니다.</li>
+</ul>
+<ol start="6">
+<li>iPhone 캐시 대응(운영 반영 안정화)</li>
+</ol>
+<ul>
+<li>iOS Safari/PWA는 JS/Service Worker 캐시가 강하게 남을 수 있어, 정적 에셋 버전 파라미터를 적용합니다.</li>
+<li><code>resources/views/partials/head-scripts.blade.php</code>와 <code>resources/views/partials/head-styles.blade.php</code>에서 <code>filemtime(...)</code> 기반 <code>?v=</code>를 사용합니다.</li>
+<li><code>resources/views/layouts/app.blade.php</code>의 서비스워커 등록 URL에도 <code>?v=</code>를 붙이고 <code>reg.update()</code>를 호출합니다.</li>
+<li>배포 시 <code>php artisan optimize:clear</code>를 실행해 서버 캐시를 정리합니다.</li>
+</ul>
 <h2 id="readme-9-데이터-모델-핵심">9. 데이터 모델 핵심</h2>
 <ul>
 <li><code>users</code>: 회원</li>
@@ -683,6 +753,8 @@ resources/views/
 <li><code>post_histories</code>: 게시글 작업 이력</li>
 <li><code>login_logs</code>: 로그인 시도 로그</li>
 <li><code>mail_logs</code>: 메일 발송/수신 로그</li>
+<li><code>web_push_subscriptions</code>: 디바이스별 웹 푸시 구독</li>
+<li><code>web_push_messages</code>: 푸시 발송/클릭/성공여부 이력</li>
 <li><code>jobs</code>, <code>failed_jobs</code>, <code>sessions</code>, <code>password_reset_tokens</code>: 큐/세션/복구</li>
 </ul>
 <h2 id="readme-10-로컬-실행">10. 로컬 실행</h2>

@@ -1,6 +1,9 @@
+html {
+    --app-header-height: 64px;
+}
+
 html, body {
-    overscroll-behavior: none;
-    touch-action: pan-x pan-y; /* 줌 금지 */
+    overflow-x: hidden;
 
     /* 마우스 드래그 방지*/
     -webkit-user-select: none; /* 크롬, 사파리 */
@@ -71,6 +74,7 @@ body {
     display: flex;
     flex-direction: column;
     background: #f5f5f5;
+    padding-top: var(--app-header-height);
 }
 
 body > .container-fluid {
@@ -82,14 +86,29 @@ footer {
 }
 
 .navbar.sticky-top {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 1030;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1040;
     padding-top: env(safe-area-inset-top);
 }
 
 .navbar .navbar-toggler:focus{
     box-shadow: none;
+}
+
+.offcanvas.offcanvas-start {
+    padding-top: env(safe-area-inset-top);
+}
+
+.offcanvas.offcanvas-start .offcanvas-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: inherit;
+    padding-top: calc(1rem + env(safe-area-inset-top));
 }
 
 .t-mark{
