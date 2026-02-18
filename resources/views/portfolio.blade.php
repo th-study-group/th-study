@@ -56,13 +56,14 @@
             <li><a href="#overview">1. 개요</a><span class="toc-dots"></span><span class="toc-desc">방향/슬로건</span></li>
             <li><a href="#versions">2. 버전</a><span class="toc-dots"></span><span class="toc-desc">Laravel/PHP/Node 등</span></li>
             <li><a href="#flows">3. 핵심 흐름</a><span class="toc-dots"></span><span class="toc-desc">메일/배포</span></li>
-            <li><a href="#run">4. 실행</a><span class="toc-dots"></span><span class="toc-desc">로컬/큐</span></li>
-            <li><a href="#deploy">5. 배포</a><span class="toc-dots"></span><span class="toc-desc">SSH + git pull</span></li>
-            <li><a href="#infra">6. 운영 인프라</a><span class="toc-dots"></span><span class="toc-desc">Lightsail + Swap</span></li>
-            <li><a href="#backup">7. DB 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
-            <li><a href="#docker">8. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
-            <li><a href="#queue-service">9. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
-            <li><a href="#appendix">10. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
+            <li><a href="#pwa-push">4. PWA 설치/푸시</a><span class="toc-dots"></span><span class="toc-desc">구독/발송/클릭</span></li>
+            <li><a href="#run">5. 실행</a><span class="toc-dots"></span><span class="toc-desc">로컬/큐</span></li>
+            <li><a href="#deploy">6. 배포</a><span class="toc-dots"></span><span class="toc-desc">SSH + git pull</span></li>
+            <li><a href="#infra">7. 운영 인프라</a><span class="toc-dots"></span><span class="toc-desc">Lightsail + Swap</span></li>
+            <li><a href="#backup">8. DB 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
+            <li><a href="#docker">9. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
+            <li><a href="#queue-service">10. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
+            <li><a href="#appendix">11. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
           </ul>
         </div>
       </div>
@@ -166,9 +167,56 @@
   </div>
 </section>
 
+<section id="pwa-push" class="section">
+  <div class="container">
+    <h2 class="h2x mb-3">4. PWA 설치/푸시</h2>
+    <div class="box pad">
+      <p class="leadx mb-3">PWA 설치부터 구독, 발송, 클릭 추적까지 한 흐름으로 운영합니다.</p>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:20%">단계</th>
+              <th>설명</th>
+              <th style="width:34%">기준 코드</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold">1. 설치</td>
+              <td>서비스워커 등록 후 PWA 앱 설치 컨텍스트에서 실행</td>
+              <td><code>resources/views/layouts/app.blade.php</code>, <code>public/service-worker.js</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">2. 구독 동기화</td>
+              <td>로그인 시 구독 조회/생성 후 서버에 저장</td>
+              <td><code>public/js/pwa_push.js</code> (<code>autoSyncOnLogin</code>)</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">3. 발송</td>
+              <td>서비스에서 사용자별 Job 등록, Job에서 WebPush 전송</td>
+              <td><code>app/Services/PushService.php</code>, <code>app/Jobs/SendWebPushJob.php</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">4. 이력 기록</td>
+              <td>발송/클릭 토큰/대상 URL/테이블명 기록</td>
+              <td><code>web_push_messages</code>, <code>app/Models/WebPushMessage.php</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">5. 클릭 이동</td>
+              <td><code>/push/open/{token}</code>으로 클릭률 기록 후 <code>target_url</code>로 이동</td>
+              <td><code>app/Http/Controllers/PushController.php</code>, <code>app/Services/PushService.php</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="run" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">4. 실행</h2>
+    <h2 class="h2x mb-3">5. 실행</h2>
     <div class="box pad">
     <div class="codeblock">
       <div class="codehdr"><span>bash · 로컬 실행(예시)</span><button class="copybtn no-print" onclick="copyFrom('#localRun', this)">복사</button></div>
@@ -205,7 +253,7 @@ php artisan queue:failed</code></pre>
 
 <section id="deploy" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">5. 배포</h2>
+    <h2 class="h2x mb-3">6. 배포</h2>
     <div class="box pad">
     <div class="codeblock">
       <div class="codehdr"><span>bash · 서버 접속</span><button class="copybtn no-print" onclick="copyFrom('#sshCmd', this)">복사</button></div>
@@ -251,7 +299,7 @@ sudo systemctl reload nginx</code></pre>
 
 <section id="infra" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">6. 운영 인프라 AWS Lightsail</h2>
+    <h2 class="h2x mb-3">7. 운영 인프라 AWS Lightsail</h2>
     <div class="box pad">
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
@@ -317,7 +365,7 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="backup" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">7. DB 백업</h2>
+    <h2 class="h2x mb-3">8. DB 백업</h2>
     <div class="box pad">
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
@@ -340,7 +388,7 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="docker" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">8. 개발 검증 Docker</h2>
+    <h2 class="h2x mb-3">9. 개발 검증 Docker</h2>
     <div class="box pad">
       <p class="leadx mb-2">배포 전 동일한 Ubuntu 기반 환경을 검증하기 위해 Docker Compose를 사용합니다.</p>
       
@@ -374,7 +422,7 @@ SHOW TABLES;</code></pre>
 
 <section id="queue-service" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">9. Queue 영구 실행 systemd</h2>
+    <h2 class="h2x mb-3">10. Queue 영구 실행 systemd</h2>
     <div class="box pad">
       <div class="codeblock">
         <div class="codehdr"><span>bash · 서비스 파일 생성</span><button class="copybtn no-print" onclick="copyFrom('#queueSvcCreate', this)">복사</button></div>
@@ -414,7 +462,7 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="appendix" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">10. README 원문</h2>
+    <h2 class="h2x mb-3">11. README 원문</h2>
     <div class="box pad readme-summary">
       <p class="fw-bold mb-2">포트폴리오 관점 요약</p>
       <ul>

@@ -1,6 +1,7 @@
 $(function () {
     autoSyncOnLogin();
     bindLogoutPushCleanup();
+    bindFirstInteractionSubscribe();
 });
 
 function csrfToken() {
@@ -97,9 +98,7 @@ function autoSyncOnLogin() {
         })
         .then(function (subscription) {
             if (!subscription) {
-                return subscribeAndSave().then(function (newSubscription) {
-                    return pingOncePerDay(newSubscription.endpoint);
-                });
+                return;
             }
 
             return requestPushApi('/push/exists', { endpoint: subscription.endpoint })
@@ -116,6 +115,64 @@ function autoSyncOnLogin() {
         .catch(function () {
             // 자동 동기화 실패는 사용자 흐름을 막지 않는다.
         });
+}
+
+function isStandalonePwa() {
+    var isIosStandalone = window.navigator.standalone === true;
+    var isDisplayModeStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+
+    return isIosStandalone || isDisplayModeStandalone;
+}
+
+function bindFirstInteractionSubscribe() {
+    if (!window.IS_LOGGED_IN) {
+        return;
+    }
+
+    if (!isStandalonePwa()) {
+        return;
+    }
+
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        return;
+    }
+
+    var triggered = false;
+    var handler = function () {
+        if (triggered) {
+            return;
+        }
+        triggered = true;
+        cleanup();
+
+        navigator.serviceWorker.ready
+            .then(function (registration) {
+                return registration.pushManager.getSubscription();
+            })
+            .then(function (subscription) {
+                if (subscription) {
+                    return;
+                }
+
+                return subscribeAndSave()
+                    .then(function (newSubscription) {
+                        return pingOncePerDay(newSubscription.endpoint);
+                    });
+            })
+            .catch(function () {
+                // 첫 상호작용 기반 자동 구독 실패는 사용자 흐름을 막지 않는다.
+            });
+    };
+
+    var cleanup = function () {
+        document.removeEventListener('pointerdown', handler, true);
+        document.removeEventListener('touchstart', handler, true);
+        document.removeEventListener('keydown', handler, true);
+    };
+
+    document.addEventListener('pointerdown', handler, true);
+    document.addEventListener('touchstart', handler, true);
+    document.addEventListener('keydown', handler, true);
 }
 
 function clearPushPingCache(endpoint) {
