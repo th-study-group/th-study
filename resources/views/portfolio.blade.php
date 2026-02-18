@@ -56,7 +56,7 @@
             <li><a href="#overview">1. 개요</a><span class="toc-dots"></span><span class="toc-desc">방향/슬로건</span></li>
             <li><a href="#versions">2. 버전</a><span class="toc-dots"></span><span class="toc-desc">Laravel/PHP/Node 등</span></li>
             <li><a href="#flows">3. 핵심 흐름</a><span class="toc-dots"></span><span class="toc-desc">메일/배포</span></li>
-            <li><a href="#pwa-push">4. PWA 설치/푸시</a><span class="toc-dots"></span><span class="toc-desc">구독/발송/클릭</span></li>
+            <li><a href="#pwa-push">4. PWA 설치/푸시</a><span class="toc-dots"></span><span class="toc-desc">허용/구독/캐시 대응</span></li>
             <li><a href="#run">5. 실행</a><span class="toc-dots"></span><span class="toc-desc">로컬/큐</span></li>
             <li><a href="#deploy">6. 배포</a><span class="toc-dots"></span><span class="toc-desc">SSH + git pull</span></li>
             <li><a href="#infra">7. 운영 인프라</a><span class="toc-dots"></span><span class="toc-desc">Lightsail + Swap</span></li>
@@ -193,6 +193,11 @@
               <td><code>public/js/pwa_push.js</code> (<code>autoSyncOnLogin</code>)</td>
             </tr>
             <tr>
+              <td class="fw-bold">2-1. 허용 팝업</td>
+              <td>로그인 + 홈화면 추가(standalone) 앱에서만 허용 팝업 노출, 허용 클릭 시 권한 요청 실행</td>
+              <td><code>public/js/pwa_push.js</code> (<code>openNativePushPermissionPrompt</code>), <code>resources/views/layouts/header.blade.php</code></td>
+            </tr>
+            <tr>
               <td class="fw-bold">3. 발송</td>
               <td>서비스에서 사용자별 Job 등록, Job에서 WebPush 전송</td>
               <td><code>app/Services/PushService.php</code>, <code>app/Jobs/SendWebPushJob.php</code></td>
@@ -206,6 +211,11 @@
               <td class="fw-bold">5. 클릭 이동</td>
               <td><code>/push/open/{token}</code>으로 클릭률 기록 후 <code>target_url</code>로 이동</td>
               <td><code>app/Http/Controllers/PushController.php</code>, <code>app/Services/PushService.php</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">6. iPhone 캐시 대응</td>
+              <td>정적 JS/CSS와 서비스워커 URL에 <code>filemtime</code> 기반 버전 쿼리를 붙여 운영 캐시 고착을 방지</td>
+              <td><code>resources/views/partials/head-scripts.blade.php</code>, <code>resources/views/partials/head-styles.blade.php</code>, <code>resources/views/layouts/app.blade.php</code></td>
             </tr>
           </tbody>
         </table>

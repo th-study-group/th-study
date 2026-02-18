@@ -209,6 +209,11 @@ resources/views/
 - 구독이 없으면 `subscribeAndSave()`로 새 구독을 만들고 서버(`/push/subscribe`)에 저장합니다.
 - 구독이 있으면 `/push/exists`로 서버 존재 여부를 확인하고, 없으면 재등록합니다.
 
+2-1. 앱 푸시 허용 팝업(Standalone 앱 전용)
+- `public/js/pwa_push.js`의 `openNativePushPermissionPrompt()`가 실행됩니다.
+- 로그인 상태 + 홈화면 추가로 실행된 PWA 컨텍스트(standalone)에서만 팝업을 노출합니다.
+- 허용 버튼 클릭 시 `Notification.requestPermission()` 호출 후 구독 생성/저장을 진행합니다.
+
 3. 구독 유지/정리 정책
 - 활성 구독은 `web_push_subscriptions`에 저장됩니다.
 - 로그아웃/회원탈퇴 시 해당 사용자의 구독을 서버에서 전체 삭제합니다.
@@ -223,6 +228,12 @@ resources/views/
 - 푸시 payload URL은 `/push/open/{click_token}` 형태로 전달됩니다.
 - 클릭 시 `click_datetime`이 기록되고, `target_url`로 리다이렉트됩니다.
 - 로그인 만료 시에는 로그인 후 intended 경로로 복귀합니다.
+
+6. iPhone 캐시 대응(운영 반영 안정화)
+- iOS Safari/PWA는 JS/Service Worker 캐시가 강하게 남을 수 있어, 정적 에셋 버전 파라미터를 적용합니다.
+- `resources/views/partials/head-scripts.blade.php`와 `resources/views/partials/head-styles.blade.php`에서 `filemtime(...)` 기반 `?v=`를 사용합니다.
+- `resources/views/layouts/app.blade.php`의 서비스워커 등록 URL에도 `?v=`를 붙이고 `reg.update()`를 호출합니다.
+- 배포 시 `php artisan optimize:clear`를 실행해 서버 캐시를 정리합니다.
 
 ## 9. 데이터 모델 핵심
 
