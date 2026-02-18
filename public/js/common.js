@@ -1,6 +1,7 @@
 $(function () {
     initGlobalBackToTop();
     initDragHorizontalScroll();
+    initBackdropSafetyGuard();
 
     $(document).on("contextmenu", function (e) {
         e.preventDefault();
@@ -100,6 +101,46 @@ $(function () {
     // iOS Safari/PWA에서 초기 backdrop 잔류 이슈를 피하기 위해
     // 페이지 진입 시 강제 로딩 모달 표시를 제거한다.
 });
+
+function initBackdropSafetyGuard()
+{
+    function cleanupStuckOverlays() {
+        var hasShownModal = document.querySelector('.modal.show') !== null;
+        var hasShownOffcanvas = document.querySelector('.offcanvas.show') !== null;
+
+        if (!hasShownModal) {
+            document.querySelectorAll('.modal-backdrop').forEach(function (el) {
+                el.remove();
+            });
+        }
+
+        if (!hasShownOffcanvas) {
+            document.querySelectorAll('.offcanvas-backdrop').forEach(function (el) {
+                el.remove();
+            });
+        }
+
+        if (!hasShownModal && !hasShownOffcanvas) {
+            document.body.classList.remove('modal-open');
+            document.body.style.removeProperty('overflow');
+            document.body.style.removeProperty('padding-right');
+            document.body.style.removeProperty('touch-action');
+        }
+    }
+
+    cleanupStuckOverlays();
+    window.addEventListener('pageshow', cleanupStuckOverlays);
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) {
+            cleanupStuckOverlays();
+        }
+    });
+
+    // iOS에서 복귀 직후 잔류 레이어가 늦게 붙는 케이스 방지
+    setTimeout(cleanupStuckOverlays, 120);
+    setTimeout(cleanupStuckOverlays, 500);
+    setTimeout(cleanupStuckOverlays, 1200);
+}
 
 function updateEmptyRowColspan(tableSelector, cellSelector)
 {
