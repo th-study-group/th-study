@@ -98,6 +98,16 @@ function autoSyncOnLogin() {
         })
         .then(function (subscription) {
             if (!subscription) {
+                if (requiresIosGestureSubscribe()) {
+                    return;
+                }
+
+                return subscribeAndSave().then(function (newSubscription) {
+                    return pingOncePerDay(newSubscription.endpoint);
+                });
+            }
+
+            if (requiresIosGestureSubscribe() && !isStandalonePwa()) {
                 return;
             }
 
@@ -117,6 +127,10 @@ function autoSyncOnLogin() {
         });
 }
 
+function isIosDevice() {
+    return /iPhone|iPad|iPod/i.test(window.navigator.userAgent || '');
+}
+
 function isStandalonePwa() {
     var isIosStandalone = window.navigator.standalone === true;
     var isDisplayModeStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
@@ -124,8 +138,16 @@ function isStandalonePwa() {
     return isIosStandalone || isDisplayModeStandalone;
 }
 
+function requiresIosGestureSubscribe() {
+    return isIosDevice();
+}
+
 function bindFirstInteractionSubscribe() {
     if (!window.IS_LOGGED_IN) {
+        return;
+    }
+
+    if (!requiresIosGestureSubscribe()) {
         return;
     }
 
