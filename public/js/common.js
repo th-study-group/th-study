@@ -3,6 +3,7 @@ $(function () {
     initGlobalBackToTop();
     initDragHorizontalScroll();
     initBackdropSafetyGuard();
+    initOffcanvasScrollReset();
 
     $(document).on("contextmenu", function (e) {
         e.preventDefault();
@@ -122,6 +123,23 @@ function initFixedHeaderOffset()
     window.addEventListener('orientationchange', syncHeaderHeight);
     window.addEventListener('pageshow', syncHeaderHeight);
     setTimeout(syncHeaderHeight, 60);
+}
+
+function initOffcanvasScrollReset()
+{
+    document.addEventListener('show.bs.offcanvas', function (event) {
+        const offcanvas = event.target;
+        if (!offcanvas || !offcanvas.classList.contains('offcanvas')) {
+            return;
+        }
+
+        offcanvas.scrollTop = 0;
+
+        const body = offcanvas.querySelector('.offcanvas-body');
+        if (body) {
+            body.scrollTop = 0;
+        }
+    });
 }
 
 function initBackdropSafetyGuard()
