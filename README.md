@@ -214,6 +214,12 @@ resources/views/
 - 로그인 상태 + 홈화면 추가로 실행된 PWA 컨텍스트(standalone)에서만 팝업을 노출합니다.
 - 허용 버튼 클릭 시 `Notification.requestPermission()` 호출 후 구독 생성/저장을 진행합니다.
 
+2-2. OS별 푸시 알림 설정 위치(사용자 안내용)
+- iOS: `설정 > 알림 > 티에이치스터디(PWA 앱명)`에서 알림 허용/배너/사운드 설정
+- Android(Chrome PWA): `설정 > 앱 > TH Study(또는 브라우저 앱) > 알림`에서 허용/차단
+- Android(브라우저 권한): `Chrome > 사이트 설정 > 알림 > th-study.com`에서 허용/차단
+- 최초 PWA 실행 시 허용을 놓친 경우 위 경로에서 수동으로 다시 켤 수 있습니다.
+
 3. 구독 유지/정리 정책
 - 활성 구독은 `web_push_subscriptions`에 저장됩니다.
 - 로그아웃/회원탈퇴 시 해당 사용자의 구독을 서버에서 전체 삭제합니다.

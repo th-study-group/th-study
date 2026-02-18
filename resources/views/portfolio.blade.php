@@ -198,6 +198,11 @@
               <td><code>public/js/pwa_push.js</code> (<code>openNativePushPermissionPrompt</code>), <code>resources/views/layouts/header.blade.php</code></td>
             </tr>
             <tr>
+              <td class="fw-bold">2-2. OS 설정 위치</td>
+              <td>iOS: 설정 &gt; 알림 &gt; 티에이치스터디 / Android: 설정 &gt; 앱(또는 Chrome 사이트 설정) &gt; 알림에서 수동 허용 가능</td>
+              <td><code>README.md</code> (운영 가이드), 사용자 디바이스 OS 알림 설정</td>
+            </tr>
+            <tr>
               <td class="fw-bold">3. 발송</td>
               <td>서비스에서 사용자별 Job 등록, Job에서 WebPush 전송</td>
               <td><code>app/Services/PushService.php</code>, <code>app/Jobs/SendWebPushJob.php</code></td>
