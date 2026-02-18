@@ -284,7 +284,7 @@
           </p>
 
           <div class="actionrow reveal delay-3">
-            <a class="actionbtn" href="https://github.com/leetaehee/laravel-app" target="_blank" rel="noopener">
+            <a class="actionbtn" href="https://github.com/th-study-group/th-study" target="_blank" rel="noopener">
               <i class="devicon-github-original"></i> GitHub
             </a>
 
@@ -292,7 +292,7 @@
               <span class="iconSlot"></span> 티스토리
             </a>
 
-            <a class="actionbtn" href="mailto:developerkimtakgu@gmail.com" id="mailBtn">
+            <a class="actionbtn" href="mailto:admin@th-study.com" id="mailBtn">
               <span class="iconSlot"></span> Contact
             </a>
 
