@@ -109,11 +109,11 @@ footer {
 }
 
 .offcanvas.offcanvas-start .offcanvas-header {
-    position: sticky;
-    top: 0;
-    z-index: 2;
+    position: relative;
+    top: auto;
+    z-index: auto;
     background: inherit;
-    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-top: calc(1rem + env(safe-area-inset-top));
 }
 
 .t-mark{
