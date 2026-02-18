@@ -90,8 +90,9 @@
         <script>
             if ("serviceWorker" in navigator) { // 지원 브라우저 체크
                 window.addEventListener("load", function () {
-                    navigator.serviceWorker.register("/service-worker.js")
+                    navigator.serviceWorker.register("/service-worker.js?v={{ filemtime(public_path('service-worker.js')) }}")
                         .then(function (reg) {
+                        reg.update();
                         //console.log("SW 등록 성공:", reg.scope); // 확인용
                     })
                     .catch(function (err) {
