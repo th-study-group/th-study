@@ -179,10 +179,6 @@ function autoSyncOnLogin() {
                 });
             }
 
-            if (requiresIosGestureSubscribe() && !isStandalonePwa()) {
-                return;
-            }
-
             return requestPushApi('/push/exists', { endpoint: subscription.endpoint })
                 .then(function (response) {
                     if (!response || response.exists !== true) {
