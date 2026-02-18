@@ -334,6 +334,7 @@ function renderNativePushPrompt() {
     }
 
     popup.style.display = 'flex';
+    popup.style.pointerEvents = 'auto';
     popup.setAttribute('aria-hidden', 'false');
     pushDebugAlert('성공: 팝업 표시됨');
 
@@ -378,6 +379,7 @@ function renderNativePushPrompt() {
 
 function hideNativePushPrompt(popup) {
     popup.style.display = 'none';
+    popup.style.pointerEvents = 'none';
     popup.setAttribute('aria-hidden', 'true');
 }
 

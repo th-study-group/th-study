@@ -55,12 +55,14 @@ function thShowPwaSplash() {
 
     splash.classList.remove("th-pwa-splash-hide");
     splash.style.display = "flex";
+    splash.style.pointerEvents = "auto";
 
     setTimeout(function () {
         splash.classList.add("th-pwa-splash-hide");
         
         setTimeout(function () {
             splash.style.display = "none";
+            splash.style.pointerEvents = "none";
             window.__thSplashVisible = false;
             window.dispatchEvent(new CustomEvent("th:splash:hidden"));
         }, 260);

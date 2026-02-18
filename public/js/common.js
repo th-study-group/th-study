@@ -97,11 +97,8 @@ $(function () {
         });
     };
 
-    const minVisibleMs = 300;
-    showLoading();
-    setTimeout(function () {
-        hideLoading();
-    }, minVisibleMs);
+    // iOS Safari/PWA에서 초기 backdrop 잔류 이슈를 피하기 위해
+    // 페이지 진입 시 강제 로딩 모달 표시를 제거한다.
 });
 
 function updateEmptyRowColspan(tableSelector, cellSelector)

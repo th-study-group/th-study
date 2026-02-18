@@ -4,6 +4,7 @@
     z-index:99999; /* # 최상단 */
     background:#ffffff;
     display:none; /* # 기본 숨김 (PWA에서만 표시) */
+    pointer-events:none;
     align-items:center;
     justify-content:center;
 }

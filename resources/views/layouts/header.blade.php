@@ -15,7 +15,7 @@
 <div
     id="nativePushPermissionPopup"
     aria-hidden="true"
-    style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.45); align-items:center; justify-content:center; padding:20px;">
+    style="display:none; pointer-events:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.45); align-items:center; justify-content:center; padding:20px;">
     <div style="max-width:420px; width:100%; background:#fff; border-radius:14px; padding:20px; box-shadow:0 14px 38px rgba(0,0,0,0.22);">
         <h3 style="margin:0 0 10px 0; font-size:18px; font-weight:700; color:#111;">앱 푸시 알림을 허용하시겠습니까?</h3>
         <p style="margin:0 0 16px 0; font-size:14px; line-height:1.55; color:#444;">
