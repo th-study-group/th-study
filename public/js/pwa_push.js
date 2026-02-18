@@ -111,17 +111,7 @@ function requestPushApi(url, data) {
 }
 
 function pingOncePerDay(endpoint) {
-    var key = 'push_last_ping_' + endpoint;
-    var now = Date.now();
-    var last = Number(localStorage.getItem(key) || '0');
-
-    if (now - last < 24 * 60 * 60 * 1000) {
-        return $.Deferred().resolve().promise();
-    }
-
-    return requestPushApi('/push/ping', { endpoint: endpoint }).then(function () {
-        localStorage.setItem(key, String(now));
-    });
+    return requestPushApi('/push/ping', { endpoint: endpoint });
 }
 
 function subscribeAndSave() {
