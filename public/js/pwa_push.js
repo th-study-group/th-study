@@ -5,9 +5,74 @@ $(function () {
 });
 
 function pushDebugAlert(message) {
+    var text = '[PUSH DEBUG] ' + message;
+
     try {
-        alert('[PUSH DEBUG] ' + message);
+        console.log(text);
     } catch (e) {}
+
+    pushDebugPanel(text);
+
+    try {
+        alert(text);
+    } catch (e) {}
+}
+
+function pushDebugPanel(text) {
+    var panelId = 'pushDebugPanel';
+    var lineId = 'pushDebugPanelLines';
+    var panel = document.getElementById(panelId);
+
+    if (!panel) {
+        panel = document.createElement('div');
+        panel.id = panelId;
+        panel.style.position = 'fixed';
+        panel.style.left = '8px';
+        panel.style.right = '8px';
+        panel.style.bottom = '8px';
+        panel.style.zIndex = '100000';
+        panel.style.background = 'rgba(17,24,39,0.94)';
+        panel.style.color = '#f9fafb';
+        panel.style.padding = '10px';
+        panel.style.borderRadius = '10px';
+        panel.style.fontSize = '12px';
+        panel.style.lineHeight = '1.45';
+        panel.style.maxHeight = '34vh';
+        panel.style.overflowY = 'auto';
+        panel.style.boxShadow = '0 6px 24px rgba(0,0,0,0.28)';
+        panel.innerHTML = ''
+            + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+            + '<strong style="font-size:12px;">PUSH DEBUG LOG</strong>'
+            + '<button type="button" id="pushDebugPanelClose" style="border:0;background:transparent;color:#d1d5db;cursor:pointer;font-size:12px;">닫기</button>'
+            + '</div>'
+            + '<div id="' + lineId + '"></div>';
+        document.body.appendChild(panel);
+
+        var closeButton = document.getElementById('pushDebugPanelClose');
+        if (closeButton) {
+            closeButton.onclick = function () {
+                panel.style.display = 'none';
+            };
+        }
+    }
+
+    panel.style.display = 'block';
+
+    var lineWrap = document.getElementById(lineId);
+    if (!lineWrap) {
+        return;
+    }
+
+    var row = document.createElement('div');
+    row.textContent = new Date().toLocaleTimeString() + ' ' + text;
+    row.style.borderTop = '1px solid rgba(255,255,255,0.12)';
+    row.style.paddingTop = '4px';
+    row.style.marginTop = '4px';
+    lineWrap.appendChild(row);
+
+    while (lineWrap.children.length > 12) {
+        lineWrap.removeChild(lineWrap.firstChild);
+    }
 }
 
 function csrfToken() {
