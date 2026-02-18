@@ -40,6 +40,6 @@ return [
     'webpush' => [
         'vapid_public_key' => env('VAPID_PUBLIC_KEY'),   // 공개키
         'vapid_private_key' => env('VAPID_PRIVATE_KEY'), // 개인키
-        'vapid_subject' => 'mailto:' . env('APP_ADMIN_EMAIL'), // 이메일
+        'vapid_subject' => 'mailto:' . env('VAPID_SUBJECT'), // 이메일
     ],
 ];
