@@ -206,8 +206,9 @@ resources/views/
 
 2. 로그인 시 자동 구독 동기화
 - `public/js/pwa_push.js`의 `autoSyncOnLogin()`이 실행됩니다.
-- 구독이 없으면 `subscribeAndSave()`로 새 구독을 만들고 서버(`/push/subscribe`)에 저장합니다.
 - 구독이 있으면 `/push/exists`로 서버 존재 여부를 확인하고, 없으면 재등록합니다.
+- 구독이 없고 권한이 허용된 경우 `subscribeAndSave()`로 새 구독을 만들고 서버(`/push/subscribe`)에 저장합니다.
+- `/push/ping`은 로그인 직후 첫 페이지에서만 최근접속시각 갱신 용도로 1회 호출합니다.
 
 2-1. 앱 푸시 허용 팝업(Standalone 앱 전용)
 - `public/js/pwa_push.js`의 `openNativePushPermissionPrompt()`가 실행됩니다.
@@ -222,13 +223,14 @@ resources/views/
 
 3. 구독 유지/정리 정책
 - 활성 구독은 `web_push_subscriptions`에 저장됩니다.
-- 로그아웃/회원탈퇴 시 해당 사용자의 구독을 서버에서 전체 삭제합니다.
-- 프론트도 가능하면 브라우저 구독 해제를 함께 시도합니다.
+- 계정은 디바이스별 다중 구독을 유지합니다(웹/앱/브라우저별 endpoint 공존).
+- 로그아웃 시에는 현재 디바이스 endpoint 해제를 우선 시도하고, 다른 디바이스 구독은 유지합니다.
+- 회원탈퇴 시에는 해당 사용자의 구독을 서버에서 전체 삭제합니다.
 
 4. 푸시 발송
 - 서비스 레이어에서 `PushService::sendToUser()`를 호출합니다.
 - 대상 사용자별 `SendWebPushJob`이 큐에 등록되고, Job에서 실제 웹푸시를 전송합니다.
-- 발송 이력은 `web_push_messages`에 기록됩니다.
+- 발송 이력은 `web_push_messages`에 기록되며, `success_flag(1/0)`와 `send_error_message(JSON)`에 전송 결과를 남깁니다.
 
 5. 클릭 추적 및 이동
 - 푸시 payload URL은 `/push/open/{click_token}` 형태로 전달됩니다.
@@ -250,6 +252,8 @@ resources/views/
 - `post_histories`: 게시글 작업 이력
 - `login_logs`: 로그인 시도 로그
 - `mail_logs`: 메일 발송/수신 로그
+- `web_push_subscriptions`: 디바이스별 웹 푸시 구독
+- `web_push_messages`: 푸시 발송/클릭/성공여부 이력
 - `jobs`, `failed_jobs`, `sessions`, `password_reset_tokens`: 큐/세션/복구
 
 ## 10. 로컬 실행

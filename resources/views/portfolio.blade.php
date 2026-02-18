@@ -189,7 +189,7 @@
             </tr>
             <tr>
               <td class="fw-bold">2. 구독 동기화</td>
-              <td>로그인 시 구독 조회/생성 후 서버에 저장</td>
+              <td>로그인 시 <code>exists</code>로 서버 상태를 확인하고, 없으면 재등록. 구독 미존재+권한 허용 시 생성하며 <code>ping</code>은 로그인 직후 1회만 갱신</td>
               <td><code>public/js/pwa_push.js</code> (<code>autoSyncOnLogin</code>)</td>
             </tr>
             <tr>
@@ -209,7 +209,7 @@
             </tr>
             <tr>
               <td class="fw-bold">4. 이력 기록</td>
-              <td>발송/클릭 토큰/대상 URL/테이블명 기록</td>
+              <td>발송/클릭 토큰/대상 URL/테이블명 + 성공여부(<code>success_flag</code>) + 실패사유 JSON(<code>send_error_message</code>) 기록</td>
               <td><code>web_push_messages</code>, <code>app/Models/WebPushMessage.php</code></td>
             </tr>
             <tr>
