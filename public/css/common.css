@@ -39,6 +39,11 @@ html, body {
         display: block;
     }
 
+    .navbar .auth-btn {
+        margin-top: 0 !important;
+        align-self: center;
+    }
+
     .sidebar-col {
         flex: 0 0 22%;
         max-width: 22%;
