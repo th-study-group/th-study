@@ -171,7 +171,19 @@ function autoSyncOnLogin() {
         .then(function (subscription) {
             if (!subscription) {
                 if (requiresIosGestureSubscribe()) {
-                    return;
+                    // iOS는 권한 요청이 사용자 제스처를 요구하므로,
+                    // 최초(default) 상태에서는 자동 구독을 건너뛴다.
+                    if (!isStandalonePwa()) {
+                        return;
+                    }
+
+                    if (!('Notification' in window)) {
+                        return;
+                    }
+
+                    if (Notification.permission === 'default' || Notification.permission === 'denied') {
+                        return;
+                    }
                 }
 
                 return subscribeAndSave().then(function (newSubscription) {
