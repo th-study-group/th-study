@@ -39,9 +39,17 @@ Route::prefix("comments")->name("comments.")->group(function() {
 });
 
 // 웹 푸시 구독 등록/취소
-Route::middleware(['throttle:5,1'])->prefix('push')->name('push')->group(function () {
-    Route::post('/subscribe', [PushController::class, 'subscribe'])->name('subscribe');   // 푸시 토큰 저장
-    Route::post('/unsubscribe', [PushController::class, 'unsubscribe'])->name('unsubscribe');  // 푸시 토큰 삭제
-    Route::post('/ping', [PushController::class, 'ping'])->name('ping'); // 푸시 토큰 최근 접속일 덥데이트
-    Route::post('/exists', [PushController::class, 'exists'])->name('exists'); // 푸시 정보가 유효한지 
+Route::prefix('push')->name('push.')->group(function () {
+    Route::post('/subscribe', [PushController::class, 'subscribe'])
+        ->middleware(['throttle:20,1'])
+        ->name('subscribe'); // 푸시 토큰 저장
+    Route::post('/unsubscribe', [PushController::class, 'unsubscribe'])
+        ->middleware(['throttle:20,1'])
+        ->name('unsubscribe'); // 푸시 토큰 삭제
+    Route::post('/ping', [PushController::class, 'ping'])
+        ->middleware(['throttle:30,1'])
+        ->name('ping'); // 푸시 토큰 최근 접속일 업데이트
+    Route::post('/exists', [PushController::class, 'exists'])
+        ->middleware(['throttle:300,1'])
+        ->name('exists'); // 푸시 정보가 유효한지
 });
