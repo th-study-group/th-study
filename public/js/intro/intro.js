@@ -397,7 +397,7 @@ function initLiteYouTubeEmbeds(root = document) {
             if (el.querySelector("iframe")) return;
 
             const iframe = document.createElement("iframe");
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&playsinline=1&rel=0&modestbranding=1&fs=1&enablejsapi=1`;
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&playsinline=1&rel=0&modestbranding=1&fs=1&enablejsapi=1`;
             iframe.title = "YouTube video player";
             iframe.loading = "eager";
             iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
@@ -409,9 +409,10 @@ function initLiteYouTubeEmbeds(root = document) {
             const ctrlBtn = document.createElement("button");
             ctrlBtn.type = "button";
             ctrlBtn.className = "yt-control-btn";
-            ctrlBtn.textContent = "일시정지";
-            ctrlBtn.setAttribute("aria-label", "영상 일시정지");
+            ctrlBtn.textContent = "음소거 해제";
+            ctrlBtn.setAttribute("aria-label", "영상 음소거 해제");
             ctrlBtn.dataset.playing = "Y";
+            ctrlBtn.dataset.muted = "Y";
 
             const postPlayerCommand = (func) => {
                 if (!iframe.contentWindow) return;
@@ -427,15 +428,27 @@ function initLiteYouTubeEmbeds(root = document) {
 
             const requestPlay = () => {
                 postPlayerCommand("playVideo");
-                postPlayerCommand("unMute");
                 ctrlBtn.dataset.playing = "Y";
-                ctrlBtn.textContent = "일시정지";
-                ctrlBtn.setAttribute("aria-label", "영상 일시정지");
+                if (ctrlBtn.dataset.muted === "Y") {
+                    ctrlBtn.textContent = "음소거 해제";
+                    ctrlBtn.setAttribute("aria-label", "영상 음소거 해제");
+                } else {
+                    ctrlBtn.textContent = "일시정지";
+                    ctrlBtn.setAttribute("aria-label", "영상 일시정지");
+                }
             };
 
             ctrlBtn.addEventListener("click", (evt) => {
                 evt.preventDefault();
                 evt.stopPropagation();
+                if (ctrlBtn.dataset.muted === "Y") {
+                    postPlayerCommand("unMute");
+                    ctrlBtn.dataset.muted = "N";
+                    ctrlBtn.dataset.playing = "Y";
+                    ctrlBtn.textContent = "일시정지";
+                    ctrlBtn.setAttribute("aria-label", "영상 일시정지");
+                    return;
+                }
                 const playing = ctrlBtn.dataset.playing === "Y";
                 postPlayerCommand(playing ? "pauseVideo" : "playVideo");
                 ctrlBtn.dataset.playing = playing ? "N" : "Y";
