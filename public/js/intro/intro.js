@@ -396,7 +396,7 @@ function initLiteYouTubeEmbeds(root = document) {
             if (el.querySelector("iframe")) return;
 
             const iframe = document.createElement("iframe");
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&playsinline=1&rel=0&modestbranding=1&fs=1`;
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&playsinline=1&rel=0&modestbranding=1&fs=1&enablejsapi=1`;
             iframe.title = "YouTube video player";
             iframe.loading = "lazy";
             iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
@@ -404,6 +404,34 @@ function initLiteYouTubeEmbeds(root = document) {
 
             el.innerHTML = "";
             el.appendChild(iframe);
+
+            const ctrlBtn = document.createElement("button");
+            ctrlBtn.type = "button";
+            ctrlBtn.className = "yt-control-btn";
+            ctrlBtn.textContent = "일시정지";
+            ctrlBtn.setAttribute("aria-label", "영상 일시정지");
+            ctrlBtn.dataset.playing = "Y";
+
+            ctrlBtn.addEventListener("click", (evt) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+                const playing = ctrlBtn.dataset.playing === "Y";
+                if (iframe.contentWindow) {
+                    iframe.contentWindow.postMessage(
+                        JSON.stringify({
+                            event: "command",
+                            func: playing ? "pauseVideo" : "playVideo",
+                            args: [],
+                        }),
+                        "*"
+                    );
+                }
+                ctrlBtn.dataset.playing = playing ? "N" : "Y";
+                ctrlBtn.textContent = playing ? "재생" : "일시정지";
+                ctrlBtn.setAttribute("aria-label", playing ? "영상 재생" : "영상 일시정지");
+            });
+
+            el.appendChild(ctrlBtn);
         };
 
         el.addEventListener("click", activate);
