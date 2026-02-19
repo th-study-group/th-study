@@ -399,7 +399,7 @@ function initLiteYouTubeEmbeds(root = document) {
             const iframe = document.createElement("iframe");
             iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&playsinline=1&rel=0&modestbranding=1&fs=1&enablejsapi=1`;
             iframe.title = "YouTube video player";
-            iframe.loading = "lazy";
+            iframe.loading = "eager";
             iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
             iframe.allowFullscreen = true;
 
@@ -413,26 +413,44 @@ function initLiteYouTubeEmbeds(root = document) {
             ctrlBtn.setAttribute("aria-label", "영상 일시정지");
             ctrlBtn.dataset.playing = "Y";
 
+            const postPlayerCommand = (func) => {
+                if (!iframe.contentWindow) return;
+                iframe.contentWindow.postMessage(
+                    JSON.stringify({
+                        event: "command",
+                        func,
+                        args: [],
+                    }),
+                    "*"
+                );
+            };
+
+            const requestPlay = () => {
+                postPlayerCommand("playVideo");
+                postPlayerCommand("unMute");
+                ctrlBtn.dataset.playing = "Y";
+                ctrlBtn.textContent = "일시정지";
+                ctrlBtn.setAttribute("aria-label", "영상 일시정지");
+            };
+
             ctrlBtn.addEventListener("click", (evt) => {
                 evt.preventDefault();
                 evt.stopPropagation();
                 const playing = ctrlBtn.dataset.playing === "Y";
-                if (iframe.contentWindow) {
-                    iframe.contentWindow.postMessage(
-                        JSON.stringify({
-                            event: "command",
-                            func: playing ? "pauseVideo" : "playVideo",
-                            args: [],
-                        }),
-                        "*"
-                    );
-                }
+                postPlayerCommand(playing ? "pauseVideo" : "playVideo");
                 ctrlBtn.dataset.playing = playing ? "N" : "Y";
                 ctrlBtn.textContent = playing ? "재생" : "일시정지";
                 ctrlBtn.setAttribute("aria-label", playing ? "영상 재생" : "영상 일시정지");
             });
 
             el.appendChild(ctrlBtn);
+
+            iframe.addEventListener("load", () => {
+                window.setTimeout(requestPlay, 120);
+                window.setTimeout(requestPlay, 420);
+            }, { once: true });
+
+            requestPlay();
         };
 
         const activateFromEvent = (e) => {
