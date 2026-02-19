@@ -11,6 +11,7 @@ function initIntroPage() {
 
     let idx = 0;
     let lock = false;
+    const TRANSITION_LOCK_MS = 950;
 
     sections.forEach((sec, i) => {
         const label = sec.getAttribute("data-label") || `S${i}`;
@@ -61,12 +62,20 @@ function initIntroPage() {
     }
 
     function setActive(n) {
+        stopVideosOutsideSection(sections[n]);
         sections.forEach((s, i) => s.classList.toggle("active", i === n));
         Array.from(dotnav.children).forEach((d, i) => d.classList.toggle("active", i === n));
         idx = n;
         const active = sections[idx];
         if (active) active.scrollTop = 0;
         requestAnimationFrame(updateParallax);
+    }
+
+    function stopVideosOutsideSection(activeSection) {
+        wrap.querySelectorAll(".yt-lite[data-video-id]").forEach((el) => {
+            if (activeSection && activeSection.contains(el)) return;
+            resetLiteYouTubeEmbed(el);
+        });
     }
 
     function go(n) {
@@ -77,7 +86,7 @@ function initIntroPage() {
         setActive(n);
         window.setTimeout(() => {
             lock = false;
-        }, 700);
+        }, TRANSITION_LOCK_MS);
     }
 
     wrap.querySelectorAll("[data-goto]").forEach((a) => {
@@ -89,7 +98,10 @@ function initIntroPage() {
     });
 
     function onWheel(e) {
-        if (lock) return;
+        if (lock) {
+            e.preventDefault();
+            return;
+        }
 
         const activeSection = getActiveSection();
         const delta = e.deltaY;
@@ -116,11 +128,22 @@ function initIntroPage() {
     let gestureConsumed = false;
     let startAtTop = false;
     let startAtBottom = false;
+    let startOnInteractive = false;
+
+    function isInteractiveTarget(target) {
+        if (!target || !(target instanceof Element)) return false;
+        return Boolean(
+            target.closest(
+                "iframe, .video-wrap, .video-ratio, a, button, input, textarea, select, label, [role='button'], [contenteditable='true']"
+            )
+        );
+    }
 
     wrap.addEventListener(
         "touchstart",
         (e) => {
             if (!e.touches || !e.touches.length) return;
+            startOnInteractive = isInteractiveTarget(e.target);
             startY = e.touches[0].clientY;
             startX = e.touches[0].clientX;
             lastY = startY;
@@ -138,7 +161,12 @@ function initIntroPage() {
         "touchmove",
         (e) => {
             if (startY === null || !e.touches || !e.touches.length) return;
-            if (lock || gestureConsumed) return;
+            if (startOnInteractive) return;
+            if (lock) {
+                e.preventDefault();
+                return;
+            }
+            if (gestureConsumed) return;
 
             const touch = e.touches[0];
             const diffY = startY - touch.clientY;
@@ -196,6 +224,10 @@ function initIntroPage() {
             startX = null;
             lastY = null;
             boundaryPull = 0;
+            if (startOnInteractive) {
+                startOnInteractive = false;
+                return;
+            }
 
             if (lock) return;
             if (gestureConsumed) {
@@ -229,6 +261,7 @@ function initIntroPage() {
             gestureConsumed = false;
             startAtTop = false;
             startAtBottom = false;
+            startOnInteractive = false;
         },
         { passive: true }
     );
@@ -338,11 +371,73 @@ function initIntroPage() {
         if (slot && icon) slot.appendChild(icon);
     }
 
+    initLiteYouTubeEmbeds(wrap);
+
     updateParallax();
 
     window.addEventListener("resize", setViewportHeightVar, { passive: true });
     window.addEventListener("orientationchange", setViewportHeightVar, { passive: true });
     window.addEventListener("pageshow", setViewportHeightVar, { passive: true });
+}
+
+function initLiteYouTubeEmbeds(root = document) {
+    const targets = root.querySelectorAll(".yt-lite[data-video-id]");
+    targets.forEach((el) => {
+        if (el.dataset.bound === "Y") return;
+        el.dataset.bound = "Y";
+        const initialImg = el.querySelector("img");
+        el.dataset.thumbSrc = initialImg?.getAttribute("src") || `https://i.ytimg.com/vi/${el.dataset.videoId}/hqdefault.jpg`;
+        el.dataset.thumbAlt = initialImg?.getAttribute("alt") || "YouTube 영상 썸네일";
+
+        const activate = () => {
+            const videoId = el.dataset.videoId;
+            if (!videoId) return;
+
+            if (el.querySelector("iframe")) return;
+
+            const iframe = document.createElement("iframe");
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&playsinline=1&rel=0&modestbranding=1&fs=1`;
+            iframe.title = "YouTube video player";
+            iframe.loading = "lazy";
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+            iframe.allowFullscreen = true;
+
+            el.innerHTML = "";
+            el.appendChild(iframe);
+        };
+
+        el.addEventListener("click", activate);
+        el.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                activate();
+            }
+        });
+    });
+}
+
+function resetLiteYouTubeEmbed(el) {
+    if (!el || !(el instanceof Element)) return;
+    if (!el.matches(".yt-lite[data-video-id]")) return;
+    if (!el.querySelector("iframe")) return;
+
+    const videoId = el.dataset.videoId;
+    const thumbSrc = el.dataset.thumbSrc || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+    const thumbAlt = el.dataset.thumbAlt || "YouTube 영상 썸네일";
+
+    el.innerHTML = "";
+
+    const img = document.createElement("img");
+    img.src = thumbSrc;
+    img.alt = thumbAlt;
+    img.loading = "lazy";
+
+    const play = document.createElement("span");
+    play.className = "yt-play-btn";
+    play.setAttribute("aria-hidden", "true");
+
+    el.appendChild(img);
+    el.appendChild(play);
 }
 
 if (document.readyState === "loading") {

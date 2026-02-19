@@ -288,6 +288,54 @@ body.intro-mode > .container-fluid{
     word-break: keep-all;
 }
 
+.intro-page .video-wrap{
+    margin-top:10px;
+    position:relative;
+    width:100%;
+    padding-top:56.25%;
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:#0c1222;
+    box-shadow: var(--shadow);
+}
+.intro-page .video-wrap img,
+.intro-page .video-wrap iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+}
+.intro-page .video-wrap img{
+    object-fit:cover;
+    display:block;
+}
+.intro-page .video-wrap.yt-lite{
+    cursor:pointer;
+}
+.intro-page .yt-play-btn{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:66px;
+    height:48px;
+    transform:translate(-50%, -50%);
+    border-radius:12px;
+    background:rgba(255,0,0,.9);
+    box-shadow:0 10px 24px rgba(0,0,0,.35);
+}
+.intro-page .yt-play-btn::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-42%, -50%);
+    border-style:solid;
+    border-width:10px 0 10px 16px;
+    border-color:transparent transparent transparent #fff;
+}
+
 .intro-page .tagrow{
     display:flex;
     flex-wrap:wrap;

@@ -256,6 +256,19 @@
             일상의 기록까지 함께 모아 검색 가능한 데이터로 정리해 나가는 방향을 지향합니다.
           </p>
 
+          <div class="video-wrap yt-lite reveal delay-3"
+               role="button"
+               tabindex="0"
+               aria-label="Laravel 유튜브 영상 재생"
+               data-video-id="8LvIohp9jfE"
+               data-youtube-url="https://youtu.be/8LvIohp9jfE?si=HX99IvJJoKxJ545N">
+            <img
+              src="https://i.ytimg.com/vi/8LvIohp9jfE/hqdefault.jpg"
+              alt="Laravel 유튜브 영상 썸네일"
+              loading="lazy">
+            <span class="yt-play-btn" aria-hidden="true"></span>
+          </div>
+
           <div class="tagrow reveal delay-3">
             <span class="tag">콘텐츠 구조화</span>
             <span class="tag">검색 최적화</span>

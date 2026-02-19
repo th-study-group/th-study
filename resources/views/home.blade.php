@@ -14,127 +14,122 @@
     <div class="home-landing">
         <header id="top" class="section-pad">
             <div class="container reveal">
-                <div class="row align-items-center g-4">
-                      <div class="col-lg-6">
-                          <span class="kicker mb-3">Developer Growth Platform</span>
-                          <h1 class="display-5 fw-black mb-3 grad-title">{{ config('app.name') }}</h1>
-                          <p class="lead mb-4 muted">
-                              성장하는 개발자가 장인정신을 지닌 리더로 나아가는 과정을 기록하고 확장하는 개발자 성장 플랫폼.
-                          </p>
+                <div class="row align-items-center g-4 g-lg-5">
+                    <div class="col-lg-6">
+                        <span class="kicker mb-3">Developer Growth Archive</span>
+                        <h1 class="display-4 fw-black mb-3">티에이치스터디</h1>
+                        <h2 class="hero-subtitle mb-3">
+                            <span id="heroTypingText" data-text="성장하는 개발자가 장인정신을 지닌 리더로 나아가는 과정"></span>
+                        </h2>
+                        <p class="lead mb-4 muted">
+                            개발, 인프라, 운영, 실험을 기록하고 공유하는 성장 아카이브입니다.
+                        </p>
 
-                          <div class="d-flex flex-wrap gap-2 mb-4">
-                              <span class="chip">성장</span>
-                              <span class="chip">기록</span>
-                              <span class="chip">실험</span>
-                              <span class="chip">운영</span>
-                              <span class="chip">수익화</span>
-                          </div>
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            <span class="chip">성장 기록</span>
+                            <span class="chip">실험</span>
+                            <span class="chip">운영</span>
+                            <span class="chip">수익화</span>
+                        </div>
 
-                          <div class="d-flex gap-2 flex-wrap">
-                              <a class="btn btn-accent btn-lg" href="#highlights">핵심 요약 보기</a>
-                              <a class="btn btn-outline-dark btn-lg" href="{{ route('intro') }}">사이트 소개</a>
-                          </div>
-                      </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a class="btn btn-accent btn-lg" href="#highlights">핵심 요약 보기</a>
+                            <a class="btn btn-outline-dark btn-lg" href="{{ route('intro') }}">사이트 소개</a>
+                        </div>
+                    </div>
 
-                      {{--
-                      <div class="col-lg-6">
-                          <div class="img-ph lg">No Image</div>
-                      </div>
-                      --}}
+                    <div class="col-lg-6">
+                        <div class="hero-visual soft-card">
+                            <div class="code-window-top"><span></span><span></span><span></span></div>
+                            <img
+                                src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80"
+                                alt="개발자 코드 작업 이미지"
+                                class="img-fluid hero-image"
+                                loading="lazy">
+                            <div class="code-preview">
+<pre><code><span class="code-key">const</span> mission = {
+  <span class="code-prop">build</span>: <span class="code-string">'th-study.com'</span>,
+  <span class="code-prop">focus</span>: [<span class="code-string">'record'</span>, <span class="code-string">'experiment'</span>, <span class="code-string">'operate'</span>],
+  <span class="code-prop">goal</span>: <span class="code-string">'sustainable growth'</span>
+};
 
-                      <div class="col-lg-6 d-flex justify-content-center align-items-center">
-                        <img src="{{ asset('images/main_logo.png') }}" 
-                             class="img-fluid" 
-                             style="max-width: 420px; width: 100%; height: auto;">
-                      </div>
-                  </div>
-              </div>
-          </header>
+<span class="code-key">function</span> deploy() {
+  <span class="code-key">return</span> <span class="code-string">'consistency > speed'</span>;
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-          <section id="about" class="section-pad anchor-offset">
-              <div class="container reveal">
-                  <div class="row g-4 align-items-center">
-                      <div class="col-lg-6">
-                          <span class="kicker mb-3">프로젝트 소개</span>
-                          <h2 class="fw-bold mb-3">기록이 쌓이고, 운영이 경험이 되고, 경험이 자산이 된다</h2>
-                          <p class="mb-3">
+        <section id="highlights" class="section-pad anchor-offset">
+            <div class="container reveal">
+                <div class="d-flex align-items-end justify-content-between flex-wrap gap-2 mb-4">
+                    <div>
+                        <span class="kicker mb-2">핵심 섹션</span>
+                        <h2 class="fw-bold mb-1">개발자 성장 흐름을 한눈에</h2>
+                        <p class="muted mb-0">현재 TH-Study의 핵심 주제를 카드로 정리했습니다.</p>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6 col-xl-3">
+                        <article class="p-4 soft-card highlight-card h-100">
+                            <i class="devicon-laravel-plain colored highlight-icon" aria-hidden="true"></i>
+                            <h5 class="fw-bold mt-3">성장 기록</h5>
+                            <p class="muted mb-0">학습과 시행착오, 프로젝트 흐름을 꾸준히 쌓아 성장 자산으로 만듭니다.</p>
+                        </article>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <article class="p-4 soft-card highlight-card h-100">
+                            <i class="devicon-python-plain colored highlight-icon" aria-hidden="true"></i>
+                            <h5 class="fw-bold mt-3">실험 및 학습</h5>
+                            <p class="muted mb-0">레거시부터 신기술까지 직접 실험하고, 검증된 결과를 학습 노트로 남깁니다.</p>
+                        </article>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <article class="p-4 soft-card highlight-card h-100">
+                            <i class="devicon-nginx-original colored highlight-icon" aria-hidden="true"></i>
+                            <h5 class="fw-bold mt-3">운영 / 개발일지</h5>
+                            <p class="muted mb-0">배포, 로그, 인프라 운영 경험을 개발일지 형태로 구조화해 공유합니다.</p>
+                        </article>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <article class="p-4 soft-card highlight-card h-100">
+                            <i class="devicon-mysql-plain colored highlight-icon" aria-hidden="true"></i>
+                            <h5 class="fw-bold mt-3">수익화 / 프로젝트 진행상황</h5>
+                            <p class="muted mb-0">트래픽과 콘텐츠 전략을 기반으로 수익화 가능성과 진행 현황을 관리합니다.</p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section-pad anchor-offset">
+            <div class="container reveal">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-6">
+                        <span class="kicker mb-3">프로젝트 소개</span>
+                        <h2 class="fw-bold mb-3">기록이 쌓이고, 운영이 경험이 되고, 경험이 자산이 된다</h2>
+                        <p class="mb-3">
                             {{ config('app.name') }}은 개발자로 살아온 시간과 앞으로의 성장을 담아내기 위해 시작된 개발자 성장 플랫폼이다.
-                              학습, 경험, 기록, 실험, 서비스 운영을 하나의 흐름으로 연결한다.
-                          </p>
-                          <p class="mb-0 muted">
-                              PHP 레거시부터 프레임워크까지의 경험을 기반으로, 기존 기술과 새로운 기술이 공존하는 환경을 직접 만들고 운영한다.
-                              작은 기록 습관에서 출발해, 하나의 서비스로 확장하며 “꾸준히 오래 가는 개발”을 목표로 한다.
-                          </p>
-                      </div>
+                            학습, 경험, 기록, 실험, 서비스 운영을 하나의 흐름으로 연결한다.
+                        </p>
+                        <p class="mb-0 muted">
+                            PHP 레거시부터 프레임워크까지의 경험을 기반으로, 기존 기술과 새로운 기술이 공존하는 환경을 직접 만들고 운영한다.
+                            작은 기록 습관에서 출발해, 하나의 서비스로 확장하며 “꾸준히 오래 가는 개발”을 목표로 한다.
+                        </p>
+                    </div>
 
-                      {{--
-                      <div class="col-lg-6">
-                          <div class="img-ph soft-card flat">No Image</div>
-                      </div>
-                      --}}
-
-                      <div class="col-lg-6 d-flex justify-content-center align-items-center">
-                        <img src="{{ asset('images/intro_project_img.jpg') }}" 
-                             class="img-fluid" 
-                             style="max-width: 420px; width: 100%; height: auto;">
-                      </div>
-                  </div>
-              </div>
-          </section>
-
-          <section id="highlights" class="section-pad anchor-offset">
-              <div class="container reveal">
-                  <div class="d-flex align-items-end justify-content-between flex-wrap gap-2 mb-4">
-                      <div>
-                          <span class="kicker mb-2">핵심 포인트</span>
-                          <h2 class="fw-bold mb-1">한 페이지에서 성격이 바로 읽히게</h2>
-                          <p class="muted mb-0">개발자 성장 플랫폼으로서의 본질만 남겼다.</p>
-                      </div>
-                  </div>
-
-                  <div class="row g-3">
-                      <div class="col-md-6 col-lg-3">
-                          <div class="p-4 soft-card h-100">
-                              <h5 class="fw-bold">성장 기록</h5>
-                              <p class="muted mb-0">학습, 시행착오, 프로젝트 흐름을 기록하고 정리한다.</p>
-                          </div>
-                      </div>
-                      <div class="col-md-6 col-lg-3">
-                          <div class="p-4 soft-card h-100">
-                              <h5 class="fw-bold">레거시 × 신기술</h5>
-                              <p class="muted mb-0">오래된 기술의 현실과 최신 흐름을 함께 실험한다.</p>
-                          </div>
-                      </div>
-                      <div class="col-md-6 col-lg-3">
-                          <div class="p-4 soft-card h-100">
-                              <h5 class="fw-bold">서비스 확장</h5>
-                              <p class="muted mb-0">개발을 넘어 기획, 운영, 개선까지 연결한다.</p>
-                          </div>
-                      </div>
-                      <div class="col-md-6 col-lg-3">
-                          <div class="p-4 soft-card h-100">
-                              <h5 class="fw-bold">운영 경험</h5>
-                              <p class="muted mb-0">로그, 배포, 트래픽 등 실제 운영 감각을 쌓는다.</p>
-                          </div>
-                      </div>
-                  </div>
-
-                  <div class="row g-3 mt-1">
-                      <div class="col-md-6 col-lg-6">
-                          <div class="p-4 soft-card h-100">
-                              <h5 class="fw-bold">정보 정리 플랫폼</h5>
-                              <p class="muted mb-0">개발 지식, 문서, 여행 기록까지 한곳에 모아 관리한다.</p>
-                          </div>
-                      </div>
-                      <div class="col-md-6 col-lg-6">
-                          <div class="p-4 soft-card h-100">
-                              <h5 class="fw-bold">성장과 수익의 연결</h5>
-                              <p class="muted mb-0">광고/콘텐츠/트래픽을 통해 지속 가능한 프로젝트를 만든다.</p>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </section>
+                    <div class="col-lg-6 d-flex justify-content-center align-items-center">
+                        <img src="{{ asset('images/intro_project_img.jpg') }}"
+                             class="img-fluid rounded-4 border"
+                             style="max-width: 520px; width: 100%; height: auto;">
+                    </div>
+                </div>
+            </div>
+        </section>
 
           <section class="py-5">
               <div class="container reveal">
@@ -151,9 +146,7 @@
                           <div class="col-lg-4">
                               <div class="d-grid gap-2 d-lg-flex justify-content-lg-end">
                                   <a class="btn btn-outline-dark btn-lg" href="#roadmap">로드맵 보기</a>
-                                  <button class="btn btn-accent btn-lg" data-bs-toggle="modal" data-bs-target="#contactModal">
-                                      문의하기
-                                  </button>
+                                  <a class="btn btn-accent btn-lg" href="#contact">문의하기</a>
                               </div>
                           </div>
                       </div>
@@ -323,10 +316,25 @@
                           <div class="mt-3 img-ph sm">No Image</div>
                           --}}
 
-                          <div class="profile-image">
-                              <div class="image-card">
-                                  <img src="{{ asset('images/intro_developer_history.jpg') }}" 
-                                       class="img-fluid">
+                          <div class="video-card mt-3">
+                              <div class="video-head d-flex align-items-center justify-content-between mb-2">
+                                  <div class="fw-bold">Laravel 학습 영상</div>
+                                  <a class="small muted text-decoration-none" target="_blank" rel="noopener noreferrer"
+                                     href="https://youtu.be/vYrTMfEufsg?si=kQek9rnZM2i7DKGc">
+                                      YouTube 열기
+                                  </a>
+                              </div>
+                              <div class="video-ratio yt-lite"
+                                   role="button"
+                                   tabindex="0"
+                                   aria-label="Laravel 유튜브 영상 재생"
+                                   data-video-id="vYrTMfEufsg"
+                                   data-youtube-url="https://youtu.be/vYrTMfEufsg?si=kQek9rnZM2i7DKGc">
+                                  <img
+                                      src="https://i.ytimg.com/vi/vYrTMfEufsg/hqdefault.jpg"
+                                      alt="Laravel 유튜브 영상 썸네일"
+                                      loading="lazy">
+                                  <span class="yt-play-btn" aria-hidden="true"></span>
                               </div>
                           </div>
                       </div>
@@ -379,16 +387,110 @@
                               <div class="fw-bold">함께 이야기해보기</div>
                               <div class="muted">콜라보/피드백/제안이 있으면 편하게.</div>
                           </div>
-                          <button class="btn btn-accent" data-bs-toggle="modal" data-bs-target="#contactModal">문의하기</button>
+                          <a class="btn btn-accent" href="#contact">문의하기</a>
                       </div>
                   </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section-pad anchor-offset">
+            <div class="container reveal">
+                <span class="kicker mb-2">Contact</span>
+                <h2 class="fw-bold mb-3">문의하기</h2>
+                <p class="muted mb-4">문의 내용을 남겨주시면 확인 후 빠르게 연락드리겠습니다.</p>
+
+                <div class="soft-card contact-shell p-4 p-lg-5">
+                    <div id="contactErrors" class="alert alert-danger d-none" role="alert"></div>
+
+                    <form id="contact_form" method="post" action="{{ route('guest_posts.store', ['post_type' => $postType]) }}">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" for="name">이름</label>
+                                <input class="form-control" id="name" name="name" placeholder="홍길동" />
+                                <div id="error-name" class="invalid-feedback d-block small text-break d-none"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">연락 방법</label>
+                                <div class="d-flex flex-wrap gap-3 contact-method-wrap">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="contact_method" id="contact_phone" value="phone" checked>
+                                        <label class="form-check-label" for="contact_phone">핸드폰</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="contact_method" id="contact_mail" value="email">
+                                        <label class="form-check-label" for="contact_mail">이메일</label>
+                                    </div>
+                                </div>
+                                <div id="error-contact_method" class="invalid-feedback d-block small text-break d-none"></div>
+                            </div>
+
+                            <div class="col-md-6" id="contactPhoneGroup">
+                                <label class="form-label" for="phone">핸드폰 번호</label>
+                                <input type="tel"
+                                       id="phone"
+                                       name="phone"
+                                       class="form-control"
+                                       placeholder="하이픈 없이 숫자만 입력해 주세요. 예) 01012345678" />
+                                <div id="error-phone" class="invalid-feedback d-block small text-break d-none"></div>
+                            </div>
+
+                            <div class="col-md-6 d-none" id="contactEmailGroup">
+                                <label class="form-label" for="email">이메일</label>
+                                <input type="email"
+                                       id="email"
+                                       name="email"
+                                       class="form-control"
+                                       placeholder="email@example.com" />
+                                <div id="error-email" class="invalid-feedback d-block small text-break d-none"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label" for="inquiry_memo">문의 내용</label>
+                                <textarea id="inquiry_memo" name="inquiry_memo" class="form-control" rows="5" placeholder="내용을 입력해 주세요."></textarea>
+                                <div id="error-inquiry_memo" class="invalid-feedback d-block small text-break d-none"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input type="checkbox"
+                                           id="personal_info_agree"
+                                           name="personal_info_agree"
+                                           class="form-check-input"
+                                           value="Y"
+                                           checked>
+                                    <label class="form-check-label small muted" for="personal_info_agree">
+                                        개인정보 수집 및 이용에 동의합니다.
+                                    </label>
+                                </div>
+                                <div id="error-personal_info_agree" class="invalid-feedback d-block small text-break d-none"></div>
+
+                                <div class="form-check mt-2">
+                                    <input type="checkbox"
+                                           id="marketing_info_agree"
+                                           name="marketing_info_agree"
+                                           class="form-check-input"
+                                           value="Y">
+                                    <label class="form-check-label small muted" for="marketing_info_agree">
+                                        마케팅 정보 수신에 동의합니다.
+                                    </label>
+                                </div>
+                                <div id="error-marketing_info_agree" class="invalid-feedback d-block small text-break d-none"></div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="contact-actions mt-4">
+                        <button type="button" id="contactSubmitBtn" class="btn btn-accent btn-lg">문의하기</button>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section id="map" class="section-pad anchor-offset">
             <div class="container reveal">
                 <span class="kicker mb-2">Location</span>
-                <h2 class="fw-bold mb-3">찾아오는 길</h2>
+                <h2 class="fw-bold mb-2">위치 안내</h2>
                 <p class="muted mb-4">경기도 안산시 단원구 시화호수로633 (반달섬)</p>
                 <div class="map-shell soft-card">
                     <div id="kakao-map" class="map-canvas" aria-label="Kakao Map"></div>
@@ -396,103 +498,6 @@
                 </div>
             </div>
         </section>
-
-        <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                      <div class="modal-header border-0">
-                          <h5 class="modal-title fw-bold">문의하기</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-                      </div>
-
-                      <div class="modal-body">
-                          <p class="muted small mb-3">
-                              문의 내용을 남겨주시면 확인 후 빠르게 연락드리겠습니다.
-                          </p>
-
-                          <div id="contactErrors" class="alert alert-danger d-none" role="alert"></div>
-
-                          <form id="contact_form" method="post" action="{{ route('guest_posts.store', ['post_type' => $postType]) }}">
-                              <div class="mb-3">
-                                  <label class="form-label" for="name">이름</label>
-                                  <input class="form-control" id="name" name="name" placeholder="홍길동" />
-                                  <div id="error-name" class="invalid-feedback d-block small text-break d-none"></div>
-                              </div>
-
-                              <div class="mb-3">
-                                  <label class="form-label">연락 방법</label>
-                                  <div class="d-flex flex-wrap gap-3">
-                                      <div class="form-check">
-                                          <input class="form-check-input" type="radio" name="contact_method" id="contact_phone" value="phone" checked>
-                                          <label class="form-check-label" for="contact_phone">핸드폰</label>
-                                      </div>
-                                      <div class="form-check">
-                                          <input class="form-check-input" type="radio" name="contact_method" id="contact_mail" value="email">
-                                          <label class="form-check-label" for="contact_mail">이메일</label>
-                                      </div>
-                                  </div>
-                                  <div id="error-contact_method" class="invalid-feedback d-block small text-break d-none"></div>
-                              </div>
-
-                              <div class="mb-3" id="contactPhoneGroup">
-                                  <label class="form-label" for="phone">핸드폰 번호</label>
-                                  <input type="tel"
-                                         id="phone" 
-                                         name="phone"
-                                         class="form-control"
-                                         placeholder="하이픈 없이 숫자만 입력해 주세요. 예) 01012345678" />
-                                  <div id="error-phone" class="invalid-feedback d-block small text-break d-none"></div>
-                              </div>
-
-                              <div class="mb-3 d-none" id="contactEmailGroup">
-                                  <label class="form-label" for="email">이메일</label>
-                                  <input type="email" 
-                                         id="email" 
-                                         name="email" 
-                                         class="form-control"
-                                         placeholder="email@example.com" />
-                                  <div id="error-email" class="invalid-feedback d-block small text-break d-none"></div>
-                              </div>
-
-                              <div class="mb-3">
-                                  <label class="form-label" for="inquire_memo">문의 내용</label>
-                                  <textarea id="inquiry_memo" name="inquiry_memo" class="form-control" rows="4" placeholder="내용을 입력해 주세요."></textarea>
-                                  <div id="error-inquiry_memo" class="invalid-feedback d-block small text-break d-none"></div>
-                              </div>
-
-                              <div class="form-check">
-                                 <input type="checkbox" 
-                                         id="personal_info_agree" 
-                                         name="personal_info_agree" 
-                                         class="form-check-input" 
-                                         value="Y" 
-                                         checked>
-                                  <label class="form-check-label small muted" for="personal_info_agree">
-                                      개인정보 수집 및 이용에 동의합니다.
-                                  </label>
-                              </div>
-                              <div id="error-personal_info_agree" class="invalid-feedback d-block small text-break d-none"></div>
-                              <div class="form-check mt-2">
-                                 <input type="checkbox" 
-                                         id="marketing_info_agree" 
-                                         name="marketing_info_agree"
-                                         class="form-check-input" 
-                                         value="Y">
-                                  <label class="form-check-label small muted" for="marketing_info_agree">
-                                      마케팅 정보 수신에 동의합니다.
-                                  </label>
-                              </div>
-                              <div id="error-marketing_info_agree" class="invalid-feedback d-block small text-break d-none"></div>
-                          </form>
-                      </div>
-
-                      <div class="modal-footer border-0">
-                          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
-                          <button type="button" id="contactSubmitBtn" class="btn btn-accent">문의하기</button>
-                      </div>
-                  </div>
-              </div>
-          </div>
 
           <div class="modal fade" id="contactConfirmModal" tabindex="-1" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
@@ -528,9 +533,7 @@
                       </div>
                       <div class="modal-footer border-0">
                           <button class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
-                          <button class="btn btn-accent" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#contactModal">
-                              문의하기 이동
-                          </button>
+                          <a class="btn btn-accent" href="#contact" id="githubToContactBtn">문의하기 이동</a>
                       </div>
                   </div>
               </div>
@@ -589,12 +592,25 @@
                 $(document).off('keydown.contactConfirm');
             });
 
-            $('#contactModal').on('hidden.bs.modal', function() {
-                resetContactForm();
+            $('#githubToContactBtn').on('click', function(e) {
+                e.preventDefault();
+                const target = document.getElementById('contact');
+                $('#githubShareModal').modal('hide');
+
+                if (!target) return;
+                setTimeout(function() {
+                    const y = target.getBoundingClientRect().top + window.scrollY - 88;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }, 220);
             });
+
+            if (typeof initLiteYouTubeEmbeds === 'function') {
+                initLiteYouTubeEmbeds(document);
+            }
 
             initKakaoMap();
             initHomeScroll();
+            initHeroTyping();
             updateContactMethodVisibility();
         });
 
@@ -622,8 +638,8 @@
         function submitContactForm() {
             const $form = $('#contact_form');
             const $errors = $('#contactErrors');
-            const $errorFields = $('#error-name, #error-contact_method, #error-phone, #error-email, #error-inquire_memo, #error-personal_info_agree, #error-marketing_info_agree');
-            const $invalidInputs = $('#name, #phone, #email, #inquire_memo');
+            const $errorFields = $('#error-name, #error-contact_method, #error-phone, #error-email, #error-inquiry_memo, #error-personal_info_agree, #error-marketing_info_agree');
+            const $invalidInputs = $('#name, #phone, #email, #inquiry_memo');
             const payload = {
                 name: $('#name').val(),
                 contact_method: $('input[name="contact_method"]:checked').val(),
@@ -660,7 +676,7 @@
                 },
                 onSuccess: function () {
                     $('#contactConfirmModal').modal('hide');
-                    $('#contactModal').modal('hide');
+                    resetContactForm();
                 },
                 onError: function (xhr) {
                     shouldHideLoading = false;
@@ -796,8 +812,8 @@
             }
 
             const $errors = $('#contactErrors');
-            const $errorFields = $('#error-name, #error-contact_method, #error-phone, #error-email, #error-inquire_memo, #error-personal_info_agree, #error-marketing_info_agree');
-            const $invalidInputs = $('#name, #phone, #email, #inquire_memo');
+            const $errorFields = $('#error-name, #error-contact_method, #error-phone, #error-email, #error-inquiry_memo, #error-personal_info_agree, #error-marketing_info_agree');
+            const $invalidInputs = $('#name, #phone, #email, #inquiry_memo');
 
             $errors.addClass('d-none').text('');
             $errorFields.addClass('d-none').text('');

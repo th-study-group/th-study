@@ -1,18 +1,27 @@
-function initHomeScroll(){
+function initHomeScroll() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const offsetTop = 88;
+
     function smoothScrollTo(targetY, durationMs) {
+        if (prefersReducedMotion) {
+            window.scrollTo(0, targetY);
+            return;
+        }
+
         const startY = window.scrollY;
         const diff = targetY - startY;
         const start = performance.now();
 
-        function ease(t){
+        function ease(t) {
             return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
         }
 
-        function step(now){
-            const p = Math.min(1, (now - start) / durationMs);
-            window.scrollTo(0, startY + diff * ease(p));
-            if (p < 1) requestAnimationFrame(step);
+        function step(now) {
+            const progress = Math.min(1, (now - start) / durationMs);
+            window.scrollTo(0, startY + diff * ease(progress));
+            if (progress < 1) requestAnimationFrame(step);
         }
+
         requestAnimationFrame(step);
     }
 
@@ -20,72 +29,102 @@ function initHomeScroll(){
         anchor.addEventListener('click', (event) => {
             const id = anchor.getAttribute('href');
             if (!id || id.length < 2) return;
-            const el = document.querySelector(id);
-            if (!el) return;
+
+            const target = document.querySelector(id);
+            if (!target) return;
+
             event.preventDefault();
-            const y = el.getBoundingClientRect().top + window.scrollY - 96;
-            smoothScrollTo(y, 720);
+            const y = target.getBoundingClientRect().top + window.scrollY - offsetTop;
+            smoothScrollTo(y, 700);
         });
     });
 
-    /*function enableWheelSmooth(){
-        let current = window.scrollY;
-        let target = window.scrollY;
-        let ticking = false;
-
-        const strength = 0.1;
-        const maxStep = 220;
-
-        function animate(){
-            ticking = true;
-            current += (target - current) * strength;
-            window.scrollTo(0, current);
-
-            if (Math.abs(target - current) < 0.6) {
-                ticking = false;
-                return;
-            }
-            requestAnimationFrame(animate);
-        }
-
-        window.addEventListener('wheel', (event) => {
-            const inModal = document.querySelector('.modal.show');
-            if (inModal) return;
-            event.preventDefault();
-
-            const delta = Math.max(-maxStep, Math.min(maxStep, event.deltaY));
-            target = Math.max(0, target + delta);
-
-            if (!ticking) {
-                current = window.scrollY;
-                requestAnimationFrame(animate);
-            }
-        }, { passive: false });
-
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                current = window.scrollY;
-                target = window.scrollY;
-            }
-        }, { passive: true });
-    }
-    enableWheelSmooth();
-    */
-
     const revealTargets = document.querySelectorAll('.home-landing .reveal');
-    if (revealTargets.length) {
-        if ('IntersectionObserver' in window) {
-            const revealObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach((entry) => {
-                    if (!entry.isIntersecting) return;
-                    entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target);
-                });
-            }, { threshold: 0.12 });
+    if (!revealTargets.length) return;
 
-            revealTargets.forEach((el) => revealObserver.observe(el));
-        } else {
-            revealTargets.forEach((el) => el.classList.add('is-visible'));
-        }
+    if ('IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+
+                const cards = entry.target.querySelectorAll('.highlight-card');
+                cards.forEach((card, index) => {
+                    card.style.transitionDelay = `${index * 70}ms`;
+                });
+
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            });
+        }, { threshold: 0.14 });
+
+        revealTargets.forEach((el) => revealObserver.observe(el));
+        return;
     }
+
+    revealTargets.forEach((el) => el.classList.add('is-visible'));
+}
+
+function initHeroTyping() {
+    const el = document.getElementById('heroTypingText');
+    if (!el) return;
+
+    const fullText = el.dataset.text || el.textContent || '';
+    if (!fullText) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+        el.textContent = fullText;
+        return;
+    }
+
+    el.textContent = '';
+    let index = 0;
+
+    const timer = window.setInterval(() => {
+        index += 1;
+        el.textContent = fullText.slice(0, index);
+
+        if (index >= fullText.length) {
+            window.clearInterval(timer);
+        }
+    }, 48);
+}
+
+function initLiteYouTubeEmbeds(root = document) {
+    const targets = root.querySelectorAll('.yt-lite[data-video-id]');
+    targets.forEach((el) => {
+        if (el.dataset.bound === 'Y') return;
+        el.dataset.bound = 'Y';
+
+        const activate = () => {
+            const videoId = el.dataset.videoId;
+            if (!videoId) return;
+
+            if (el.querySelector('iframe')) return;
+
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&playsinline=1&rel=0&modestbranding=1&fs=1`;
+            iframe.title = 'YouTube video player';
+            iframe.loading = 'lazy';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+            iframe.allowFullscreen = true;
+
+            el.innerHTML = '';
+            el.appendChild(iframe);
+        };
+
+        el.addEventListener('click', activate);
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                activate();
+            }
+        });
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initLiteYouTubeEmbeds(document), { once: true });
+} else {
+    initLiteYouTubeEmbeds(document);
 }
