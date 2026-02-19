@@ -6,7 +6,7 @@
 @endsection
 
 @push('styles')
-    <link href="{{ asset('css/intro/home.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/intro/home.css') }}?v={{ filemtime(public_path('css/intro/home.css')) }}" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -844,5 +844,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/intro/home.js') }}"></script> 
+    <script src="{{ asset('js/intro/home.js') }}?v={{ filemtime(public_path('js/intro/home.js')) }}"></script> 
 @endpush
