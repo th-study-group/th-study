@@ -237,9 +237,17 @@
     <!-- 6: 수익 -->
     <section class="section" data-label="수익">
       <div class="split">
-        <div class="imgbox reveal delay-1">
-          <img class="parallax" data-speed="0.18" alt="monetize image"
-               src="{{ asset('images/intro/006.avif') }}">
+        <div class="imgbox yt-lite reveal delay-1"
+             role="button"
+             tabindex="0"
+             aria-label="수익화 유튜브 영상 재생"
+             data-video-id="8LvIohp9jfE"
+             data-youtube-url="https://youtu.be/8LvIohp9jfE?si=HX99IvJJoKxJ545N">
+          <img
+            src="https://i.ytimg.com/vi/8LvIohp9jfE/hqdefault.jpg"
+            alt="수익화 유튜브 영상 썸네일"
+            loading="lazy">
+          <span class="yt-play-btn" aria-hidden="true"></span>
         </div>
 
         <div class="content">
@@ -255,19 +263,6 @@
             {{ config('app.name') }}는 개발뿐 아니라 여행, 맛집, 카페, 대중교통, 신기술, 미래, 경제 같은
             일상의 기록까지 함께 모아 검색 가능한 데이터로 정리해 나가는 방향을 지향합니다.
           </p>
-
-          <div class="video-wrap yt-lite reveal delay-3"
-               role="button"
-               tabindex="0"
-               aria-label="Laravel 유튜브 영상 재생"
-               data-video-id="8LvIohp9jfE"
-               data-youtube-url="https://youtu.be/8LvIohp9jfE?si=HX99IvJJoKxJ545N">
-            <img
-              src="https://i.ytimg.com/vi/8LvIohp9jfE/hqdefault.jpg"
-              alt="Laravel 유튜브 영상 썸네일"
-              loading="lazy">
-            <span class="yt-play-btn" aria-hidden="true"></span>
-          </div>
 
           <div class="tagrow reveal delay-3">
             <span class="tag">콘텐츠 구조화</span>
