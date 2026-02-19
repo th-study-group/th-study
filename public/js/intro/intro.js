@@ -385,6 +385,7 @@ function initLiteYouTubeEmbeds(root = document) {
     targets.forEach((el) => {
         if (el.dataset.bound === "Y") return;
         el.dataset.bound = "Y";
+        let lastActivatedAt = 0;
         const initialImg = el.querySelector("img");
         el.dataset.thumbSrc = initialImg?.getAttribute("src") || `https://i.ytimg.com/vi/${el.dataset.videoId}/hqdefault.jpg`;
         el.dataset.thumbAlt = initialImg?.getAttribute("alt") || "YouTube 영상 썸네일";
@@ -434,7 +435,19 @@ function initLiteYouTubeEmbeds(root = document) {
             el.appendChild(ctrlBtn);
         };
 
-        el.addEventListener("click", activate);
+        const activateFromEvent = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const now = Date.now();
+            if (now - lastActivatedAt < 450) return;
+            lastActivatedAt = now;
+            activate();
+        };
+
+        el.addEventListener("click", activateFromEvent);
+        el.addEventListener("touchend", activateFromEvent, { passive: false });
         el.addEventListener("keydown", (e) => {
             if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();

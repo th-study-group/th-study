@@ -95,6 +95,7 @@ function initLiteYouTubeEmbeds(root = document) {
     targets.forEach((el) => {
         if (el.dataset.bound === 'Y') return;
         el.dataset.bound = 'Y';
+        let lastActivatedAt = 0;
 
         const activate = () => {
             const videoId = el.dataset.videoId;
@@ -141,7 +142,19 @@ function initLiteYouTubeEmbeds(root = document) {
             el.appendChild(ctrlBtn);
         };
 
-        el.addEventListener('click', activate);
+        const activateFromEvent = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const now = Date.now();
+            if (now - lastActivatedAt < 450) return;
+            lastActivatedAt = now;
+            activate();
+        };
+
+        el.addEventListener('click', activateFromEvent);
+        el.addEventListener('touchend', activateFromEvent, { passive: false });
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();

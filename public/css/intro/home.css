@@ -382,6 +382,7 @@ body:has(.home-page) > .container-fluid {
     background: rgba(255, 0, 0, 0.9);
     z-index: 6;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    pointer-events: none;
 }
 
 .home-landing .yt-play-btn::before {
