@@ -438,7 +438,7 @@ function initLiteYouTubeEmbeds(root = document) {
                 }
             };
 
-            ctrlBtn.addEventListener("click", (evt) => {
+            const onControlToggle = (evt) => {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (ctrlBtn.dataset.muted === "Y") {
@@ -454,7 +454,10 @@ function initLiteYouTubeEmbeds(root = document) {
                 ctrlBtn.dataset.playing = playing ? "N" : "Y";
                 ctrlBtn.textContent = playing ? "재생" : "일시정지";
                 ctrlBtn.setAttribute("aria-label", playing ? "영상 재생" : "영상 일시정지");
-            });
+            };
+
+            ctrlBtn.addEventListener("click", onControlToggle);
+            ctrlBtn.addEventListener("touchend", onControlToggle, { passive: false });
 
             el.appendChild(ctrlBtn);
 
@@ -467,6 +470,8 @@ function initLiteYouTubeEmbeds(root = document) {
         };
 
         const activateFromEvent = (e) => {
+            if (el.querySelector("iframe")) return;
+            if (e && e.target && e.target.closest && e.target.closest(".yt-control-btn")) return;
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
