@@ -188,7 +188,7 @@
                                         @checked(old('personal_info_agree'))
                                         value="Y"
                                     >
-                                    <label class="form-check-label" for="personal_info_agree">개인정보동의(필수)</label>
+                                    <label class="form-check-label" for="personal_info_agree">개인정보동의 (필수)</label>
                                 </div>
                                 @error('personal_info_agree')
                                     <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
@@ -205,7 +205,7 @@
                                         value="Y"
                                         @checked(old('marketing_info_agree'))
                                     >
-                                    <label class="form-check-label" for="marketing_info_agree">마케팅동의</label>
+                                    <label class="form-check-label" for="marketing_info_agree">마케팅동의 (선택)</label>
                                 </div>
                                 @error('marketing_info_agree')
                                     <div class="invalid-feedback d-block small text-break">{{ $message }}</div>

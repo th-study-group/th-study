@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\SendWebPushJob;
+use App\Repositories\UserRepository;
 use App\Repositories\WebPushMessageRepository;
 use App\Repositories\WebPushSubScriptionRepository;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 class PushService
 {
     public function __construct(
+        private UserRepository $userRepository,
         private WebPushSubScriptionRepository $webPushSubScriptionRepository,
         private WebPushMessageRepository $webPushMessageRepository
     ) {}
@@ -148,7 +150,22 @@ class PushService
             ];
         }
 
-        foreach ($targetUserIds as $targetUserId) {
+        $pushEnabledUserIds = $this->userRepository->getPushEnabledUserIds($targetUserIds);
+        if (empty($pushEnabledUserIds)) {
+            Log::info('[Push][SendToUser] 푸시 수신 동의 사용자 없음', [
+                'user_idx' => auth()->id(),
+                'target_user_count' => count($targetUserIds),
+                'ip' => request()->ip(),
+            ]);
+
+            return [
+                'ok' => true,
+                'msg' => 'skipped_all_opt_out',
+                'queued_users' => 0,
+            ];
+        }
+
+        foreach ($pushEnabledUserIds as $targetUserId) {
             SendWebPushJob::dispatch(
                 userId: $targetUserId,
                 title: $data['title'],
@@ -164,13 +181,14 @@ class PushService
         Log::info('[Push][SendToUser] 큐 등록 완료', [
             'user_idx' => auth()->id(),
             'target_user_count' => count($targetUserIds),
+            'push_enabled_user_count' => count($pushEnabledUserIds),
             'ip' => request()->ip(),
         ]);
 
         return [
             'ok' => true,
             'msg' => 'queued',
-            'queued_users' => count($targetUserIds),
+            'queued_users' => count($pushEnabledUserIds),
         ];
     }
 

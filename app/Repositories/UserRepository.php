@@ -44,6 +44,27 @@ class UserRepository
     }
 
     /**
+     * 푸시 수신 동의 사용자 idx 목록 조회
+     *
+     * @param array<int, int|string> $userIds
+     * @return array<int, int>
+     */
+    public function getPushEnabledUserIds(array $userIds): array
+    {
+        if (empty($userIds)) {
+            return [];
+        }
+
+        return User::whereIn('idx', $userIds)
+            ->where('push_notification_agree', 1)
+            ->pluck('idx')
+            ->map(function ($id): int {
+                return (int) $id;
+            })
+            ->all();
+    }
+
+    /**
      * 회원 목록 조회
      *
      * @param array $filters

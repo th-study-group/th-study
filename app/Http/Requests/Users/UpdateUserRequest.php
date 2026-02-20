@@ -42,6 +42,7 @@ class UpdateUserRequest extends FormRequest
             'address' => ['nullable', 'string', 'max:80'],
             'personal_info_agree' => ['required', 'string', 'in:Y'],
             'marketing_info_agree' => ['nullable', 'string', 'in:Y,N'],
+            'push_notification_agree' => ['nullable', 'string', 'in:Y,N'],
         ];
     }
 

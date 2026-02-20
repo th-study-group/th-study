@@ -149,7 +149,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <div class="form-check">
                             <input
                                 type="checkbox"
@@ -159,14 +159,14 @@
                                 value="Y"
                             @checked(session()->hasOldInput() ? (old('personal_info_agree') === 'Y') : ($user->personal_info_agree === 'Y'))
                             >
-                            <label class="form-check-label" for="personal_info_agree">개인정보동의(필수)</label>
+                            <label class="form-check-label" for="personal_info_agree">개인정보동의 (필수)</label>
                         </div>
                         @error('personal_info_agree')
                             <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-2">
                         <div class="form-check">
                             <input
                                 type="checkbox"
@@ -176,11 +176,25 @@
                                 value="Y"
                             @checked(old('marketing_info_agree', $user->marketing_info_agree) === 'Y')
                             >
-                            <label class="form-check-label" for="marketing_info_agree">마케팅동의</label>
+                            <label class="form-check-label" for="marketing_info_agree">마케팅동의 (선택)</label>
                         </div>
                         @error('marketing_info_agree')
                             <div class="invalid-feedback d-block small text-break">{{ $message }}</div>
                         @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input
+                                type="checkbox"
+                                id="push_notification_agree"
+                                name="push_notification_agree"
+                                class="form-check-input"
+                                value="Y"
+                            @checked(old('push_notification_agree', $user->push_notification_agree) === 'Y')
+                            >
+                            <label class="form-check-label" for="push_notification_agree">푸시 알림 수신 동의 (선택)</label>
+                        </div>
                     </div>
 
                     @if (($user->level ?? null) === 'normal')

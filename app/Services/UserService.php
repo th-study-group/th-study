@@ -233,7 +233,8 @@ class UserService
                     'phone' => $payload['phone'],
                     'address' => $payload['address'] ?? null,
                     'personal_info_agree' => $payload['personal_info_agree'],
-                    'marketing_info_agree' => $payload['marketing_info_agree'] ?? null,
+                    'marketing_info_agree' => $payload['marketing_info_agree'] ?? 0,
+                    'push_notification_agree' => $payload['push_notification_agree'] ?? 0,
                     'update_user_idx' => $id,
                 ]);
 

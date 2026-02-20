@@ -33,6 +33,7 @@ class User extends Authenticatable
         'address',
         'personal_info_agree',
         'marketing_info_agree',
+        'push_notification_agree',
         //'memo',
         //'level',
         //'ip',  
@@ -95,6 +96,16 @@ class User extends Authenticatable
     }
 
     public function getMarketingInfoAgreeAttribute($value)
+    {
+        return (int) $value === 1 ? 'Y' : 'N';
+    }
+
+    public function setPushNotificationAgreeAttribute($value) 
+    {
+        $this->attributes['push_notification_agree'] = $value === 'Y' ? 1 : 0;
+    }
+
+    public function getPushNotificationAgreeAttribute($value) 
     {
         return (int) $value === 1 ? 'Y' : 'N';
     }

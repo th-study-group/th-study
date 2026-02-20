@@ -56,6 +56,10 @@
                         <div class="board-field bg-light rounded-3 px-3 py-2">{{ $terms[(int) $member->getRawOriginal('marketing_info_agree')] ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
+                        <span class="form-label small text-secondary d-block mb-1">푸시알림수신동의</span>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $terms[(int) $member->getRawOriginal('push_notification_agree')] ?? '-' }}</div>
+                    </div>
+                    <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">회원등급</span>
                         <div class="board-field bg-light rounded-3 px-3 py-2">{{ $gradeList[$member->level ?? ''] ?? '-' }}</div>
                     </div>
