@@ -44,6 +44,25 @@ class UserRepository
     }
 
     /**
+     * 사용자 푸시 수신 동의값 업데이트
+     *
+     * @param int $id
+     * @param string $agree
+     * @return bool
+     */
+    public function updatePushNotificationAgree(int $id, string $agree): bool
+    {
+        $user = $this->findById($id);
+        if (!$user) {
+            return false;
+        }
+
+        return $user->update([
+            'push_notification_agree' => $agree,
+        ]);
+    }
+
+    /**
      * 푸시 수신 동의 사용자 idx 목록 조회
      *
      * @param array<int, int|string> $userIds

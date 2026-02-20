@@ -6,6 +6,7 @@ use App\Jobs\SendWebPushJob;
 use App\Repositories\UserRepository;
 use App\Repositories\WebPushMessageRepository;
 use App\Repositories\WebPushSubScriptionRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -33,14 +34,18 @@ class PushService
             return;
         }
 
-        $this->webPushSubScriptionRepository->upsertByEndpoint([
-            'user_idx' => $userIdx,
-            'endpoint' => $data['endpoint'],
-            'p256dh' => $data['keys']['p256dh'],
-            'auth' => $data['keys']['auth'],
-            'user_agent' => $userAgent ?? '',
-            'last_seen_datetime' => now(),
-        ]);
+        DB::transaction(function () use ($data, $userIdx, $userAgent): void {
+            $this->webPushSubScriptionRepository->upsertByEndpoint([
+                'user_idx' => $userIdx,
+                'endpoint' => $data['endpoint'],
+                'p256dh' => $data['keys']['p256dh'],
+                'auth' => $data['keys']['auth'],
+                'user_agent' => $userAgent ?? '',
+                'last_seen_datetime' => now(),
+            ]);
+            
+            $this->userRepository->updatePushNotificationAgree($userIdx, 'Y');
+        });
 
         Log::info('[Push][Subscribe] 완료', [
             'user_idx' => $userIdx,
