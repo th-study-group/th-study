@@ -100,9 +100,59 @@ $(function () {
         });
     };
 
-    // iOS Safari/PWA에서 초기 backdrop 잔류 이슈를 피하기 위해
-    // 페이지 진입 시 강제 로딩 모달 표시를 제거한다.
+    initInitialEntryLoading(loadingModal);
 });
+
+function initInitialEntryLoading(loadingModal)
+{
+    if (!loadingModal) {
+        return;
+    }
+
+    // PWA 스플래시가 표시 중이면 끝난 뒤에 짧게 로딩 표시
+    if (window.__thSplashVisible === true) {
+        window.addEventListener('th:splash:hidden', function () {
+            runInitialEntryLoading(loadingModal);
+        }, { once: true });
+        return;
+    }
+
+    runInitialEntryLoading(loadingModal);
+}
+
+function runInitialEntryLoading(loadingModal)
+{
+    if (document.body && document.body.dataset.initialLoadingShown === '1') {
+        return;
+    }
+
+    if (document.body) {
+        document.body.dataset.initialLoadingShown = '1';
+    }
+
+    const navEntry = performance.getEntriesByType
+        ? performance.getEntriesByType('navigation')[0]
+        : null;
+
+    // 뒤로가기/앞으로가기 복원 시에는 불필요한 점멸 방지
+    if (navEntry && navEntry.type === 'back_forward') {
+        return;
+    }
+
+    try {
+        loadingModal.show();
+    } catch (e) {
+        return;
+    }
+
+    setTimeout(function () {
+        if (typeof window.hideLoading === 'function') {
+            window.hideLoading();
+        } else {
+            loadingModal.hide();
+        }
+    }, 260);
+}
 
 function initFixedHeaderOffset()
 {
