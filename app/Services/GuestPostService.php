@@ -30,40 +30,45 @@ class GuestPostService
     public function create(GuestPostRequest $request): GuestPost
     {
         $payload = $request->validated();
-        $ip = $request->ip();
-        $userAgent = (string) $request->userAgent();
-
-        $contactValue = $payload['contact_method'] === 'phone'
-            ? $payload['phone']
-            : $payload['email'];
-
-        $writer = $payload['name'];
-        $title = "{$writer} 님이 메인페이지에서 작성한 문의입니다.";
+        $context = [
+            'ip' => $request->ip(),
+            'user_agent' => (string) $request->userAgent(),
+            'contact_value' => $payload['contact_method'] === 'phone'
+                ? $payload['phone']
+                : $payload['email'],
+            'writer' => $payload['name'],
+        ];
+        $context['title'] = "{$context['writer']} 님이 메인페이지에서 작성한 문의입니다.";
 
         Log::info('Guest post create start', [
             'action' => 'create',
             'model' => 'GuestPost',
             'contact_method' => $payload['contact_method'] ?? null,
-            'ip' => $ip,
+            'ip' => $context['ip'],
         ]);
 
+        $refererUrl = $request->headers->get('referer');
+        $context['referer_url'] = is_string($refererUrl) && $refererUrl !== ''
+            ? mb_substr($refererUrl, 0, 2048)
+            : null;
+
         try {
-            $guestPost = DB::transaction(function () use ($payload, $ip, $userAgent, $contactValue, $writer, $title) {
-                $guestPost = GuestPost::create([
-                    'title' => $title,
+            $guestPost = DB::transaction(function () use ($payload, $context) {
+                $guestPost = new GuestPost();
+                $guestPost->forceFill([
+                    'title' => $context['title'],
                     'content' => $payload['inquiry_memo'],
                     'personal_info_agree' => $payload['personal_info_agree'],
                     'marketing_info_agree' => $payload['marketing_info_agree'] ?? 'N',
                     'contact_method' => $payload['contact_method'],
-                    'contact_value' => $contactValue,
-                    'writer' => $writer,
-                    'user_agent' => $userAgent,
-                    'ip' => $ip,
-                ]);
-
-                $guestPost->forceFill([
+                    'contact_value' => $context['contact_value'],
+                    'writer' => $context['writer'],
+                    'ip' => $context['ip'],
+                    'user_agent' => $context['user_agent'],
+                    'referer_url' => $context['referer_url'],
                     'post_type' => 'inquiries',
-                ])->saveQuietly();
+                ]);
+                $guestPost->save();
 
                 return $guestPost;
             });
@@ -72,13 +77,13 @@ class GuestPostService
                 'action' => 'create',
                 'model' => 'GuestPost',
                 'guest_post_idx' => $guestPost->idx,
-                'ip' => $ip,
+                'ip' => $context['ip'],
             ]);
 
             $this->notifyAdminsByPush(
-                $title,
+                $context['title'],
                 $payload['inquiry_memo'],
-                $userAgent,
+                $context['user_agent'],
                 $guestPost->idx
             );
 
@@ -87,7 +92,7 @@ class GuestPostService
             Log::error('Guest post create failed', [
                 'action' => 'create',
                 'model' => 'GuestPost',
-                'ip' => $ip,
+                'ip' => $context['ip'],
                 'error' => $e->getMessage(),
             ]);
             throw $e;

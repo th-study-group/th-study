@@ -17,7 +17,8 @@ class GuestPost extends Base
         'memo',
         'writer',
         'ip',
-        'user_agent',
+        //'user_agent',
+        //referer_url
         //'update_user_idx',
         //'delete_user_idx',
         //'create_datetime',
