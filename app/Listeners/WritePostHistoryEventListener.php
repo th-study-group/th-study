@@ -13,11 +13,17 @@ class WritePostHistoryEventListener
 {
     public function handle(PostHistoryEvent $event): void
     {
+        $refererUrl = request()->headers->get('referer');
+        $refererUrl = is_string($refererUrl) && $refererUrl !== ''
+            ? mb_substr($refererUrl, 0, 2048)
+            : null;
+
         $history = new PostHistory();
         $history->forceFill([
             'post_idx' => $event->postIdx,
             'ip' => $event->ip,
             'user_agent' => $event->userAgent,
+            'referer_url' => $refererUrl,
             'job_type' => $event->jobType,
             'table_name' => $event->tableName,
             'status' => $event->status,
