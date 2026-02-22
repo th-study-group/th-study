@@ -14,7 +14,7 @@ services:
     depends_on:
       - mysql
 
-  # ✅ 큐 워커 (systemd 대신 도커에서는 이 컨테이너로 계속 돌림)
+  # 큐 워커 (systemd 대신 도커에서는 이 컨테이너로 계속 돌림)
   queue:
     build:
       context: .
