@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * 노트 주제
+ */
 class NoteTopic extends Base
 {
     protected $table = 'note_topics';

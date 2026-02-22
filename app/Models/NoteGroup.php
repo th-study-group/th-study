@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * 노트 그룹 코드 
+ */
 class NoteGroup extends Base
 {
     protected $table = 'note_groups';

@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+/**
+ * 미인증 게시글
+ */
 class GuestPost extends Base
 {
     protected $fillable = [

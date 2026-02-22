@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 메일 발송 수신 로그
+ */
 class MailLog extends Model
 {
     protected $table = 'mail_logs';

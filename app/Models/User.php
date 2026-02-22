@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * 회원 (사용자)
+ */
 class User extends Authenticatable
 {
     use SoftDeletes;

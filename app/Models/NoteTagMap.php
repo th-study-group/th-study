@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * 노트 해시테크 관계
+ */
 class NoteTagMap extends Model
 {
     protected $table = 'note_tag_map';

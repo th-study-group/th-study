@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * 노트 이력 관리
+ */
 class NoteHistory extends Model
 {
     protected $table = 'note_histories';

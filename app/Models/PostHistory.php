@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 게시글 이력관리
+ */
 class PostHistory extends Model
 {
     protected $table = 'post_histories';

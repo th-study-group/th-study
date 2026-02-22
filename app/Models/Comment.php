@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\BaseModel;
 
+/**
+ * 게시글 댓글
+ */
 class Comment extends Base
 {
     protected $casts = [
