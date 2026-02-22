@@ -297,6 +297,12 @@ npm run build
 
 # DB 반영
 php artisan migrate --force
+
+# 슈퍼어드민 보정(환경별 택1)
+php artisan db:seed --class=EnvSuperAdminSeeder --force
+# php artisan db:seed --class=AutoSuperAdminSeeder --force
+
+# 노트 코드/마스터 데이터 동기화
 php artisan db:seed --class=NoteMasterSeeder --force
 
 # 큐 서비스 재시작(배포 반영)
@@ -310,11 +316,22 @@ sudo systemctl reload nginx</code></pre>
       <strong>CI/CD 운영 기준</strong><br>
       <ul class="mb-0" style="margin-left:18px;">
         <li>Self-hosted runner 기준으로 <code>main</code> push 시 배포 자동화 구성</li>
-        <li>코드 동기화 -> <code>composer install --no-dev</code> -> <code>php artisan migrate --force</code> -> <code>php artisan db:seed --class=NoteMasterSeeder --force</code></li>
+        <li>코드 동기화 -> <code>composer install --no-dev</code> -> <code>php artisan optimize:clear</code>/<code>config:cache</code>/<code>route:cache</code>/<code>view:cache</code> -> <code>php artisan migrate --force</code> -> <code>php artisan db:seed --class=NoteMasterSeeder --force</code></li>
         <li>슈퍼어드민 계정은 환경별 시더로 보정: 운영 <code>AutoSuperAdminSeeder</code>, 개발/로컬 <code>EnvSuperAdminSeeder</code></li>
         <li>노트 마스터 데이터는 <code>config/seeders/note.php</code>에서 관리하고, 시더는 <code>updateOrCreate</code> 방식으로 동기화</li>
-        <li>웹서버 reload 및 큐 서비스 재시작까지 포함</li>
+        <li>웹서버 reload(<code>php8.2-fpm</code>, <code>nginx</code>) 및 큐 반영(<code>php artisan queue:restart</code>) 포함</li>
       </ul>
+      <div class="codeblock mt-3">
+        <div class="codehdr"><span>bash · 수동 실행(슈퍼어드민/노트)</span><button class="copybtn no-print" onclick="copyFrom('#seedOps', this)">복사</button></div>
+        <pre id="seedOps"><code># 개발/로컬: .env 기준 슈퍼어드민 보정
+php artisan db:seed --class=EnvSuperAdminSeeder --force
+
+# 운영: 랜덤 비밀번호 출력 방식 슈퍼어드민 보정
+php artisan db:seed --class=AutoSuperAdminSeeder --force
+
+# 노트 코드/마스터 데이터 동기화(config/seeders/note.php 기준)
+php artisan db:seed --class=NoteMasterSeeder --force</code></pre>
+      </div>
     </div>
     </div></div>
   </div>
@@ -359,9 +376,9 @@ sudo certbot renew --dry-run</code></pre>
     <div class="mt-4">
       <div class="codeblock">
         <div class="codehdr"><span>bash · 빠른 운영 점검</span><button class="copybtn no-print" onclick="copyFrom('#opsQuick', this)">복사</button></div>
-          <pre id="opsQuick"><code>docker compose ps
-php artisan about --only=environment,drivers
+          <pre id="opsQuick"><code>php artisan about --only=environment,drivers
 php artisan migrate:status
+sudo systemctl status php8.2-fpm
 sudo systemctl status nginx
 sudo systemctl status th-study-queue</code></pre>
         </div>
@@ -428,6 +445,19 @@ docker compose logs -f
 
 # 내리기
 docker compose down</code></pre>
+    </div>
+    <div class="mt-4">
+    <div class="codeblock">
+      <div class="codehdr"><span>bash · 도커 시더 실행(슈퍼어드민/노트)</span><button class="copybtn no-print" onclick="copyFrom('#dcSeed', this)">복사</button></div>
+      <pre id="dcSeed"><code># 개발/로컬: .env 기준 슈퍼어드민 보정
+docker exec -it th-app php artisan db:seed --class=EnvSuperAdminSeeder --force
+
+# 운영: 랜덤 비밀번호 출력 방식 슈퍼어드민 보정
+docker exec -it th-app php artisan db:seed --class=AutoSuperAdminSeeder --force
+
+# 노트 코드/마스터 데이터 동기화(config/seeders/note.php 기준)
+docker exec -it th-app php artisan db:seed --class=NoteMasterSeeder --force</code></pre>
+    </div>
     </div>
     
       <div class="mt-4">
@@ -805,7 +835,14 @@ npm run build</code></pre></div>
 docker compose up -d --build
 docker compose ps</code></pre></div>
 <div class="codeblock"><div class="codehdr"><span>bash</span></div><pre><code>docker exec -it th-app php artisan key:generate --force
-docker exec -it th-app php artisan migrate</code></pre></div>
+docker exec -it th-app php artisan migrate
+
+# 슈퍼어드민 보정(환경별 택1)
+docker exec -it th-app php artisan db:seed --class=EnvSuperAdminSeeder --force
+# docker exec -it th-app php artisan db:seed --class=AutoSuperAdminSeeder --force
+
+# 노트 코드/마스터 데이터 동기화(config/seeders/note.php 기준)
+docker exec -it th-app php artisan db:seed --class=NoteMasterSeeder --force</code></pre></div>
 <div class="codeblock"><div class="codehdr"><span>bash</span></div><pre><code>docker compose up -d
 docker compose down
 docker compose restart
@@ -832,21 +869,30 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 free -h</code></pre></div>
 <h3 id="readme-125-cicd-핵심">12.5 CI/CD 핵심</h3>
 <ul>
-<li><code>main</code> push 시 코드 동기화, <code>composer install --no-dev</code>, <code>php artisan migrate --force</code>, <code>php artisan db:seed --class=NoteMasterSeeder --force</code>, 웹서버 reload, 큐 반영 수행</li>
+<li><code>main</code> push 시 <code>.github/workflows/deploy.yml</code> 기준으로 코드 동기화, <code>composer install --no-dev</code>, <code>php artisan optimize:clear/config:cache/route:cache/view:cache</code>, <code>php artisan migrate --force</code>, <code>php artisan db:seed --class=NoteMasterSeeder --force</code>, 웹서버 reload(<code>php8.2-fpm</code>, <code>nginx</code>), <code>php artisan queue:restart</code> 수행</li>
 <li>슈퍼어드민 계정은 환경별 시더로 보정: 운영 <code>AutoSuperAdminSeeder</code>, 개발/로컬 <code>EnvSuperAdminSeeder</code></li>
 <li>노트 마스터 데이터는 <code>config/seeders/note.php</code>에서 관리하며, 시더는 <code>updateOrCreate</code> 기반 동기화</li>
 <li>자동배포 스크립트에는 민감정보 하드코딩 금지, 환경변수/비밀 저장소 사용</li>
 </ul>
+<div class="codeblock"><div class="codehdr"><span>bash</span></div><pre><code># 개발/로컬: .env(SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD) 기준 슈퍼어드민 보정
+php artisan db:seed --class=EnvSuperAdminSeeder --force
+
+# 운영: SUPERADMIN_EMAIL 기준 슈퍼어드민 보정(비밀번호 랜덤 생성, 콘솔 출력)
+php artisan db:seed --class=AutoSuperAdminSeeder --force
+
+# 노트 코드/마스터 데이터 동기화(config/seeders/note.php 기준)
+php artisan db:seed --class=NoteMasterSeeder --force</code></pre></div>
 <h3 id="readme-126-db-백업복구-최소-운영안">12.6 DB 백업/복구 최소 운영안</h3>
 <ul>
 <li>풀백업(일 1회) + 증분(binlog, 시간 단위) + 14일 보관 후 자동삭제</li>
 <li>복구: 최신 풀백업 복원 후 해당 시점 이후 binlog 순차 적용</li>
 </ul>
 <h3 id="readme-127-빠른-점검-명령어">12.7 빠른 점검 명령어</h3>
-<div class="codeblock"><div class="codehdr"><span>bash</span></div><pre><code>docker compose ps
-php artisan about --only=environment,drivers
+<div class="codeblock"><div class="codehdr"><span>bash</span></div><pre><code>php artisan about --only=environment,drivers
 php artisan migrate:status
-php artisan queue:work --once</code></pre></div>
+sudo systemctl status php8.2-fpm
+sudo systemctl status nginx
+sudo systemctl status th-study-queue</code></pre></div>
 <h3 id="readme-128-운영-경로-기준">12.8 운영 경로 기준</h3>
 <ul>
 <li>앱 루트: <code>/var/www/th-study</code></li>

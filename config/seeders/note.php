@@ -9,6 +9,7 @@ return [
         ['code' => 'map', 'name' => '지도'],
         ['code' => 'document', 'name' => '문서'],
         ['code' => 'video', 'name' => '영상'],
+        ['code' => 'video2', 'name' => '영상2'],
     ],
 
     'categories' => [

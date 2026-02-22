@@ -36,7 +36,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Date UI: Flatpickr
 - Queue: Database queue
 - Realtime(실험): Pusher + Laravel Echo
-- Infra: Docker(app, queue, nginx, mysql, node), self-hosted deploy
+- Infra: Ubuntu(Nginx + PHP-FPM) self-hosted deploy
 
 ### 프론트 라이브러리 구성(`app.blade.php` 기준)
 
@@ -339,6 +339,13 @@ docker compose ps
 ```bash
 docker exec -it th-app php artisan key:generate --force
 docker exec -it th-app php artisan migrate
+
+# 슈퍼어드민 보정(환경별 택1)
+docker exec -it th-app php artisan db:seed --class=EnvSuperAdminSeeder --force
+# docker exec -it th-app php artisan db:seed --class=AutoSuperAdminSeeder --force
+
+# 노트 코드/마스터 데이터 동기화(config/seeders/note.php 기준)
+docker exec -it th-app php artisan db:seed --class=NoteMasterSeeder --force
 ```
 
 7. 평상시 시작/종료/재시작
@@ -387,7 +394,7 @@ ssh -i /path/to/lightsail-key.pem ubuntu@<LIGHTSAIL_STATIC_IP>
 3. 타임존 `Asia/Seoul` 통일
 4. 프로젝트 배포 디렉터리 고정(예: `/var/www/th-study`)
 5. Nginx 서버블록 + HTTPS(Let’s Encrypt) 적용
-6. Queue 워커 상시 실행(systemd 또는 Docker queue 서비스)
+6. Queue 워커 상시 실행(systemd 서비스)
 
 프론트 자산 모드 구분:
 - 개발: `npm run dev` (HMR/개발용)
@@ -443,14 +450,27 @@ free -h
 1. 서버에 GitHub Actions runner 설치/서비스 등록
 2. 서버에서 GitHub 접근 가능한 SSH 인증키 구성
 3. 원격 저장소 URL을 SSH 방식으로 사용
-4. `main` push 시 배포 워크플로우 실행:
+4. `main` push 시 `.github/workflows/deploy.yml` 배포 워크플로우 실행:
    - 코드 동기화
    - `composer install --no-dev`
-   - `php artisan optimize:*`
+   - `php artisan optimize:clear`, `php artisan config:cache`, `php artisan route:cache`, `php artisan view:cache`
    - `php artisan migrate --force`
    - `php artisan db:seed --class=NoteMasterSeeder --force` (노트 마스터 동기화)
-   - 웹서버 reload
+   - 웹서버 reload (`php8.2-fpm`, `nginx`)
    - `php artisan queue:restart`
+
+수동 실행 명령어(슈퍼어드민/노트 마스터):
+
+```bash
+# 개발/로컬: .env(SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD) 기준 슈퍼어드민 보정
+php artisan db:seed --class=EnvSuperAdminSeeder --force
+
+# 운영: SUPERADMIN_EMAIL 기준 슈퍼어드민 보정(비밀번호 랜덤 생성, 콘솔 출력)
+php artisan db:seed --class=AutoSuperAdminSeeder --force
+
+# 노트 코드/마스터 데이터 동기화(config/seeders/note.php 기준)
+php artisan db:seed --class=NoteMasterSeeder --force
+```
 
 노트 마스터 시더 운영 규칙:
 - 시더 데이터는 `config/seeders/note.php`에서 관리
@@ -480,13 +500,14 @@ free -h
 ### 12.7 빠른 점검 명령어
 
 ```bash
-docker compose ps
 php artisan about --only=environment,drivers
 php artisan migrate:status
-php artisan queue:work --once
+sudo systemctl status php8.2-fpm
+sudo systemctl status nginx
+sudo systemctl status th-study-queue
 ```
 
-이 4가지만으로도 로컬/서버 기본 동작 여부를 빠르게 확인할 수 있습니다.
+이 명령들로 서버 기본 동작 여부를 빠르게 확인할 수 있습니다.
 
 ### 12.8 운영 경로 기준(최소 공유용)
 
