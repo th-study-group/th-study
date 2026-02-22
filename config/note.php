@@ -42,9 +42,17 @@ return [
             'title' => '여행',
             'url'   => '/blogs/tour',
         ],
-        'music' => [
-            'title' => '음악',
-            'url'   => '/blogs/music',
+        'food' => [
+            'title' => '음식',
+            'url'   => '/blogs/food',
+        ],
+        'cafe' => [
+            'title' => '카페',
+            'url'   => '/blogs/cafe',
+        ],
+        'economy' => [
+            'title' => '경제',
+            'url' => '/blogs/economy'
         ],
     ],
     'maps.index' => [
