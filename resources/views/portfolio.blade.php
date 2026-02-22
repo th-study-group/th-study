@@ -297,6 +297,7 @@ npm run build
 
 # DB 반영
 php artisan migrate --force
+php artisan db:seed --class=NoteMasterSeeder --force
 
 # 큐 서비스 재시작(배포 반영)
 sudo systemctl restart th-study-queue
@@ -309,7 +310,9 @@ sudo systemctl reload nginx</code></pre>
       <strong>CI/CD 운영 기준</strong><br>
       <ul class="mb-0" style="margin-left:18px;">
         <li>Self-hosted runner 기준으로 <code>main</code> push 시 배포 자동화 구성</li>
-        <li>코드 동기화 -> <code>composer install --no-dev</code> -> <code>php artisan migrate --force</code></li>
+        <li>코드 동기화 -> <code>composer install --no-dev</code> -> <code>php artisan migrate --force</code> -> <code>php artisan db:seed --class=NoteMasterSeeder --force</code></li>
+        <li>슈퍼어드민 계정은 환경별 시더로 보정: 운영 <code>AutoSuperAdminSeeder</code>, 개발/로컬 <code>EnvSuperAdminSeeder</code></li>
+        <li>노트 마스터 데이터는 <code>config/seeders/note.php</code>에서 관리하고, 시더는 <code>updateOrCreate</code> 방식으로 동기화</li>
         <li>웹서버 reload 및 큐 서비스 재시작까지 포함</li>
       </ul>
     </div>
@@ -640,6 +643,14 @@ resources/views/
 <li>미들웨어는 &quot;입구 보안&quot;</li>
 <li>Policy는 &quot;행동 권한&quot;</li>
 </ul>
+<h3 id="readme-슈퍼어드민-시더-정책">슈퍼어드민 시더 정책</h3>
+<ul>
+<li>기준 파일: <code>database/seeders/DatabaseSeeder.php</code></li>
+<li>운영(<code>production</code>)에서는 <code>AutoSuperAdminSeeder</code>를 실행해 슈퍼어드민 계정을 보정</li>
+<li>개발/로컬에서는 <code>EnvSuperAdminSeeder</code>를 실행해 <code>.env</code> 기준으로 슈퍼어드민 계정을 보정</li>
+<li>두 시더 모두 이메일 기준 <code>firstOrNew</code> 패턴으로 동작해 중복 생성 없이 갱신</li>
+<li>비밀번호/토큰/실계정 값은 문서나 저장소에 기록하지 않고 환경변수로만 관리</li>
+</ul>
 <h2 id="readme-8-메일-시스템">8. 메일 시스템</h2>
 <h3 id="readme-81-공통-발송-파이프라인">8.1 공통 발송 파이프라인</h3>
 <ol>
@@ -821,7 +832,9 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 free -h</code></pre></div>
 <h3 id="readme-125-cicd-핵심">12.5 CI/CD 핵심</h3>
 <ul>
-<li><code>main</code> push 시 코드 동기화, <code>composer install --no-dev</code>, <code>php artisan migrate --force</code>, 웹서버 reload, 큐 반영 수행</li>
+<li><code>main</code> push 시 코드 동기화, <code>composer install --no-dev</code>, <code>php artisan migrate --force</code>, <code>php artisan db:seed --class=NoteMasterSeeder --force</code>, 웹서버 reload, 큐 반영 수행</li>
+<li>슈퍼어드민 계정은 환경별 시더로 보정: 운영 <code>AutoSuperAdminSeeder</code>, 개발/로컬 <code>EnvSuperAdminSeeder</code></li>
+<li>노트 마스터 데이터는 <code>config/seeders/note.php</code>에서 관리하며, 시더는 <code>updateOrCreate</code> 기반 동기화</li>
 <li>자동배포 스크립트에는 민감정보 하드코딩 금지, 환경변수/비밀 저장소 사용</li>
 </ul>
 <h3 id="readme-126-db-백업복구-최소-운영안">12.6 DB 백업/복구 최소 운영안</h3>

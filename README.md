@@ -153,6 +153,14 @@ resources/views/
 - 미들웨어는 "입구 보안"
 - Policy는 "행동 권한"
 
+### 슈퍼어드민 시더 정책
+
+- 기준 파일: `database/seeders/DatabaseSeeder.php`
+- 운영(`production`)에서는 `AutoSuperAdminSeeder`를 실행해 슈퍼어드민 계정을 보정합니다.
+- 개발/로컬에서는 `EnvSuperAdminSeeder`를 실행해 `.env` 기준으로 슈퍼어드민 계정을 보정합니다.
+- 두 시더 모두 이메일 기준 `firstOrNew` 패턴으로 동작해, 같은 계정을 중복 생성하지 않고 갱신합니다.
+- 비밀번호/토큰/실계정 값은 문서나 저장소에 기록하지 않고 환경변수로만 관리합니다.
+
 ## 8. 메일 시스템
 
 ### 8.1 공통 발송 파이프라인
@@ -440,8 +448,14 @@ free -h
    - `composer install --no-dev`
    - `php artisan optimize:*`
    - `php artisan migrate --force`
+   - `php artisan db:seed --class=NoteMasterSeeder --force` (노트 마스터 동기화)
    - 웹서버 reload
    - `php artisan queue:restart`
+
+노트 마스터 시더 운영 규칙:
+- 시더 데이터는 `config/seeders/note.php`에서 관리
+- 실행 방식은 `updateOrCreate` 기반으로 중복 insert 없이 upsert 형태 동기화
+- `groups`, `categories`, `topics`를 코드 기반(`group_code`, `category_code`)으로 연결
 
 주의:
 - 자동배포 스크립트에 민감정보 직접 하드코딩 금지
