@@ -22,20 +22,17 @@ jobs:
           echo "==== Composer Install ===="
           composer install --no-dev --optimize-autoloader
 
-          echo "==== Docker Compose Up ===="
-          docker compose up -d
-
           echo "==== Laravel Optimize ===="
-          docker compose exec -T app php artisan optimize:clear || true
-          docker compose exec -T app php artisan config:cache
-          docker compose exec -T app php artisan route:cache || true
-          docker compose exec -T app php artisan view:cache || true
+          php artisan optimize:clear || true
+          php artisan config:cache
+          php artisan route:cache || true
+          php artisan view:cache || true
 
           echo "==== DB Migrate ===="
-          docker compose exec -T app php artisan migrate --force
+          php artisan migrate --force
 
           echo "==== Seed Note Master ===="
-          docker compose exec -T app php artisan db:seed --class=NoteMasterSeeder --force
+          php artisan db:seed --class=NoteMasterSeeder --force
 
           echo "==== Permission Fix ===="
           sudo chown -R ubuntu:www-data storage bootstrap/cache || true
@@ -46,6 +43,6 @@ jobs:
           sudo systemctl reload nginx || true
 
           echo "==== Restart Queue ===="
-          docker compose exec -T app php artisan queue:restart || true
+          php artisan queue:restart || true
 
           echo "🚀 Deployment Done!"
