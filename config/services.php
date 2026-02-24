@@ -42,9 +42,4 @@ return [
         'vapid_private_key' => env('VAPID_PRIVATE_KEY'), // 개인키
         'vapid_subject' => 'mailto:' . env('VAPID_SUBJECT'), // 이메일
     ],
-
-    'tinyeditor' => [
-        'key' => env('TINYEDITOR_KEY'),  // 에디터
-    ],
-
 ];
