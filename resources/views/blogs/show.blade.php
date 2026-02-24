@@ -5,28 +5,15 @@
 @section('style')
   <style>
     .blog-show-page {
-      background: #f6f6f6;
-      border: 1px solid #e7e7e7;
-    }
-
-    .blog-show-back {
-      border: 1px solid #c5ccd6;
       background: #fff;
-      color: #1f2937;
-      text-decoration: none;
-      border-radius: 6px;
-      font-size: 14px;
-      height: 36px;
-      padding: 0 12px;
-      display: inline-flex;
-      align-items: center;
+      border: 1px solid #e9ecef;
     }
 
     .blog-show-title {
       margin: 0 0 14px;
       font-size: 34px;
       line-height: 1.3;
-      color: #111827;
+      color: #212529;
       word-break: keep-all;
       overflow-wrap: anywhere;
     }
@@ -39,7 +26,7 @@
       border-bottom: 1px solid #dbe2eb;
       padding-bottom: 14px;
       margin-bottom: 18px;
-      color: #4b5563;
+      color: #6c757d;
       font-size: 20px;
       font-weight: 600;
     }
@@ -56,7 +43,7 @@
 
     .blog-show-visibility {
       margin: -4px 0 14px;
-      color: #4b5563;
+      color: #6c757d;
       font-size: 15px;
       text-align: right;
     }
@@ -72,15 +59,15 @@
       margin-left: 8px;
       font-size: 13px;
       font-weight: 700;
-      border: 1px solid #c8ced7;
-      background: #eff2f6;
-      color: #6b7280;
+      border: 1px solid var(--bs-secondary-border-subtle);
+      background: var(--bs-secondary-bg-subtle);
+      color: var(--bs-secondary-color);
     }
 
     .blog-show-visibility-badge.is-public {
-      border-color: #b9dbff;
-      background: #eaf3ff;
-      color: #1d4ed8;
+      border-color: var(--bs-success-border-subtle);
+      background: var(--bs-success-bg-subtle);
+      color: var(--bs-success-text-emphasis);
     }
 
     .blog-show-content p {
@@ -96,59 +83,31 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 24px 0 0;
-      padding: 14px 0 0;
+      margin: 30px 0 0;
+      padding: 18px 0 0;
       list-style: none;
       border-top: 1px solid #e3e8ef;
     }
 
     .blog-show-tags li {
-      background: #edf3ff;
-      color: #224a92;
+      background: #f8f9fa;
+      color: #495057;
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 13px;
       font-weight: 600;
+      border: 1px solid #dee2e6;
     }
 
     .blog-show-actions {
       display: flex;
       justify-content: flex-end;
       gap: 8px;
-      margin-top: 12px;
+      margin-top: 20px;
     }
 
     .blog-show-action-btn {
-      border: 1px solid #7a8594;
-      background: #fff;
-      color: #4b5563;
-      border-radius: 8px;
-      height: 36px;
-      padding: 0 11px;
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1;
       text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .blog-show-action-btn.is-danger {
-      border-color: #ff6b75;
-      color: #ef4444;
-      background: #fff;
-    }
-
-    .blog-show-action-btn.is-primary {
-      border-color: #3b82f6;
-      color: #2563eb;
-      background: #fff;
-    }
-
-    .blog-show-action-btn.is-dark {
-      border-color: #6b7280;
-      color: #fff;
-      background: #6b7280;
     }
 
     @media (max-width: 991px) {
@@ -247,7 +206,7 @@
   @endphp
 
   <section class="col-12 col-lg-8 mx-auto blog-page-scope">
-    <div class="blog-show-page p-3 p-lg-4 rounded-3 shadow-sm">
+    <div class="board-card blog-show-page p-3 p-lg-4 rounded-3 shadow-sm">
       <h1 class="blog-show-title">{{ $title }}</h1>
       <div class="blog-show-meta">
         <span class="blog-show-meta-category">{{ $category }}</span>
@@ -271,10 +230,10 @@
       </ul>
 
       <div class="blog-show-actions">
-        <a href="{{ route('blogs.edit', ['slug' => $slug, 'idx' => $idx]) }}" class="blog-show-action-btn">수정</a>
-        <button type="button" class="blog-show-action-btn is-danger" id="blogShowDeleteBtn">삭제</button>
-        <button type="button" class="blog-show-action-btn is-primary" id="blogShowPublicBtn">공개설정</button>
-        <a href="{{ route('blogs.index', ['slug' => $slug]) }}" class="blog-show-action-btn is-dark">목록</a>
+        <a href="{{ route('blogs.edit', ['slug' => $slug, 'idx' => $idx]) }}" class="blog-show-action-btn btn btn-outline-secondary">수정</a>
+        <button type="button" class="blog-show-action-btn btn btn-outline-danger" id="blogShowDeleteBtn">삭제</button>
+        <button type="button" class="blog-show-action-btn btn btn-outline-primary" id="blogShowPublicBtn">공개설정</button>
+        <a href="{{ route('blogs.index', ['slug' => $slug]) }}" class="blog-show-action-btn btn btn-secondary">목록</a>
       </div>
     </div>
   </section>

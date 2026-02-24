@@ -9,33 +9,22 @@
     }
 
     .blog-list-page {
-      background: #f6f6f6;
-      border: 1px solid #e7e7e7;
+      background: #fff;
+      border: 1px solid #e9ecef;
     }
 
     .blog-list-head {
-      border-bottom: 1px solid #d2d5da;
+      border-bottom: 1px solid #dee2e6;
       padding-bottom: 18px;
       margin-bottom: 6px;
     }
 
     .blog-list-title {
-      color: #1f2328;
+      color: #212529;
       font-weight: 700;
       margin: 0;
-      font-size: 30px;
-    }
-
-    .blog-write-top {
-      border: 1px solid #111;
-      color: #fff;
-      background: #111;
-      padding: 9px 14px;
-      font-size: 14px;
-      line-height: 1;
-      text-decoration: none;
-      display: inline-block;
-      border-radius: 4px;
+      font-size: 20px;
+      letter-spacing: -0.02em;
     }
 
     .blog-modal-open {
@@ -75,19 +64,19 @@
     .blog-search-select,
     .blog-search-input {
       height: 44px;
-      border: 1px solid #c8cdd4;
+      border: 1px solid #ced4da;
       border-radius: 4px;
       background: #fff;
       padding: 0 12px;
-      color: #333;
+      color: #495057;
     }
 
     .blog-search-select {
       width: 128px;
       min-width: 128px;
       flex: 0 0 128px;
-      font-size: 20px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 500;
     }
 
     .blog-search-input {
@@ -98,22 +87,22 @@
 
     .blog-search-btn {
       height: 48px;
-      border: 1px solid #2b2f36;
-      background: #2b2f36;
+      border: 1px solid var(--bs-primary);
+      background: var(--bs-primary);
       color: #fff;
       border-radius: 4px;
       padding: 0 18px;
-      font-weight: 600;
+      font-weight: 500;
       width: 100%;
       flex: 0 0 100%;
       display: block;
     }
 
     .blog-list-total {
-      color: #2b2f36;
+      color: #6c757d;
       margin: 10px 0 0;
-      font-weight: 600;
-      font-size: 20px;
+      font-weight: 500;
+      font-size: 16px;
     }
 
     .blog-items {
@@ -162,7 +151,7 @@
 
     .blog-item-category {
       margin: 0 0 8px;
-      color: #1f4d8f;
+      color: #6c757d;
       font-size: 13px;
       font-weight: 700;
       letter-spacing: -0.01em;
@@ -183,7 +172,7 @@
     .blog-item-more {
       display: inline-block;
       margin-top: 8px;
-      color: #5f6670;
+      color: #6c757d;
       font-size: 14px;
       text-decoration: none;
       letter-spacing: -0.01em;
@@ -196,10 +185,10 @@
 
     .blog-more-btn {
       width: 100%;
-      border: 1px solid #c8cdd4;
-      background: transparent;
+      border: 1px solid #ced4da;
+      background: #fff;
       height: 64px;
-      color: #4b5563;
+      color: #495057;
       font-size: 22px;
     }
 
@@ -313,20 +302,21 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 18px 0 0;
+      margin: 24px 0 0;
       padding: 0;
       list-style: none;
       border-top: 1px solid #ebeff5;
-      padding-top: 14px;
+      padding-top: 18px;
     }
 
     .blog-detail-tags li {
-      background: #edf3ff;
-      color: #224a92;
+      background: #f8f9fa;
+      color: #495057;
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 13px;
       font-weight: 600;
+      border: 1px solid #dee2e6;
     }
 
     .blog-detail-visibility {
@@ -347,52 +337,26 @@
       margin-left: 8px;
       font-size: 13px;
       font-weight: 700;
-      border: 1px solid #c8ced7;
-      background: #eff2f6;
-      color: #6b7280;
+      border: 1px solid var(--bs-secondary-border-subtle);
+      background: var(--bs-secondary-bg-subtle);
+      color: var(--bs-secondary-color);
     }
 
     .blog-detail-visibility-badge.is-public {
-      border-color: #b9dbff;
-      background: #eaf3ff;
-      color: #1d4ed8;
+      border-color: var(--bs-success-border-subtle);
+      background: var(--bs-success-bg-subtle);
+      color: var(--bs-success-text-emphasis);
     }
 
     .blog-detail-actions {
       display: flex;
       justify-content: flex-end;
       gap: 8px;
-      margin-top: 12px;
+      margin-top: 20px;
     }
 
     .blog-detail-action-btn {
-      border: 1px solid #7a8594;
-      background: #fff;
-      color: #4b5563;
-      border-radius: 8px;
-      height: 36px;
-      padding: 0 11px;
-      font-size: 14px;
-      font-weight: 600;
       line-height: 1;
-    }
-
-    .blog-detail-action-btn.is-danger {
-      border-color: #ff6b75;
-      color: #ef4444;
-      background: #fff;
-    }
-
-    .blog-detail-action-btn.is-primary {
-      border-color: #3b82f6;
-      color: #2563eb;
-      background: #fff;
-    }
-
-    .blog-detail-action-btn.is-dark {
-      border-color: #6b7280;
-      color: #fff;
-      background: #6b7280;
     }
 
     .blog-detail-content p {
@@ -580,11 +544,11 @@
   @endphp
 
   <main class="col-lg-10 content-col blog-page-scope">
-    <section class="blog-list-page p-3 p-lg-5 rounded-3 shadow-sm">
+    <section class="board-card blog-list-page p-3 p-lg-4 rounded-3 shadow-sm">
       <div class="blog-list-head">
         <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
           <h1 class="blog-list-title">전체 글</h1>
-          <a href="{{ $writeUrl }}" class="blog-write-top">작성</a>
+          <a href="{{ $writeUrl }}" class="btn btn-dark btn-sm text-nowrap">작성하기</a>
         </div>
 
         <form id="blogSearchForm" class="blog-search-wrap" autocomplete="off">
@@ -635,10 +599,10 @@
         <div id="blogDetailContent" class="blog-detail-content"></div>
         <ul id="blogDetailTags" class="blog-detail-tags"></ul>
         <div class="blog-detail-actions">
-          <button type="button" id="blogDetailEditBtn" class="blog-detail-action-btn">수정</button>
-          <button type="button" id="blogDetailDeleteBtn" class="blog-detail-action-btn is-danger">삭제</button>
-          <button type="button" id="blogDetailPublicBtn" class="blog-detail-action-btn is-primary">공개설정</button>
-          <button type="button" id="blogDetailBottomCloseBtn" class="blog-detail-action-btn is-dark">목록</button>
+          <button type="button" id="blogDetailEditBtn" class="blog-detail-action-btn btn btn-outline-secondary">수정</button>
+          <button type="button" id="blogDetailDeleteBtn" class="blog-detail-action-btn btn btn-outline-danger">삭제</button>
+          <button type="button" id="blogDetailPublicBtn" class="blog-detail-action-btn btn btn-outline-primary">공개설정</button>
+          <button type="button" id="blogDetailBottomCloseBtn" class="blog-detail-action-btn btn btn-secondary">목록</button>
         </div>
       </div>
     </div>

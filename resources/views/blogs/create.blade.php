@@ -5,22 +5,29 @@
 @section('style')
   <style>
     .blog-create-page {
-      background: #f6f6f6;
-      border: 1px solid #e7e7e7;
+      background: #fff;
+      border: 1px solid #e9ecef;
     }
 
     .blog-create-title {
-      margin: 0 0 14px;
+      margin: 0 0 4px;
       font-weight: 700;
-      color: #111827;
-      font-size: 28px;
+      color: #212529;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .blog-create-description {
+      color: #6c757d;
+      font-size: 14px;
+      margin: 0 0 14px;
     }
 
     .blog-create-label {
-      font-weight: 700;
-      color: #1f2937;
+      font-weight: 500;
+      color: #6c757d;
       margin-bottom: 8px;
-      font-size: 15px;
+      font-size: 13px;
     }
 
     .blog-create-input,
@@ -157,8 +164,9 @@
   @endphp
 
   <section class="col-12 col-lg-8 mx-auto">
-    <div class="blog-create-page rounded-3 p-3 p-lg-4 shadow-sm">
+    <div class="board-card blog-create-page rounded-3 p-3 p-lg-4 shadow-sm">
       <h1 class="blog-create-title">노트 작성</h1>
+      <p class="blog-create-description">블로그 글을 작성할 수 있습니다.</p>
 
       <form id="blogCreateForm" method="post" action="{{ $storeUrl }}">
         @csrf
@@ -330,5 +338,3 @@
     })(window.jQuery);
   </script>
 @endsection
-
-@include('partials.tinymce')
