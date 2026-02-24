@@ -12,12 +12,12 @@ class ValidateNoteSlug
         $route = $request->route();
 
         if ($route) {
-            $routeName = $route->getName();
             $slug = $route->parameter('slug');
+            $group = $route->parameter('group');
 
-            if ($routeName && $slug !== null) {
+            if ($group && $slug !== null) {
                 $notes = config('note', []);
-                $allowed = array_keys($notes[$routeName] ?? []);
+                $allowed = array_keys($notes[$group] ?? []);
 
                 if (empty($allowed) || !in_array($slug, $allowed, true)) {
                     abort(404);

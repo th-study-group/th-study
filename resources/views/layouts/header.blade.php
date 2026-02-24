@@ -84,7 +84,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('documents.index') }}">문서관리</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">정보관리</a></li>
                 --}}
-                <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">정보관리</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">블로그</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('portfolio') }}">포트폴리오</a></li>
                 @auth
                     @if (auth()->user()?->email_verify_datetime)

@@ -14,8 +14,10 @@ class ViewComposerServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('layouts.*', function ($view) {
-            $routeName = optional(request()->route())->getName();
-           
+            $route = request()->route();
+            $routeName = optional($route)->getName();
+            $noteGroup = $route?->parameter('group');
+
             $notes = config('note', []);
            
             $menuAuths = config('menu.auth', []);
@@ -36,7 +38,7 @@ class ViewComposerServiceProvider extends ServiceProvider
             );
             
             $view->with([
-                'sideNotes' => $notes[$routeName] ?? [],
+                'sideNotes' => $notes[$noteGroup] ?? [],
                 'sideMenuFlag' => $userLevel,
                 'sideMenuAuth' => array_keys($menuAuths),
                 'sideMenus' => $menuFlag,

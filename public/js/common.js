@@ -30,6 +30,9 @@ $(function () {
             dataType: 'json',
             data: {},
             headers: {},
+            processData: undefined,
+            contentType: undefined,
+            xhr: undefined,
             showLoading: true,
             shouldHideLoading: null,
             onSuccess: null,
@@ -47,6 +50,9 @@ $(function () {
             dataType: settings.dataType,
             data: settings.data,
             headers: settings.headers,
+            processData: settings.processData,
+            contentType: settings.contentType,
+            xhr: settings.xhr,
         });
     
         xhr.then(

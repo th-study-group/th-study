@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'photos.index' => [
+    'photos' => [
         'food' => [
             'title' => '음식',
             'url'   => '/photos/food',
@@ -19,7 +19,7 @@ return [
             'url'   => '/photos/music',
         ],
     ],
-    'videos.index' => [
+    'videos' => [
         'develop' => [
             'title' => '개발',
             'url'   => '/videos/develop',
@@ -33,7 +33,7 @@ return [
             'url'   => '/videos/music',
         ],
     ],
-    'blogs.index' => [
+    'blogs' => [
         'develop' => [
             'title' => '개발',
             'url'   => '/blogs/develop',
@@ -55,7 +55,7 @@ return [
             'url' => '/blogs/economy'
         ],
     ],
-    'maps.index' => [
+    'maps' => [
         'food' => [
             'title' => '음식',
             'url'   => '/maps/food',
@@ -77,7 +77,7 @@ return [
             'url'   => '/maps/history',
         ],
     ],
-    'documents.index' => [
+    'documents' => [
         'work' => [
             'title' => '회사자료',
             'url'   => '/documents/work',
@@ -90,5 +90,12 @@ return [
             'title' => '라라벨',
             'url'   => '/documents/laravel',
         ],
+    ],
+    'group' => [
+        'photos' => 'photo',
+        'videos' => 'video',
+        'blogs' => 'blog',
+        'maps' => 'map',
+        'documents' => 'document',
     ],
 ];

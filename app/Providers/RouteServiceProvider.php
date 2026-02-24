@@ -49,7 +49,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/auth.php'));
             
             // 컨텐츠항목(정보관리,문서관리)
-			Route::middleware('web')
+			Route::middleware(['web', 'note.slug'])
                 ->group(base_path('routes/content.php'));
 
             // 로그인한 유저에게 보이는 항목 

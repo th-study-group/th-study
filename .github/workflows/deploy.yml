@@ -31,9 +31,6 @@ jobs:
           echo "==== DB Migrate ===="
           php artisan migrate --force
 
-          echo "==== Seed Note Master ===="
-          php artisan db:seed --class=NoteMasterSeeder --force
-
           echo "==== Permission Fix ===="
           sudo chown -R ubuntu:www-data storage bootstrap/cache || true
           sudo chmod -R 775 storage bootstrap/cache || true
