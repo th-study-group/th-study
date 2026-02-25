@@ -136,6 +136,119 @@
       margin-top: 18px;
     }
 
+    .blog-create-thumbnail-picker {
+      display: block;
+    }
+
+    .blog-create-thumbnail-input {
+      height: 52px;
+      border: 1px solid #c9cfd8;
+      border-radius: 8px;
+      background: #fff;
+      padding: 0;
+      line-height: 52px;
+      overflow: hidden;
+    }
+
+    .blog-create-thumbnail-input::file-selector-button {
+      height: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 168px;
+      margin-right: 12px;
+      border: 0;
+      border-right: 1px solid #c9cfd8;
+      background: #f3f4f6;
+      padding: 0;
+      color: #212529;
+      font-weight: 600;
+      line-height: 1;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .blog-create-thumbnail-input::-webkit-file-upload-button {
+      height: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 168px;
+      margin-right: 12px;
+      border: 0;
+      border-right: 1px solid #c9cfd8;
+      background: #f3f4f6;
+      padding: 0;
+      color: #212529;
+      font-weight: 600;
+      line-height: 1;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .blog-create-thumbnail-fileinfo {
+      display: none;
+      margin-top: 10px;
+      border: 1px solid #d9dee7;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #f8fafc;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .blog-create-thumbnail-filename {
+      color: #374151;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .blog-create-thumbnail-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .blog-create-thumbnail-action-btn {
+      height: 32px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+      color: #6b7280;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1;
+      padding: 0 10px;
+      cursor: pointer;
+    }
+
+    .blog-create-thumbnail-action-btn.is-remove {
+      color: #b91c1c;
+      border-color: #efb4b4;
+      background: #fff5f5;
+    }
+
+    .blog-create-thumbnail-action-btn.is-view {
+      display: none;
+    }
+
+    .blog-create-thumbnail-eye-icon {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
     @media (max-width: 991px) {
       .blog-create-title {
         font-size: 22px;
@@ -152,7 +265,6 @@
 @section('content')
   @php
     $slug = (string) request()->route('slug', 'develop');
-    $storeUrl = route('blogs.store', ['slug' => $slug]);
     $listUrl = route('blogs.index', ['slug' => $slug]);
     $topics = [
       '국내여행',
@@ -168,7 +280,7 @@
       <h1 class="blog-create-title">노트 작성</h1>
       <p class="blog-create-description">블로그 글을 작성할 수 있습니다.</p>
 
-      <form id="blogCreateForm" method="post" action="{{ $storeUrl }}">
+      <form id="blogCreateForm" method="post" enctype="multipart/form-data">
         @csrf
 
         <div class="mb-3">
@@ -202,7 +314,34 @@
 
         <div class="mb-3">
           <label for="blogContent" class="form-label blog-create-label">내용</label>
-          <textarea id="blogContent" name="content" class="form-control tinymce" rows="16" placeholder="내용을 입력하세요."></textarea>
+          <textarea id="blogContent" name="content" class="d-none" rows="16" placeholder="내용을 입력하세요."></textarea>
+          <div id="blogContentEditor" class="js-toast-ui-editor" data-source-selector="#blogContent"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="blogThumbnail" class="form-label blog-create-label">대표이미지</label>
+          {{-- 수정모드에서 DB에 이미 저장된 대표이미지가 있을 때만 아래 파일 선택 영역을 숨기면 됩니다.
+               예: @if($isEditMode && !empty($savedThumbnailPath)) style="display:none" @endif --}}
+          <div id="blogThumbnailPicker" class="blog-create-thumbnail-picker">
+            <input type="file" id="blogThumbnail" name="thumbnail" class="form-control blog-create-thumbnail-input" accept="image/*">
+          </div>
+          {{-- 파일 첨부 후 표시되는 "파일명 + 보기/삭제" UI는 현재 단계에서 숨김 처리.
+               수정모드에서 DB 저장 파일 관리가 필요해질 때 아래 블록 주석 해제해서 사용하세요. --}}
+          {{--
+            <div id="blogThumbnailFileInfo" class="blog-create-thumbnail-fileinfo">
+              <span id="blogThumbnailFileName" class="blog-create-thumbnail-filename"></span>
+              <div class="blog-create-thumbnail-actions">
+                <button type="button" id="blogThumbnailViewBtn" class="blog-create-thumbnail-action-btn is-view" aria-label="이미지 보기">
+                  <svg class="blog-create-thumbnail-eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  보기
+                </button>
+                <button type="button" id="blogThumbnailRemoveBtn" class="blog-create-thumbnail-action-btn is-remove" aria-label="첨부 파일 삭제">삭제</button>
+              </div>
+            </div>
+          --}}
         </div>
 
         <div>
@@ -217,7 +356,7 @@
         </div>
 
         <div class="blog-create-footer">
-          <button type="submit" class="btn btn-primary">적용</button>
+          <button type="button" class="btn btn-primary">적용</button>
           <a href="{{ $listUrl }}" class="btn btn-outline-secondary">목록</a>
         </div>
       </form>
@@ -225,14 +364,15 @@
   </section>
 @endsection
 
+@push('scripts')
+  <script src="{{ asset('js/toast_ui_editor.js') }}?v={{ filemtime(public_path('js/toast_ui_editor.js')) }}" defer></script> 
+@endpush
+
 @section('script')
   <script>
-    (function ($) {
-      if (!$) {
-        return;
-      }
-
+    $(function () {
       var tags = [];
+      var thumbnailObjectUrl = '';
 
       function escapeHtml(value) {
         return String(value)
@@ -312,6 +452,51 @@
           }
         });
 
+        $('#blogThumbnail').on('change', function (e) {
+          var file = e.target.files && e.target.files[0];
+          var infoWrapEl = $('#blogThumbnailFileInfo');
+          var fileNameEl = $('#blogThumbnailFileName');
+          if (thumbnailObjectUrl) {
+            URL.revokeObjectURL(thumbnailObjectUrl);
+            thumbnailObjectUrl = '';
+          }
+          if (!file) {
+            fileNameEl.text('');
+            infoWrapEl.hide();
+            return;
+          }
+          if (!file.type || file.type.indexOf('image/') !== 0) {
+            window.alert('이미지 파일만 업로드할 수 있습니다.');
+            $(this).val('');
+            fileNameEl.text('');
+            infoWrapEl.hide();
+            return;
+          }
+          thumbnailObjectUrl = URL.createObjectURL(file);
+          fileNameEl.text(file.name || '');
+          infoWrapEl.css('display', 'flex');
+
+          {{-- 수정모드에서만 파일 선택 영역을 숨기고 싶다면 아래를 해제하세요.
+               $('#blogThumbnailPicker').hide(); --}}
+        });
+
+        $('#blogThumbnailViewBtn').on('click', function () {
+          if (!thumbnailObjectUrl) {
+            return;
+          }
+          window.open(thumbnailObjectUrl, '_blank', 'noopener,noreferrer');
+        });
+
+        $('#blogThumbnailRemoveBtn').on('click', function () {
+          $('#blogThumbnail').val('');
+          $('#blogThumbnailFileName').text('');
+          $('#blogThumbnailFileInfo').hide();
+          if (thumbnailObjectUrl) {
+            URL.revokeObjectURL(thumbnailObjectUrl);
+            thumbnailObjectUrl = '';
+          }
+        });
+
         $(document).on('click', '.js-tag-remove', function (e) {
           var index = Number($(this).closest('.blog-create-tag-chip').data('index'));
           e.preventDefault();
@@ -322,10 +507,10 @@
           renderTags();
         });
 
-        $('#blogCreateForm').on('submit', function () {
+        $('#blogCreateForm .btn.btn-primary').on('click', function () {
           addTagFromInput();
           syncHidden();
-          return window.confirm('적용하시겠습니까?');
+          window.alert('현재는 화면 구성 단계입니다.');
         });
       }
 
@@ -334,7 +519,7 @@
         bindEvents();
       }
 
-      $(init);
-    })(window.jQuery);
+      init();
+    });
   </script>
 @endsection

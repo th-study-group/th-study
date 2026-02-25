@@ -602,7 +602,7 @@
           <button type="button" id="blogDetailEditBtn" class="blog-detail-action-btn btn btn-outline-secondary">수정</button>
           <button type="button" id="blogDetailDeleteBtn" class="blog-detail-action-btn btn btn-outline-danger">삭제</button>
           <button type="button" id="blogDetailPublicBtn" class="blog-detail-action-btn btn btn-outline-primary">공개설정</button>
-          <button type="button" id="blogDetailBottomCloseBtn" class="blog-detail-action-btn btn btn-secondary">목록</button>
+          <button type="button" id="blogDetailBottomCloseBtn" class="blog-detail-action-btn btn btn-secondary">닫기</button>
         </div>
       </div>
     </div>
