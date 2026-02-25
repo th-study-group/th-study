@@ -137,26 +137,34 @@
     }
 
     .blog-create-thumbnail-picker {
-      display: block;
-    }
-
-    .blog-create-thumbnail-input {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
       height: 52px;
       border: 1px solid #c9cfd8;
       border-radius: 8px;
+      padding: 0 12px 0 0;
       background: #fff;
-      padding: 0;
-      line-height: 52px;
       overflow: hidden;
     }
 
-    .blog-create-thumbnail-input::file-selector-button {
+    .blog-create-thumbnail-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .blog-create-thumbnail-trigger {
       height: 100%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       width: 168px;
-      margin-right: 12px;
       border: 0;
       border-right: 1px solid #c9cfd8;
       background: #f3f4f6;
@@ -166,39 +174,10 @@
       line-height: 1;
       text-align: center;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
-    .blog-create-thumbnail-input::-webkit-file-upload-button {
-      height: 100%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 168px;
-      margin-right: 12px;
-      border: 0;
-      border-right: 1px solid #c9cfd8;
-      background: #f3f4f6;
-      padding: 0;
-      color: #212529;
-      font-weight: 600;
-      line-height: 1;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    .blog-create-thumbnail-fileinfo {
-      display: none;
-      margin-top: 10px;
-      border: 1px solid #d9dee7;
-      border-radius: 10px;
-      padding: 8px 10px;
-      background: #f8fafc;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .blog-create-thumbnail-filename {
+    .blog-create-thumbnail-name {
       color: #374151;
       font-size: 14px;
       font-weight: 500;
@@ -207,46 +186,6 @@
       text-overflow: ellipsis;
       min-width: 0;
       flex: 1;
-    }
-
-    .blog-create-thumbnail-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .blog-create-thumbnail-action-btn {
-      height: 32px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      background: #fff;
-      color: #6b7280;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      font-size: 13px;
-      font-weight: 600;
-      line-height: 1;
-      padding: 0 10px;
-      cursor: pointer;
-    }
-
-    .blog-create-thumbnail-action-btn.is-remove {
-      color: #b91c1c;
-      border-color: #efb4b4;
-      background: #fff5f5;
-    }
-
-    .blog-create-thumbnail-action-btn.is-view {
-      display: none;
-    }
-
-    .blog-create-thumbnail-eye-icon {
-      width: 14px;
-      height: 14px;
-      display: block;
     }
 
     @media (max-width: 991px) {
@@ -324,6 +263,8 @@
                예: @if($isEditMode && !empty($savedThumbnailPath)) style="display:none" @endif --}}
           <div id="blogThumbnailPicker" class="blog-create-thumbnail-picker">
             <input type="file" id="blogThumbnail" name="thumbnail" class="form-control blog-create-thumbnail-input" accept="image/*">
+            <button type="button" id="blogThumbnailTrigger" class="blog-create-thumbnail-trigger">파일 선택</button>
+            <span id="blogThumbnailName" class="blog-create-thumbnail-name">선택된 파일 없음</span>
           </div>
           {{-- 파일 첨부 후 표시되는 "파일명 + 보기/삭제" UI는 현재 단계에서 숨김 처리.
                수정모드에서 DB 저장 파일 관리가 필요해질 때 아래 블록 주석 해제해서 사용하세요. --}}
@@ -372,8 +313,6 @@
   <script>
     $(function () {
       var tags = [];
-      var thumbnailObjectUrl = '';
-
       function escapeHtml(value) {
         return String(value)
           .replace(/&/g, '&amp;')
@@ -452,49 +391,27 @@
           }
         });
 
+        $('#blogThumbnailTrigger').on('click', function () {
+          $('#blogThumbnail').trigger('click');
+        });
+
         $('#blogThumbnail').on('change', function (e) {
           var file = e.target.files && e.target.files[0];
-          var infoWrapEl = $('#blogThumbnailFileInfo');
-          var fileNameEl = $('#blogThumbnailFileName');
-          if (thumbnailObjectUrl) {
-            URL.revokeObjectURL(thumbnailObjectUrl);
-            thumbnailObjectUrl = '';
-          }
+          var nameEl = $('#blogThumbnailName');
+
           if (!file) {
-            fileNameEl.text('');
-            infoWrapEl.hide();
+            nameEl.text('선택된 파일 없음');
             return;
           }
+
           if (!file.type || file.type.indexOf('image/') !== 0) {
             window.alert('이미지 파일만 업로드할 수 있습니다.');
             $(this).val('');
-            fileNameEl.text('');
-            infoWrapEl.hide();
+            nameEl.text('선택된 파일 없음');
             return;
           }
-          thumbnailObjectUrl = URL.createObjectURL(file);
-          fileNameEl.text(file.name || '');
-          infoWrapEl.css('display', 'flex');
 
-          {{-- 수정모드에서만 파일 선택 영역을 숨기고 싶다면 아래를 해제하세요.
-               $('#blogThumbnailPicker').hide(); --}}
-        });
-
-        $('#blogThumbnailViewBtn').on('click', function () {
-          if (!thumbnailObjectUrl) {
-            return;
-          }
-          window.open(thumbnailObjectUrl, '_blank', 'noopener,noreferrer');
-        });
-
-        $('#blogThumbnailRemoveBtn').on('click', function () {
-          $('#blogThumbnail').val('');
-          $('#blogThumbnailFileName').text('');
-          $('#blogThumbnailFileInfo').hide();
-          if (thumbnailObjectUrl) {
-            URL.revokeObjectURL(thumbnailObjectUrl);
-            thumbnailObjectUrl = '';
-          }
+          nameEl.text(file.name || '선택된 파일 없음');
         });
 
         $(document).on('click', '.js-tag-remove', function (e) {
