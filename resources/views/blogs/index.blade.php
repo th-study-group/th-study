@@ -208,7 +208,7 @@
 
     .blog-detail-dialog {
       width: min(860px, 100%);
-      max-height: 88vh;
+      max-height: min(88vh, calc(100dvh - 48px));
       background: #fff;
       border-radius: 12px;
       overflow: hidden;
@@ -220,7 +220,7 @@
     .blog-detail-head {
       position: sticky;
       top: 0;
-      z-index: 1;
+      z-index: 3;
       background: #fff;
       border-bottom: 1px solid #e2e6eb;
       display: flex;
@@ -229,14 +229,18 @@
     }
 
     .blog-detail-close {
-      border: 0;
-      background: transparent;
-      color: #111;
-      font-size: 28px;
+      border: 1px solid #d5dbe4;
+      background: #fff;
+      color: #111827;
+      font-size: 24px;
+      font-weight: 600;
       line-height: 1;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .blog-detail-close:hover {
@@ -353,10 +357,42 @@
       justify-content: flex-end;
       gap: 8px;
       margin-top: 20px;
+      flex-wrap: wrap;
     }
 
     .blog-detail-action-btn {
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
       line-height: 1;
+      border-width: 1px;
+      box-shadow: none;
+    }
+
+    .blog-detail-action-btn.is-edit {
+      border-color: #cfd6e2;
+      color: #374151;
+      background: #fff;
+    }
+
+    .blog-detail-action-btn.is-delete {
+      border-color: #f1b7b7;
+      color: #b42318;
+      background: #fff5f5;
+    }
+
+    .blog-detail-action-btn.is-public {
+      border-color: #c7d7ff;
+      color: #214ea3;
+      background: #eff4ff;
+    }
+
+    .blog-detail-action-btn.is-close {
+      border-color: #1f2937;
+      color: #fff;
+      background: #1f2937;
     }
 
     .blog-detail-content p {
@@ -483,11 +519,11 @@
       }
 
       .blog-detail-head {
-        padding: 10px;
+        padding: calc(env(safe-area-inset-top, 0px) + 8px) 12px 10px;
       }
 
       .blog-detail-body {
-        padding: 12px 14px 18px;
+        padding: 12px 14px calc(env(safe-area-inset-bottom, 0px) + 18px);
       }
 
       .blog-detail-title {
@@ -509,10 +545,13 @@
       }
 
       .blog-detail-action-btn {
-        height: 34px;
-        padding: 0 10px;
-        font-size: 13px;
-        border-radius: 8px;
+        min-height: 36px;
+        padding: 0 12px;
+      }
+
+      .blog-detail-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .blog-more-btn {
@@ -599,10 +638,10 @@
         <div id="blogDetailContent" class="blog-detail-content"></div>
         <ul id="blogDetailTags" class="blog-detail-tags"></ul>
         <div class="blog-detail-actions">
-          <button type="button" id="blogDetailEditBtn" class="blog-detail-action-btn btn btn-outline-secondary">수정</button>
-          <button type="button" id="blogDetailDeleteBtn" class="blog-detail-action-btn btn btn-outline-danger">삭제</button>
-          <button type="button" id="blogDetailPublicBtn" class="blog-detail-action-btn btn btn-outline-primary">공개설정</button>
-          <button type="button" id="blogDetailBottomCloseBtn" class="blog-detail-action-btn btn btn-secondary">닫기</button>
+          <button type="button" id="blogDetailEditBtn" class="blog-detail-action-btn is-edit btn">수정</button>
+          <button type="button" id="blogDetailDeleteBtn" class="blog-detail-action-btn is-delete btn">삭제</button>
+          <button type="button" id="blogDetailPublicBtn" class="blog-detail-action-btn is-public btn">공개설정</button>
+          <button type="button" id="blogDetailBottomCloseBtn" class="blog-detail-action-btn is-close btn">닫기</button>
         </div>
       </div>
     </div>

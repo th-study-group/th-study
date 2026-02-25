@@ -104,10 +104,46 @@
       justify-content: flex-end;
       gap: 8px;
       margin-top: 20px;
+      flex-wrap: wrap;
     }
 
     .blog-show-action-btn {
       text-decoration: none;
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-width: 1px;
+      box-shadow: none;
+    }
+
+    .blog-show-action-btn.is-edit {
+      border-color: #cfd6e2;
+      color: #374151;
+      background: #fff;
+    }
+
+    .blog-show-action-btn.is-delete {
+      border-color: #f1b7b7;
+      color: #b42318;
+      background: #fff5f5;
+    }
+
+    .blog-show-action-btn.is-public {
+      border-color: #c7d7ff;
+      color: #214ea3;
+      background: #eff4ff;
+    }
+
+    .blog-show-action-btn.is-list {
+      border-color: #1f2937;
+      color: #fff;
+      background: #1f2937;
     }
 
     @media (max-width: 991px) {
@@ -134,9 +170,8 @@
       }
 
       .blog-show-action-btn {
-        height: 34px;
-        padding: 0 10px;
-        font-size: 13px;
+        min-height: 36px;
+        padding: 0 12px;
         border-radius: 8px;
       }
     }
@@ -230,10 +265,10 @@
       </ul>
 
       <div class="blog-show-actions">
-        <a href="{{ route('blogs.edit', ['slug' => $slug, 'idx' => $idx]) }}" class="blog-show-action-btn btn btn-outline-secondary">수정</a>
-        <button type="button" class="blog-show-action-btn btn btn-outline-danger" id="blogShowDeleteBtn">삭제</button>
-        <button type="button" class="blog-show-action-btn btn btn-outline-primary" id="blogShowPublicBtn">공개설정</button>
-        <a href="{{ route('blogs.index', ['slug' => $slug]) }}" class="blog-show-action-btn btn btn-secondary">목록</a>
+        <a href="{{ route('blogs.edit', ['slug' => $slug, 'idx' => $idx]) }}" class="blog-show-action-btn is-edit btn">수정</a>
+        <button type="button" class="blog-show-action-btn is-delete btn" id="blogShowDeleteBtn">삭제</button>
+        <button type="button" class="blog-show-action-btn is-public btn" id="blogShowPublicBtn">공개설정</button>
+        <a href="{{ route('blogs.index', ['slug' => $slug]) }}" class="blog-show-action-btn is-list btn">목록</a>
       </div>
     </div>
   </section>
