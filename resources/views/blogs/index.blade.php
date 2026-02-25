@@ -420,7 +420,7 @@
       z-index: 99;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .blog-fab {
@@ -451,9 +451,20 @@
     }
 
     .blog-fab-top {
-      font-size: 24px;
-      line-height: 1;
-      font-weight: 400;
+      background: #142447;
+      border-color: rgba(191, 209, 255, 0.35);
+      box-shadow: 0 12px 24px rgba(8, 19, 42, 0.33);
+    }
+
+    .blog-fab-top svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     @media (max-width: 991px) {
@@ -561,7 +572,7 @@
 
       .blog-fab-wrap {
         right: 16px;
-        bottom: 16px;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
       }
 
       .blog-fab {
@@ -570,8 +581,9 @@
         font-size: 12px;
       }
 
-      .blog-fab-top {
-        font-size: 20px;
+      .blog-fab-top svg {
+        width: 20px;
+        height: 20px;
       }
     }
   </style>
@@ -616,7 +628,11 @@
           <path d="M12.5 7.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
         </svg>
       </a>
-      <button type="button" id="blogGoTopBtn" class="blog-fab blog-fab-top" title="맨 위로">^</button>
+      <button type="button" id="blogGoTopBtn" class="blog-fab blog-fab-top" title="맨 위로" aria-label="맨 위로">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 15l-6-6-6 6"></path>
+        </svg>
+      </button>
     </div>
   </main>
 
