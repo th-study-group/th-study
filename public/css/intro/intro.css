@@ -67,6 +67,12 @@ body.intro-mode > .container-fluid{
     overflow-y:auto;
     overscroll-behavior-y:contain;
     -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+.intro-page .section::-webkit-scrollbar{
+    width:0;
+    height:0;
 }
 .intro-page .section.active{
     opacity:1;
@@ -448,12 +454,13 @@ body.intro-mode > .container-fluid{
 
 /* 모바일 최적화 */
 @media (max-width: 920px){
+    .intro-page .section:not(.hero){ align-items:flex-start; }
     .intro-page .dotnav{ right:12px; gap:10px; }
     .intro-page .dot::after{ display:none; }
 
     .intro-page .split{
         grid-template-columns: 1fr;
-        gap:14px;
+        gap:24px;
         padding: 18px 16px;
         align-items:start;
     }
