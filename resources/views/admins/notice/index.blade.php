@@ -111,7 +111,7 @@
                                 </td>
                                 <td class="text-nowrap">
                                     <span class="badge use-flag use-flag-{{ $post->use_flag ?? 0 }}">
-                                        {{ $useFlagLabels[$post->use_flag ?? 0] ?? '-' }}
+                                        {{ config('const.use_flag.' . ((($post->use_flag ?? 0) == 1) ? 'Y' : 'N'), '-') }}
                                     </span>
                                 </td>
                                 <td class="board-col-hidden text-nowrap">{{ $post->create_datetime?->diffForHumans() ?? '-' }}</td>

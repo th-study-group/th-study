@@ -14,10 +14,6 @@ return [
             'title' => '여행',
             'url'   => '/photos/tour',
         ],
-        'music' => [
-            'title' => '음악',
-            'url'   => '/photos/music',
-        ],
     ],
     'videos' => [
         'develop' => [

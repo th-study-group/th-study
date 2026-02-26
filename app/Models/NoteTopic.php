@@ -30,6 +30,16 @@ class NoteTopic extends Base
         'delete_datetime' => 'datetime',
     ];
 
+    public function setUseFlagAttribute($value): void
+    {
+        $this->attributes['use_flag'] = $value === 'Y' ? 1 : 0;
+    }
+
+    public function getUseFlagAttribute($value): string
+    {
+        return $value == 1 ? 'Y' : 'N';
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(NoteCategory::class, 'categories_idx', 'idx');

@@ -17,9 +17,6 @@ foreach (array_keys($noteGroups) as $group) {
         Route::get('/{slug}/{idx}/edit', [NoteController::class, 'edit'])->name('edit')->defaults('group', $group);
         Route::put("/{slug}/{idx}", [NoteController::class, 'update'])->name('update');
         Route::delete("/{slug}/{idx}", [NoteController::class, 'destroy'])->name('soft.delete');
+        Route::patch("/{slug}/{idx}/thumbnail", [NoteController::class, 'destoryThumbnail'])->name('thumbnail.destroy');
     });
 }
-
-// TinyMCE 이미지 업로드
-Route::post('notes/upload-image', [NoteController::class, 'uploadImage'])
-    ->name('notes.upload-image');

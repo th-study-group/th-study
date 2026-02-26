@@ -55,15 +55,16 @@
           <ul>
             <li><a href="#overview">1. 개요</a><span class="toc-dots"></span><span class="toc-desc">방향/슬로건</span></li>
             <li><a href="#versions">2. 버전</a><span class="toc-dots"></span><span class="toc-desc">Laravel/PHP/Node 등</span></li>
-            <li><a href="#flows">3. 핵심 흐름</a><span class="toc-dots"></span><span class="toc-desc">메일/배포</span></li>
-            <li><a href="#pwa-push">4. PWA 설치/푸시</a><span class="toc-dots"></span><span class="toc-desc">허용/구독/캐시 대응</span></li>
-            <li><a href="#run">5. 실행</a><span class="toc-dots"></span><span class="toc-desc">로컬/큐</span></li>
-            <li><a href="#deploy">6. 배포</a><span class="toc-dots"></span><span class="toc-desc">SSH + git pull</span></li>
-            <li><a href="#infra">7. 운영 인프라</a><span class="toc-dots"></span><span class="toc-desc">Lightsail + Swap</span></li>
-            <li><a href="#backup">8. DB 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
-            <li><a href="#docker">9. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
-            <li><a href="#queue-service">10. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
-            <li><a href="#appendix">11. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
+            <li><a href="#note-module">3. 노트 모듈 구축</a><span class="toc-dots"></span><span class="toc-desc">CRUD 기반 설계/검증/권한</span></li>
+            <li><a href="#flows">4. 핵심 흐름</a><span class="toc-dots"></span><span class="toc-desc">메일/배포</span></li>
+            <li><a href="#pwa-push">5. PWA 설치/푸시</a><span class="toc-dots"></span><span class="toc-desc">허용/구독/캐시 대응</span></li>
+            <li><a href="#run">6. 실행</a><span class="toc-dots"></span><span class="toc-desc">로컬/큐</span></li>
+            <li><a href="#deploy">7. 배포</a><span class="toc-dots"></span><span class="toc-desc">SSH + git pull</span></li>
+            <li><a href="#infra">8. 운영 인프라</a><span class="toc-dots"></span><span class="toc-desc">Lightsail + Swap</span></li>
+            <li><a href="#backup">9. DB 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
+            <li><a href="#docker">10. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
+            <li><a href="#queue-service">11. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
+            <li><a href="#appendix">12. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
           </ul>
         </div>
       </div>
@@ -124,9 +125,62 @@
   </div>
 </section>
 
+<section id="note-module" class="section">
+  <div class="container">
+    <h2 class="h2x mb-3">3. 노트 모듈 구축</h2>
+    <div class="box pad">
+      <p class="leadx mb-3">노트 기능은 단순 입력 화면이 아니라 운영 가능한 모듈로 설계했습니다. 검증, 권한, 파일 업로드, 이력, 태그 매핑을 분리 구조로 구현했습니다.</p>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:24%">영역</th>
+              <th>구현 내용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold">아키텍처</td>
+              <td>Controller - Service - Repository 구조로 분리, FormRequest 기반 검증, Policy 기반 권한 제어(admin 전용 작성/수정/삭제)</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">주제 조회</td>
+              <td>그룹-카테고리-토픽 관계를 with 조회로 연결하고 <code>use_flag=1</code> 토픽만 노출</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">썸네일 처리</td>
+              <td>Intervention Image 적용, EXIF 회전 보정, 1600px 축소, PNG 유지/JPG 압축, <code>storage/app/public/YYYYMM</code> 저장</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">해시태그</td>
+              <td>최대 10개, 항목당 20자 검증. <code>note_tags</code>와 <code>note_tag_map</code> 다대다 저장</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">콘텐츠 저장/출력</td>
+              <td>Toast UI 저장 포맷을 Markdown에서 HTML로 전환하고, 상세 화면은 기존 Markdown 데이터도 자동 변환해 호환 렌더링</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">보안 정제</td>
+              <td>서버 저장 전 sanitize 적용(허용 태그 중심), 위험 태그/이벤트 속성 제거 및 <code>javascript:</code> 링크 차단</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">히스토리</td>
+              <td>노트 등록 시 이벤트 기반으로 <code>note_histories</code> 기록(작업구분, IP, UA, referer 포함)</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">운영 이슈 대응</td>
+              <td>로컬 업로드 실패 원인 분석 후 php.ini 업로드 한도(2M/8M -> 50M/50M) 조정</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="flows" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">3. 핵심 흐름</h2>
+    <h2 class="h2x mb-3">4. 핵심 흐름</h2>
     <div class="row g-3">
       <div class="col-lg-6"><div class="box pad h-100"><div class="fw-bold mb-2"><i class="bi bi-envelope me-2"></i>메일/큐 흐름</div><div class="svg-wrap">
 <svg class="svg-flow" viewBox="0 0 980 160" role="img" aria-label="메일/큐 흐름도">
@@ -169,7 +223,7 @@
 
 <section id="pwa-push" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">4. PWA 설치/푸시</h2>
+    <h2 class="h2x mb-3">5. PWA 설치/푸시</h2>
     <div class="box pad">
       <p class="leadx mb-3">PWA 설치부터 구독, 발송, 클릭 추적까지 한 흐름으로 운영합니다.</p>
       <ul class="small text-muted mb-3">
@@ -236,7 +290,7 @@
 
 <section id="run" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">5. 실행</h2>
+    <h2 class="h2x mb-3">6. 실행</h2>
     <div class="box pad">
     <div class="codeblock">
       <div class="codehdr"><span>bash · 로컬 실행(예시)</span><button class="copybtn no-print" onclick="copyFrom('#localRun', this)">복사</button></div>
@@ -273,7 +327,7 @@ php artisan queue:failed</code></pre>
 
 <section id="deploy" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">6. 배포</h2>
+    <h2 class="h2x mb-3">7. 배포</h2>
     <div class="box pad">
     <div class="codeblock">
       <div class="codehdr"><span>bash · 서버 접속</span><button class="copybtn no-print" onclick="copyFrom('#sshCmd', this)">복사</button></div>
@@ -339,7 +393,7 @@ php artisan db:seed --class=NoteMasterSeeder --force</code></pre>
 
 <section id="infra" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">7. 운영 인프라 AWS Lightsail</h2>
+    <h2 class="h2x mb-3">8. 운영 인프라 AWS Lightsail</h2>
     <div class="box pad">
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
@@ -405,7 +459,7 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="backup" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">8. DB 백업</h2>
+    <h2 class="h2x mb-3">9. DB 백업</h2>
     <div class="box pad">
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
@@ -428,7 +482,7 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="docker" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">9. 개발 검증 Docker</h2>
+    <h2 class="h2x mb-3">10. 개발 검증 Docker</h2>
     <div class="box pad">
       <p class="leadx mb-2">배포 전 동일한 Ubuntu 기반 환경을 검증하기 위해 Docker Compose를 사용합니다.</p>
       
@@ -475,7 +529,7 @@ SHOW TABLES;</code></pre>
 
 <section id="queue-service" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">10. Queue 영구 실행 systemd</h2>
+    <h2 class="h2x mb-3">11. Queue 영구 실행 systemd</h2>
     <div class="box pad">
       <div class="codeblock">
         <div class="codehdr"><span>bash · 서비스 파일 생성</span><button class="copybtn no-print" onclick="copyFrom('#queueSvcCreate', this)">복사</button></div>
@@ -515,7 +569,7 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="appendix" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">11. README 원문</h2>
+    <h2 class="h2x mb-3">12. README 원문</h2>
     <div class="box pad readme-summary">
       <p class="fw-bold mb-2">포트폴리오 관점 요약</p>
       <ul>

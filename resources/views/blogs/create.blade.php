@@ -2,270 +2,96 @@
 
 @section('title', '작성')
 
-@section('style')
-  <style>
-    .blog-create-page {
-      background: #fff;
-      border: 1px solid #e9ecef;
-    }
-
-    .blog-create-title {
-      margin: 0 0 4px;
-      font-weight: 700;
-      color: #212529;
-      font-size: 20px;
-      letter-spacing: -0.02em;
-    }
-
-    .blog-create-description {
-      color: #6c757d;
-      font-size: 14px;
-      margin: 0 0 14px;
-    }
-
-    .blog-create-label {
-      font-weight: 500;
-      color: #6c757d;
-      margin-bottom: 8px;
-      font-size: 13px;
-    }
-
-    .blog-create-input,
-    .blog-create-select {
-      height: 46px;
-      border: 1px solid #c9cfd8;
-      border-radius: 8px;
-      background: #fff;
-    }
-
-    .blog-create-select {
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      padding-right: 40px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 14px;
-    }
-
-    .blog-create-radio-wrap {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-height: 46px;
-      padding: 0 2px;
-    }
-
-    .blog-create-tags-wrap {
-      border: 1px solid #d5dbe4;
-      border-radius: 8px;
-      background: #fff;
-      padding: 12px;
-    }
-
-    .blog-create-tag-editor {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      min-height: 52px;
-      border: 1px solid #c9cfd8;
-      border-radius: 8px;
-      padding: 8px 10px;
-      background: #fff;
-    }
-
-    .blog-create-tag-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      align-items: center;
-    }
-
-    .blog-create-tag-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid #d4dbe6;
-      border-radius: 999px;
-      padding: 6px 10px;
-      background: #f8fafc;
-    }
-
-    .blog-create-tag-text {
-      color: #1f2937;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .blog-create-tag-remove {
-      border: 0;
-      background: transparent;
-      color: #9ca3af;
-      font-size: 18px;
-      line-height: 1;
-      padding: 0;
-      width: 16px;
-      height: 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .blog-create-tag-input {
-      flex: 1 1 180px;
-      border: 0;
-      outline: none;
-      min-width: 160px;
-      height: 32px;
-      font-size: 16px;
-      color: #374151;
-      padding: 0;
-      background: transparent;
-    }
-
-    .blog-create-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 18px;
-    }
-
-    .blog-create-thumbnail-picker {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      height: 52px;
-      border: 1px solid #c9cfd8;
-      border-radius: 8px;
-      padding: 0 12px 0 0;
-      background: #fff;
-      overflow: hidden;
-    }
-
-    .blog-create-thumbnail-input {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .blog-create-thumbnail-trigger {
-      height: 100%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 168px;
-      border: 0;
-      border-right: 1px solid #c9cfd8;
-      background: #f3f4f6;
-      padding: 0;
-      color: #212529;
-      font-weight: 600;
-      line-height: 1;
-      text-align: center;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .blog-create-thumbnail-name {
-      color: #374151;
-      font-size: 14px;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      min-width: 0;
-      flex: 1;
-    }
-
-    @media (max-width: 991px) {
-      .blog-create-title {
-        font-size: 22px;
-      }
-
-      .blog-create-tag-input {
-        min-width: 120px;
-        flex-basis: 120px;
-      }
-    }
-  </style>
-@endsection
+@push('styles')
+  <link href="{{ asset('css/blog.css') }}?v={{ filemtime(public_path('css/blog.css')) }}" rel="stylesheet" />
+@endpush
 
 @section('content')
-  @php
-    $slug = (string) request()->route('slug', 'develop');
-    $listUrl = route('blogs.index', ['slug' => $slug]);
-    $topics = [
-      '국내여행',
-      '국내맛집',
-      '초딩도 쉽게하는 라라벨',
-      '초딩도 쉽게 이해하는 경제',
-      '라라벨 기초',
-    ];
-  @endphp
-
   <section class="col-12 col-lg-8 mx-auto">
     <div class="board-card blog-create-page rounded-3 p-3 p-lg-4 shadow-sm">
       <h1 class="blog-create-title">노트 작성</h1>
       <p class="blog-create-description">블로그 글을 작성할 수 있습니다.</p>
 
-      <form id="blogCreateForm" method="post" enctype="multipart/form-data">
+      @if ($errors->any())
+        <div class="alert alert-warning d-flex align-items-center gap-2 small mt-3" role="alert">
+          <span class="badge text-bg-warning text-dark">경고</span>
+          <span>노트 등록 실패 사유를 확인하세요.</span>
+        </div>
+      @endif
+
+      @if (session('status'))
+        <div class="alert alert-success">{{ session('status') }}</div>
+      @endif
+
+      <form id="form-note" method="post" action="{{ $formAction }}" enctype="multipart/form-data">
         @csrf
 
         <div class="mb-3">
-          <label for="blogTitle" class="form-label blog-create-label">제목</label>
-          <input type="text" id="blogTitle" name="title" class="form-control blog-create-input" maxlength="255" placeholder="제목을 입력하세요.">
+          <label for="subject" class="form-label blog-create-label">제목</label>
+          <input type="text" 
+                 id="subject" 
+                 name="subject" 
+                 class="form-control blog-create-input @error('subject') is-invalid @enderror"
+                 value="{{ old('subject') }}"
+                 maxlength="255" 
+                 placeholder="제목을 입력하세요.">
+          @error('subject')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+          @enderror
         </div>
 
         <div class="mb-3">
-          <label for="blogTopic" class="form-label blog-create-label">주제</label>
-          <select id="blogTopic" name="topic" class="form-select blog-create-select">
-            <option value="전체" selected>전체</option>
-            @foreach ($topics as $topic)
-              <option value="{{ $topic }}">{{ $topic }}</option>
+          <label for="topic" class="form-label blog-create-label">주제</label>
+          <select id="topic" name="topic" class="form-select blog-create-select @error('topic') is-invalid @enderror">
+            <option value="">주제를 선택해 주세요.</option>
+            @foreach (($topics ?? collect()) as $topic)
+              <option value="{{ $topic->idx }}" {{ old('topic') == $topic->idx ? 'selected' : '' }}>
+                {{ $topic->name }}
+              </option>
             @endforeach
           </select>
+          @error('topic')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+          @enderror
         </div>
 
+        {{--
         <div class="mb-3">
           <span class="form-label d-block blog-create-label">공개여부</span>
           <div class="blog-create-radio-wrap">
             <div class="form-check mb-0">
-              <input class="form-check-input" type="radio" name="is_public" id="isPublicY" value="1" checked>
-              <label class="form-check-label" for="isPublicY">공개</label>
+              <input class="form-check-input" type="radio" id="use_flag" name="usg_flag" value="Y" checked>
+              <label class="form-check-label" for="use_flag">공개</label>
             </div>
             <div class="form-check mb-0">
-              <input class="form-check-input" type="radio" name="is_public" id="isPublicN" value="0">
-              <label class="form-check-label" for="isPublicN">비공개</label>
+              <input class="form-check-input" type="radio" name="usg_flag" id="use_flag" value="N">
+              <label class="form-check-label" for="usg_flag">비공개</label>
             </div>
           </div>
         </div>
+        --}}
 
         <div class="mb-3">
-          <label for="blogContent" class="form-label blog-create-label">내용</label>
-          <textarea id="blogContent" name="content" class="d-none" rows="16" placeholder="내용을 입력하세요."></textarea>
-          <div id="blogContentEditor" class="js-toast-ui-editor" data-source-selector="#blogContent"></div>
+          <label for="content" class="form-label blog-create-label">내용</label>
+          <textarea id="content" name="content" class="d-none" rows="16" placeholder="내용을 입력하세요.">{{ old('content') }}</textarea>
+          <div id="blogContentEditor" class="js-toast-ui-editor" data-source-selector="#content"></div>
+          @error('content')
+            <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
+          @enderror
         </div>
 
         <div class="mb-3">
-          <label for="blogThumbnail" class="form-label blog-create-label">대표이미지</label>
+          <label for="thumbnail_path" class="form-label blog-create-label">대표이미지</label>
           {{-- 수정모드에서 DB에 이미 저장된 대표이미지가 있을 때만 아래 파일 선택 영역을 숨기면 됩니다.
                예: @if($isEditMode && !empty($savedThumbnailPath)) style="display:none" @endif --}}
-          <div id="blogThumbnailPicker" class="blog-create-thumbnail-picker">
-            <input type="file" id="blogThumbnail" name="thumbnail" class="form-control blog-create-thumbnail-input" accept="image/*">
-            <button type="button" id="blogThumbnailTrigger" class="blog-create-thumbnail-trigger">파일 선택</button>
-            <span id="blogThumbnailName" class="blog-create-thumbnail-name">선택된 파일 없음</span>
+          <div id="thumbnail_path_picker" class="thumbnail_path-picker">
+            <input type="file" id="thumbnail_path" name="thumbnail_path" class="form-control blog-create-thumbnail-input @error('thumbnail_path') is-invalid @enderror" accept="image/*">
+            <button type="button" id="thumbnail_path_trigger" class="blog-create-thumbnail-trigger">파일 선택</button>
+            <span id="thumbnail_path_name" class="blog-create-thumbnail-name">선택된 파일 없음</span>
           </div>
+          @error('thumbnail_path')
+            <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
+          @enderror
           {{-- 파일 첨부 후 표시되는 "파일명 + 보기/삭제" UI는 현재 단계에서 숨김 처리.
                수정모드에서 DB 저장 파일 관리가 필요해질 때 아래 블록 주석 해제해서 사용하세요. --}}
           {{--
@@ -290,15 +116,24 @@
           <div class="blog-create-tags-wrap">
             <div class="blog-create-tag-editor">
               <ul id="blogTagChips" class="blog-create-tag-chips"></ul>
-              <input type="text" id="blogTagInput" class="blog-create-tag-input" maxlength="30" placeholder="#태그입력">
+              <input type="text" 
+                     id="blogTagInput" 
+                     class="blog-create-tag-input" 
+                     maxlength="20" 
+                     placeholder="#태그입력">
             </div>
           </div>
-          <input type="hidden" id="blogTagsHidden" name="tags">
+          <input type="hidden" id="tags" name="tags">
+          @error('tags')
+            <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
+          @enderror
         </div>
 
         <div class="blog-create-footer">
-          <button type="button" class="btn btn-primary">적용</button>
-          <a href="{{ $listUrl }}" class="btn btn-outline-secondary">목록</a>
+          <button type="button" id="btn_save" class="btn btn-primary">적용</button>
+          <a href="{{ route("{$group}.index", ['slug' => $slug]) }}" class="btn btn-outline-secondary">
+            목록
+          </a>
         </div>
       </form>
     </div>
@@ -306,137 +141,96 @@
 @endsection
 
 @push('scripts')
-  <script src="{{ asset('js/toast_ui_editor.js') }}?v={{ filemtime(public_path('js/toast_ui_editor.js')) }}" defer></script> 
+  <script src="{{ asset('js/toast_ui_editor.js') }}?v={{ filemtime(public_path('js/toast_ui_editor.js')) }}" defer></script>
+  <script src="{{ asset('js/blog.js') }}?v={{ filemtime(public_path('js/blog.js')) }}" defer></script>  
 @endpush
 
 @section('script')
   <script>
     $(function () {
-      var tags = [];
-      function escapeHtml(value) {
-        return String(value)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
-      }
+      const tagManager = createTagManager({
+        chipsSelector: '#blogTagChips',
+        hiddenSelector: '#tags',
+        maxCount: 10,
+      });
+      let isComposingTag = false;
 
-      function normalizeTag(value) {
-        var tag = $.trim(value || '');
-        if (!tag) {
-          return '';
-        }
-        if (tag.charAt(0) !== '#') {
-          tag = '#' + tag;
-        }
-        return tag;
-      }
-
-      function syncHidden() {
-        $('#blogTagsHidden').val(JSON.stringify(tags));
-      }
-
-      function renderTags() {
-        var html = '';
-        var i;
-        var tag;
-        for (i = 0; i < tags.length; i += 1) {
-          tag = escapeHtml(tags[i]);
-          html += '' +
-            '<li class="blog-create-tag-chip" data-index="' + i + '">' +
-              '<span class="blog-create-tag-text">' + tag + '</span>' +
-              '<button type="button" class="blog-create-tag-remove js-tag-remove" aria-label="태그 삭제">×</button>' +
-            '</li>';
-        }
-        $('#blogTagChips').html(html);
-        syncHidden();
-      }
-
-      function addTagFromInput() {
-        var raw = $('#blogTagInput').val();
-        var normalized;
-
-        if (!$.trim(raw || '')) {
-          return false;
+      $("#btn_save").on("click", function() {
+        if (confirm("적용하시겠습니까?") == false) {
+          return;
         }
 
-        normalized = normalizeTag(raw);
-        if (!normalized) {
-          return false;
+        const subject = $('#subject').val().trim();
+        const topic = $('#topic').val();
+        const content = $('#content').val().trim();
+
+        if (!subject) {
+          alert('제목을 입력해 주세요.');
+          $('#subject').trigger('focus');
+          return;
         }
-        if (tags.indexOf(normalized) > -1) {
-          $('#blogTagInput').val('').trigger('focus');
-          return false;
+
+        if (!topic) {
+          alert('주제를 선택해 주세요.');
+          $('#topic').trigger('focus');
+          return;
         }
-        tags.push(normalized);
 
-        $('#blogTagInput').val('').trigger('focus');
-        renderTags();
-        return true;
-      }
+        if (!content) {
+          alert('내용을 입력해 주세요.');
 
-      function bindEvents() {
-        $('.blog-create-tag-editor').on('click', function () {
-          $('#blogTagInput').trigger('focus');
-        });
-
-        $('#blogTagInput').on('keydown', function (e) {
-          if (e.isComposing || e.keyCode === 229) {
-            return;
-          }
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            addTagFromInput();
-          }
-        });
-
-        $('#blogThumbnailTrigger').on('click', function () {
-          $('#blogThumbnail').trigger('click');
-        });
-
-        $('#blogThumbnail').on('change', function (e) {
-          var file = e.target.files && e.target.files[0];
-          var nameEl = $('#blogThumbnailName');
-
-          if (!file) {
-            nameEl.text('선택된 파일 없음');
-            return;
+          const $editorInput = $('#blogContentEditor').find('.toastui-editor-ww-container .ProseMirror');
+          if ($editorInput.length > 0) {
+            $editorInput.trigger('focus');
+          } else {
+            $('#content').trigger('focus');
           }
 
-          if (!file.type || file.type.indexOf('image/') !== 0) {
-            window.alert('이미지 파일만 업로드할 수 있습니다.');
-            $(this).val('');
-            nameEl.text('선택된 파일 없음');
-            return;
-          }
+          return;
+        }
+        
+        $("#form-note").submit();
+      });
 
-          nameEl.text(file.name || '선택된 파일 없음');
-        });
+      $('#thumbnail_path_trigger').on('click', function () {
+        $('#thumbnail_path').trigger('click');
+      });
 
-        $(document).on('click', '.js-tag-remove', function (e) {
-          var index = Number($(this).closest('.blog-create-tag-chip').data('index'));
+      $('#thumbnail_path').on('change', function () {
+        updateThumbnailName(this, '#thumbnail_path_name');
+      });
+
+      $('#blogTagInput').on('compositionstart', function () {
+        isComposingTag = true;
+      });
+
+      $('#blogTagInput').on('compositionend', function () {
+        isComposingTag = false;
+      });
+
+      $('#blogTagInput').on('keydown', function (e) {
+        if (isComposingTag || e.isComposing) {
+          return;
+        }
+
+        if (e.key === 'Enter' || e.key === ',') {
           e.preventDefault();
-          if (Number.isNaN(index)) {
-            return;
+          
+          const result = tagManager.addTag($(this).val());
+          
+          if (!result.ok && result.reason === 'max') {
+            alert('해시태그는 최대 10개까지 등록할 수 있습니다.');
           }
-          tags.splice(index, 1);
-          renderTags();
-        });
+          $(this).val('');
+          
+        }
+      });
 
-        $('#blogCreateForm .btn.btn-primary').on('click', function () {
-          addTagFromInput();
-          syncHidden();
-          window.alert('현재는 화면 구성 단계입니다.');
-        });
-      }
+      $('#blogTagChips').on('click', '.js-tag-remove', function () {
+        tagManager.removeTag($(this).data('tag'));
+      });
 
-      function init() {
-        renderTags();
-        bindEvents();
-      }
-
-      init();
+      tagManager.render();
     });
   </script>
 @endsection

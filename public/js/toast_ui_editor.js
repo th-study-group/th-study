@@ -44,9 +44,9 @@ window.initToastUiEditor = function (options) {
     });
 
     if (sourceEl && syncOnChange) {
-        sourceEl.value = editor.getMarkdown();
+        sourceEl.value = editor.getHTML();
         editor.on('change', function () {
-            sourceEl.value = editor.getMarkdown();
+            sourceEl.value = editor.getHTML();
         });
     }
 

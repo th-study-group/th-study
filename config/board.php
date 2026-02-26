@@ -22,11 +22,6 @@ $postTypes = [
     'inquiries' => '문의사항',
 ];
 
-$postUseFlag = [
-    1 => '공개',
-    0 => '비공개',
-];
-
 // 관리자, 회원 등 권한이 필요할 때 적용
 $postTypeExcluded = ['inquiries'];
 
@@ -38,7 +33,6 @@ return [
     'status_badge_classes' => $statusBadgeClasses,
     'post_type' => $postTypes,
     'post_type_excluded' => $postTypeExcluded,
-    'post_use_flag' => $postUseFlag,
     'post_type_inquiry' => 'inquiries',
     'post_type_for_route' => array_values(
         array_diff(array_keys($postTypes), $postTypeExcluded)

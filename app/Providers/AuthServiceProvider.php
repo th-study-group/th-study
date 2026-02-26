@@ -4,9 +4,11 @@ namespace App\Providers;
 
 
 use App\Models\Comment;
+use App\Models\Note;
 use App\Models\Post;
 use App\Models\User;
 use App\Policies\CommentPolicy;
+use App\Policies\NotePolicy;
 use App\Policies\PostPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -22,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Post::class => PostPolicy::class,
         Comment::class => CommentPolicy::class,
+        Note::class => NotePolicy::class,
     ];
 
     /**

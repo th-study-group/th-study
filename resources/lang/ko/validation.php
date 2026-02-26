@@ -166,10 +166,31 @@ return [
         'marketing_info_agree' => [
             'in' => '마케팅 정보 수신 동의 값이 올바르지 않습니다.',
         ],
+        'subject' => [
+            'required' => '제목을 입력해 주세요.',
+            'min' => '제목은 5자 이상 입력해 주세요.',
+            'max' => '제목은 100자 이하로 입력해 주세요.',
+        ],
+        'topic' => [
+            'required' => '주제를 선택해 주세요.',
+            'integer' => '주제 정보가 올바르지 않습니다.',
+            'exists' => '사용 가능한 주제를 선택해 주세요.',
+        ],
+        'content' => [
+            'required' => '내용을 입력해 주세요.',
+            'min' => '내용은 10자 이상 입력해 주세요.',
+        ],
+        'thumbnail_path' => [
+            'image' => '대표이미지는 이미지 파일만 업로드할 수 있습니다.',
+            'mimes' => '대표이미지는 JPG 또는 PNG 파일만 업로드할 수 있습니다.',
+            'max' => '대표이미지는 50MB 이하만 업로드할 수 있습니다.',
+        ],
     ],
 
     'attributes' => [
         'title' => '제목',
+        'subject' => '제목',
+        'topic' => '주제',
         'content' => '내용',
         'email' => '이메일',
         'current_password' => '현재 비밀번호',
@@ -183,6 +204,8 @@ return [
         'phone' => '핸드폰 번호',
         'address' => '주소',
         'inquiry_memo' => '문의 내용',
+        'thumbnail_path' => '대표이미지',
+        'tags' => '해시태그',
         'memo' => '비고',
         'personal_info_agree' => '개인정보 수집 및 이용 동의',
         'marketing_info_agree' => '마케팅 정보 수신 동의',

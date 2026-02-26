@@ -15,7 +15,7 @@ class ViewComposerServiceProvider extends ServiceProvider
     {
         View::composer('layouts.*', function ($view) {
             $route = request()->route();
-            $routeName = optional($route)->getName();
+            $routeName = $route?->getName();
             $noteGroup = $route?->parameter('group');
 
             $notes = config('note', []);

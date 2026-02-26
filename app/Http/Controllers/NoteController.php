@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Notes\StoreNoteRequest;
+use App\Models\Note;
+use App\Services\NoteService;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
@@ -12,9 +13,9 @@ use Illuminate\View\View;
  */
 class NoteController extends Controller
 {
-    public function __construct()
-    {
-    }
+    public function __construct(
+        private NoteService $noteService
+    ) {}
 
     /**
      * 글 목록 
@@ -43,8 +44,16 @@ class NoteController extends Controller
     public function show(Request $request, string $slug, string $idx) : View
     {
         $noteType = $request->route('group');
+        $note = $this->noteService->getNoteDetail($noteType, $slug, $idx);
+        $contentHtml = $this->noteService->toRenderableHtml($note->content ?? '');
 
-        return view("{$noteType}.show");
+        return view("{$noteType}.show", [
+            'group' => $noteType,
+            'slug' => $slug,
+            'note' => $note,
+            'contentHtml' => $contentHtml,
+            'useFlag' => $note->use_flag ?? 'N',
+        ]);
     }
 
     /**
@@ -58,8 +67,14 @@ class NoteController extends Controller
     public function create(Request $request, string $slug) : View
     {
         $noteType = $request->route('group');
+        $topics = $this->noteService->getNoteTopics($noteType, $slug);
 
-        return view("{$noteType}.create");
+        return view("{$noteType}.create", [
+            'group' => $noteType,
+            'slug' => $slug,
+            'formAction' => route("{$noteType}.store", ['slug' => $slug]),
+            'topics' => $topics,
+        ]);
     }
 
     /**
@@ -69,8 +84,22 @@ class NoteController extends Controller
      * @param string $idx
      * @return void
      */
-    public function store(Request $request, string $idx)
+    public function store(StoreNoteRequest $request, string $slug)
     {
+        $this->authorize('create', Note::class);
+        $routeName = $request->route()?->getName();
+        $noteType = strtok($routeName, '.');
+
+        if (empty($noteType)) {
+            abort(404);
+        }
+
+        $note = $this->noteService->createNote($request, $noteType, $slug);
+
+        return to_route("{$noteType}.show", [
+            'slug' => $slug,
+            'idx' => $note->idx,
+        ]);
     }
     
     /**
@@ -102,6 +131,17 @@ class NoteController extends Controller
      * @return void
      */
     public function destroy(string $idx)
+    {
+    }
+
+    /**
+     * 썸네일 삭제 (AJAX)
+     *
+     * @param Request $request
+     * @param String $idx
+     * @return void
+     */
+    public function destroyThumbnail(Request $request, String $idx)
     {
     }
 }

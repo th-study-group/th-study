@@ -32,7 +32,6 @@ class PostController extends Controller
         return view("admins.{$postType}.index", [
             'posts' => $posts,
             'filters' => $filters,
-            'useFlagLabels' => config('board.post_use_flag'),
         ]);
     }
 
@@ -75,10 +74,11 @@ class PostController extends Controller
             request()->ip(),
             request()->userAgent()
         );
+        $useFlag = (($post->use_flag ?? 0) == 1) ? 'Y' : 'N';
 
         return view("admins.{$postType}.show", [
             'post' => $post,
-            'useFlagLabel' => config('board.post_use_flag')[$post->use_flag ?? 0] ?? '-',
+            'useFlag' => $useFlag,
         ]);
     }
 

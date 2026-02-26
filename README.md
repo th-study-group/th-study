@@ -667,3 +667,170 @@ sudo systemctl status th-study-queue
 ## 16. 마무리 한 줄
 
 티에이치스터디그룹은 하나의 사이트가 아니라, 개발자로서의 성장 과정을 담는 플랫폼이다.
+
+## 17. 노트 개발 작업 기록 (2026-02-26 기준)
+
+아래 내용은 노트 기능 관련으로 채팅 작업을 통해 반영된 실제 변경 이력입니다.
+
+### 17.1 화면/라우팅/폼 처리
+
+- 노트 작성 화면: `resources/views/blogs/create.blade.php`
+- 저장 action은 컨트롤러에서 전달한 `formAction`만 사용하도록 고정
+- 저장 버튼 클릭 시 프론트 검증 추가
+  - 제목 미입력: 알림 + 제목 포커스
+  - 주제 미선택: 알림 + 주제 포커스
+  - 내용 미입력: 알림 + 에디터 포커스
+  - 정상 입력: `#form-note` submit
+- 상단 에러 UI를 `inquiries/create`와 동일한 `alert alert-warning + badge` 형태로 통일
+- 필드별 백엔드 에러 출력 영역 추가
+  - `subject`, `topic`, `content`, `thumbnail_path`, `tags`
+  - `is-invalid`, `@error`, `old()` 적용
+
+### 17.2 주제(Topic) 조회 구조 개선
+
+- 구조: Controller -> Service -> Repository
+- 추가 파일
+  - `app/Repositories/NoteTopicRepository.php`
+  - `app/Services/NoteService.php`
+- `with(['category.group'])` 관계 조회 적용
+- 조회 조건
+  - `use_flag = 1`
+  - 라우트 `group/slug`와 일치하는 group/category만
+- 그룹 코드 매핑 처리
+  - URL 그룹(`blogs`) -> DB 그룹코드(`blog`)
+  - `config('note.group')` 기반으로 변환 후 조회
+
+### 17.3 권한/검증(FormRequest + Policy)
+
+- FormRequest 추가: `app/Http/Requests/Notes/StoreNoteRequest.php`
+- Policy 추가: `app/Policies/NotePolicy.php`
+  - 조회는 허용
+  - 작성/수정/삭제/공개여부 변경은 `user.level = admin`만 허용
+- Policy 등록: `app/Providers/AuthServiceProvider.php`
+
+검증 규칙(저장 전):
+- `subject`: required|string|min:5|max:100
+- `topic`: required|integer|exists(note_topics.idx, use_flag=1, delete_datetime null)
+- `content`: required|string|min:10
+- `thumbnail_path`: nullable|image|mimes:jpg,jpeg,png|max:51200(50MB)
+- `tags`: nullable|string
+  - 최대 10개
+  - 각 태그 최대 20자
+- 추가 after 검증
+  - 선택한 topic이 현재 group/category에 실제 속하는지 검증
+
+검증 메시지 관리:
+- FormRequest 내부 `messages()` 제거
+- `resources/lang/ko/validation.php`의 `custom`/`attributes`로 이전
+
+### 17.4 노트 저장/이동 흐름
+
+- 컨트롤러 `store()`는 정상 입력 시 `show`로 이동
+  - `to_route("{$group}.show", ['slug' => $slug, 'idx' => $note->idx])`
+- 성공 안내 문구("입력값 검증...") 제거
+- 라우트 default 의존 제거
+  - `group`은 라우트명(`blogs.store`)에서 파싱해 사용
+
+### 17.5 썸네일 업로드 처리
+
+- 구현 위치: `app/Services/NoteService.php`
+- 라이브러리: `intervention/image` v3
+- 처리 규칙
+  - EXIF 회전 보정(`orient`)
+  - 가로 1600px 초과 시 축소(`scaleDown(width: 1600)`)
+  - PNG는 PNG 유지
+  - JPEG 계열은 JPG(quality 80)
+- 저장 위치/규칙
+  - disk: `public`
+  - 경로: `storage/app/public/{YYYYMM}/{uuid}.{ext}`
+- 업로드 필드명 통일: `thumbnail_path`
+
+### 17.6 해시태그 저장 처리
+
+- 프론트
+  - 파일: `public/js/blog.js`
+  - 태그 관리 함수 분리(전역 태그 배열 제거)
+  - 입력 규칙: Enter/`,`로 추가, 중복 방지, 최대 10개
+  - 한글 조합 입력 대응(composition 이벤트)
+  - hidden `tags`에 콤마 문자열 동기화
+- 백엔드
+  - 노트 생성 시 태그 파싱 -> 저장
+  - 추가 파일
+    - `app/Repositories/NoteTagRepository.php`
+    - `app/Repositories/NoteTagMapRepository.php`
+  - 처리
+    - `note_tags`: 이름 기준 조회/생성(soft delete 복구 포함)
+    - `note_tag_map`: `insertOrIgnore`로 매핑 저장
+
+### 17.7 히스토리(Event 기반) 적용
+
+- 이벤트 추가: `app/Events/NoteHistoryEvent.php`
+- 리스너 추가: `app/Listeners/WriteNoteHistoryEventListener.php`
+- 이벤트 등록: `app/Providers/EventServiceProvider.php`
+- 노트 생성 시 `job_type = 등록` 기록
+  - 기록 필드: `note_idx`, `job_type`, `ip`, `user_agent`, `referer_url`, `create_user_idx`
+- 불일치 케이스 로그 추가
+  - topic/group/category 불일치 시 warning 로그 남김
+
+### 17.8 업로드 실패 원인 분석 및 php.ini 조정
+
+증상:
+- 로그: `thumbnail_path => 업로드에 실패했습니다.(uploaded)`
+
+원인:
+- 로컬 PHP 업로드 제한이 낮음
+  - `upload_max_filesize = 2M`
+  - `post_max_size = 8M`
+
+조치:
+- 로컬 Homebrew PHP 설정 파일 수정
+  - 파일: `/opt/homebrew/etc/php/8.2/php.ini`
+  - 변경:
+    - `upload_max_filesize = 50M`
+    - `post_max_size = 50M`
+- 반영 확인: `php -i`에서 50M 확인
+
+참고:
+- Docker 설정(`docker/php/conf.d/zz-custom.ini`)은 이미 50M 상태
+- 실사용 서버 종류에 따라 PHP-FPM/웹서버 재시작 필요
+
+### 17.9 관련 핵심 파일 목록
+
+- 컨트롤러: `app/Http/Controllers/NoteController.php`
+- 요청검증: `app/Http/Requests/Notes/StoreNoteRequest.php`
+- 서비스: `app/Services/NoteService.php`
+- 레퍼지토리:
+  - `app/Repositories/NoteRepository.php`
+  - `app/Repositories/NoteTopicRepository.php`
+  - `app/Repositories/NoteTagRepository.php`
+  - `app/Repositories/NoteTagMapRepository.php`
+- 권한: `app/Policies/NotePolicy.php`
+- 이벤트/리스너:
+  - `app/Events/NoteHistoryEvent.php`
+  - `app/Listeners/WriteNoteHistoryEventListener.php`
+- 라우트: `routes/content.php`
+- 화면/스크립트:
+  - `resources/views/blogs/create.blade.php`
+  - `resources/views/blogs/show.blade.php`
+  - `public/js/blog.js`
+  - `public/js/toast_ui_editor.js`
+  - `public/css/blog.css`
+- 언어 메시지: `resources/lang/ko/validation.php`
+
+### 17.10 content 저장/출력 전환 (Markdown -> HTML)
+
+- 에디터 동기화 전환
+  - `public/js/toast_ui_editor.js`
+  - `editor.getMarkdown()` -> `editor.getHTML()`로 변경
+- 저장 정책
+  - 노트 저장 전 `content`를 서버에서 sanitize 후 DB 저장
+  - 허용 태그 중심(`p, br, strong, b, em, i, u, s, h1~h6, ul, ol, li, blockquote, pre, code, a`)
+  - 위험 태그/속성 제거(`script/style/iframe/object/embed`, `on*` 이벤트 속성)
+  - `a[href]`의 `javascript:`/`data:` 차단
+- 상세 출력 정책(기존 데이터 호환)
+  - `content`가 HTML 패턴이면 sanitize 후 그대로 렌더
+  - 기존 Markdown 패턴이면 `Str::markdown(..., safe 옵션)` 변환 후 렌더
+  - 최종 출력은 `resources/views/blogs/show.blade.php`에서 `{!! $contentHtml !!}` 단일 경로 사용
+- 입력 검증 보강
+  - HTML 태그 제거 후 순수 텍스트 길이 기준 10자 이상 검증
+  - `<p><br></p>` 같은 의미 없는 입력 통과 방지

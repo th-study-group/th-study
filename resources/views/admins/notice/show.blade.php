@@ -33,7 +33,7 @@
                         <span class="text-danger">(수정시각: {{ $post->update_datetime }})</span>
                     @endif
                     <span class="ms-auto text-nowrap">공개여부:</span>
-                    <span class="badge use-flag use-flag-{{ $post->use_flag ?? 0 }}">{{ $useFlagLabel }}</span>
+                    <span class="badge use-flag use-flag-{{ $post->use_flag ?? 0 }}">{{ config("const.use_flag.{$useFlag}", '-') }}</span>
                 </div>
             </div>
 
