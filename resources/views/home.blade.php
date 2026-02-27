@@ -661,8 +661,6 @@
             $('#personal_info_agree').removeClass('is-invalid');
             $('#marketing_info_agree').removeClass('is-invalid');
 
-            let shouldHideLoading = true;
-
             requestAjax({
                 method: 'POST',
                 url: $form.attr('action'),
@@ -671,15 +669,11 @@
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
-                shouldHideLoading: function () {
-                    return shouldHideLoading;
-                },
                 onSuccess: function () {
                     $('#contactConfirmModal').modal('hide');
                     resetContactForm();
                 },
                 onError: function (xhr) {
-                    shouldHideLoading = false;
                     $('#personal_info_agree').prop('checked', checkboxState.personalInfo);
                     $('#marketing_info_agree').prop('checked', checkboxState.marketingInfo);
 
@@ -694,7 +688,6 @@
                     res = res || {};
                     const errors = res.errors || {};
                     const statusMessages = errors.status || [];
-                    const isValidationError = xhr.status === 422;
                     const fieldMap = {
                         name: '#name',
                         contact_method: 'input[name="contact_method"]',
@@ -733,10 +726,6 @@
 
                     if (!hasFieldErrors && !statusMessages.length) {
                         $errors.removeClass('d-none').text('문의사항 등록 실패 사유를 확인해주세요.');
-                    }
-
-                    if (isValidationError || hasFieldErrors) {
-                        shouldHideLoading = true;
                     }
                 },
             });
