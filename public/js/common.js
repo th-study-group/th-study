@@ -147,7 +147,8 @@ $(function () {
     }
 
     function hideLoadingUi() {
-        if (!loadingState.isVisible) {
+        const isModalShown = modalEl.classList.contains('show');
+        if (!loadingState.isVisible && !isModalShown) {
             return;
         }
 
@@ -232,7 +233,11 @@ function runInitialEntryLoading(loadingModal)
     }
 
     try {
-        loadingModal.show();
+        if (typeof window.showLoading === 'function') {
+            window.showLoading();
+        } else {
+            loadingModal.show();
+        }
     } catch (e) {
         return;
     }
