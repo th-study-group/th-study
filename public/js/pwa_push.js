@@ -293,6 +293,12 @@ function bindLogoutPushCleanup() {
         var href = this.href;
         e.preventDefault();
 
+        if (typeof window.showLoading === 'function') {
+            try {
+                window.showLoading();
+            } catch (ignore) {}
+        }
+
         Promise.resolve(unsubscribeCurrentPush())
             .catch(function () {
                 return false;

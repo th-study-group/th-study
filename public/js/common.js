@@ -90,10 +90,13 @@ $(function () {
         activeCount: 0,
         blockerEl: null,
         isVisible: false,
+        visibleSince: 0,
+        hideTimer: null,
         watchdogTimer: null,
     };
 
     const LOADING_WATCHDOG_MS = 15000;
+    const LOADING_MIN_VISIBLE_MS = 450;
 
     function getLoadingBlockerElement() {
         if (loadingState.blockerEl && document.body.contains(loadingState.blockerEl)) {
@@ -111,6 +114,11 @@ $(function () {
     }
 
     function showLoadingUi() {
+        if (loadingState.hideTimer) {
+            clearTimeout(loadingState.hideTimer);
+            loadingState.hideTimer = null;
+        }
+
         if (loadingState.isVisible) {
             return;
         }
@@ -128,6 +136,7 @@ $(function () {
         }, 0);
 
         loadingState.isVisible = true;
+        loadingState.visibleSince = Date.now();
     }
 
     function resetLoadingWatchdog() {
@@ -166,6 +175,7 @@ $(function () {
         }
         document.body.classList.remove('loading-active');
         loadingState.isVisible = false;
+        loadingState.visibleSince = 0;
     }
 
     window.showLoading = function () {
@@ -186,6 +196,25 @@ $(function () {
         }
 
         loadingState.activeCount = 0;
+
+        if (loadingState.hideTimer) {
+            clearTimeout(loadingState.hideTimer);
+            loadingState.hideTimer = null;
+        }
+
+        const elapsed = loadingState.visibleSince > 0
+            ? Date.now() - loadingState.visibleSince
+            : LOADING_MIN_VISIBLE_MS;
+        const remaining = forceHide ? 0 : Math.max(0, LOADING_MIN_VISIBLE_MS - elapsed);
+
+        if (remaining > 0) {
+            loadingState.hideTimer = setTimeout(function () {
+                loadingState.hideTimer = null;
+                hideLoadingUi();
+            }, remaining);
+            return;
+        }
+
         if (loadingState.watchdogTimer) {
             clearTimeout(loadingState.watchdogTimer);
             loadingState.watchdogTimer = null;
@@ -215,32 +244,6 @@ function initInitialEntryLoading(loadingModal)
 
 function runInitialEntryLoading(loadingModal)
 {
-    const initialLoadingSessionKey = 'th_initial_loading_session_v1';
-    const initialLoadingFallbackKey = 'th_initial_loading_fallback_last_shown_at';
-    const initialLoadingFallbackCooldownMs = 10 * 60 * 1000;
-
-    let alreadyShown = false;
-    try {
-        alreadyShown = sessionStorage.getItem(initialLoadingSessionKey) === '1';
-    } catch (e) {
-        try {
-            const lastShownAt = Number(localStorage.getItem(initialLoadingFallbackKey) || '0');
-            alreadyShown = lastShownAt > 0 && (Date.now() - lastShownAt) < initialLoadingFallbackCooldownMs;
-        } catch (ignore) {}
-    }
-
-    if (alreadyShown) {
-        return;
-    }
-
-    try {
-        sessionStorage.setItem(initialLoadingSessionKey, '1');
-    } catch (e) {
-        try {
-            localStorage.setItem(initialLoadingFallbackKey, String(Date.now()));
-        } catch (ignore) {}
-    }
-
     const navEntry = performance.getEntriesByType
         ? performance.getEntriesByType('navigation')[0]
         : null;
@@ -262,11 +265,11 @@ function runInitialEntryLoading(loadingModal)
 
     setTimeout(function () {
         if (typeof window.hideLoading === 'function') {
-            window.hideLoading({ force: true });
+            window.hideLoading();
         } else {
             loadingModal.hide();
         }
-    }, 260);
+    }, 700);
 }
 
 function initFixedHeaderOffset()

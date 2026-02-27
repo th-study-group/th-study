@@ -41,13 +41,9 @@
 
         <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mt-3 board-status-actions">
             <div class="d-flex gap-2 ms-auto">
-                @can('update', $post)
-                    <button type="button" id="btn_post_modify" class="btn btn-outline-secondary">수정</button>
-                @endcan
-                @can('delete', $post)
-                    <button type="button" id="btn_post_delete" class="btn btn-outline-danger">삭제</button>
-                @endcan
                 @can('updateUseFlag', $post)
+                    <button type="button" id="btn_post_modify" class="btn btn-outline-secondary {{ (($post->use_flag ?? 0) == 1) ? 'd-none' : '' }}">수정</button>
+                    <button type="button" id="btn_post_delete" class="btn btn-outline-danger {{ (($post->use_flag ?? 0) == 1) ? 'd-none' : '' }}">삭제</button>
                     <button type="button" id="btn_post_use_flag" class="btn btn-outline-primary">공개설정</button>
                 @endcan
                 <button type="button" id="btn_post_list" class="btn btn-secondary">목록</button>
