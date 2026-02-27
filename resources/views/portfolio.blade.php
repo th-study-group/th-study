@@ -55,7 +55,7 @@
           <ul>
             <li><a href="#overview">1. 개요</a><span class="toc-dots"></span><span class="toc-desc">방향/슬로건</span></li>
             <li><a href="#versions">2. 버전</a><span class="toc-dots"></span><span class="toc-desc">Laravel/PHP/Node 등</span></li>
-            <li><a href="#note-module">3. 노트 모듈 구축</a><span class="toc-dots"></span><span class="toc-desc">CRUD 기반 설계/검증/권한</span></li>
+            <li><a href="#note-module">3. 블로그 서비스 모듈 구축</a><span class="toc-dots"></span><span class="toc-desc">CRUD 기반 설계/검증/권한</span></li>
             <li><a href="#flows">4. 핵심 흐름</a><span class="toc-dots"></span><span class="toc-desc">메일/배포</span></li>
             <li><a href="#pwa-push">5. PWA 설치/푸시</a><span class="toc-dots"></span><span class="toc-desc">허용/구독/캐시 대응</span></li>
             <li><a href="#run">6. 실행</a><span class="toc-dots"></span><span class="toc-desc">로컬/큐</span></li>
@@ -127,9 +127,9 @@
 
 <section id="note-module" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">3. 노트 모듈 구축</h2>
+    <h2 class="h2x mb-3">3. 블로그 서비스 모듈 구축</h2>
     <div class="box pad">
-      <p class="leadx mb-3">노트 기능은 단순 입력 화면이 아니라 운영 가능한 모듈로 설계했습니다. 검증, 권한, 파일 업로드, 이력, 태그 매핑을 분리 구조로 구현했습니다.</p>
+      <p class="leadx mb-3">블로그 서비스 기능은 단순 입력 화면이 아니라 운영 가능한 모듈로 설계했습니다. 검증, 권한, 파일 업로드, 이력, 태그 매핑을 분리 구조로 구현했습니다.</p>
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
           <thead>
@@ -165,7 +165,7 @@
             </tr>
             <tr>
               <td class="fw-bold">히스토리</td>
-              <td>노트 등록 시 이벤트 기반으로 <code>note_histories</code> 기록(작업구분, IP, UA, referer 포함)</td>
+              <td>블로그 글 등록 시 이벤트 기반으로 <code>note_histories</code> 기록(작업구분, IP, UA, referer 포함)</td>
             </tr>
             <tr>
               <td class="fw-bold">운영 이슈 대응</td>

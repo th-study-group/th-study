@@ -668,13 +668,13 @@ sudo systemctl status th-study-queue
 
 티에이치스터디그룹은 하나의 사이트가 아니라, 개발자로서의 성장 과정을 담는 플랫폼이다.
 
-## 17. 노트 개발 작업 기록 (2026-02-26 기준)
+## 17. 블로그 서비스 개발 작업 기록 (2026-02-26 기준)
 
-아래 내용은 노트 기능 관련으로 채팅 작업을 통해 반영된 실제 변경 이력입니다.
+아래 내용은 블로그 서비스 기능 관련으로 채팅 작업을 통해 반영된 실제 변경 이력입니다.
 
 ### 17.1 화면/라우팅/폼 처리
 
-- 노트 작성 화면: `resources/views/blogs/create.blade.php`
+- 블로그 글 작성 화면: `resources/views/blogs/create.blade.php`
 - 저장 action은 컨트롤러에서 전달한 `formAction`만 사용하도록 고정
 - 저장 버튼 클릭 시 프론트 검증 추가
   - 제목 미입력: 알림 + 제목 포커스
@@ -723,7 +723,7 @@ sudo systemctl status th-study-queue
 - FormRequest 내부 `messages()` 제거
 - `resources/lang/ko/validation.php`의 `custom`/`attributes`로 이전
 
-### 17.4 노트 저장/이동 흐름
+### 17.4 블로그 글 저장/이동 흐름
 
 - 컨트롤러 `store()`는 정상 입력 시 `show`로 이동
   - `to_route("{$group}.show", ['slug' => $slug, 'idx' => $note->idx])`
@@ -823,7 +823,7 @@ sudo systemctl status th-study-queue
   - `public/js/toast_ui_editor.js`
   - `editor.getMarkdown()` -> `editor.getHTML()`로 변경
 - 저장 정책
-  - 노트 저장 전 `content`를 서버에서 sanitize 후 DB 저장
+  - 블로그 글 저장 전 `content`를 서버에서 sanitize 후 DB 저장
   - 허용 태그 중심(`p, br, strong, b, em, i, u, s, h1~h6, ul, ol, li, blockquote, pre, code, a`)
   - 위험 태그/속성 제거(`script/style/iframe/object/embed`, `on*` 이벤트 속성)
   - `a[href]`의 `javascript:`/`data:` 차단
@@ -835,7 +835,7 @@ sudo systemctl status th-study-queue
   - HTML 태그 제거 후 순수 텍스트 길이 기준 10자 이상 검증
   - `<p><br></p>` 같은 의미 없는 입력 통과 방지
 
-## 18. 노트 목록/상세 고도화 작업 기록 (2026-02-27 기준)
+## 18. 블로그 목록/상세 고도화 작업 기록 (2026-02-27 기준)
 
 ### 18.1 목록 조회 구조(초기 진입 + AJAX 공용화)
 
@@ -893,7 +893,7 @@ sudo systemctl status th-study-queue
 
 ### 18.9 운영 로그 보강
 
-- 노트 서비스에서 목록 조회/단건 조회 로그 추가(`Log::info`)
+- 블로그 서비스에서 목록 조회/단건 조회 로그 추가(`Log::info`)
 - 로그 필수 필드로 `ip` 포함 여부 점검 및 일관성 유지
 - 히스토리 테이블 기록과 별개로 운영 추적 로그를 동일 패턴으로 보강
 
