@@ -465,7 +465,7 @@ free -h
 # 개발/로컬: .env(SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD) 기준 슈퍼어드민 보정
 php artisan db:seed --class=EnvSuperAdminSeeder --force
 
-# 운영: SUPERADMIN_EMAIL 기준 슈퍼어드민 보정(비밀번호 랜덤 생성, 콘솔 출력)
+# 운영: SUPERADMIN_EMAIL 기준 슈퍼어드민 보정(비밀번호 랜덤 생성, 콘솔 출력)야
 php artisan db:seed --class=AutoSuperAdminSeeder --force
 
 # 노트 코드/마스터 데이터 동기화(config/seeders/note.php 기준)
