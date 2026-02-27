@@ -174,6 +174,16 @@
           </tbody>
         </table>
       </div>
+      <div class="callout mt-4">
+        <strong>최근 고도화 핵심(요약)</strong><br>
+        목록은 초기 SSR + AJAX 스크롤 페이징(10건 단위)으로 구성하고, 검색은 FormRequest로 검증했습니다.
+        <br>
+        목록 카드 상세는 팝업 AJAX로 분리해 로딩/상세조회/삭제/공개설정을 즉시 처리합니다.
+        <br>
+        `/blogs`는 전체 카테고리, `/blogs/{slug}`는 단일 카테고리 조회로 분기하며 잘못된 slug는 404 처리합니다.
+        <br>
+        상세 공유 대응을 위해 메타/OG를 페이지 상속 구조로 바꿔 제목·설명·썸네일이 게시글 기준으로 노출되게 정리했습니다.
+      </div>
     </div>
   </div>
 </section>

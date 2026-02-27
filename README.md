@@ -834,3 +834,77 @@ sudo systemctl status th-study-queue
 - 입력 검증 보강
   - HTML 태그 제거 후 순수 텍스트 길이 기준 10자 이상 검증
   - `<p><br></p>` 같은 의미 없는 입력 통과 방지
+
+## 18. 노트 목록/상세 고도화 작업 기록 (2026-02-27 기준)
+
+### 18.1 목록 조회 구조(초기 진입 + AJAX 공용화)
+
+- 목록 조회 로직을 서비스 단에서 공용화하고, 컨트롤러는 화면 진입과 AJAX 응답이 같은 데이터 빌더를 공유하도록 정리
+- 첫 진입은 SSR 기준으로 렌더링하고, 이후 더보기/검색은 AJAX로 동일 응답 구조를 재사용
+- 기본 페이지 크기는 10건으로 고정, 버튼 기반 스크롤 페이징에서 10건씩 추가 로드
+- 목록 AJAX 응답에 `items`, `pagination`, `filters`를 포함해 프론트 상태 동기화 단순화
+
+### 18.2 목록 검색 검증(FormRequest)
+
+- 목록 검색 쿼리 검증을 FormRequest로 이관
+- 적용 파일: `app/Http/Requests/Notes/IndexNoteRequest.php`
+- 검증 대상: `search_select_type`, `search_keyword`, `page`
+- 컨트롤러 `index()`는 `IndexNoteRequest` 기반으로만 목록 처리
+
+### 18.3 라우팅/카테고리 정책 정비
+
+- `/blogs` 접근 시 블로그 그룹 전체 카테고리 글 조회
+- `/blogs/{slug}` 접근 시 해당 카테고리 글만 조회
+- slug가 실제 카테고리 코드와 불일치하면 404 처리
+- 목록 타이틀은 카테고리별 동적 표기(`개발 글`, `여행 글`), 전체는 `전체 글`
+
+### 18.4 목록 카드 UX 개선
+
+- 목록 시간 표기를 절대시각에서 상대시간으로 변경(예: `3분 전`, `1시간 전`)
+- 썸네일 미등록 글은 기본 이미지(`public/images/no_image.png`) 노출
+- 카드 내 `더보기`는 링크(`<a>`) 대신 버튼 + 스크립트 이동으로 통일
+- 모바일/PC에서 시간과 더보기 버튼 라인 정렬 보정
+
+### 18.5 목록 팝업 상세(AJAX)
+
+- 목록 아이템 클릭 시 팝업 상세를 AJAX로 조회
+- 목록 조회 API는 목록 데이터만 반환하고, 상세는 별도 상세 API 호출로 분리
+- 팝업 열림 시 배경 블러/오버레이가 헤더 포함 전체 영역에 적용되도록 z-index 및 DOM 위치 조정
+- 공통 AJAX 모듈(`requestAjax`) 사용으로 로딩바 노출 일관성 확보(목록 조회/더보기/상세/삭제/공개설정)
+
+### 18.6 팝업 액션 정책
+
+- 수정: 상세 페이지(수정 폼)로 이동
+- 삭제: 팝업 내 confirm 후 AJAX soft delete 처리, 성공 시 목록 카드/카운트 즉시 갱신
+- 공개설정: 팝업에서 즉시 토글 처리(AJAX)
+- 권한/상태에 따라 수정/삭제 버튼 표시 조건을 동적으로 재계산
+
+### 18.7 권한/노출 정책 보강
+
+- 카테고리 화면에서는 admin 권한이 아닌 경우 상단/하단 작성하기 버튼 비노출
+- 공개상태 변경 직후 목록 팝업 액션 버튼 상태(수정/삭제)가 즉시 반영되도록 클라이언트 상태 갱신
+
+### 18.8 상세 페이지 메타/OG 상속 구조
+
+- 레이아웃 메타 태그를 `@yield(..., 기본값)` 구조로 변경해 페이지별 override 지원
+- 적용 파일: `resources/views/layouts/app.blade.php`
+- 상세 페이지(`resources/views/blogs/show.blade.php`)는 제목/설명/이미지를 게시글 기준으로 override
+- `og:image`는 썸네일 존재 시 썸네일 URL, 없으면 기본 OG 이미지(`images/og/001.png`)
+
+### 18.9 운영 로그 보강
+
+- 노트 서비스에서 목록 조회/단건 조회 로그 추가(`Log::info`)
+- 로그 필수 필드로 `ip` 포함 여부 점검 및 일관성 유지
+- 히스토리 테이블 기록과 별개로 운영 추적 로그를 동일 패턴으로 보강
+
+### 18.10 관련 핵심 파일
+
+- 컨트롤러: `app/Http/Controllers/NoteController.php`
+- 서비스: `app/Services/NoteService.php`
+- 요청검증: `app/Http/Requests/Notes/IndexNoteRequest.php`
+- 레포지토리: `app/Repositories/NoteRepository.php`
+- 목록 화면: `resources/views/blogs/index.blade.php`
+- 상세 화면: `resources/views/blogs/show.blade.php`
+- 레이아웃: `resources/views/layouts/app.blade.php`
+- 스크립트: `public/js/blog.js`
+- 스타일: `public/css/blog.css`
