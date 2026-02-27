@@ -68,14 +68,35 @@ class NoteRepository
      * @param int $perPage
      * @return LengthAwarePaginator
      */
-    public function paginateByCodes(string $groupCode, string $categoryCode, bool $isAdmin, int $perPage = 20): LengthAwarePaginator
+    public function paginateByCodes(
+        string $groupCode,
+        ?string $categoryCode,
+        bool $isAdmin,
+        int $perPage = 10,
+        ?string $searchType = null,
+        ?string $searchKeyword = null
+    ): LengthAwarePaginator
     {
         return Note::with(['category', 'group', 'topic', 'tags'])
             ->where('group_code', $groupCode)
-            ->where('categories_code', $categoryCode)
+            ->when(
+                is_string($categoryCode) && trim($categoryCode) !== '',
+                function ($query) use ($categoryCode) {
+                    $query->where('categories_code', trim((string) $categoryCode));
+                }
+            )
             ->when(! $isAdmin, function ($query) {
                 $query->where('use_flag', 1);
             })
+            ->when(
+                is_string($searchKeyword) && trim($searchKeyword) !== '',
+                function ($query) use ($searchType, $searchKeyword) {
+                    $keyword = trim((string) $searchKeyword);
+                    $type = in_array($searchType, ['title', 'content'], true) ? $searchType : 'title';
+                    $column = $type === 'content' ? 'content' : 'subject';
+                    $query->where($column, 'like', '%' . $keyword . '%');
+                }
+            )
             ->orderByDesc('idx')
             ->paginate($perPage);
     }

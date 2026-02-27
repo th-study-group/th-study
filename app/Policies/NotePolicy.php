@@ -47,7 +47,7 @@ class NotePolicy
      */
     public function delete(User $user, Note $note): bool
     {
-        return $user->level === 'admin';
+        return $user->level === 'admin' && $note->use_flag !== 'Y';
     }
 
     /**

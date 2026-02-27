@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Notes\DestroyNoteRequest;
 use App\Http\Requests\Notes\DestroyNoteTagRequest;
 use App\Http\Requests\Notes\DestroyNoteThumbnailRequest;
+use App\Http\Requests\Notes\IndexNoteRequest;
 use App\Http\Requests\Notes\StoreNoteRequest;
 use App\Http\Requests\Notes\UpdateNoteRequest;
 use App\Http\Requests\Notes\UpdateNoteUseFlagRequest;
 use App\Models\Note;
 use App\Services\NoteService;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -31,16 +33,50 @@ class NoteController extends Controller
      * 
      * @return View
      */
-    public function index(Request $request, ?string $slug = null) : View
+    public function index(IndexNoteRequest $request, ?string $slug = null)
     {
-        $noteGroup = $request->route('group');
-        $resolvedSlug = (string) ($slug ?? $request->route('slug', ''));
-        $notes = $resolvedSlug !== '' ? $this->noteService->getNotes($noteGroup, $resolvedSlug) : null;
+        $noteGroup = (string) $request->route('group');
+        $resolvedSlug = trim((string) ($slug ?? ''));
+        $categoryConfig = config("note.{$noteGroup}", []);
+        $categoryCodes = is_array($categoryConfig) ? array_keys($categoryConfig) : [];
+
+        if ($resolvedSlug === $noteGroup) {
+            $resolvedSlug = '';
+        }
+
+        if ($resolvedSlug !== '' && ! in_array($resolvedSlug, $categoryCodes, true)) {
+            abort(404);
+        }
+
+        $canCreate = (bool) optional($request->user())->can('create', Note::class);
+        $categoryTitle = (string) data_get($categoryConfig, "{$resolvedSlug}.title", '');
+        $listTitle = $resolvedSlug !== '' && $categoryTitle !== '' ? "{$categoryTitle} 글" : '전체 글';
+
+        $filters = [
+            'search_select_type' => (string) $request->query('search_select_type', 'title'),
+            'search_keyword' => trim((string) $request->query('search_keyword', '')),
+        ];
+        $notes = $this->noteService->getNotes(
+            $noteGroup,
+            $resolvedSlug !== '' ? $resolvedSlug : null,
+            $filters,
+            10
+        );
+
+        if ($request->ajax()) {
+            return response()->json($this->buildNoteListResponse($noteGroup, $resolvedSlug, $notes, $filters));
+        }
+
+        $initialPayload = $this->buildNoteListResponse($noteGroup, $resolvedSlug, $notes, $filters);
 
         return view("{$noteGroup}.index", [
             'group' => $noteGroup,
             'slug' => $resolvedSlug,
             'notes' => $notes,
+            'filters' => $filters,
+            'listTitle' => $listTitle,
+            'writeUrl' => $resolvedSlug !== '' && $canCreate ? route("{$noteGroup}.create", ['slug' => $resolvedSlug]) : null,
+            'initialPayload' => $initialPayload,
         ]);
     }
 
@@ -53,11 +89,22 @@ class NoteController extends Controller
      * 
      * @return View 
      */
-    public function show(Request $request, string $slug, string $idx) : View
+    public function show(Request $request, string $slug, string $idx)
     {
         $noteGroup = $request->route('group');
         $note = $this->noteService->getNoteDetail($noteGroup, $slug, $idx);
         $contentHtml = $this->noteService->toRenderableHtml($note->content ?? '');
+        
+        $metaTitle = (string) ($note->subject ?? '상세내역');
+        $plainContent = trim((string) preg_replace('/\s+/u', ' ', strip_tags($contentHtml)));
+        $metaDescription = $plainContent !== '' ? Str::limit($plainContent, 160) : '상세내역';
+        $metaImage = ! empty($note->thumbnail_path)
+            ? url(Storage::url((string) $note->thumbnail_path))
+            : asset('images/og/001.png');
+
+        if ($request->ajax()) {
+            return response()->json($this->buildNoteDetailResponse($request, $noteGroup, $slug, $note, $contentHtml));
+        }
 
         return view("{$noteGroup}.show", [
             'group' => $noteGroup,
@@ -65,6 +112,9 @@ class NoteController extends Controller
             'note' => $note,
             'contentHtml' => $contentHtml,
             'useFlag' => $note->use_flag ?? 'N',
+            'metaTitle' => $metaTitle,
+            'metaDescription' => $metaDescription,
+            'metaImage' => $metaImage,
         ]);
     }
 
@@ -268,5 +318,92 @@ class NoteController extends Controller
         return response()->json([
             'use_flag' => $updatedNote->use_flag,
         ]);
+    }
+
+    private function buildNoteListResponse(string $group, string $slug, $notes, array $filters): array
+    {
+        if (! $notes) {
+            return [
+                'items' => [],
+                'pagination' => [
+                    'current_page' => 1,
+                    'last_page' => 1,
+                    'per_page' => 10,
+                    'total' => 0,
+                    'has_more' => false,
+                ],
+                'filters' => $filters,
+            ];
+        }
+
+        $items = $notes->getCollection()->map(function (Note $note) use ($group, $slug) {
+            $content = trim((string) ($note->content ?? ''));
+            $plainContent = preg_replace('/\s+/', ' ', trim(strip_tags($content))) ?? '';
+            $thumbnailUrl = ! empty($note->thumbnail_path)
+                ? Storage::url((string) $note->thumbnail_path)
+                : asset('images/no_image.png');
+
+            return [
+                'idx' => (int) $note->idx,
+                'subject' => (string) ($note->subject ?? ''),
+                'group_topic_name' => (string) ($note->group_topic_name ?? '-'),
+                'create_datetime' => $note->create_datetime?->format('Y-m-d H:i:s') ?? '-',
+                'desc' => Str::limit($plainContent, 120),
+                'thumbnail_url' => $thumbnailUrl,
+                'show_url' => route("{$group}.show", [
+                    'slug' => $slug !== '' ? $slug : (string) ($note->categories_code ?? ''),
+                    'idx' => $note->idx,
+                ]),
+            ];
+        })->values()->all();
+
+        return [
+            'items' => $items,
+            'pagination' => [
+                'current_page' => $notes->currentPage(),
+                'last_page' => $notes->lastPage(),
+                'per_page' => $notes->perPage(),
+                'total' => $notes->total(),
+                'has_more' => $notes->hasMorePages(),
+            ],
+            'filters' => $filters,
+        ];
+    }
+
+    /**
+     * 목록 팝업/상세 AJAX 응답용 노트 상세 페이로드 생성
+     *
+     * @return array<string, mixed>
+     */
+    private function buildNoteDetailResponse(Request $request, string $group, string $slug, Note $note, string $contentHtml): array
+    {
+        $user = $request->user();
+        $canUpdate = $user ? $user->can('update', $note) : false;
+        $canDelete = $user ? $user->can('delete', $note) : false;
+        $canUpdateUseFlag = $user ? $user->can('updateUseFlag', $note) : false;
+
+        return [
+            'note' => [
+                'idx' => $note->idx,
+                'subject' => $note->subject ?? '',
+                'group_topic_name' => $note->group_topic_name ?? '-',
+                'create_datetime' => $note->create_datetime?->format('Y-m-d H:i:s') ?? '-',
+                'content_html' => $contentHtml,
+                'use_flag' => $note->use_flag ?? 'N',
+                'use_flag_label' => config("const.use_flag.{$note->use_flag}", '-'),
+                'tags' => $note->tags ?? collect()->pluck('name')->values()->all(),
+            ],
+            'actions' => [
+                'show_url' => route("{$group}.show", ['slug' => $slug, 'idx' => $note->idx]),
+                'edit_url' => route("{$group}.edit", ['slug' => $slug, 'idx' => $note->idx]),
+                'delete_url' => route("{$group}.soft.delete", ['slug' => $slug, 'idx' => $note->idx]),
+                'use_flag_url' => route("{$group}.use_flag.update", ['slug' => $slug, 'idx' => $note->idx]),
+            ],
+            'permissions' => [
+                'can_update' => $canUpdate,
+                'can_delete' => $canDelete,
+                'can_update_use_flag' => $canUpdateUseFlag,
+            ],
+        ];
     }
 }

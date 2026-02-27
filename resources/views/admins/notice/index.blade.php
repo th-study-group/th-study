@@ -74,7 +74,7 @@
                                 </div>
                             </div>
                             <div class="d-grid mt-3">
-                                <button type="submit" id="btn_search" class="btn btn-primary">검색</button>
+                                <button type="button" id="btn_search" class="btn btn-primary">검색</button>
                             </div>
                         </form>
                     </div>
@@ -155,6 +155,10 @@
             updateEmptyRowColspan('#notice_table', '#notice_empty_row_cell');
             $(window).on('resize', function(){
                 updateEmptyRowColspan('#notice_table', '#notice_empty_row_cell');
+            });
+
+            $("#btn_search").on("click", function() {
+                $("#form_search").submit();
             });
 
             $('.notice-row').on('click', function(e){

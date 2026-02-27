@@ -207,12 +207,40 @@ class NoteService
      * @param string $categoryCode
      * @return LengthAwarePaginator
      */
-    public function getNotes(string $groupCode, string $categoryCode): LengthAwarePaginator
+    public function getNotes(
+        string $groupCode,
+        ?string $categoryCode,
+        array $filters = [],
+        int $perPage = 10
+    ): LengthAwarePaginator
     {
         $resolvedGroupCode = (string) config("note.group.{$groupCode}", $groupCode);
         $isAdmin = auth()->check() && (auth()->user()?->level === 'admin');
+        $searchType = (string) ($filters['search_select_type'] ?? 'title');
+        $searchKeyword = trim((string) ($filters['search_keyword'] ?? ''));
+        $notes = $this->noteRepository->paginateByCodes(
+            $resolvedGroupCode,
+            $categoryCode,
+            $isAdmin,
+            $perPage,
+            $searchType,
+            $searchKeyword
+        );
 
-        return $this->noteRepository->paginateByCodes($resolvedGroupCode, $categoryCode, $isAdmin, 20);
+        Log::info('[Note][List] 조회 완료', [
+            'user_idx' => auth()->id(),
+            'group_code' => $groupCode,
+            'resolved_group_code' => $resolvedGroupCode,
+            'category_code' => $categoryCode,
+            'search_type' => $searchType,
+            'search_keyword' => $searchKeyword,
+            'page' => $notes->currentPage(),
+            'per_page' => $notes->perPage(),
+            'total' => $notes->total(),
+            'ip' => request()->ip(),
+        ]);
+
+        return $notes;
     }
 
     /**
@@ -226,8 +254,18 @@ class NoteService
     public function getNote(string $groupCode, string $categoryCode, int $idx): Note
     {
         $resolvedGroupCode = (string) config("note.group.{$groupCode}", $groupCode);
+        $note = $this->noteRepository->findByIdxAndCodes($idx, $resolvedGroupCode, $categoryCode);
 
-        return $this->noteRepository->findByIdxAndCodes($idx, $resolvedGroupCode, $categoryCode);
+        Log::info('[Note][Target] 조회 완료', [
+            'user_idx' => auth()->id(),
+            'note_idx' => $note->idx,
+            'group_code' => $groupCode,
+            'resolved_group_code' => $resolvedGroupCode,
+            'category_code' => $categoryCode,
+            'ip' => request()->ip(),
+        ]);
+
+        return $note;
     }
 
     /**

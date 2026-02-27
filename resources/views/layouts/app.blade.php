@@ -12,11 +12,11 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> {{-- 상태바 --}}
 
         {{-- og image --}}
-        <meta name="description" content="{{ config('app.name') }}은 성장하는 개발자가 기록과 실험을 통해 실력을 확장하고, 서비스 운영과 수익화를 경험하는 개발자 성장 플랫폼입니다.">
-        <meta property="og:title" content="{{ config('app.name') }} 개발자 성장 플랫폼">
-        <meta property="og:description" content="개발자의 기록, 실험, 운영, 수익화를 기반으로 성장하는 플랫폼">
-        <meta property="og:image" content="{{ asset('images/og/001.png') }}">
-        <meta property="og:type" content="{{ config('app.name') }}">
+        <meta name="description" content="@yield('meta_description', config('app.name') . '은 성장하는 개발자가 기록과 실험을 통해 실력을 확장하고, 서비스 운영과 수익화를 경험하는 개발자 성장 플랫폼입니다.')">
+        <meta property="og:title" content="@yield('og_title', config('app.name') . ' 개발자 성장 플랫폼')">
+        <meta property="og:description" content="@yield('og_description', '개발자의 기록, 실험, 운영, 수익화를 기반으로 성장하는 플랫폼')">
+        <meta property="og:image" content="@yield('og_image', asset('images/og/001.png'))">
+        <meta property="og:type" content="@yield('og_type', config('app.name'))">
 
         {{-- Favicon :: WEB --}}
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon/th_favicon_16.png') }}">

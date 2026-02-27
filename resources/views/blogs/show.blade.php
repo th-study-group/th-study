@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
-@section('title', '상세내역')
+@section('title', $metaTitle ?? '상세내역')
+@section('meta_description', $metaDescription ?? '')
+@section('og_title', $metaTitle ?? '')
+@section('og_description', $metaDescription ?? '')
+@section('og_image', $metaImage ?? asset('images/og/001.png'))
 
 @push('styles')
   <link href="{{ asset('css/blog.css') }}?v={{ filemtime(public_path('css/blog.css')) }}" rel="stylesheet" />
@@ -35,9 +39,11 @@
         @can('update', $note)
           <button type="button" id="btn_note_modify" class="btn btn-outline-secondary">수정</button>
         @endcan
-        @can('delete', $note)
-          <button type="button" id="btn_note_delete" class="btn btn-outline-danger">삭제</button>
-        @endcan
+        @if (($note->use_flag ?? 'N') !== 'Y')
+          @can('delete', $note)
+            <button type="button" id="btn_note_delete" class="btn btn-outline-danger">삭제</button>
+          @endcan
+        @endif
         @can('updateUseFlag', $note)
           <button type="button" id="btn_note_use_flag" class="btn btn-outline-primary">공개설정</button>
         @endcan
