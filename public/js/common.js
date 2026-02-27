@@ -86,24 +86,86 @@ $(function () {
         return xhr;
     };    
 
-    window.showLoading = function () {
+    const loadingState = {
+        activeCount: 0,
+        blockerEl: null,
+        isVisible: false,
+    };
+
+    function getLoadingBlockerElement() {
+        if (loadingState.blockerEl && document.body.contains(loadingState.blockerEl)) {
+            return loadingState.blockerEl;
+        }
+
+        const blocker = document.createElement('div');
+        blocker.id = 'loadingBlocker';
+        blocker.className = 'loading-blocker';
+        blocker.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(blocker);
+        loadingState.blockerEl = blocker;
+
+        return blocker;
+    }
+
+    function showLoadingUi() {
+        if (loadingState.isVisible) {
+            return;
+        }
+
+        const blocker = getLoadingBlockerElement();
+        blocker.classList.add('is-active');
+        document.body.classList.add('loading-active');
         loadingModal.show();
+
         setTimeout(function () {
             const backdrops = document.querySelectorAll('.modal-backdrop');
             if (backdrops.length) {
                 backdrops[backdrops.length - 1].classList.add('loading-backdrop');
             }
         }, 0);
-    };
-    
-    window.hideLoading = function () {
+
+        loadingState.isVisible = true;
+    }
+
+    function hideLoadingUi() {
+        if (!loadingState.isVisible) {
+            return;
+        }
+
         if (document.activeElement) {
             document.activeElement.blur();
         }
+
         loadingModal.hide();
         document.querySelectorAll('.modal-backdrop.loading-backdrop').forEach(function (el) {
             el.classList.remove('loading-backdrop');
         });
+
+        if (loadingState.blockerEl) {
+            loadingState.blockerEl.classList.remove('is-active');
+        }
+        document.body.classList.remove('loading-active');
+        loadingState.isVisible = false;
+    }
+
+    window.showLoading = function () {
+        loadingState.activeCount += 1;
+        showLoadingUi();
+    };
+    
+    window.hideLoading = function (options) {
+        const forceHide = !!(options && options.force === true);
+
+        if (!forceHide && loadingState.activeCount > 0) {
+            loadingState.activeCount -= 1;
+        }
+
+        if (!forceHide && loadingState.activeCount > 0) {
+            return;
+        }
+
+        loadingState.activeCount = 0;
+        hideLoadingUi();
     };
 
     initInitialEntryLoading(loadingModal);
@@ -153,7 +215,7 @@ function runInitialEntryLoading(loadingModal)
 
     setTimeout(function () {
         if (typeof window.hideLoading === 'function') {
-            window.hideLoading();
+            window.hideLoading({ force: true });
         } else {
             loadingModal.hide();
         }
