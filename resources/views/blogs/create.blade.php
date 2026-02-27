@@ -25,6 +25,9 @@
 
       <form id="form-note" method="post" action="{{ $formAction }}" enctype="multipart/form-data">
         @csrf
+        @if ($isEditMode)
+          @method('PUT')
+        @endif
 
         <div class="mb-3">
           <label for="subject" class="form-label blog-create-label">제목</label>
@@ -32,7 +35,7 @@
                  id="subject" 
                  name="subject" 
                  class="form-control blog-create-input @error('subject') is-invalid @enderror"
-                 value="{{ old('subject') }}"
+                 value="{{ old('subject', $note->subject ?? '') }}"
                  maxlength="255" 
                  placeholder="제목을 입력하세요.">
           @error('subject')
@@ -45,7 +48,7 @@
           <select id="topic" name="topic" class="form-select blog-create-select @error('topic') is-invalid @enderror">
             <option value="">주제를 선택해 주세요.</option>
             @foreach (($topics ?? collect()) as $topic)
-              <option value="{{ $topic->idx }}" {{ old('topic') == $topic->idx ? 'selected' : '' }}>
+              <option value="{{ $topic->idx }}" {{ old('topic', $note->topic_idx ?? null) == $topic->idx ? 'selected' : '' }}>
                 {{ $topic->name }}
               </option>
             @endforeach
@@ -55,25 +58,28 @@
           @enderror
         </div>
 
-        {{--
-        <div class="mb-3">
-          <span class="form-label d-block blog-create-label">공개여부</span>
-          <div class="blog-create-radio-wrap">
-            <div class="form-check mb-0">
-              <input class="form-check-input" type="radio" id="use_flag" name="usg_flag" value="Y" checked>
-              <label class="form-check-label" for="use_flag">공개</label>
+        @if ($isEditMode)
+          <div class="mb-3">
+            <span class="form-label d-block blog-create-label">공개여부</span>
+            <div class="blog-create-radio-wrap">
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="radio" id="use_flag_y" name="usg_flag" value="Y" {{ old('usg_flag', $note->use_flag ?? 'N') === 'Y' ? 'checked' : '' }}>
+                <label class="form-check-label" for="use_flag_y">공개</label>
+              </div>
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="radio" id="use_flag_n" name="usg_flag" value="N" {{ old('usg_flag', $note->use_flag ?? 'N') === 'N' ? 'checked' : '' }}>
+                <label class="form-check-label" for="use_flag_n">비공개</label>
+              </div>
             </div>
-            <div class="form-check mb-0">
-              <input class="form-check-input" type="radio" name="usg_flag" id="use_flag" value="N">
-              <label class="form-check-label" for="usg_flag">비공개</label>
-            </div>
+            @error('usg_flag')
+              <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
           </div>
-        </div>
-        --}}
+        @endif
 
         <div class="mb-3">
           <label for="content" class="form-label blog-create-label">내용</label>
-          <textarea id="content" name="content" class="d-none" rows="16" placeholder="내용을 입력하세요.">{{ old('content') }}</textarea>
+          <textarea id="content" name="content" class="d-none" rows="16" placeholder="내용을 입력하세요.">{{ old('content', $note->content ?? '') }}</textarea>
           <div id="blogContentEditor" class="js-toast-ui-editor" data-source-selector="#content"></div>
           @error('content')
             <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
@@ -82,9 +88,7 @@
 
         <div class="mb-3">
           <label for="thumbnail_path" class="form-label blog-create-label">대표이미지</label>
-          {{-- 수정모드에서 DB에 이미 저장된 대표이미지가 있을 때만 아래 파일 선택 영역을 숨기면 됩니다.
-               예: @if($isEditMode && !empty($savedThumbnailPath)) style="display:none" @endif --}}
-          <div id="thumbnail_path_picker" class="thumbnail_path-picker">
+          <div id="thumbnail_path_picker" class="thumbnail_path-picker" @if ($hasSavedThumbnail) style="display:none" @endif>
             <input type="file" id="thumbnail_path" name="thumbnail_path" class="form-control blog-create-thumbnail-input @error('thumbnail_path') is-invalid @enderror" accept="image/*">
             <button type="button" id="thumbnail_path_trigger" class="blog-create-thumbnail-trigger">파일 선택</button>
             <span id="thumbnail_path_name" class="blog-create-thumbnail-name">선택된 파일 없음</span>
@@ -92,23 +96,13 @@
           @error('thumbnail_path')
             <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
           @enderror
-          {{-- 파일 첨부 후 표시되는 "파일명 + 보기/삭제" UI는 현재 단계에서 숨김 처리.
-               수정모드에서 DB 저장 파일 관리가 필요해질 때 아래 블록 주석 해제해서 사용하세요. --}}
-          {{--
-            <div id="blogThumbnailFileInfo" class="blog-create-thumbnail-fileinfo">
-              <span id="blogThumbnailFileName" class="blog-create-thumbnail-filename"></span>
-              <div class="blog-create-thumbnail-actions">
-                <button type="button" id="blogThumbnailViewBtn" class="blog-create-thumbnail-action-btn is-view" aria-label="이미지 보기">
-                  <svg class="blog-create-thumbnail-eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                  보기
-                </button>
-                <button type="button" id="blogThumbnailRemoveBtn" class="blog-create-thumbnail-action-btn is-remove" aria-label="첨부 파일 삭제">삭제</button>
-              </div>
+          <div id="blogThumbnailFileInfo" class="blog-create-thumbnail-fileinfo" @if (! $hasSavedThumbnail) style="display:none" @endif>
+            <span id="blogThumbnailFileName" class="blog-create-thumbnail-filename">{{ $savedThumbnailName }}</span>
+            <div class="blog-create-thumbnail-actions">
+              <a id="blogThumbnailViewBtn" class="blog-create-thumbnail-action-btn is-view" href="{{ $savedThumbnailUrl ?? '#' }}" target="_blank" rel="noopener noreferrer" @if (! $hasSavedThumbnail) style="display:none" @endif>보기</a>
+              <button type="button" id="blogThumbnailRemoveBtn" class="blog-create-thumbnail-action-btn is-remove" aria-label="첨부 파일 삭제">삭제</button>
             </div>
-          --}}
+          </div>
         </div>
 
         <div>
@@ -123,7 +117,7 @@
                      placeholder="#태그입력">
             </div>
           </div>
-          <input type="hidden" id="tags" name="tags">
+          <input type="hidden" id="tags" name="tags" value="{{ $initialTagsValue }}">
           @error('tags')
             <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
           @enderror
@@ -148,12 +142,23 @@
 @section('script')
   <script>
     $(function () {
+      const isEditMode = @json($isEditMode);
+      const thumbnailDestroyUrl = @json($thumbnailDestroyUrl);
+      const tagsDestroyUrl = @json($tagsDestroyUrl);
       const tagManager = createTagManager({
         chipsSelector: '#blogTagChips',
         hiddenSelector: '#tags',
         maxCount: 10,
       });
+      const initialTags = ($('#tags').val() || '')
+        .split(',')
+        .map(function (tag) { return String(tag).trim(); })
+        .filter(function (tag) { return tag !== ''; });
       let isComposingTag = false;
+
+      initialTags.forEach(function (tag) {
+        tagManager.addTag(tag);
+      });
 
       $("#btn_save").on("click", function() {
         if (confirm("적용하시겠습니까?") == false) {
@@ -221,13 +226,70 @@
           if (!result.ok && result.reason === 'max') {
             alert('해시태그는 최대 10개까지 등록할 수 있습니다.');
           }
-          $(this).val('');
           
+          $(this).val('');   
         }
       });
 
       $('#blogTagChips').on('click', '.js-tag-remove', function () {
-        tagManager.removeTag($(this).data('tag'));
+        const tag = String($(this).data('tag') ?? '').trim();
+
+        if (!tag) {
+          return;
+        }
+
+        if (!isEditMode) {
+          tagManager.removeTag(tag);
+          return;
+        }
+
+        requestAjax({
+          method: 'DELETE',
+          url: tagsDestroyUrl,
+          dataType: 'json',
+          data: { tag: tag },
+          headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          },
+          onSuccess: function () {
+            tagManager.removeTag(tag);
+          },
+          onError: function () {
+            alert('해시태그 삭제 중 오류가 발생했습니다.');
+          },
+        });
+      });
+
+      $('#blogThumbnailRemoveBtn').on('click', function () {
+        if (!isEditMode) {
+          $('#thumbnail_path').val('');
+          updateThumbnailName(document.getElementById('thumbnail_path'), '#thumbnail_path_name');
+          return;
+        }
+
+        if (!confirm('기존 썸네일을 삭제하시겠습니까?')) {
+          return;
+        }
+
+        requestAjax({
+          method: 'PATCH',
+          url: thumbnailDestroyUrl,
+          dataType: 'json',
+          headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          },
+          onSuccess: function () {
+            $('#blogThumbnailFileInfo').hide();
+            $('#blogThumbnailViewBtn').hide().attr('href', '#');
+            $('#blogThumbnailFileName').text('');
+            $('#thumbnail_path_picker').show();
+            $('#thumbnail_path').val('');
+            updateThumbnailName(document.getElementById('thumbnail_path'), '#thumbnail_path_name');
+          },
+          onError: function () {
+            alert('썸네일 삭제 중 오류가 발생했습니다.');
+          },
+        });
       });
 
       tagManager.render();

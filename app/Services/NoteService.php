@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Events\NoteHistoryEvent;
 use App\Http\Requests\Notes\StoreNoteRequest;
+use App\Http\Requests\Notes\UpdateNoteRequest;
 use App\Models\Note;
+use App\Models\NoteTag;
 use App\Models\NoteTopic;
 use App\Repositories\NoteRepository;
 use App\Repositories\NoteTagMapRepository;
@@ -13,6 +15,7 @@ use App\Repositories\NoteTopicRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -82,7 +85,7 @@ class NoteService
         $topicIdx = (int) $request->integer('topic');
         $topic = NoteTopic::with(['category.group'])->findOrFail($topicIdx);
 
-        $isMatch = ($topic->use_flag ?? 0) === 1
+        $isMatch = ($topic->use_flag ?? 'N') === 'Y'
             && ($topic->category?->code === $categoryCode)
             && ($topic->category?->group?->code === $resolvedGroupCode);
 
@@ -115,6 +118,7 @@ class NoteService
             $note = $this->noteRepository->create([
                 'group_idx' => $topic->category->group_idx,
                 'categories_idx' => $topic->categories_idx,
+                'topic_idx' => $topic->idx,
                 'group_code' => $resolvedGroupCode,
                 'categories_code' => $topic->category->code,
                 'subject' => $request->input('subject'),
@@ -136,11 +140,11 @@ class NoteService
             $this->noteTagMapRepository->insertMappings((int) $note->idx, $tagIdxList);
 
             event(new NoteHistoryEvent(
-                noteIdx: (int) $note->idx,
+                noteIdx: $note->idx,
                 jobType: '등록',
                 createUserIdx: $userIdx,
-                ip: (string) $request->ip(),
-                userAgent: (string) ($request->userAgent() ?? ''),
+                ip: $request->ip(),
+                userAgent: $request->userAgent() ?? '',
             ));
 
             Log::info('[Note][Create] 등록 완료', [
@@ -169,8 +173,310 @@ class NoteService
     public function getNoteDetail(string $groupCode, string $categoryCode, int $idx): Note
     {
         $resolvedGroupCode = (string) config("note.group.{$groupCode}", $groupCode);
+        $userIdx = (int) (auth()->id() ?? 0);
+        $isAdmin = auth()->check() && (auth()->user()?->level === 'admin');
+        $note = $this->noteRepository->findByIdxAndCodes($idx, $resolvedGroupCode, $categoryCode);
+
+        if (! $isAdmin && ($note->use_flag ?? 'N') !== 'Y') {
+            abort(404);
+        }
+
+        event(new NoteHistoryEvent(
+            noteIdx: $note->idx,
+            jobType: '조회',
+            createUserIdx: $userIdx,
+            ip: request()->ip(),
+            userAgent: request()->userAgent() ?? '',
+        ));
+
+        Log::info('[Note][View] 조회 완료', [
+            'user_idx' => $userIdx,
+            'note_idx' => $note->idx,
+            'group_code' => $resolvedGroupCode,
+            'category_code' => $categoryCode,
+            'ip' => request()->ip(),
+        ]);
+
+        return $note;
+    }
+
+    /**
+     * 노트 목록 조회
+     *
+     * @param string $groupCode
+     * @param string $categoryCode
+     * @return LengthAwarePaginator
+     */
+    public function getNotes(string $groupCode, string $categoryCode): LengthAwarePaginator
+    {
+        $resolvedGroupCode = (string) config("note.group.{$groupCode}", $groupCode);
+        $isAdmin = auth()->check() && (auth()->user()?->level === 'admin');
+
+        return $this->noteRepository->paginateByCodes($resolvedGroupCode, $categoryCode, $isAdmin, 20);
+    }
+
+    /**
+     * 수정/삭제용 노트 조회
+     *
+     * @param string $groupCode
+     * @param string $categoryCode
+     * @param int $idx
+     * @return Note
+     */
+    public function getNote(string $groupCode, string $categoryCode, int $idx): Note
+    {
+        $resolvedGroupCode = (string) config("note.group.{$groupCode}", $groupCode);
 
         return $this->noteRepository->findByIdxAndCodes($idx, $resolvedGroupCode, $categoryCode);
+    }
+
+    /**
+     * 노트 수정
+     *
+     * @param UpdateNoteRequest $request
+     * @param string $groupCode
+     * @param string $categoryCode
+     * @param int $idx
+     * @return Note
+     */
+    public function updateNote(UpdateNoteRequest $request, string $groupCode, string $categoryCode, int $idx): Note
+    {
+        $resolvedGroupCode = (string) config("note.group.{$groupCode}", $groupCode);
+        $note = $this->noteRepository->findByIdxAndCodes($idx, $resolvedGroupCode, $categoryCode);
+        $topicIdx = (int) $request->integer('topic');
+        $topic = NoteTopic::with(['category.group'])->findOrFail($topicIdx);
+        $userIdx = (int) (auth()->id() ?? 0);
+
+        $isMatch = ($topic->use_flag ?? 'N') === 'Y'
+            && ($topic->category?->code === $categoryCode)
+            && ($topic->category?->group?->code === $resolvedGroupCode);
+
+        if (! $isMatch) {
+            throw ValidationException::withMessages([
+                'topic' => '해당 카테고리에서 사용 가능한 주제를 선택해 주세요.',
+            ]);
+        }
+
+        return DB::transaction(function () use ($request, $note, $topic, $resolvedGroupCode, $userIdx): Note {
+            $beforeTagIdxList = $this->noteTagMapRepository->getTagIdxListByNote((int) $note->idx);
+            $thumbnailPath = $note->thumbnail_path;
+
+            if ($request->hasFile('thumbnail_path')) {
+                $this->deletePublicThumbnail($thumbnailPath);
+                $thumbnailPath = $this->storeThumbnail($request->file('thumbnail_path'));
+            }
+
+            $sanitizedContent = $this->sanitizeHtml($this->normalizeUtf8((string) $request->input('content')));
+
+            $note = $this->noteRepository->update($note, [
+                'group_idx' => $topic->category->group_idx,
+                'categories_idx' => $topic->categories_idx,
+                'topic_idx' => $topic->idx,
+                'group_code' => $resolvedGroupCode,
+                'categories_code' => $topic->category->code,
+                'subject' => $request->input('subject'),
+                'content' => $sanitizedContent,
+                'thumbnail_path' => $thumbnailPath,
+                'use_flag' => $request->input('usg_flag', $note->use_flag ?? 'N'),
+                'update_user_idx' => $userIdx,
+            ]);
+
+            $tagNames = $this->parseTagNames((string) $request->input('tags', ''));
+            $tagIdxList = [];
+
+            foreach ($tagNames as $tagName) {
+                $tag = $this->noteTagRepository->findOrCreateByName($tagName, $userIdx);
+                $tagIdxList[] = (int) $tag->idx;
+            }
+
+            $tagIdxList = array_values(array_unique($tagIdxList));
+            $this->noteTagMapRepository->replaceMappings((int) $note->idx, $tagIdxList);
+            $removedTagIdxList = array_values(array_diff($beforeTagIdxList, $tagIdxList));
+            $this->softDeleteOrphanTags($removedTagIdxList, $userIdx);
+
+            event(new NoteHistoryEvent(
+                noteIdx: (int) $note->idx,
+                jobType: '수정',
+                createUserIdx: $userIdx,
+                ip: (string) $request->ip(),
+                userAgent: (string) ($request->userAgent() ?? ''),
+            ));
+
+            Log::info('[Note][Update] 수정 완료', [
+                'user_idx' => $userIdx,
+                'note_idx' => $note->idx,
+                'group_code' => $resolvedGroupCode,
+                'category_code' => $topic->category->code,
+                'topic_idx' => $topic->idx,
+                'thumbnail_path' => $thumbnailPath,
+                'tag_count' => count($tagIdxList),
+                'ip' => request()->ip(),
+            ]);
+
+            return $note;
+        });
+    }
+
+    /**
+     * 노트 삭제
+     *
+     * @param Note $note
+     * @param int $userIdx
+     * @param string $ip
+     * @param string $userAgent
+     * @return void
+     */
+    public function deleteNote(Note $note, int $userIdx, string $ip, string $userAgent): void
+    {
+        DB::transaction(function () use ($note, $userIdx, $ip, $userAgent): void {
+            $tagIdxList = $this->noteTagMapRepository->getTagIdxListByNote((int) $note->idx);
+
+            if (! empty($note->thumbnail_path)) {
+                $this->deletePublicThumbnail((string) $note->thumbnail_path);
+            }
+
+            $this->noteTagMapRepository->deleteMappingsByNote((int) $note->idx);
+            $this->softDeleteOrphanTags($tagIdxList, $userIdx);
+
+            Note::withTrashed()
+                ->where('idx', $note->idx)
+                ->update([
+                    'delete_user_idx' => $userIdx,
+                ]);
+
+            $note->delete();
+
+            event(new NoteHistoryEvent(
+                noteIdx: (int) $note->idx,
+                jobType: '삭제',
+                createUserIdx: $userIdx,
+                ip: $ip,
+                userAgent: $userAgent,
+            ));
+
+            Log::info('[Note][Delete] 삭제 완료', [
+                'user_idx' => $userIdx,
+                'note_idx' => $note->idx,
+                'ip' => $ip,
+            ]);
+        });
+    }
+
+    /**
+     * 노트 공개여부 토글
+     *
+     * @param Note $note
+     * @param int $userIdx
+     * @param string $ip
+     * @param string $userAgent
+     * @return Note
+     */
+    public function updateNoteUseFlag(Note $note, int $userIdx, string $ip, string $userAgent): Note
+    {
+        return DB::transaction(function () use ($note, $userIdx, $ip, $userAgent): Note {
+            $nextUseFlag = ($note->use_flag ?? 'N') === 'Y' ? 'N' : 'Y';
+
+            $note = $this->noteRepository->update($note, [
+                'use_flag' => $nextUseFlag,
+                'update_user_idx' => $userIdx,
+            ]);
+
+            event(new NoteHistoryEvent(
+                noteIdx: (int) $note->idx,
+                jobType: '수정',
+                createUserIdx: $userIdx,
+                ip: $ip,
+                userAgent: $userAgent,
+            ));
+
+            Log::info('[Note][UseFlag] 변경 완료', [
+                'user_idx' => $userIdx,
+                'note_idx' => $note->idx,
+                'use_flag' => $note->use_flag,
+                'ip' => $ip,
+            ]);
+
+            return $note;
+        });
+    }
+
+    /**
+     * 노트 썸네일 삭제
+     *
+     * @param Note $note
+     * @param int $userIdx
+     * @param string $ip
+     * @param string $userAgent
+     * @return Note
+     */
+    public function destroyNoteThumbnail(Note $note, int $userIdx, string $ip, string $userAgent): Note
+    {
+        return DB::transaction(function () use ($note, $userIdx, $ip, $userAgent): Note {
+            if (! empty($note->thumbnail_path)) {
+                $this->deletePublicThumbnail((string) $note->thumbnail_path);
+            }
+
+            $note = $this->noteRepository->update($note, [
+                'thumbnail_path' => null,
+                'update_user_idx' => $userIdx,
+            ]);
+
+            event(new NoteHistoryEvent(
+                noteIdx: (int) $note->idx,
+                jobType: '수정',
+                createUserIdx: $userIdx,
+                ip: $ip,
+                userAgent: $userAgent,
+            ));
+
+            Log::info('[Note][Thumbnail] 삭제 완료', [
+                'user_idx' => $userIdx,
+                'note_idx' => $note->idx,
+                'ip' => $ip,
+            ]);
+
+            return $note;
+        });
+    }
+
+    /**
+     * 노트 태그 삭제
+     *
+     * @param Note $note
+     * @param string $tagName
+     * @param int $userIdx
+     * @param string $ip
+     * @param string $userAgent
+     * @return int
+     */
+    public function destroyNoteTag(Note $note, string $tagName, int $userIdx, string $ip, string $userAgent): int
+    {
+        return DB::transaction(function () use ($note, $tagName, $userIdx, $ip, $userAgent): int {
+            $tagIdx = $this->noteTagMapRepository->findTagIdxByNoteAndTagName((int) $note->idx, $tagName);
+            $deletedCount = $this->noteTagMapRepository->deleteMappingByTagName((int) $note->idx, $tagName);
+
+            if ($deletedCount > 0 && $tagIdx !== null) {
+                $this->softDeleteOrphanTags([$tagIdx], $userIdx);
+            }
+
+            event(new NoteHistoryEvent(
+                noteIdx: (int) $note->idx,
+                jobType: '수정',
+                createUserIdx: $userIdx,
+                ip: $ip,
+                userAgent: $userAgent,
+            ));
+
+            Log::info('[Note][Tag] 삭제 완료', [
+                'user_idx' => $userIdx,
+                'note_idx' => $note->idx,
+                'tag_name' => $tagName,
+                'deleted_count' => $deletedCount,
+                'ip' => $ip,
+            ]);
+
+            return $deletedCount;
+        });
     }
 
     /**
@@ -398,5 +704,66 @@ class NoteService
     private function looksLikeMojibake(string $value): bool
     {
         return (bool) preg_match('/(?:Ã.|Â.|ì.|ë.|ê.|í.|î.|ð.|�)/u', $value);
+    }
+
+    /**
+     * public 디스크 썸네일 삭제
+     *
+     * @param string|null $path
+     * @return void
+     */
+    private function deletePublicThumbnail(?string $path): void
+    {
+        $rawPath = trim((string) $path);
+
+        if ($rawPath === '') {
+            return;
+        }
+
+        $normalizedPath = preg_replace('#^/?storage/#', '', $rawPath) ?? $rawPath;
+        $normalizedPath = ltrim($normalizedPath, '/');
+
+        $deleted = Storage::disk('public')->delete($normalizedPath);
+
+        if (! $deleted) {
+            Log::warning('[Note][Thumbnail] 파일 삭제 실패', [
+                'raw_path' => $rawPath,
+                'normalized_path' => $normalizedPath,
+            ]);
+        }
+    }
+
+    /**
+     * 매핑이 없는 태그 soft delete
+     *
+     * @param array<int, int> $tagIdxList
+     * @param int $userIdx
+     * @return void
+     */
+    private function softDeleteOrphanTags(array $tagIdxList, int $userIdx): void
+    {
+        $targetIdxList = array_values(array_unique(array_map('intval', $tagIdxList)));
+
+        foreach ($targetIdxList as $tagIdx) {
+            if ($tagIdx <= 0) {
+                continue;
+            }
+
+            if ($this->noteTagMapRepository->countMappingsByTagIdx($tagIdx) > 0) {
+                continue;
+            }
+
+            $tag = NoteTag::query()->find($tagIdx);
+
+            if (! $tag || $tag->trashed()) {
+                continue;
+            }
+
+            $tag->forceFill([
+                'delete_user_idx' => $userIdx,
+            ])->saveQuietly();
+
+            $tag->delete();
+        }
     }
 }

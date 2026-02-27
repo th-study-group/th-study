@@ -16,6 +16,7 @@ class Note extends Base
     protected $fillable = [
         //'group_idx',
         //'categories_idx',
+        //'topic_idx',
         'group_code',
         'categories_code',
         'subject',
@@ -46,6 +47,15 @@ class Note extends Base
         return $value === 1 ? 'Y' : 'N';
     }
 
+    public function getGroupTopicNameAttribute(): string
+    {
+        $groupName = $this->group?->name ?? $this->group_code ?? '-';
+        $categoryName = $this->category?->name ?? $this->categories_code ?? '-';
+        $topicName = $this->topic?->name ?? '-';
+
+        return "{$groupName} > {$categoryName} > {$topicName}";
+    }
+
     public function group(): BelongsTo
     {
         return $this->belongsTo(NoteGroup::class, 'group_idx', 'idx');
@@ -54,6 +64,11 @@ class Note extends Base
     public function category(): BelongsTo
     {
         return $this->belongsTo(NoteCategory::class, 'categories_idx', 'idx');
+    }
+
+    public function topic(): BelongsTo
+    {
+        return $this->belongsTo(NoteTopic::class, 'topic_idx', 'idx');
     }
 
     public function histories(): HasMany

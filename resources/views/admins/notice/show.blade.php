@@ -48,7 +48,7 @@
                     <button type="button" id="btn_post_delete" class="btn btn-outline-danger">삭제</button>
                 @endcan
                 @can('updateUseFlag', $post)
-                    <button type="button" id="btn_use_flag" class="btn btn-outline-primary">공개설정</button>
+                    <button type="button" id="btn_post_use_flag" class="btn btn-outline-primary">공개설정</button>
                 @endcan
                 <button type="button" id="btn_post_list" class="btn btn-secondary">목록</button>
             </div>
@@ -103,7 +103,7 @@
                 });
             });
 
-            $('#btn_use_flag').on('click', function(){
+            $('#btn_post_use_flag').on('click', function(){
                 const message = useFlag === 1
                     ? '이미 공개중입니다. 비공개로 하시겠습니까?'
                     : '현재 비공개입니다. 공개로 하시겠습니까?';
