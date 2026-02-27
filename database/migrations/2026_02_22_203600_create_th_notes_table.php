@@ -15,9 +15,10 @@ return new class extends Migration
             $table->bigIncrements('idx')->comment('PK');
             $table->unsignedBigInteger('group_idx')->comment('FK : th_note_groups.idx');
             $table->unsignedBigInteger('categories_idx')->comment('FK : th_note_categories.idx');
+            $table->unsignedBigInteger('topic_idx')->comment('FK : th_note_topics.idx');
             $table->string('group_code', 20)->comment('그룹 코드');
             $table->string('categories_code', 20)->comment('카테고리 코드');
-            $table->string('subject', 20)->comment('제목');
+            $table->string('subject', 100)->comment('제목');
             $table->longText('content')->comment('내용');
             $table->string('thumbnail_path', 500)->nullable()->comment('썸네일 경로');
             $table->tinyInteger('use_flag')->default(0)->comment('공개여부');

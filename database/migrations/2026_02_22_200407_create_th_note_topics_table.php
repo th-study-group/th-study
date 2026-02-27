@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('categories_idx')->comment('FK : th_note_categories.idx');
             $table->string('name', 30)->comment('주제명');
             $table->string('memo', 255)->comment('비고');
+            $table->tinyInteger('use_flag')->default(0)->comment('1 : 사용  0 : 미사용');
             $table->unsignedBigInteger('create_user_idx')->comment('등록자');
             $table->unsignedBigInteger('update_user_idx')->nullable()->comment('수정자');
             $table->unsignedBigInteger('delete_user_idx')->nullable()->comment('삭제자');
