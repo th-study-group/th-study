@@ -65,7 +65,45 @@
             const editUrl = "{{ route('admins.posts.edit', ['post_type' => 'notice', 'idx' => $post->idx]) }}";
             const deleteUrl = "{{ route('admins.posts.soft.delete', ['post_type' => 'notice', 'idx' => $post->idx]) }}";
             const useFlagUrl = "{{ route('admins.posts.use_flag.update', ['post_type' => 'notice', 'idx' => $post->idx]) }}";
-            const useFlag = "{{ $post->use_flag ?? 0 }}";
+            const useFlagLabelMap = @json(config('const.use_flag', []));
+            let currentUseFlag = Number("{{ $post->use_flag ?? 0 }}");
+            const $useFlagBadge = $('.use-flag');
+            const $modifyBtn = $('#btn_post_modify');
+            const $deleteBtn = $('#btn_post_delete');
+
+            function normalizeUseFlag(flag) {
+                if (flag === 1 || flag === '1' || flag === true) {
+                    return 1;
+                }
+                if (typeof flag === 'string') {
+                    const upper = flag.trim().toUpperCase();
+                    if (upper === 'Y' || upper === 'YES' || upper === 'TRUE') {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+
+            function getUseFlagLabel(flag) {
+                return Number(flag) === 1
+                    ? (useFlagLabelMap.Y ?? '공개')
+                    : (useFlagLabelMap.N ?? '비공개');
+            }
+
+            function syncUseFlagUi(flag) {
+                const normalized = normalizeUseFlag(flag);
+
+                $useFlagBadge
+                    .removeClass('use-flag-0 use-flag-1')
+                    .addClass(`use-flag-${normalized}`)
+                    .text(getUseFlagLabel(normalized));
+
+                $modifyBtn.toggleClass('d-none', normalized === 1);
+                $deleteBtn.toggleClass('d-none', normalized === 1);
+            }
+
+            currentUseFlag = normalizeUseFlag(currentUseFlag);
+            syncUseFlagUi(currentUseFlag);
 
             $("#btn_post_list").on("click", function() {
                 location.href = listUrl;
@@ -104,7 +142,7 @@
             });
 
             $('#btn_post_use_flag').on('click', function(){
-                const message = useFlag === 1
+                const message = currentUseFlag === 1
                     ? '이미 공개중입니다. 비공개로 하시겠습니까?'
                     : '현재 비공개입니다. 공개로 하시겠습니까?';
 
@@ -119,9 +157,13 @@
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     },
-                    onSuccess: function () {
+                    onSuccess: function (data) {
+                        const nextUseFlag = normalizeUseFlag(data && data.use_flag !== undefined
+                            ? data.use_flag
+                            : (currentUseFlag === 1 ? 0 : 1));
+                        currentUseFlag = nextUseFlag;
+                        syncUseFlagUi(nextUseFlag);
                         alert('공개 여부가 변경되었습니다.');
-                        location.reload();
                     },
                     onError: function (xhr) {
                         let message = '공개여부 변경 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';

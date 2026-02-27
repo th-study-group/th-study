@@ -215,12 +215,30 @@ function initInitialEntryLoading(loadingModal)
 
 function runInitialEntryLoading(loadingModal)
 {
-    if (document.body && document.body.dataset.initialLoadingShown === '1') {
+    const initialLoadingSessionKey = 'th_initial_loading_session_v1';
+    const initialLoadingFallbackKey = 'th_initial_loading_fallback_last_shown_at';
+    const initialLoadingFallbackCooldownMs = 10 * 60 * 1000;
+
+    let alreadyShown = false;
+    try {
+        alreadyShown = sessionStorage.getItem(initialLoadingSessionKey) === '1';
+    } catch (e) {
+        try {
+            const lastShownAt = Number(localStorage.getItem(initialLoadingFallbackKey) || '0');
+            alreadyShown = lastShownAt > 0 && (Date.now() - lastShownAt) < initialLoadingFallbackCooldownMs;
+        } catch (ignore) {}
+    }
+
+    if (alreadyShown) {
         return;
     }
 
-    if (document.body) {
-        document.body.dataset.initialLoadingShown = '1';
+    try {
+        sessionStorage.setItem(initialLoadingSessionKey, '1');
+    } catch (e) {
+        try {
+            localStorage.setItem(initialLoadingFallbackKey, String(Date.now()));
+        } catch (ignore) {}
     }
 
     const navEntry = performance.getEntriesByType

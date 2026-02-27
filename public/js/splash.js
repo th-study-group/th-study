@@ -1,4 +1,6 @@
 let thSplashSessionKey = "th_pwa_splash_session_v1";
+let thSplashFallbackKey = "th_pwa_splash_fallback_last_shown_at";
+let thSplashFallbackCooldownMs = 10 * 60 * 1000;
 
 function thIsPwaMode() {
     if (typeof navigator.standalone !== "undefined" && navigator.standalone) {
@@ -26,12 +28,21 @@ function thShouldShowSplashInSession() {
         
         return true;
     } catch (e) {
-        if (window.__thPwaSplashShownOnce === true) {
+        var now = Date.now();
+        var lastShownAt = 0;
+
+        try {
+            lastShownAt = Number(localStorage.getItem(thSplashFallbackKey) || "0");
+        } catch (ignore) {}
+
+        if (lastShownAt > 0 && (now - lastShownAt) < thSplashFallbackCooldownMs) {
             return false;
         }
-        
-        window.__thPwaSplashShownOnce = true;
-        
+
+        try {
+            localStorage.setItem(thSplashFallbackKey, String(now));
+        } catch (ignore) {}
+
         return true;
     }
 }
