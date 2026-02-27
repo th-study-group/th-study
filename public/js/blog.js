@@ -209,7 +209,21 @@ function applyBlogDetailState(state, payload) {
   const note = payload.note || {};
   const actions = payload.actions || {};
   const permissions = payload.permissions || {};
-  const tags = Array.isArray(note.tags) ? note.tags : [];
+  const tags = Array.isArray(note.tags)
+    ? note.tags
+        .map(function (tag) {
+          if (typeof tag === 'string') {
+            return tag;
+          }
+          if (tag && typeof tag === 'object') {
+            return String(tag.name ?? tag.tag_name ?? '').trim();
+          }
+          return '';
+        })
+        .filter(function (tagName) {
+          return tagName !== '';
+        })
+    : [];
   const useFlag = String(note.use_flag || 'N');
   const useFlagLabel = String(note.use_flag_label || (useFlag === 'Y' ? '공개' : '비공개'));
 

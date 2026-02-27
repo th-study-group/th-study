@@ -391,7 +391,11 @@ class NoteController extends Controller
                 'content_html' => $contentHtml,
                 'use_flag' => $note->use_flag ?? 'N',
                 'use_flag_label' => config("const.use_flag.{$note->use_flag}", '-'),
-                'tags' => $note->tags ?? collect()->pluck('name')->values()->all(),
+                'tags' => ($note->tags ?? collect())
+                    ->pluck('name')
+                    ->filter(static fn ($name) => is_string($name) && trim($name) !== '')
+                    ->values()
+                    ->all(),
             ],
             'actions' => [
                 'show_url' => route("{$group}.show", ['slug' => $slug, 'idx' => $note->idx]),
