@@ -71,7 +71,9 @@
   <div id="blogDetailModal" class="blog-detail-modal" role="dialog" aria-modal="true" aria-labelledby="blogDetailTitle">
     <div class="blog-detail-dialog">
       <div class="blog-detail-head">
-        <button type="button" id="blogDetailCloseBtn" class="blog-detail-close" aria-label="닫기">×</button>
+        <button type="button" id="blogDetailCloseBtn" class="blog-detail-close" aria-label="닫기" title="닫기">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
       </div>
       <div class="blog-detail-body">
         <h2 id="blogDetailTitle" class="blog-detail-title"></h2>
@@ -85,10 +87,22 @@
         <div id="blogDetailContent" class="blog-detail-content"></div>
         <ul id="blogDetailTags" class="blog-detail-tags"></ul>
         <div class="blog-detail-actions">
-          <button type="button" id="blogDetailEditBtn" class="blog-detail-action-btn is-edit btn">수정</button>
-          <button type="button" id="blogDetailDeleteBtn" class="blog-detail-action-btn is-delete btn">삭제</button>
-          <button type="button" id="blogDetailPublicBtn" class="blog-detail-action-btn is-public btn">공개설정</button>
-          <button type="button" id="blogDetailBottomCloseBtn" class="blog-detail-action-btn is-close btn">닫기</button>
+          <button type="button" id="blogDetailEditBtn" class="blog-detail-action-btn blog-action-icon-btn is-edit btn" aria-label="수정" title="수정">
+            <i class="bi bi-pencil-square" aria-hidden="true"></i>
+            <span class="visually-hidden">수정</span>
+          </button>
+          <button type="button" id="blogDetailDeleteBtn" class="blog-detail-action-btn blog-action-icon-btn is-delete btn" aria-label="삭제" title="삭제">
+            <i class="bi bi-trash3" aria-hidden="true"></i>
+            <span class="visually-hidden">삭제</span>
+          </button>
+          <button type="button" id="blogDetailPublicBtn" class="blog-detail-action-btn blog-action-icon-btn is-public btn" aria-label="공개설정" title="공개설정">
+            <i class="bi bi-eye" aria-hidden="true"></i>
+            <span class="visually-hidden">공개설정</span>
+          </button>
+          <button type="button" id="blogDetailBottomCloseBtn" class="blog-detail-action-btn blog-action-icon-btn is-close btn" aria-label="닫기" title="닫기">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+            <span class="visually-hidden">닫기</span>
+          </button>
         </div>
       </div>
     </div>
