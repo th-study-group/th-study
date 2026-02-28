@@ -42,6 +42,9 @@
     border-radius: 24px;
     overflow: hidden;
 }
+.pwa-image-modal{
+    z-index: 1080;
+}
 .pwa-link-modal-copy{
     margin-bottom: 12px;
     color: #475569;
@@ -61,9 +64,14 @@
 }
 .pwa-image-modal .modal-header{
     color: #f8fafc;
+    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding-left: calc(1rem + env(safe-area-inset-left));
+    padding-right: calc(1rem + env(safe-area-inset-right));
 }
 .pwa-image-modal .btn-close{
     filter: invert(1) grayscale(1);
+    margin-top: 0;
+    margin-right: 0;
 }
 .pwa-image-modal .modal-body{
     display: flex;
@@ -71,6 +79,9 @@
     justify-content: center;
     min-height: 40vh;
     padding-top: 0;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    padding-left: calc(1rem + env(safe-area-inset-left));
+    padding-right: calc(1rem + env(safe-area-inset-right));
 }
 .pwa-image-modal-target{
     display: block;
@@ -79,4 +90,14 @@
     margin: 0 auto;
     object-fit: contain;
     border-radius: 18px;
+}
+body.pwa-image-preview-open .global-back-to-top{
+    display: none !important;
+}
+
+@media (max-width: 575.98px){
+    .pwa-image-modal .modal-content{
+        min-height: 100dvh;
+        border-radius: 0;
+    }
 }

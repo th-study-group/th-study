@@ -86,10 +86,12 @@ function initPwaStandaloneLinkGuards()
     });
 
     imageModalEl.addEventListener('hidden.bs.modal', function () {
+        document.body.classList.remove('pwa-image-preview-open');
         imageTargetEl.setAttribute('src', '');
     });
 
     function openImagePreview(url) {
+        document.body.classList.add('pwa-image-preview-open');
         imageTargetEl.setAttribute('src', url);
         imageModal.show();
     }
