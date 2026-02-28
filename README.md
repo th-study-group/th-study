@@ -488,21 +488,56 @@ php artisan db:seed --class=NoteMasterSeeder --force
 - 자동배포 스크립트에 민감정보 직접 하드코딩 금지
 - 실제 키/토큰/계정값은 반드시 환경변수 또는 서버 비밀 저장소로 관리
 
-### 12.6 DB 백업/복구 최소 운영안
+### 12.6 DB / 업로드 파일 백업 운영안
 
 권장 구조:
-- 풀백업(일 1회)
-- 증분(binlog, 시간 단위)
-- 보관주기(예: 14일) 후 자동삭제
+- DB 풀백업(일 1회)
+- DB 증분(binlog, 시간 단위)
+- 업로드 파일 백업(일 1회)
+- 보관주기: 14일 후 자동삭제
 
 핵심 원칙:
 - 백업 계정 분리
 - 백업 비밀번호는 별도 권한 파일로 관리
 - MySQL 원본 binlog를 수동 삭제하지 않기
+- 업로드 파일은 `storage/app/public` 전체를 tar.gz로 백업
+
+운영 경로:
+- DB 풀백업: `/backup/mysql/full`
+- DB 증분백업(binlog): `/backup/mysql/binlog`
+- 업로드 파일 백업: `/backup/laravel_files`
+- 프로젝트 루트: `/var/www/th-study`
+
+파일 백업 스크립트:
+- `/usr/local/bin/laravel_file_backup.sh`
+- `/usr/local/bin/laravel_file_backup_cleanup.sh`
+
+크론 예시:
+
+```bash
+# 매일 03:30 라라벨 업로드 전체 백업
+30 3 * * * /usr/local/bin/laravel_file_backup.sh
+
+# 매일 04:50 라라벨 업로드 백업 중 14일 지난 파일 삭제
+50 4 * * * /usr/local/bin/laravel_file_backup_cleanup.sh
+```
+
+테스트 명령어:
+
+```bash
+sudo /usr/local/bin/laravel_file_backup.sh
+sudo sh /usr/local/bin/laravel_file_backup.sh
+
+sudo /usr/local/bin/laravel_file_backup_cleanup.sh
+sudo sh /usr/local/bin/laravel_file_backup_cleanup.sh
+
+ls -lh /backup/laravel_files
+```
 
 복구 기본:
-1. 최신 풀백업 복원
+1. 최신 DB 풀백업 복원
 2. 해당 시점 이후 binlog 순차 적용
+3. 필요한 경우 `/backup/laravel_files`의 업로드 압축본 해제 후 파일 복원
 
 ### 12.7 빠른 점검 명령어
 
@@ -524,16 +559,33 @@ sudo systemctl status th-study-queue
 - Nginx 로그: `/var/log/nginx/access.log`, `/var/log/nginx/error.log`
 - Laravel 로그: `/var/www/th-study/storage/logs`
 - DB 풀백업: `/backup/mysql/full`
-- DB 증분백업(binlog): `/backup/binlog`
+- DB 증분백업(binlog): `/backup/mysql/binlog`
+- 업로드 파일 백업: `/backup/laravel_files`
 
 백업 정책(예시):
 - 풀백업: 일 1회
 - 증분백업: 시간 단위
+- 업로드 파일 백업: 일 1회
 - 보관주기: 14일
 
 복구 순서(요약):
 1. 최신 풀백업 복원
 2. 해당 시점 이후 binlog 순차 적용
+
+### 12.8.1 공통 에러 화면 커스텀
+
+- 웹 요청 기준 `404`, `419`, `429`, `500`, `503` 상태코드는 공통 에러 화면으로 렌더링
+- JSON/API 응답은 기존 Laravel 응답 형식을 유지
+- `APP_DEBUG=true`인 로컬 개발환경에서는 비 HTTP 예외의 `500` 디버그 화면을 유지
+
+관련 파일:
+- 예외 분기: `app/Exceptions/Handler.php`
+- 공통 뷰: `resources/views/errors/minimal.blade.php`
+
+화면 구성:
+- 상태코드 숫자를 크게 노출
+- 한글 제목/짧은 안내 문구 제공
+- `메인으로 가기` 버튼으로 홈 복귀 가능
 
 ### 12.9 GitHub 조직관리 가이드
 

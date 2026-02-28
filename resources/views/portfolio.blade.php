@@ -30,7 +30,7 @@
           <ul class="text-white-50 mb-3" style="margin-left:18px;">
             <li>운영: AWS Lightsail Ubuntu 직접 구성</li>
             <li>검증: 로컬 환경 및 Docker Compose 이용하여 테스트</li>
-            <li>백업: <code style="color:#fff;">/backup/mysql</code> 14일 보관</li>
+            <li>백업: <code style="color:#fff;">/backup/mysql</code> + <code style="color:#fff;">/backup/laravel_files</code> 14일 보관</li>
           </ul>
           <div class="fw-bold text-white mb-2">Tech Stack</div>
           <div class="d-flex flex-wrap gap-3 align-items-center icons">
@@ -61,7 +61,7 @@
             <li><a href="#run">6. 실행</a><span class="toc-dots"></span><span class="toc-desc">로컬/큐</span></li>
             <li><a href="#deploy">7. 배포</a><span class="toc-dots"></span><span class="toc-desc">SSH + git pull</span></li>
             <li><a href="#infra">8. 운영 인프라</a><span class="toc-dots"></span><span class="toc-desc">Lightsail + Swap</span></li>
-            <li><a href="#backup">9. DB 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
+            <li><a href="#backup">9. DB / 파일 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
             <li><a href="#docker">10. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
             <li><a href="#queue-service">11. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
             <li><a href="#codex-skill">12. Codex 스킬</a><span class="toc-dots"></span><span class="toc-desc">SKILL.md 작성법과 파일 종류</span></li>
@@ -488,7 +488,7 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="backup" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">9. DB 백업</h2>
+    <h2 class="h2x mb-3">9. DB / 파일 백업</h2>
     <div class="box pad">
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
@@ -496,15 +496,69 @@ sudo systemctl status th-study-queue</code></pre>
           <tbody>
             <tr><td class="fw-bold">Full</td><td><code>/backup/mysql/full</code></td><td>1일 1회</td><td>14일</td></tr>
             <tr><td class="fw-bold">Binlog</td><td><code>/backup/mysql/binlog</code></td><td>매시간</td><td>14일</td></tr>
+            <tr><td class="fw-bold">Files</td><td><code>/backup/laravel_files</code></td><td>매일 03:30</td><td>14일</td></tr>
           </tbody>
         </table>
       </div>
+      <div class="callout mt-4">
+        <strong>파일 백업 기준</strong><br>
+        <ul class="mb-0" style="margin-left:18px;">
+          <li>대상: <code>/var/www/th-study/storage/app/public</code> 전체</li>
+          <li>백업 스크립트: <code>/usr/local/bin/laravel_file_backup.sh</code></li>
+          <li>정리 스크립트: <code>/usr/local/bin/laravel_file_backup_cleanup.sh</code></li>
+        </ul>
+      </div>
       <div class="mt-4">
-    <div class="codeblock">
-      <div class="codehdr"><span>bash · 14일 지난 백업 삭제</span><button class="copybtn no-print" onclick="copyFrom('#bkClean', this)">복사</button></div>
-      <pre id="bkClean"><code>find /backup/mysql -type f -mtime +14 -delete</code></pre>
-    </div>
-    </div>
+        <div class="codeblock">
+          <div class="codehdr"><span>bash · 라라벨 업로드 백업 스크립트</span><button class="copybtn no-print" onclick="copyFrom('#fileBackupScript', this)">복사</button></div>
+          <pre id="fileBackupScript"><code>#!/usr/bin/env bash
+set -e
+
+PROJECT_DIR="/var/www/th-study"
+UPLOAD_DIR="$PROJECT_DIR/storage/app/public"
+BACKUP_DIR="/backup/laravel_files"
+NOW="$(date +%F_%H-%M-%S)"
+
+mkdir -p "$BACKUP_DIR"
+
+tar -czf "$BACKUP_DIR/laravel_${NOW}.tar.gz" \
+  -C "$UPLOAD_DIR" .</code></pre>
+        </div>
+      </div>
+      <div class="mt-4">
+        <div class="codeblock">
+          <div class="codehdr"><span>bash · 파일 백업 정리 + 테스트</span><button class="copybtn no-print" onclick="copyFrom('#fileBackupOps', this)">복사</button></div>
+          <pre id="fileBackupOps"><code># 14일 지난 파일 백업 삭제
+find /backup/laravel_files -name "laravel_*.tar.gz" -mtime +14 -delete
+
+# 실행 테스트
+sudo /usr/local/bin/laravel_file_backup.sh
+sudo sh /usr/local/bin/laravel_file_backup.sh
+sudo /usr/local/bin/laravel_file_backup_cleanup.sh
+sudo sh /usr/local/bin/laravel_file_backup_cleanup.sh
+
+# 결과 확인
+ls -lh /backup/laravel_files</code></pre>
+        </div>
+      </div>
+      <div class="mt-4">
+        <div class="codeblock">
+          <div class="codehdr"><span>bash · root crontab</span><button class="copybtn no-print" onclick="copyFrom('#fileBackupCron', this)">복사</button></div>
+          <pre id="fileBackupCron"><code># 매일 03:30 라라벨 업로드 전체 백업
+30 3 * * * /usr/local/bin/laravel_file_backup.sh
+
+# 매일 04:50 라라벨 업로드 백업 중 14일 지난 파일 삭제
+50 4 * * * /usr/local/bin/laravel_file_backup_cleanup.sh</code></pre>
+        </div>
+      </div>
+      <div class="callout mt-4">
+        <strong>PWA 에러 화면 커스텀</strong><br>
+        <ul class="mb-0" style="margin-left:18px;">
+          <li><code>404</code>, <code>419</code>, <code>429</code>, <code>500</code>, <code>503</code> 공통 에러 화면 구성</li>
+          <li>상태코드 숫자 크게 표시 + 한글 설명 + <code>메인으로 가기</code> 버튼 제공</li>
+          <li>예외 분기: <code>app/Exceptions/Handler.php</code>, 공통 뷰: <code>resources/views/errors/minimal.blade.php</code></li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -1058,11 +1112,17 @@ php artisan db:seed --class=AutoSuperAdminSeeder --force
 
 # 노트 코드/마스터 데이터 동기화(config/seeders/note.php 기준)
 php artisan db:seed --class=NoteMasterSeeder --force</code></pre></div>
-<h3 id="readme-126-db-백업복구-최소-운영안">12.6 DB 백업/복구 최소 운영안</h3>
+<h3 id="readme-126-db-업로드-파일-백업-운영안">12.6 DB / 업로드 파일 백업 운영안</h3>
 <ul>
-<li>풀백업(일 1회) + 증분(binlog, 시간 단위) + 14일 보관 후 자동삭제</li>
-<li>복구: 최신 풀백업 복원 후 해당 시점 이후 binlog 순차 적용</li>
+<li>DB 풀백업(일 1회) + 증분(binlog, 시간 단위) + 업로드 파일 백업(일 1회) + 14일 보관 후 자동삭제</li>
+<li>업로드 파일은 <code>storage/app/public</code> 전체를 tar.gz로 보관</li>
+<li>복구: 최신 풀백업 복원 후 해당 시점 이후 binlog 순차 적용, 필요 시 파일 압축본 복원</li>
 </ul>
+<div class="codeblock"><div class="codehdr"><span>bash</span></div><pre><code># 매일 03:30 라라벨 업로드 전체 백업
+30 3 * * * /usr/local/bin/laravel_file_backup.sh
+
+# 매일 04:50 라라벨 업로드 백업 중 14일 지난 파일 삭제
+50 4 * * * /usr/local/bin/laravel_file_backup_cleanup.sh</code></pre></div>
 <h3 id="readme-127-빠른-점검-명령어">12.7 빠른 점검 명령어</h3>
 <div class="codeblock"><div class="codehdr"><span>bash</span></div><pre><code>php artisan about --only=environment,drivers
 php artisan migrate:status
@@ -1075,7 +1135,14 @@ sudo systemctl status th-study-queue</code></pre></div>
 <li>Nginx 로그: <code>/var/log/nginx/access.log</code>, <code>/var/log/nginx/error.log</code></li>
 <li>Laravel 로그: <code>/var/www/th-study/storage/logs</code></li>
 <li>DB 풀백업: <code>/backup/mysql/full</code></li>
-<li>DB 증분백업(binlog): <code>/backup/binlog</code></li>
+<li>DB 증분백업(binlog): <code>/backup/mysql/binlog</code></li>
+<li>업로드 파일 백업: <code>/backup/laravel_files</code></li>
+</ul>
+<h3 id="readme-1281-공통-에러-화면-커스텀">12.8.1 공통 에러 화면 커스텀</h3>
+<ul>
+<li>웹 요청 기준 <code>404</code>, <code>419</code>, <code>429</code>, <code>500</code>, <code>503</code> 공통 에러 화면 제공</li>
+<li>상태코드 숫자 크게 표시 + 한글 설명 + <code>메인으로 가기</code> 버튼 제공</li>
+<li>예외 분기: <code>app/Exceptions/Handler.php</code>, 공통 뷰: <code>resources/views/errors/minimal.blade.php</code></li>
 </ul>
 <h3 id="readme-129-github-조직관리-가이드">12.9 GitHub 조직관리 가이드</h3>
 <ul>
