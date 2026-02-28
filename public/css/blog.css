@@ -1305,6 +1305,10 @@
         env(safe-area-inset-left, 0px);
     }
 
+    body.is-standalone-pwa .blog-detail-modal {
+      padding: 0;
+    }
+
     .blog-detail-dialog {
       width: 100%;
       max-height: 100dvh;
@@ -1312,10 +1316,22 @@
       height: 100dvh;
       height: 100svh;
       border-radius: 0;
+      display: block;
+      position: relative;
     }
 
     .blog-detail-head {
-      padding: max(12px, calc(env(safe-area-inset-top, 0px) + 8px)) 12px 10px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 4;
+      height: 0;
+      min-height: 0;
+      padding: 0;
+      border-bottom: 0;
+      background: transparent;
+      pointer-events: none;
     }
 
     .blog-detail-head-category {
@@ -1323,12 +1339,28 @@
       margin-bottom: 10px;
     }
 
+    .blog-detail-close {
+      position: absolute;
+      top: max(12px, calc(env(safe-area-inset-top, 0px) + 8px));
+      right: 12px;
+      pointer-events: auto;
+    }
+
     .blog-detail-body {
       padding:
-        12px
+        max(68px, calc(env(safe-area-inset-top, 0px) + 56px))
         max(14px, calc(env(safe-area-inset-right, 0px) + 14px))
-        max(18px, calc(env(safe-area-inset-bottom, 0px) + 18px))
+        max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px))
         max(14px, calc(env(safe-area-inset-left, 0px) + 14px));
+    }
+
+    body.is-standalone-pwa .blog-detail-close {
+      top: calc(env(safe-area-inset-top, 0px) + 6px);
+    }
+
+    body.is-standalone-pwa .blog-detail-body {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 52px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
     }
 
     .blog-detail-title-row {

@@ -1,4 +1,8 @@
 $(function () {
+    if (isStandalonePwa()) {
+        document.body.classList.add('is-standalone-pwa');
+    }
+
     initPwaStandaloneLinkGuards();
 });
 
