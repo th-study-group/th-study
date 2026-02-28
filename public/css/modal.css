@@ -36,3 +36,47 @@
     opacity: 1;
     pointer-events: auto;
 }
+.pwa-link-modal .modal-content,
+.pwa-image-modal .modal-content{
+    border: 0;
+    border-radius: 24px;
+    overflow: hidden;
+}
+.pwa-link-modal-copy{
+    margin-bottom: 12px;
+    color: #475569;
+    font-size: 0.95rem;
+}
+.pwa-link-modal-url{
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: #f8fafc;
+    color: #0f172a;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    word-break: break-all;
+}
+.pwa-image-modal .modal-content{
+    background: rgba(2, 6, 23, 0.96);
+}
+.pwa-image-modal .modal-header{
+    color: #f8fafc;
+}
+.pwa-image-modal .btn-close{
+    filter: invert(1) grayscale(1);
+}
+.pwa-image-modal .modal-body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40vh;
+    padding-top: 0;
+}
+.pwa-image-modal-target{
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    margin: 0 auto;
+    object-fit: contain;
+    border-radius: 18px;
+}

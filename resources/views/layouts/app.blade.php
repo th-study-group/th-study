@@ -88,6 +88,9 @@
         {{-- PWA 스플래시 --}}
         @include('layouts.splash')
 
+        {{-- PWA 팝업 --}}
+        @include('partials.pwa-popup')
+
         {{-- service-worker.js 등록 --}}
         <script>
             if ("serviceWorker" in navigator) { // 지원 브라우저 체크
