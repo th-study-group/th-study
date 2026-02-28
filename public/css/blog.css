@@ -597,14 +597,7 @@
   html.blog-modal-open,
   body.blog-modal-open {
     overflow: hidden !important;
-  }
-
-  body.blog-modal-open {
-    position: fixed;
-    width: 100%;
-    left: 0;
-    right: 0;
-    top: var(--blog-scroll-lock-top, 0);
+    overscroll-behavior: none;
   }
 
   html,
