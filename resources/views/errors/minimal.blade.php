@@ -176,7 +176,7 @@
       <h1 id="errorTitle" class="error-title">{{ $title ?? '오류가 발생했어요' }}</h1>
       <p class="error-message">{{ $message ?? '잠시 후 다시 시도해 주세요' }}</p>
       <div class="error-actions">
-        <a href="{{ $homeUrl ?? url('/') }}" class="error-home-link">메인으로 가기</a>
+        <a href="{{ route('home') }}" class="error-home-link">메인으로 가기</a>
       </div>
     </div>
   </main>

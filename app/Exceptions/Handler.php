@@ -96,7 +96,6 @@ class Handler extends ExceptionHandler
             'code' => $status,
             'title' => $page['title'],
             'message' => $page['message'],
-            'homeUrl' => route('home'),
         ], $status);
     }
 }
