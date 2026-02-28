@@ -148,6 +148,7 @@ footer {
 
 :root {
     --global-floating-bottom: calc(18px + env(safe-area-inset-bottom));
+    --global-floating-right: 16px;
     --global-floating-size: 52px;
     --global-floating-gap: 12px;
     --global-floating-stack-height: var(--global-floating-size);
@@ -155,7 +156,7 @@ footer {
 
 .global-back-to-top {
     position: fixed;
-    right: 16px;
+    right: var(--global-floating-right);
     bottom: var(--global-floating-bottom);
     width: var(--global-floating-size);
     height: var(--global-floating-size);

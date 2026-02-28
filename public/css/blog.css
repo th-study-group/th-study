@@ -1090,7 +1090,7 @@
 
   .blog-fab-wrap {
     position: fixed;
-    right: 28px;
+    right: var(--global-floating-right);
     bottom: calc(var(--global-floating-bottom) + var(--global-floating-stack-height) + var(--global-floating-gap));
     z-index: 1059;
     display: flex;
@@ -1267,7 +1267,7 @@
     }
 
     .blog-fab-wrap {
-      right: 16px;
+      right: var(--global-floating-right);
       bottom: calc(var(--global-floating-bottom) + var(--global-floating-stack-height) + var(--global-floating-gap));
     }
 
