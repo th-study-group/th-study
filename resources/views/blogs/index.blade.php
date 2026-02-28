@@ -187,11 +187,11 @@
         }
       });
 
-      $items.on("click", ".blog-item-image-link, .blog-item-thumb", function(e) {
-        e.stopPropagation();
-      });
+      $items.on("click", ".blog-item", function(e) {
+        if ($(e.target).closest(".blog-item-image-link, .blog-item-thumb, .blog-item-more-btn, button, a").length) {
+          return;
+        }
 
-      $items.on("click", ".blog-item", function() {
         const detailUrl = String($(this).data("show-url") || '');
         if (!detailUrl) {
           return;
