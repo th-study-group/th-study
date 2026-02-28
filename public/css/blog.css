@@ -695,12 +695,17 @@
     flex-shrink: 0;
   }
 
+  .blog-item-image-link {
+    display: block;
+  }
+
   .blog-item-thumb {
     width: 100%;
     height: 140px;
     object-fit: cover;
     background: #f0f0f0;
     display: block;
+    cursor: zoom-in;
   }
 
   .blog-item-subject {

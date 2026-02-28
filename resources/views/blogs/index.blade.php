@@ -187,6 +187,10 @@
         }
       });
 
+      $items.on("click", ".blog-item-image-link, .blog-item-thumb", function(e) {
+        e.stopPropagation();
+      });
+
       $items.on("click", ".blog-item", function() {
         const detailUrl = String($(this).data("show-url") || '');
         if (!detailUrl) {

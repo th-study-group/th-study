@@ -35,8 +35,8 @@ class NoteController extends Controller
      */
     public function index(IndexNoteRequest $request, ?string $slug = null)
     {
-        $noteGroup = (string) $request->route('group');
-        $resolvedSlug = trim((string) ($slug ?? ''));
+        $noteGroup = $request->route('group');
+        $resolvedSlug = trim($slug ?? '');
         $categoryConfig = config("note.{$noteGroup}", []);
         $categoryCodes = is_array($categoryConfig) ? array_keys($categoryConfig) : [];
 

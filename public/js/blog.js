@@ -150,7 +150,19 @@ function formatRelativeTimeKorean(dateString) {
 
 function createBlogListItemHtml(item) {
   const thumbUrl = String(item.thumbnail_url || '/images/no_image.png');
-  const thumbnailHtml = `<img src="${escapeHtmlText(thumbUrl)}" alt="" class="blog-item-thumb">`;
+  const safeThumbUrl = escapeHtmlText(thumbUrl);
+  const thumbnailHtml = `
+    <a
+      href="${safeThumbUrl}"
+      class="blog-item-image-link"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="이미지 보기"
+      title="이미지 보기"
+    >
+      <img src="${safeThumbUrl}" alt="" class="blog-item-thumb" data-pwa-image-preview>
+    </a>
+  `;
   const showUrl = escapeHtmlText(item.show_url || '');
   const useFlag = String(item.use_flag || 'N');
   const useFlagLabel = String(item.use_flag_label || (useFlag === 'Y' ? '공개' : '비공개'));
