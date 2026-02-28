@@ -742,7 +742,8 @@ sudo systemctl status th-study-queue
   - JPEG 계열은 JPG(quality 80)
 - 저장 위치/규칙
   - disk: `public`
-  - 경로: `storage/app/public/{YYYYMM}/{uuid}.{ext}`
+  - 경로: `storage/app/public/{YYYYMM}/{YmdHis}.{ext}`
+  - 같은 초에 업로드가 겹치면 `_{nn}` 접미사로 충돌 방지
 - 업로드 필드명 통일: `thumbnail_path`
 
 ### 17.6 해시태그 저장 처리

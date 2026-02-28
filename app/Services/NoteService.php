@@ -19,7 +19,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Intervention\Image\Encoders\JpegEncoder;
 use Intervention\Image\Encoders\PngEncoder;
@@ -553,14 +552,37 @@ class NoteService
             $extension = 'jpg';
         }
 
-        // 저장 폴더명 규칙: YYYYMM
-        $dir = date('Ym');
-        $filename = Str::uuid()->toString() . '.' . $extension;
+        // 저장 폴더명 규칙: YYYYMM, 파일명 규칙: YmdHis(.ext)
+        $dir = now()->format('Ym');
+        $filename = $this->generateTimestampThumbnailName($dir, $extension);
         $path = $dir . '/' . $filename;
 
         Storage::disk('public')->put($path, (string) $encoded);
 
         return $path;
+    }
+
+    /**
+     * 썸네일 파일명 생성
+     *
+     * 기본 규칙은 YmdHis.ext 이고, 같은 초에 충돌 시에만 접미사를 붙인다.
+     *
+     * @param string $dir
+     * @param string $extension
+     * @return string
+     */
+    private function generateTimestampThumbnailName(string $dir, string $extension): string
+    {
+        $timestamp = now()->format('YmdHis');
+        $filename = "{$timestamp}.{$extension}";
+        $sequence = 1;
+
+        while (Storage::disk('public')->exists($dir . '/' . $filename)) {
+            $filename = sprintf('%s_%02d.%s', $timestamp, $sequence, $extension);
+            $sequence++;
+        }
+
+        return $filename;
     }
 
     /**
