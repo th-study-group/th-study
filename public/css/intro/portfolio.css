@@ -32,6 +32,8 @@ body:has(.portfolio-page) > .container-fluid > .row > *{padding-left:0 !importan
 .codeblock pre{padding:18px 18px 20px;color:#e5e7eb;font-size:14px;line-height:1.75;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;overflow:auto;white-space:pre;margin:0;tab-size: 2;}
 .table thead th{background:#f8fafc;}
 .callout{border-left:6px solid var(--accent);background:#eff6ff;border-radius:14px;padding:16px 18px;color:var(--ink);}
+.callout ul{margin:10px 0 0 1.1rem;padding:0;}
+.callout li{margin:.35rem 0;line-height:1.6;}
 .svg-wrap{border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px;}
 .svg-flow{width:100%;height:auto;}
 .readme{color:#1e293b;}

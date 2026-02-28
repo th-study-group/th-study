@@ -855,6 +855,7 @@ sudo systemctl status th-study-queue
 
 - `/blogs` 접근 시 블로그 그룹 전체 카테고리 글 조회
 - `/blogs/{slug}` 접근 시 해당 카테고리 글만 조회
+- 라우트 그룹명(`blogs`)과 DB 그룹 코드(`blog`) 차이는 `config/note.php`의 `group` 매핑으로 해소
 - slug가 실제 카테고리 코드와 불일치하면 404 처리
 - 목록 타이틀은 카테고리별 동적 표기(`개발 글`, `여행 글`), 전체는 `전체 글`
 
@@ -882,6 +883,8 @@ sudo systemctl status th-study-queue
 ### 18.7 권한/노출 정책 보강
 
 - 카테고리 화면에서는 admin 권한이 아닌 경우 상단/하단 작성하기 버튼 비노출
+- 목록/상세 조회 모두 admin이 아니면 `use_flag = Y` 글만 노출하고, 비공개 글 상세 접근은 404 처리
+- 삭제는 admin만 가능하며, 공개중(`Y`)인 글은 바로 삭제하지 않고 비공개(`N`) 상태에서만 삭제 허용
 - 공개상태 변경 직후 목록 팝업 액션 버튼 상태(수정/삭제)가 즉시 반영되도록 클라이언트 상태 갱신
 
 ### 18.8 상세 페이지 메타/OG 상속 구조
@@ -897,14 +900,140 @@ sudo systemctl status th-study-queue
 - 로그 필수 필드로 `ip` 포함 여부 점검 및 일관성 유지
 - 히스토리 테이블 기록과 별개로 운영 추적 로그를 동일 패턴으로 보강
 
-### 18.10 관련 핵심 파일
+### 18.10 수정 폼/편집 UX 보강
+
+- 등록/수정 화면은 `resources/views/blogs/create.blade.php` 단일 뷰를 재사용
+- 수정 진입 시 기존 썸네일 파일명/보기 URL/기존 태그를 preload 해 편집 컨텍스트 유지
+- 수정 화면에서는 공개여부(`usg_flag`) 라디오를 별도로 노출하고, 등록 시 기본 비공개로 시작
+- 기존 썸네일 삭제와 개별 태그 삭제는 각각 AJAX 엔드포인트로 처리해 전체 폼 제출 없이 즉시 반영
+
+### 18.11 태그/리소스 정리 정책
+
+- 태그 입력은 `#`, `,`, 중복 공백을 정규화해 저장하고, 중복 태그는 클라이언트에서 즉시 차단
+- 태그 삭제/글 수정/글 삭제 후 더 이상 연결이 없는 orphan 태그는 soft delete 처리
+- 동일 태그명이 다시 사용되면 `withTrashed()` 조회 후 restore 방식으로 재사용
+- 글 삭제 시 썸네일 파일, 태그 매핑, orphan 태그 정리를 트랜잭션 안에서 함께 처리
+
+### 18.12 관련 핵심 파일
 
 - 컨트롤러: `app/Http/Controllers/NoteController.php`
 - 서비스: `app/Services/NoteService.php`
 - 요청검증: `app/Http/Requests/Notes/IndexNoteRequest.php`
+- 요청검증(등록/수정): `app/Http/Requests/Notes/StoreNoteRequest.php`, `app/Http/Requests/Notes/UpdateNoteRequest.php`
 - 레포지토리: `app/Repositories/NoteRepository.php`
+- 태그 레포지토리: `app/Repositories/NoteTagRepository.php`, `app/Repositories/NoteTagMapRepository.php`
+- 정책/콘텐츠 처리: `app/Policies/NotePolicy.php`, `app/Support/EditorContentProcessor.php`
 - 목록 화면: `resources/views/blogs/index.blade.php`
 - 상세 화면: `resources/views/blogs/show.blade.php`
+- 등록/수정 화면: `resources/views/blogs/create.blade.php`
 - 레이아웃: `resources/views/layouts/app.blade.php`
 - 스크립트: `public/js/blog.js`
 - 스타일: `public/css/blog.css`
+
+## 19. Codex 스킬 문서 가이드
+
+이 프로젝트의 스킬 문서는
+"어떻게 구현할지"를 빠르게 전달하는 작업 지침서 역할을 합니다.
+
+### 19.1 스킬 폴더 구조
+
+Codex 기준 스킬은 보통 아래 구조를 가집니다.
+
+```text
+skill-name/
+  SKILL.md            # 필수, 스킬 본문
+  agents/openai.yaml  # 권장, UI 메타데이터
+  scripts/*           # 선택, 반복 작업용 실행 스크립트
+  references/*        # 선택, 필요할 때만 읽는 참고 문서
+  assets/*            # 선택, 템플릿/이미지/출력 리소스
+```
+
+### 19.2 파일 종류와 역할
+
+- `SKILL.md`
+  - 필수 파일
+  - 스킬 이름, 설명, 작업 절차, 사용 조건을 적는 본문
+
+- `agents/openai.yaml`
+  - 권장 파일
+  - `display_name`, `short_description`, `default_prompt` 같은 UI 메타데이터
+
+- `scripts/*`
+  - 선택 파일
+  - 반복 작성되는 처리 로직이나 변환 작업을 스크립트로 고정
+
+- `references/*`
+  - 선택 파일
+  - 길거나 상세한 정책, 스키마, API 문서를 분리 저장
+
+- `assets/*`
+  - 선택 파일
+  - 템플릿, 샘플 결과물, 이미지 같은 출력 리소스 저장
+
+### 19.3 `SKILL.md` 작성 방법
+
+1. 스킬 목적을 한 줄로 먼저 정합니다.
+2. YAML frontmatter에 최소 `name`, `description`를 적습니다.
+3. 본문에는 아래 내용을 중심으로 적습니다.
+   - 언제 사용하는지
+   - 어떤 순서로 처리하는지
+   - 무엇을 참고하는지
+4. 긴 설명은 `references/`로 분리합니다.
+5. 반복 작업은 `scripts/`로 분리합니다.
+6. 문체는 소개문보다 규칙문, 절차문, 체크리스트 형태를 우선합니다.
+7. 스킬 폴더 안에는 불필요한 보조 문서(`README.md`, `CHANGELOG.md`)를 따로 만들지 않습니다.
+
+### 19.4 `SKILL.md` 기본 형식
+
+```md
+---
+name: skill-name
+description: 언제 이 스킬을 사용해야 하는지 설명
+---
+
+# Skill Name
+
+## 목적
+- 이 스킬이 해결하는 작업
+
+## 사용할 때
+- 어떤 요청에서 이 스킬을 적용하는지
+
+## 작업 절차
+1. 무엇을 확인하는지
+2. 어떤 파일을 읽는지
+3. 어떤 순서로 처리하는지
+
+## 참고 자료
+- 필요 시 `references/...` 확인
+
+## 스크립트
+- 필요 시 `scripts/...` 사용
+```
+
+### 19.5 현재 저장소의 스킬 파일 종류와 역할
+
+- `skill/게시판.md`
+  - 종류: 도메인 규격형 스킬
+  - 역할: 게시판 CRUD, 권한, 히스토리, 로그, 페이징, 메일 규칙 정의
+
+- `skill/노트.md`
+  - 종류: 기능 명세형 스킬
+  - 역할: 노트 메뉴 구조, 라우팅, 권한, 썸네일, 해시태그, 히스토리 규칙 정의
+
+- `skill/백엔드 기초.md`
+  - 종류: 공통 개발 기준 스킬
+  - 역할: PHP/Laravel 환경과 백엔드 구현 계층 규칙 안내
+
+- `skill/프론트엔드 기초.md`
+  - 종류: 퍼블리싱 기준 스킬
+  - 역할: Bootstrap 5 중심의 프론트 작업 원칙 안내
+
+### 19.6 현재 저장소 기준 참고사항
+
+- 현재 저장소의 스킬은 폴더형 Codex Skill 전체 구조가 아니라
+  `skill/*.md` 문서형으로 운영 중입니다.
+
+- 즉, 실사용 중인 파일은 Markdown 스킬 문서이며,
+  `SKILL.md`, `agents/openai.yaml`, `scripts/`, `references/`, `assets/` 구조는
+  향후 확장 시 적용 가능한 표준 형태입니다.

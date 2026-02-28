@@ -48,7 +48,7 @@
     <div class="row g-4">
       <div class="col-lg-4">
         <h2 class="h2x mb-3">목차</h2>
-        <p class="leadx mb-0">표/흐름도/코드 블록 + README 원문까지 포함</p>
+        <p class="leadx mb-0">표, 흐름도, 운영 문서, README 원문까지 포함</p>
       </div>
       <div class="col-lg-8">
         <div class="box pad toc">
@@ -64,7 +64,8 @@
             <li><a href="#backup">9. DB 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
             <li><a href="#docker">10. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
             <li><a href="#queue-service">11. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
-            <li><a href="#appendix">12. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
+            <li><a href="#codex-skill">12. Codex 스킬</a><span class="toc-dots"></span><span class="toc-desc">SKILL.md 작성법과 파일 종류</span></li>
+            <li><a href="#appendix">13. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
           </ul>
         </div>
       </div>
@@ -156,6 +157,14 @@
               <td>최대 10개, 항목당 20자 검증. <code>note_tags</code>와 <code>note_tag_map</code> 다대다 저장</td>
             </tr>
             <tr>
+              <td class="fw-bold">공개/삭제 정책</td>
+              <td>일반 사용자는 공개 글만 조회 가능하고 비공개 상세는 404 처리. 삭제는 admin만 가능하며 비공개 상태에서만 허용</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">편집 UX</td>
+              <td>등록/수정 단일 뷰 재사용, 수정 시 기존 썸네일/태그 preload, 썸네일 삭제와 태그 삭제는 AJAX로 즉시 반영</td>
+            </tr>
+            <tr>
               <td class="fw-bold">콘텐츠 저장/출력</td>
               <td>Toast UI 저장 포맷을 Markdown에서 HTML로 전환하고, 상세 화면은 기존 Markdown 데이터도 자동 변환해 호환 렌더링</td>
             </tr>
@@ -168,6 +177,10 @@
               <td>블로그 글 등록 시 이벤트 기반으로 <code>note_histories</code> 기록(작업구분, IP, UA, referer 포함)</td>
             </tr>
             <tr>
+              <td class="fw-bold">태그/파일 정리</td>
+              <td>orphan 태그는 soft delete 후 재사용 시 restore, 글 삭제 시 썸네일 파일과 태그 매핑도 함께 정리</td>
+            </tr>
+            <tr>
               <td class="fw-bold">운영 이슈 대응</td>
               <td>로컬 업로드 실패 원인 분석 후 php.ini 업로드 한도(2M/8M -> 50M/50M) 조정</td>
             </tr>
@@ -175,14 +188,15 @@
         </table>
       </div>
       <div class="callout mt-4">
-        <strong>최근 고도화 핵심(요약)</strong><br>
-        목록은 초기 SSR + AJAX 스크롤 페이징(10건 단위)으로 구성하고, 검색은 FormRequest로 검증했습니다.
-        <br>
-        목록 카드 상세는 팝업 AJAX로 분리해 로딩/상세조회/삭제/공개설정을 즉시 처리합니다.
-        <br>
-        `/blogs`는 전체 카테고리, `/blogs/{slug}`는 단일 카테고리 조회로 분기하며 잘못된 slug는 404 처리합니다.
-        <br>
-        상세 공유 대응을 위해 메타/OG를 페이지 상속 구조로 바꿔 제목·설명·썸네일이 게시글 기준으로 노출되게 정리했습니다.
+        <strong>최근 고도화 핵심</strong>
+        <ul class="mb-0 mt-2">
+          <li>목록은 초기 SSR + AJAX 스크롤 페이징(10건 단위) 구조로 정리</li>
+          <li>검색은 FormRequest로 검증하고, 목록/상세는 공통 AJAX 흐름으로 통일</li>
+          <li>수정 화면에서는 기존 썸네일과 태그를 preload 하고, 개별 삭제도 AJAX로 처리</li>
+          <li>라우트 그룹명 `blogs`와 DB 그룹 코드 `blog`는 `config/note.php` 매핑으로 연결</li>
+          <li>`/blogs`는 전체 카테고리, `/blogs/{slug}`는 단일 카테고리 조회로 분기하며 잘못된 slug는 404 처리</li>
+          <li>상세 공유 대응을 위해 메타/OG를 페이지 상속 구조로 정리</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -577,9 +591,94 @@ sudo systemctl status th-study-queue</code></pre>
   </div>
 </section>
 
+<section id="codex-skill" class="section">
+  <div class="container">
+    <h2 class="h2x mb-3">12. Codex 스킬 문서 가이드</h2>
+    <div class="box pad">
+      <p class="leadx mb-3">
+        티에이치스터디는 Codex 스킬을 작업 지침서처럼 사용합니다.
+        아래에는 `SKILL.md` 작성 방법, 파일 종류, 현재 저장소에서 운영 중인 스킬 문서를 함께 정리했습니다.
+      </p>
+
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:24%">파일 종류</th>
+              <th>역할</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold"><code>SKILL.md</code></td>
+              <td>필수 파일. 스킬 이름, 설명, 사용 조건, 작업 절차를 담는 본문</td>
+            </tr>
+            <tr>
+              <td class="fw-bold"><code>agents/openai.yaml</code></td>
+              <td>권장 파일. <code>display_name</code>, <code>short_description</code>, <code>default_prompt</code> 같은 UI 메타데이터 관리</td>
+            </tr>
+            <tr>
+              <td class="fw-bold"><code>scripts/*</code></td>
+              <td>선택 파일. 반복되는 처리 로직이나 변환 작업을 실행 스크립트로 고정</td>
+            </tr>
+            <tr>
+              <td class="fw-bold"><code>references/*</code></td>
+              <td>선택 파일. 긴 정책 문서, API 문서, 스키마를 필요할 때만 읽도록 분리</td>
+            </tr>
+            <tr>
+              <td class="fw-bold"><code>assets/*</code></td>
+              <td>선택 파일. 템플릿, 샘플 결과물, 이미지 같은 출력 리소스 저장</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout mt-4">
+        <strong><code>SKILL.md</code> 작성 방법</strong>
+        <ul class="mb-0 mt-2">
+          <li>목적을 한 줄로 먼저 정리합니다.</li>
+          <li>frontmatter에 <code>name</code>, <code>description</code>를 작성합니다.</li>
+          <li>본문에는 사용 시점, 작업 절차, 참고 자료, 스크립트 사용 위치를 적습니다.</li>
+          <li>긴 설명은 <code>references/</code>로, 반복 작업은 <code>scripts/</code>로 분리합니다.</li>
+          <li>스킬 폴더 안에는 별도 README를 만들지 않는 것을 기준으로 합니다.</li>
+        </ul>
+      </div>
+
+      <div class="table-responsive mt-4">
+        <table class="table table-bordered align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:24%">현재 스킬 파일</th>
+              <th>종류 / 역할</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold"><code>skill/게시판.md</code></td>
+              <td>도메인 규격형 스킬. 게시판 CRUD, 권한, 히스토리, 로그, 페이징, 메일 규칙 정의</td>
+            </tr>
+            <tr>
+              <td class="fw-bold"><code>skill/노트.md</code></td>
+              <td>기능 명세형 스킬. 노트 메뉴 구조, 라우팅, 권한, 썸네일, 해시태그, 히스토리 규칙 정의</td>
+            </tr>
+            <tr>
+              <td class="fw-bold"><code>skill/백엔드 기초.md</code></td>
+              <td>공통 개발 기준 스킬. PHP/Laravel 환경과 컨트롤러-서비스-레포지토리 계층 규칙 안내</td>
+            </tr>
+            <tr>
+              <td class="fw-bold"><code>skill/프론트엔드 기초.md</code></td>
+              <td>퍼블리싱 기준 스킬. Bootstrap 5 중심의 프론트 작업 원칙 안내</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="appendix" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">12. README 원문</h2>
+    <h2 class="h2x mb-3">13. README 원문</h2>
     <div class="box pad readme-summary">
       <p class="fw-bold mb-2">포트폴리오 관점 요약</p>
       <ul>
@@ -1047,6 +1146,40 @@ sudo systemctl status th-study-queue</code></pre></div>
 </ul>
 <h2 id="readme-16-마무리-한-줄">16. 마무리 한 줄</h2>
 <p>티에이치스터디그룹은 하나의 사이트가 아니라, 개발자로서의 성장 과정을 담는 플랫폼이다.</p>
+<h2 id="readme-19-codex-스킬-문서-가이드">19. Codex 스킬 문서 가이드</h2>
+<p>이 프로젝트의 스킬 문서는 "어떻게 구현할지"를 빠르게 전달하는 작업 지침서 역할을 합니다.</p>
+<h3 id="readme-191-스킬-폴더-구조">19.1 스킬 폴더 구조</h3>
+<p>Codex 기준 스킬은 보통 아래 구조를 가집니다.</p>
+<pre><code>skill-name/
+  SKILL.md            # 필수, 스킬 본문
+  agents/openai.yaml  # 권장, UI 메타데이터
+  scripts/*           # 선택, 반복 작업용 실행 스크립트
+  references/*        # 선택, 필요할 때만 읽는 참고 문서
+  assets/*            # 선택, 템플릿/이미지/출력 리소스
+</code></pre>
+<h3 id="readme-192-파일-종류와-역할">19.2 파일 종류와 역할</h3>
+<ul>
+<li><code>SKILL.md</code>: 필수 파일, 스킬 이름/설명/작업 절차/사용 조건을 적는 본문</li>
+<li><code>agents/openai.yaml</code>: 권장 파일, UI 메타데이터 관리</li>
+<li><code>scripts/*</code>: 선택 파일, 반복 작업 자동화</li>
+<li><code>references/*</code>: 선택 파일, 긴 참고 문서 분리</li>
+<li><code>assets/*</code>: 선택 파일, 템플릿/샘플/이미지 리소스 저장</li>
+</ul>
+<h3 id="readme-193-skillmd-작성-방법">19.3 <code>SKILL.md</code> 작성 방법</h3>
+<ol>
+<li>스킬 목적을 한 줄로 먼저 정합니다.</li>
+<li>YAML frontmatter에 <code>name</code>, <code>description</code>를 적습니다.</li>
+<li>본문에는 사용 시점, 작업 절차, 참고 자료, 스크립트 사용 위치를 적습니다.</li>
+<li>긴 설명은 <code>references/</code>로, 반복 작업은 <code>scripts/</code>로 분리합니다.</li>
+<li>스킬 폴더 안에는 별도 <code>README.md</code>를 만들지 않는 것을 기준으로 합니다.</li>
+</ol>
+<h3 id="readme-194-현재-저장소의-스킬-파일-종류와-역할">19.4 현재 저장소의 스킬 파일 종류와 역할</h3>
+<ul>
+<li><code>skill/게시판.md</code>: 도메인 규격형 스킬, 게시판 CRUD/권한/히스토리/로그/메일 규칙 정의</li>
+<li><code>skill/노트.md</code>: 기능 명세형 스킬, 노트 메뉴 구조/라우팅/권한/썸네일/태그 규칙 정의</li>
+<li><code>skill/백엔드 기초.md</code>: 공통 개발 기준 스킬, PHP/Laravel 계층 규칙 안내</li>
+<li><code>skill/프론트엔드 기초.md</code>: 퍼블리싱 기준 스킬, Bootstrap 5 중심 작업 원칙 안내</li>
+</ul>
 
       </div>
     </details>
