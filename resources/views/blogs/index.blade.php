@@ -68,7 +68,7 @@
     </div>
   </main>
 
-  <div id="blogDetailModal" class="blog-detail-modal" role="dialog" aria-modal="true" aria-labelledby="blogDetailTitle">
+  <div id="blogDetailModal" class="blog-detail-modal" role="dialog" aria-modal="true" aria-labelledby="blogDetailTitle" aria-hidden="true">
     <div class="blog-detail-dialog">
       <div class="blog-detail-head">
         <button type="button" id="blogDetailCloseBtn" class="blog-detail-close" aria-label="닫기" title="닫기">

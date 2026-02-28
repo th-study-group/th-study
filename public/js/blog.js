@@ -329,13 +329,22 @@ function openBlogDetailModal() {
     $modal.appendTo('body');
   }
 
+  const scrollTop = window.scrollY || window.pageYOffset || 0;
+  document.body.style.setProperty('--blog-scroll-lock-top', `-${scrollTop}px`);
+  document.body.setAttribute('data-blog-scroll-top', String(scrollTop));
   $('html, body').addClass('blog-modal-open');
   $modal.css('display', 'flex');
+  $modal.attr('aria-hidden', 'false');
 }
 
 function closeBlogDetailModal() {
+  const savedScrollTop = Number(document.body.getAttribute('data-blog-scroll-top') || 0);
   $('html, body').removeClass('blog-modal-open');
+  document.body.style.removeProperty('--blog-scroll-lock-top');
+  document.body.removeAttribute('data-blog-scroll-top');
   $('#blogDetailModal').hide();
+  $('#blogDetailModal').attr('aria-hidden', 'true');
+  window.scrollTo(0, savedScrollTop);
 }
 
 function fetchBlogListPage(state, page, shouldAppend) {
