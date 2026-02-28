@@ -350,6 +350,8 @@ class NoteController extends Controller
                 'create_datetime' => $note->create_datetime?->format('Y-m-d H:i:s') ?? '-',
                 'desc' => Str::limit($plainContent, 120),
                 'thumbnail_url' => $thumbnailUrl,
+                'use_flag' => (string) ($note->use_flag ?? 'N'),
+                'use_flag_label' => (string) config("const.use_flag.{$note->use_flag}", (($note->use_flag ?? 'N') === 'Y' ? '공개' : '비공개')),
                 'show_url' => route("{$group}.show", [
                     'slug' => $slug !== '' ? $slug : (string) ($note->categories_code ?? ''),
                     'idx' => $note->idx,

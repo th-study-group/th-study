@@ -142,9 +142,9 @@
 @section('script')
   <script>
     $(function () {
-      const isEditMode = @json($isEditMode);
-      const thumbnailDestroyUrl = @json($thumbnailDestroyUrl);
-      const tagsDestroyUrl = @json($tagsDestroyUrl);
+      const isEditMode = {{ $isEditMode ? 'true' : 'false' }};
+      const thumbnailDestroyUrl = "{{ $thumbnailDestroyUrl ?? '' }}";
+      const tagsDestroyUrl = "{{ $tagsDestroyUrl ?? '' }}";
       const tagManager = createTagManager({
         chipsSelector: '#blogTagChips',
         hiddenSelector: '#tags',

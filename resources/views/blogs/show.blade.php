@@ -21,9 +21,11 @@
         <span class="blog-show-meta-date">{{ $note->create_datetime?->format('Y-m-d H:i:s') ?? '-' }}</span>
       </div>
 
-      <div class="blog-show-visibility">
-        <span class="blog-show-visibility-badge {{ $useFlag === 'Y' ? 'is-public' : '' }}">{{ config("const.use_flag.{$useFlag}", '-') }}</span>
-      </div>
+      @if (auth()->check() && auth()->user()?->level === 'admin')
+        <div class="blog-show-visibility">
+          <span class="blog-show-visibility-badge {{ $useFlag === 'Y' ? 'is-public' : '' }}">{{ config("const.use_flag.{$useFlag}", '-') }}</span>
+        </div>
+      @endif
 
       <article class="blog-show-content">{!! $contentHtml !!}</article>
 

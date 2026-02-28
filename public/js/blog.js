@@ -152,15 +152,22 @@ function createBlogListItemHtml(item) {
   const thumbUrl = String(item.thumbnail_url || '/images/no_image.png');
   const thumbnailHtml = `<img src="${escapeHtmlText(thumbUrl)}" alt="" class="blog-item-thumb">`;
   const showUrl = escapeHtmlText(item.show_url || '');
+  const useFlag = String(item.use_flag || 'N');
+  const useFlagLabel = String(item.use_flag_label || (useFlag === 'Y' ? '공개' : '비공개'));
+  const canManageVisibility = window.blogCanManageVisibility === true;
+  const visibilityBadgeHtml = canManageVisibility
+    ? createVisibilityBadgeHtml(useFlag, useFlagLabel, 'blog-item-visibility')
+    : '';
 
   return `
-    <article class="blog-item" data-note-idx="${Number(item.idx || 0)}" data-show-url="${showUrl}">
+    <article class="blog-item" data-note-idx="${Number(item.idx || 0)}" data-show-url="${showUrl}" data-use-flag="${escapeHtmlText(useFlag)}">
       <div class="blog-item-left">
         <h3 class="blog-item-subject">${escapeHtmlText(item.subject)}</h3>
         <p class="blog-item-category">${escapeHtmlText(item.group_topic_name)}</p>
         <p class="blog-item-desc">${escapeHtmlText(item.desc)}</p>
         <div class="blog-item-meta">
           <span class="blog-item-more">${escapeHtmlText(formatRelativeTimeKorean(item.create_datetime))}</span>
+          ${visibilityBadgeHtml}
           <button type="button" class="blog-item-more-btn" data-show-url="${showUrl}" aria-label="더보기" title="더보기">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="6" cy="12" r="1.8"></circle>
@@ -205,6 +212,43 @@ function updateBlogMoreButton($button, pagination) {
   $button.show();
 }
 
+function createVisibilityBadgeHtml(useFlag, useFlagLabel, className) {
+  const resolvedUseFlag = String(useFlag || 'N');
+  const resolvedLabel = String(useFlagLabel || (resolvedUseFlag === 'Y' ? '공개' : '비공개'));
+  const isPublic = resolvedUseFlag === 'Y';
+  const iconPath = isPublic
+    ? '<path d="M9 10V7.75a3.75 3.75 0 017.1-1.7"></path><path d="M16.5 10H18a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6a2 2 0 012-2h8"></path>'
+    : '<path d="M8 10V7.5a4 4 0 118 0V10"></path><rect x="5" y="10" width="14" height="10" rx="2"></rect>';
+
+  return `
+    <span class="${escapeHtmlText(className)} ${isPublic ? 'is-public' : 'is-private'}" title="${escapeHtmlText(resolvedLabel)}" aria-label="${escapeHtmlText(resolvedLabel)}">
+      <svg viewBox="0 0 24 24" aria-hidden="true">${iconPath}</svg>
+      <span>${escapeHtmlText(resolvedLabel)}</span>
+    </span>
+  `;
+}
+
+function syncBlogListItemVisibility(noteIdx, useFlag, useFlagLabel) {
+  if (window.blogCanManageVisibility !== true) {
+    return;
+  }
+
+  const safeNoteIdx = Number(noteIdx || 0);
+  if (safeNoteIdx <= 0) {
+    return;
+  }
+
+  const $item = $(`.blog-item[data-note-idx='${safeNoteIdx}']`);
+  if ($item.length === 0) {
+    return;
+  }
+
+  $item.attr('data-use-flag', String(useFlag || 'N'));
+  $item.find('.blog-item-visibility').replaceWith(
+    createVisibilityBadgeHtml(useFlag, useFlagLabel, 'blog-item-visibility')
+  );
+}
+
 function applyBlogDetailState(state, payload) {
   const note = payload.note || {};
   const actions = payload.actions || {};
@@ -239,8 +283,17 @@ function applyBlogDetailState(state, payload) {
   $('#blogDetailContent').html(note.content_html || '');
 
   const $visibility = $('#blogDetailVisibility');
-  $visibility.text(useFlagLabel);
-  $visibility.toggleClass('is-public', useFlag === 'Y');
+  if (window.blogCanManageVisibility === true) {
+    $visibility
+      .html(createVisibilityBadgeHtml(useFlag, useFlagLabel, 'blog-detail-visibility-badge-inner'))
+      .toggleClass('is-public', useFlag === 'Y')
+      .toggleClass('is-private', useFlag !== 'Y')
+      .show();
+    $visibility.closest('.blog-detail-visibility').show();
+  } else {
+    $visibility.empty().hide();
+    $visibility.closest('.blog-detail-visibility').hide();
+  }
 
   const $tags = $('#blogDetailTags');
   $tags.empty();
@@ -285,6 +338,10 @@ function fetchBlogListPage(state, page, shouldAppend) {
     method: 'GET',
     url: state.listUrl,
     dataType: 'json',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Accept': 'application/json',
+    },
     data: {
       page: page,
       search_select_type: state.searchType,
@@ -314,6 +371,10 @@ function fetchBlogDetail(state, detailUrl) {
     method: 'GET',
     url: detailUrl,
     dataType: 'json',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Accept': 'application/json',
+    },
     onSuccess: function (res) {
       applyBlogDetailState(state, res || {});
       openBlogDetailModal();

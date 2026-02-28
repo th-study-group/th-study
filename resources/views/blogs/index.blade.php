@@ -59,11 +59,6 @@
           </svg>
         </button>
       @endif
-      <button type="button" id="blogGoTopBtn" class="blog-fab blog-fab-top" title="맨 위로" aria-label="맨 위로">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M18 15l-6-6-6 6"></path>
-        </svg>
-      </button>
     </div>
   </main>
 
@@ -77,6 +72,9 @@
         <div class="blog-detail-meta">
           <span id="blogDetailCategory"></span>
           <span id="blogDetailDate"></span>
+        </div>
+        <div class="blog-detail-visibility">
+          <span id="blogDetailVisibility" class="blog-detail-visibility-badge"></span>
         </div>
         <div id="blogDetailContent" class="blog-detail-content"></div>
         <ul id="blogDetailTags" class="blog-detail-tags"></ul>
@@ -101,7 +99,16 @@
       const listUrl = "{{ route("{$group}.index", ['slug' => $slug]) }}";
       const writeUrl = "{{ $writeUrl ?? '' }}";
       const csrfToken = "{{ csrf_token() }}";
-      const initialData = @json($initialPayload);
+      const initialData = JSON.parse(
+        new TextDecoder().decode(
+          Uint8Array.from(
+            atob("{{ base64_encode(json_encode($initialPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) }}"),
+            c => c.charCodeAt(0)
+          )
+        )
+      );
+      const canManageVisibility = {{ auth()->check() && auth()->user()?->level === 'admin' ? 'true' : 'false' }};
+      window.blogCanManageVisibility = canManageVisibility;
 
       const state = {
         searchType: String(initialData?.filters?.search_select_type || 'title'),
@@ -109,11 +116,15 @@
         pagination: initialData?.pagination || {},
         currentDetail: null,
         isLoadingList: false,
+        listUrl: listUrl,
       };
 
       const $items = $("#blogItems");
       const $moreWrap = $(".blog-more-wrap");
       const $moreButton = $(".btn_more");
+      state.$items = $items;
+      state.$moreWrap = $moreWrap;
+      state.$moreButton = $moreButton;
 
       $("#search_select_type").val(state.searchType);
       $("#search_keyword").val(state.searchKeyword);
@@ -121,58 +132,6 @@
       renderBlogListItems($items, initialData?.items || [], false);
       updateBlogMoreButton($moreWrap, state.pagination);
       $("#blog_list_total").text(`총 ${Number(state.pagination?.total || 0)}건`);
-
-      function fetchListPage(page, shouldAppend) {
-        if (state.isLoadingList) {
-          return;
-        }
-
-        state.isLoadingList = true;
-        $moreButton.prop('disabled', true);
-
-        requestAjax({
-          method: 'GET',
-          url: listUrl,
-          dataType: 'json',
-          showLoading: true,
-          data: {
-            page: page,
-            search_select_type: state.searchType,
-            search_keyword: state.searchKeyword,
-          },
-          onSuccess: function (res) {
-            const items = Array.isArray(res?.items) ? res.items : [];
-            const pagination = res?.pagination || {};
-            state.pagination = pagination;
-            renderBlogListItems($items, items, shouldAppend);
-            updateBlogMoreButton($moreWrap, pagination);
-            $("#blog_list_total").text(`총 ${Number(pagination.total || 0)}건`);
-          },
-          onError: function () {
-            alert('목록을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-          },
-          onComplete: function () {
-            state.isLoadingList = false;
-            $moreButton.prop('disabled', false);
-          }
-        });
-      }
-
-      function fetchDetail(detailUrl) {
-        requestAjax({
-          method: 'GET',
-          url: detailUrl,
-          dataType: 'json',
-          showLoading: true,
-          onSuccess: function (res) {
-            applyBlogDetailState(state, res || {});
-            openBlogDetailModal();
-          },
-          onError: function () {
-            alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
-          }
-        });
-      }
 
       $("#btn_search").on("click", function() {
         $("#form_search").trigger("submit");
@@ -195,7 +154,7 @@
           return;
         }
         const nextPage = Number(state.pagination.current_page || 1) + 1;
-        fetchListPage(nextPage, true);
+        fetchBlogListPage(state, nextPage, true);
       });
 
       $items.on("click", ".blog-item-more-btn", function(e) {
@@ -211,17 +170,11 @@
         if (!detailUrl) {
           return;
         }
-        fetchDetail(detailUrl);
+        fetchBlogDetail(state, detailUrl);
       });
 
       $("#blogDetailCloseBtn, #blogDetailBottomCloseBtn").on("click", function() {
         closeBlogDetailModal();
-      });
-
-      $("#blogDetailModal").on("click", function(e) {
-        if (e.target === this) {
-          closeBlogDetailModal();
-        }
       });
 
       $("#blogDetailEditBtn").on("click", function() {
@@ -247,6 +200,10 @@
           method: 'DELETE',
           url: deleteUrl,
           dataType: 'json',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+          },
           showLoading: true,
           headers: {
             'X-CSRF-TOKEN': csrfToken,
@@ -301,6 +258,11 @@
             state.currentDetail.note.use_flag_label = nextUseFlag === 'Y' ? '공개' : '비공개';
             state.currentDetail.permissions = state.currentDetail.permissions || {};
             state.currentDetail.permissions.can_delete = (nextUseFlag !== 'Y');
+            syncBlogListItemVisibility(
+              state.currentDetail?.note?.idx,
+              nextUseFlag,
+              state.currentDetail.note.use_flag_label
+            );
             applyBlogDetailState(state, state.currentDetail);
             alert('공개 여부가 변경되었습니다.');
           },
@@ -310,9 +272,7 @@
         });
       });
 
-      $("#blogGoTopBtn").on("click", function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
     });
+
   </script>
 @endsection
