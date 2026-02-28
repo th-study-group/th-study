@@ -13,7 +13,13 @@
         <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
           <h1 class="blog-list-title">{{ $listTitle ?? '전체 글' }}</h1>
           @if (!empty($writeUrl))
-            <button type="button" id="btn_write_top" class="btn btn-dark btn-sm text-nowrap">작성하기</button>
+            <button type="button" id="btn_write_top" class="blog-write-top-btn" title="작성" aria-label="작성">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 20h4l10-10-4-4L4 16v4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+                <path d="M12.5 7.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              </svg>
+              <span>작성</span>
+            </button>
           @endif
         </div>
 

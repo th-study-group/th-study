@@ -4,6 +4,36 @@
     border: 1px solid #e9ecef;
   }
 
+  .blog-write-top-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 92px;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #8fb5ff;
+    border-radius: 10px;
+    background: #4f8cff;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 8px 18px rgba(79, 140, 255, 0.22);
+  }
+
+  .blog-write-top-btn svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .blog-write-top-btn:hover {
+    background: #3f7cf5;
+    color: #fff;
+  }
+
   .blog-create-title {
     margin: 0 0 4px;
     font-weight: 700;
