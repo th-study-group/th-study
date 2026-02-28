@@ -49,7 +49,7 @@
                     @enderror
                 </div>
                 <div class="d-flex justify-content-end gap-2 mt-4">
-                    <button type="button" id="btn_save" class="btn btn-primary">{{ $isEdit ? '수정' : '적용' }}</button>
+                    <button type="button" id="btn_save" class="btn btn-primary">적용</button>
                     <a href="{{ route('admins.posts.index', ['post_type' => 'notice']) }}" class="btn btn-outline-secondary">목록</a>
                 </div>
             </form>
