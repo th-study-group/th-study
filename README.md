@@ -245,6 +245,13 @@ resources/views/
 - 클릭 시 `click_datetime`이 기록되고, `target_url`로 리다이렉트됩니다.
 - 로그인 만료 시에는 로그인 후 intended 경로로 복귀합니다.
 
+5-1. Standalone PWA 링크/이미지 예외 처리
+- 일반 웹은 기존 브라우저 동작(`target="_blank"`, 새 탭/새 창)을 유지합니다.
+- 홈화면 설치 PWA(`standalone`)에서는 외부 URL 클릭 시 바로 새 창을 열지 않고 안내 모달을 먼저 노출합니다.
+- 외부 URL 모달은 `복사`/`열기`만 제공해 iOS PWA에서 닫기 UI가 없는 문제를 완화합니다.
+- 이미지 파일 URL 및 본문 이미지 클릭은 앱 내부 이미지 미리보기 모달로 처리합니다.
+- PWA 전용 스크립트/마크업/스타일은 `public/js/pwa.js`, `resources/views/partials/pwa-popup.blade.php`, `public/css/pwa-modal.css`로 분리합니다.
+
 6. iPhone 캐시 대응(운영 반영 안정화)
 - iOS Safari/PWA는 JS/Service Worker 캐시가 강하게 남을 수 있어, 정적 에셋 버전 파라미터를 적용합니다.
 - `resources/views/partials/head-scripts.blade.php`와 `resources/views/partials/head-styles.blade.php`에서 `filemtime(...)` 기반 `?v=`를 사용합니다.
@@ -743,6 +750,7 @@ sudo systemctl status th-study-queue
 - 저장 위치/규칙
   - disk: `public`
   - 경로: `storage/app/public/{YYYYMM}/{YmdHis}.{ext}`
+  - 파일명은 원본명/UUID 대신 서버에서 생성한 시간값(`YmdHis`)을 사용
   - 같은 초에 업로드가 겹치면 `_{nn}` 접미사로 충돌 방지
 - 업로드 필드명 통일: `thumbnail_path`
 

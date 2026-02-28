@@ -150,7 +150,7 @@
             </tr>
             <tr>
               <td class="fw-bold">썸네일 처리</td>
-              <td>Intervention Image 적용, EXIF 회전 보정, 1600px 축소, PNG 유지/JPG 압축, <code>storage/app/public/YYYYMM</code> 저장</td>
+              <td>Intervention Image 적용, EXIF 회전 보정, 1600px 축소, PNG 유지/JPG 압축, <code>storage/app/public/YYYYMM/YmdHis.ext</code> 저장(동초 충돌 시 접미사 부여)</td>
             </tr>
             <tr>
               <td class="fw-bold">해시태그</td>
@@ -299,6 +299,11 @@
               <td class="fw-bold">5. 클릭 이동</td>
               <td><code>/push/open/{token}</code>으로 클릭률 기록 후 <code>target_url</code>로 이동</td>
               <td><code>app/Http/Controllers/PushController.php</code>, <code>app/Services/PushService.php</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">5-1. PWA 링크/이미지 예외 처리</td>
+              <td>Standalone PWA에서는 외부 URL을 안내 모달로 한 번 감싸고, 이미지 파일 URL/본문 이미지는 앱 내부 미리보기 모달로 열어 닫기 UI 부재 문제를 완화</td>
+              <td><code>public/js/pwa.js</code>, <code>resources/views/partials/pwa-popup.blade.php</code>, <code>public/css/pwa-modal.css</code></td>
             </tr>
             <tr>
               <td class="fw-bold">6. iPhone 캐시 대응</td>
@@ -938,6 +943,14 @@ resources/views/
 <li>푸시 payload URL은 <code>/push/open/{click_token}</code> 형태로 전달됩니다.</li>
 <li>클릭 시 <code>click_datetime</code>이 기록되고, <code>target_url</code>로 리다이렉트됩니다.</li>
 <li>로그인 만료 시에는 로그인 후 intended 경로로 복귀합니다.</li>
+</ul>
+<p>5-1. Standalone PWA 링크/이미지 예외 처리</p>
+<ul>
+<li>일반 웹은 기존 브라우저 동작(<code>target="_blank"</code>, 새 탭/새 창)을 유지합니다.</li>
+<li>홈화면 설치 PWA(<code>standalone</code>)에서는 외부 URL 클릭 시 안내 모달을 먼저 노출합니다.</li>
+<li>외부 URL 모달은 <code>복사</code>/<code>열기</code>만 제공해 iOS PWA에서 닫기 UI가 없는 문제를 완화합니다.</li>
+<li>이미지 파일 URL 및 본문 이미지 클릭은 앱 내부 이미지 미리보기 모달로 처리합니다.</li>
+<li>PWA 전용 분기 코드는 <code>public/js/pwa.js</code>, <code>resources/views/partials/pwa-popup.blade.php</code>, <code>public/css/pwa-modal.css</code>로 분리했습니다.</li>
 </ul>
 <ol start="6">
 <li>iPhone 캐시 대응(운영 반영 안정화)</li>
