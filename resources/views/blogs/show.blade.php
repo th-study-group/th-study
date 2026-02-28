@@ -13,11 +13,13 @@
 @section('content')
   <section class="col-12 col-lg-8 mx-auto blog-page-scope">
     <div class="board-card blog-show-page p-3 p-lg-4 rounded-3 shadow-sm">
-      <button type="button" class="btn_note_list btn btn-dark btn-sm blog-show-top-list">목록</button>
+      <div class="blog-show-head">
+        <div class="blog-show-head-category">{{ $note->group_topic_name }}</div>
+        <button type="button" class="btn_note_list btn btn-dark btn-sm blog-show-top-list">목록</button>
+      </div>
       <h1 class="blog-show-title">{{ $note->subject }}</h1>
 
       <div class="blog-show-meta">
-        <span class="blog-show-meta-topic">{{ $note->group_topic_name }}</span>
         <span class="blog-show-meta-date">{{ $note->create_datetime?->format('Y-m-d H:i:s') ?? '-' }}</span>
       </div>
 

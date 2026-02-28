@@ -76,9 +76,11 @@
         </button>
       </div>
       <div class="blog-detail-body">
-        <h2 id="blogDetailTitle" class="blog-detail-title"></h2>
+        <div id="blogDetailCategory" class="blog-detail-head-category"></div>
+        <div class="blog-detail-title-row">
+          <h2 id="blogDetailTitle" class="blog-detail-title"></h2>
+        </div>
         <div class="blog-detail-meta">
-          <span id="blogDetailCategory"></span>
           <span id="blogDetailDate"></span>
         </div>
         <div class="blog-detail-visibility">

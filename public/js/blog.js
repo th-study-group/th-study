@@ -277,8 +277,8 @@ function applyBlogDetailState(state, payload) {
     permissions,
   };
 
-  $('#blogDetailTitle').text(note.subject || '-');
   $('#blogDetailCategory').text(note.group_topic_name || '-');
+  $('#blogDetailTitle').text(note.subject || '-');
   $('#blogDetailDate').text(note.create_datetime || '-');
   $('#blogDetailContent').html(note.content_html || '');
 
