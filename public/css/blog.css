@@ -1316,7 +1316,8 @@
       height: 100dvh;
       height: 100svh;
       border-radius: 0;
-      display: block;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr);
       position: relative;
     }
 
@@ -1352,6 +1353,10 @@
         max(14px, calc(env(safe-area-inset-right, 0px) + 14px))
         max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px))
         max(14px, calc(env(safe-area-inset-left, 0px) + 14px));
+      min-height: 0;
+      height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     body.is-standalone-pwa .blog-detail-close {
