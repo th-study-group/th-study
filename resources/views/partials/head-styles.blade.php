@@ -1,6 +1,7 @@
 <link href="{{ asset('css/bootstrap.min.css') }}?v={{ filemtime(public_path('css/bootstrap.min.css')) }}" rel="stylesheet" />
 <link href="{{ asset('css/common.css') }}?v={{ filemtime(public_path('css/common.css')) }}" rel="stylesheet" />
 <link href="{{ asset('css/modal.css') }}?v={{ filemtime(public_path('css/modal.css')) }}" rel="stylesheet" />
+<link href="{{ asset('css/pwa-modal.css') }}?v={{ filemtime(public_path('css/pwa-modal.css')) }}" rel="stylesheet" />
 <link href="{{ asset('css/board.css') }}?v={{ filemtime(public_path('css/board.css')) }}" rel="stylesheet" />
 <link href="{{ asset('css/splash.css') }}?v={{ filemtime(public_path('css/splash.css')) }}" rel="stylesheet" />
 
