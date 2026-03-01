@@ -566,6 +566,9 @@ php artisan db:seed --class=NoteMasterSeeder --force
 - `/usr/local/bin/laravel_file_backup.sh`
 - `/usr/local/bin/laravel_file_backup_cleanup.sh`
 
+파일 백업 실행 확인 스크립트:
+- `sudo grep CRON /var/log/syslog | grep laravel_file_backup`
+
 크론 예시:
 
 ```bash
