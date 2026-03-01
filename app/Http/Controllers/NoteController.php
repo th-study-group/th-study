@@ -95,8 +95,8 @@ class NoteController extends Controller
         $note = $this->noteService->getNoteDetail($noteGroup, $slug, $idx);
         $contentHtml = $this->noteService->toRenderableHtml($note->content ?? '');
         
-        $metaTitle = (string) ($note->subject ?? '상세내역');
-        $plainContent = trim((string) preg_replace('/\s+/u', ' ', strip_tags($contentHtml)));
+        $metaTitle = $note->subject ?? '상세내역';
+        $plainContent = trim(preg_replace('/\s+/u', ' ', strip_tags($contentHtml)));
         $metaDescription = $plainContent !== '' ? Str::limit($plainContent, 160) : '상세내역';
         $metaImage = ! empty($note->thumbnail_path)
             ? url(Storage::url((string) $note->thumbnail_path))

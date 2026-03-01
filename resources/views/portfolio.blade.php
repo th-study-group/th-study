@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', '포트폴리오')
+@section('title', '포트포리오')
+@section('og_description', '개발자성장플랫폼 티에이치스터디 포트폴리오')
 
 @section('style')
 @endsection
