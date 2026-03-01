@@ -37,6 +37,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Queue: Database queue
 - Realtime(실험): Pusher + Laravel Echo
 - Infra: Ubuntu(Nginx + PHP-FPM) self-hosted deploy
+- Domain/DNS: Gabia 등록 + Cloudflare 네임서버/DNS/Email Routing
 
 ### 프론트 라이브러리 구성(`app.blade.php` 기준)
 
@@ -203,6 +204,30 @@ resources/views/
 - 수신 확인 시각/아이피(`receive_datetime`, `receive_ip`)
 
 운영자는 발송 이력과 링크 도달 이력을 분리해서 추적할 수 있습니다.
+
+### 8.4.1 도메인 메일 주소 / Cloudflare Email Routing
+
+도메인 메일 주소는 "실제 기업 메일 서버 운영"이 아니라, Cloudflare Email Routing 기반 전달 주소로 사용합니다.
+
+1. 도메인/DNS 구조
+- 도메인 등록기관은 가비아를 사용합니다.
+- 권한 네임서버는 Cloudflare로 위임합니다.
+- 현재 기준 네임서버는 `earl.ns.cloudflare.com`, `maeve.ns.cloudflare.com` 입니다.
+
+2. 전달 주소 구조
+- 공개 대표 주소는 `admin@th-study.com` 입니다.
+- Cloudflare Email Routing이 위 주소로 들어온 메일을 `developerkimtakgu@gmail.com` 으로 전달합니다.
+- 이 구조는 브랜드용 주소 노출, 개인정보 보호, 무료 운영 목적에 적합합니다.
+
+3. 앱에서의 사용 위치
+- 사용자 문의 링크는 `mailto:admin@th-study.com` 형태로 사용합니다.
+- 웹 푸시 VAPID subject 식별자도 같은 주소를 기준으로 사용합니다.
+- `.env`에는 `VAPID_SUBJECT=admin@th-study.com` 값을 두고, `config/services.php`에서 최종적으로 `mailto:admin@th-study.com` 형태로 조립합니다.
+
+4. 주의점
+- `MAIL_FROM_ADDRESS=admin@th-study.com` 설정만으로 Laravel 서버 메일 발송이 완성되는 것은 아닙니다.
+- `mailto:` 링크와 Cloudflare 전달 주소는 "받는 주소/식별자" 용도이고, Laravel Mail 자동 발송은 별도의 SMTP 또는 메일 발송 서비스 구성이 필요합니다.
+- 즉, 현재 구조는 "연락받기"와 "VAPID 식별"에는 충분하지만, "서버가 admin@th-study.com 으로 직접 발송"하려면 발신 도메인 인증까지 별도로 준비해야 합니다.
 
 ### 8.5 PWA 설치부터 푸시 동작 흐름
 
@@ -425,10 +450,12 @@ ssh -i /path/to/lightsail-key.pem ubuntu@<LIGHTSAIL_STATIC_IP>
 
 1. Ubuntu LTS + 고정 IP + 22/80/443 오픈
 2. Nginx, PHP-FPM(8.2 계열), MySQL(8 계열), Node/npm 설치
-3. 타임존 `Asia/Seoul` 통일
-4. 프로젝트 배포 디렉터리 고정(예: `/var/www/th-study`)
-5. Nginx 서버블록 + HTTPS(Let’s Encrypt) 적용
-6. Queue 워커 상시 실행(systemd 서비스)
+3. 가비아 등록 도메인의 네임서버를 Cloudflare(`earl.ns.cloudflare.com`, `maeve.ns.cloudflare.com`)로 위임
+4. Cloudflare DNS에서 운영 도메인 A/CNAME/메일 관련 레코드 관리
+5. 타임존 `Asia/Seoul` 통일
+6. 프로젝트 배포 디렉터리 고정(예: `/var/www/th-study`)
+7. Nginx 서버블록 + HTTPS(Let’s Encrypt) 적용
+8. Queue 워커 상시 실행(systemd 서비스)
 
 프론트 자산 모드 구분:
 - 개발: `npm run dev` (HMR/개발용)

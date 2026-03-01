@@ -29,6 +29,7 @@
           <div class="fw-bold text-white mb-2">요약</div>
           <ul class="text-white-50 mb-3" style="margin-left:18px;">
             <li>운영: AWS Lightsail Ubuntu 직접 구성</li>
+            <li>도메인: 가비아 등록 후 Cloudflare 네임서버/DNS/Email Routing 운영</li>
             <li>검증: 로컬 환경 및 Docker Compose 이용하여 테스트</li>
             <li>백업: <code style="color:#fff;">/backup/mysql</code> + <code style="color:#fff;">/backup/laravel_files</code> 14일 보관</li>
           </ul>
@@ -311,8 +312,21 @@
               <td>정적 JS/CSS와 서비스워커 URL에 <code>filemtime</code> 기반 버전 쿼리를 붙여 운영 캐시 고착을 방지</td>
               <td><code>resources/views/partials/head-scripts.blade.php</code>, <code>resources/views/partials/head-styles.blade.php</code>, <code>resources/views/layouts/app.blade.php</code></td>
             </tr>
+            <tr>
+              <td class="fw-bold">7. VAPID / 문의 메일 주소</td>
+              <td>공개 주소 <code>admin@th-study.com</code>은 Cloudflare Email Routing으로 Gmail에 전달하고, 웹에서는 <code>mailto:</code> 링크와 VAPID subject 식별자로 사용</td>
+              <td><code>config/services.php</code>, <code>resources/views/intro.blade.php</code>, Cloudflare Email Routing</td>
+            </tr>
           </tbody>
         </table>
+      </div>
+      <div class="callout mt-4">
+        <strong>운영 메일 구조</strong><br>
+        도메인은 가비아에서 등록하고, 네임서버는 Cloudflare(<code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code>)로 위임했습니다.
+        <br>
+        <code>admin@th-study.com</code> 으로 들어온 메일은 Cloudflare Email Routing을 통해 <code>developerkimtakgu@gmail.com</code> 으로 전달됩니다.
+        <br>
+        Laravel 설정에서는 <code>VAPID_SUBJECT=admin@th-study.com</code> 값을 사용하고, <code>config/services.php</code>에서 최종적으로 <code>mailto:admin@th-study.com</code> 형태로 조립합니다.
       </div>
     </div>
   </div>
@@ -493,6 +507,8 @@ php artisan db:seed --class=NoteMasterSeeder --force</code></pre>
             <tr><td class="fw-bold">서버</td><td>AWS Lightsail / Ubuntu</td></tr>
             <tr><td class="fw-bold">웹</td><td>Nginx + PHP-FPM</td></tr>
             <tr><td class="fw-bold">DB</td><td>MySQL</td></tr>
+            <tr><td class="fw-bold">도메인/DNS</td><td>가비아 등록 도메인 + Cloudflare 네임서버/DNS 운영 (<code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code>)</td></tr>
+            <tr><td class="fw-bold">대표 메일</td><td><code>admin@th-study.com</code> -> Cloudflare Email Routing -> <code>developerkimtakgu@gmail.com</code></td></tr>
             <tr><td class="fw-bold">운영 특징</td><td>도커 없이 직접 설치 운영</td></tr>
           </tbody>
         </table>
@@ -806,6 +822,7 @@ sudo systemctl status th-study-queue</code></pre>
         <li>Laravel 10 기반 개발자 성장 플랫폼을 기획부터 운영까지 직접 구축</li>
         <li>핵심 아키텍처는 Controller-Service-Repository 분리와 정책 기반 접근 제어</li>
         <li>메일/큐/로그/백업 포함 운영 흐름을 실서비스 수준으로 문서화</li>
+        <li>도메인은 가비아에서 등록하고 Cloudflare 네임서버/DNS/Email Routing으로 외부 노출 주소를 운영</li>
         <li>sitemap, robots.txt, 공개 URL 정책까지 코드 중심으로 관리</li>
         <li>배포는 SSH + git pull + migrate + systemd queue 재시작 기준으로 표준화</li>
       </ul>
@@ -848,6 +865,7 @@ sudo systemctl status th-study-queue</code></pre>
 <li>Queue: Database queue</li>
 <li>Realtime(실험): Pusher + Laravel Echo</li>
 <li>Infra: Ubuntu self-hosted deploy</li>
+<li>Domain/DNS: Gabia 등록 + Cloudflare 네임서버/DNS/Email Routing</li>
 </ul>
 <h3 id="readme-프론트-라이브러리-구성appbladephp-기준">프론트 라이브러리 구성 <code>app.blade.php</code> 기준</h3>
 <p>로딩 기준 파일:</p>
@@ -1005,6 +1023,40 @@ resources/views/
 <li>수신 확인 시각/아이피(<code>receive_datetime</code>, <code>receive_ip</code>)</li>
 </ul>
 <p>운영자는 발송 이력과 링크 도달 이력을 분리해서 추적할 수 있습니다.</p>
+<h3 id="readme-841-도메인-메일-주소-cloudflare-email-routing">8.4.1 도메인 메일 주소 / Cloudflare Email Routing</h3>
+<p>도메인 메일 주소는 실제 기업 메일 서버가 아니라 Cloudflare Email Routing 기반 전달 주소로 운영합니다.</p>
+<ol>
+<li>도메인/DNS 구조</li>
+</ol>
+<ul>
+<li>도메인 등록기관은 가비아를 사용합니다.</li>
+<li>권한 네임서버는 Cloudflare로 위임합니다.</li>
+<li>현재 기준 네임서버는 <code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code> 입니다.</li>
+</ul>
+<ol>
+<li>전달 주소 구조</li>
+</ol>
+<ul>
+<li>공개 대표 주소는 <code>admin@th-study.com</code> 입니다.</li>
+<li>Cloudflare Email Routing이 위 주소로 들어온 메일을 <code>developerkimtakgu@gmail.com</code> 으로 전달합니다.</li>
+<li>이 구조는 브랜드용 주소 노출, 개인정보 보호, 무료 운영 목적에 적합합니다.</li>
+</ul>
+<ol>
+<li>앱에서의 사용 위치</li>
+</ol>
+<ul>
+<li>사용자 문의 링크는 <code>mailto:admin@th-study.com</code> 형태로 사용합니다.</li>
+<li>웹 푸시 VAPID subject 식별자도 같은 주소를 기준으로 사용합니다.</li>
+<li><code>.env</code>에는 <code>VAPID_SUBJECT=admin@th-study.com</code> 값을 두고, <code>config/services.php</code>에서 최종적으로 <code>mailto:admin@th-study.com</code> 형태로 조립합니다.</li>
+</ul>
+<ol>
+<li>주의점</li>
+</ol>
+<ul>
+<li><code>MAIL_FROM_ADDRESS=admin@th-study.com</code> 설정만으로 Laravel 서버 메일 발송이 완성되는 것은 아닙니다.</li>
+<li><code>mailto:</code> 링크와 Cloudflare 전달 주소는 받는 주소/식별자 용도이고, Laravel Mail 자동 발송은 별도의 SMTP 또는 메일 발송 서비스 구성이 필요합니다.</li>
+<li>즉, 현재 구조는 연락받기와 VAPID 식별에는 충분하지만, 서버가 <code>admin@th-study.com</code> 으로 직접 발송하려면 발신 도메인 인증까지 별도로 준비해야 합니다.</li>
+</ul>
 <h3 id="readme-85-pwa-설치부터-푸시-동작-흐름">8.5 PWA 설치부터 푸시 동작 흐름</h3>
 <p>웹 푸시는 설치/구독/발송/클릭 추적까지 한 흐름으로 동작합니다.</p>
 <ol>
@@ -1184,6 +1236,8 @@ docker compose ps</code></pre></div>
 <h3 id="readme-122-서버-기본-구성">12.2 서버 기본 구성</h3>
 <ul>
 <li>AWS Lightsail (Ubuntu 22.04 LTS), SSH Key 기반 접속</li>
+<li>가비아 등록 도메인의 네임서버를 Cloudflare(<code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code>)로 위임</li>
+<li>Cloudflare DNS에서 운영 도메인 A/CNAME/메일 관련 레코드 관리</li>
 <li>타임존 <code>Asia/Seoul</code> 통일, 배포 경로 <code>/var/www/th-study</code> 고정</li>
 <li>Nginx 서버블록 + HTTPS(Let's Encrypt) 적용</li>
 <li>Queue 워커 상시 실행(systemd)</li>
