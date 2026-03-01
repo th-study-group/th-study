@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PushController;
-use App\Http\Controllers\TestController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,3 +45,13 @@ Route::group([], function() {
 // 웹 푸시 발송 후 사용자 클릭 추적
 Route::get('/push/open/{token}', [PushController::class, 'open'])
   ->middleware(['throttle:120,1']); // 클릭추적
+
+// 사이트맵 
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+
+// 동적 robots.txt  처리
+Route::get('/robots.txt', function () {
+    return response()
+        ->view('robots')
+        ->header('Content-Type', 'text/plain');
+});

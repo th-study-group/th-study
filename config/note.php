@@ -3,7 +3,7 @@
 return [
     'photos' => [
         'food' => [
-            'title' => '음식',
+            'title' => '맛집',
             'url'   => '/photos/food',
         ],
         'cafe' => [
@@ -39,7 +39,7 @@ return [
             'url'   => '/blogs/tour',
         ],
         'food' => [
-            'title' => '음식',
+            'title' => '맛집',
             'url'   => '/blogs/food',
         ],
         'cafe' => [
@@ -53,7 +53,7 @@ return [
     ],
     'maps' => [
         'food' => [
-            'title' => '음식',
+            'title' => '맛집',
             'url'   => '/maps/food',
         ],
         'cafe' => [
