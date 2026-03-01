@@ -216,7 +216,7 @@ resources/views/
 
 2. 전달 주소 구조
 - 공개 대표 주소는 `admin@th-study.com` 입니다.
-- Cloudflare Email Routing이 위 주소로 들어온 메일을 `developerkimtakgu@gmail.com` 으로 전달합니다.
+- Cloudflare Email Routing이 위 주소로 들어온 메일을 예시 전달 주소인 `inbox@example.com` 으로 전달하는 방식으로 운영할 수 있습니다.
 - 이 구조는 브랜드용 주소 노출, 개인정보 보호, 무료 운영 목적에 적합합니다.
 
 3. 앱에서의 사용 위치

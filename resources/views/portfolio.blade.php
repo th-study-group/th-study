@@ -314,7 +314,7 @@
             </tr>
             <tr>
               <td class="fw-bold">7. VAPID / 문의 메일 주소</td>
-              <td>공개 주소 <code>admin@th-study.com</code>은 Cloudflare Email Routing으로 Gmail에 전달하고, 웹에서는 <code>mailto:</code> 링크와 VAPID subject 식별자로 사용</td>
+              <td>공개 주소 <code>admin@th-study.com</code>은 Cloudflare Email Routing으로 예시 전달 주소에 포워딩하고, 웹에서는 <code>mailto:</code> 링크와 VAPID subject 식별자로 사용</td>
               <td><code>config/services.php</code>, <code>resources/views/intro.blade.php</code>, Cloudflare Email Routing</td>
             </tr>
           </tbody>
@@ -324,7 +324,7 @@
         <strong>운영 메일 구조</strong><br>
         도메인은 가비아에서 등록하고, 네임서버는 Cloudflare(<code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code>)로 위임했습니다.
         <br>
-        <code>admin@th-study.com</code> 으로 들어온 메일은 Cloudflare Email Routing을 통해 <code>developerkimtakgu@gmail.com</code> 으로 전달됩니다.
+        <code>admin@th-study.com</code> 으로 들어온 메일은 Cloudflare Email Routing을 통해 예시 전달 주소 <code>inbox@example.com</code> 으로 전달되는 구조입니다.
         <br>
         Laravel 설정에서는 <code>VAPID_SUBJECT=admin@th-study.com</code> 값을 사용하고, <code>config/services.php</code>에서 최종적으로 <code>mailto:admin@th-study.com</code> 형태로 조립합니다.
       </div>
@@ -508,7 +508,7 @@ php artisan db:seed --class=NoteMasterSeeder --force</code></pre>
             <tr><td class="fw-bold">웹</td><td>Nginx + PHP-FPM</td></tr>
             <tr><td class="fw-bold">DB</td><td>MySQL</td></tr>
             <tr><td class="fw-bold">도메인/DNS</td><td>가비아 등록 도메인 + Cloudflare 네임서버/DNS 운영 (<code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code>)</td></tr>
-            <tr><td class="fw-bold">대표 메일</td><td><code>admin@th-study.com</code> -> Cloudflare Email Routing -> <code>developerkimtakgu@gmail.com</code></td></tr>
+            <tr><td class="fw-bold">대표 메일</td><td><code>admin@th-study.com</code> -> Cloudflare Email Routing -> <code>inbox@example.com</code> (예시)</td></tr>
             <tr><td class="fw-bold">운영 특징</td><td>도커 없이 직접 설치 운영</td></tr>
           </tbody>
         </table>
@@ -1038,7 +1038,7 @@ resources/views/
 </ol>
 <ul>
 <li>공개 대표 주소는 <code>admin@th-study.com</code> 입니다.</li>
-<li>Cloudflare Email Routing이 위 주소로 들어온 메일을 <code>developerkimtakgu@gmail.com</code> 으로 전달합니다.</li>
+<li>Cloudflare Email Routing이 위 주소로 들어온 메일을 예시 전달 주소인 <code>inbox@example.com</code> 으로 전달하는 방식으로 운영할 수 있습니다.</li>
 <li>이 구조는 브랜드용 주소 노출, 개인정보 보호, 무료 운영 목적에 적합합니다.</li>
 </ul>
 <ol>
