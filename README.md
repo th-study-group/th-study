@@ -276,7 +276,12 @@ resources/views/
 - 블로그 URL은 `config/note.php` 기준으로 `/blogs/develop`, `/blogs/tour`, `/blogs/food`, `/blogs/cafe`, `/blogs/economy`를 사용합니다.
 - 노출 라벨도 기존 `음식`에서 `맛집`으로 정리해 메뉴명과 SEO 표현을 맞췄습니다.
 
-4. 운영 주의점
+4. 네이버 서치어드바이저 등록
+- 네이버 서치어드바이저에 사이트를 등록해 국내 검색엔진 수집 채널도 별도로 확보했습니다.
+- 운영 기준은 `/robots.txt`, `/sitemap.xml` 같은 공개 크롤링 기준 URL을 함께 유지하는 것입니다.
+- 검색 유입 점검 시에는 Google 계열 색인과 별개로 네이버 수집 상태도 같이 확인합니다.
+
+5. 운영 주의점
 - `APP_URL`이 비어 있거나 끝 슬래시가 잘못 들어가면 `Sitemap`/`robots.txt`의 절대 URL이 깨질 수 있습니다.
 - 새 공개 페이지를 추가하면 `config/sitemap.php` 등록과 `robots.txt` 허용 정책을 함께 검토해야 합니다.
 

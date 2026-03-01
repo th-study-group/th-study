@@ -358,6 +358,11 @@
               <td>사용자 노출 명칭을 기존 <code>음식</code>에서 <code>맛집</code>으로 통일해 블로그 카테고리 의미와 검색 표현을 맞춤</td>
               <td><code>config/note.php</code></td>
             </tr>
+            <tr>
+              <td class="fw-bold">네이버 서치어드바이저</td>
+              <td>네이버 서치어드바이저에 사이트를 등록해 국내 검색엔진 수집 경로를 추가하고, 운영 기준 URL은 <code>/robots.txt</code>와 <code>/sitemap.xml</code>로 통일</td>
+              <td>네이버 서치어드바이저, <code>routes/web.php</code>, <code>config/sitemap.php</code></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -366,6 +371,7 @@
         <ul class="mb-0 mt-2">
           <li><code>APP_URL</code>이 sitemap/robots 절대 URL의 기준이므로 운영 도메인 값이 정확해야 함</li>
           <li>새 공개 페이지를 만들면 라우트 추가만으로 끝내지 않고 <code>config/sitemap.php</code>와 robots 정책도 함께 검토</li>
+          <li>검색 유입 관리는 Google 색인만 보지 않고 네이버 서치어드바이저 수집 상태도 함께 확인</li>
           <li>검색엔진 노출은 동적 페이지보다 공개 목록/브랜드 소개/포트폴리오 중심으로 우선 관리</li>
         </ul>
       </div>
@@ -1098,6 +1104,14 @@ resources/views/
 <li>노출 라벨도 기존 <code>음식</code>에서 <code>맛집</code>으로 정리해 메뉴명과 SEO 표현을 맞췄습니다.</li>
 </ul>
 <ol start="4">
+<li>네이버 서치어드바이저 등록</li>
+</ol>
+<ul>
+<li>네이버 서치어드바이저에 사이트를 등록해 국내 검색엔진 수집 채널도 별도로 확보했습니다.</li>
+<li>운영 기준은 <code>/robots.txt</code>, <code>/sitemap.xml</code> 같은 공개 크롤링 기준 URL을 함께 유지하는 것입니다.</li>
+<li>검색 유입 점검 시에는 Google 계열 색인과 별개로 네이버 수집 상태도 같이 확인합니다.</li>
+</ul>
+<ol start="5">
 <li>운영 주의점</li>
 </ol>
 <ul>
