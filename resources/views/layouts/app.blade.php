@@ -4,6 +4,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
+        {{-- 네이버 검색엔진 SEO 서치어드바이저 --}}
+        <meta name="naver-site-verification" content="2a350b8a4be67f3a443b1eafc451fe588a8ee0b5" />
+
         {{-- 아이폰 주소, 날짜, 이메일 등 밑줄 방지 --}}
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
 
