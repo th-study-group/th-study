@@ -610,6 +610,9 @@ tar -czf "$BACKUP_DIR/laravel_${NOW}.tar.gz" \
           <pre id="fileBackupOps"><code># 14일 지난 파일 백업 삭제
 find /backup/laravel_files -name "laravel_*.tar.gz" -mtime +14 -delete
 
+# 파일 백업 실행 확인 스크립트:
+sudo grep CRON /var/log/syslog | grep laravel_file_backup
+
 # 실행 테스트
 sudo /usr/local/bin/laravel_file_backup.sh
 sudo sh /usr/local/bin/laravel_file_backup.sh
