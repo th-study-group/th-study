@@ -258,6 +258,28 @@ resources/views/
 - `resources/views/layouts/app.blade.php`의 서비스워커 등록 URL에도 `?v=`를 붙이고 `reg.update()`를 호출합니다.
 - 배포 시 `php artisan optimize:clear`를 실행해 서버 캐시를 정리합니다.
 
+### 8.6 검색엔진 최적화(SEO) 운영
+
+검색엔진 크롤링과 색인 기준도 코드로 관리합니다.
+
+1. Sitemap 동적 생성
+- `spatie/laravel-sitemap` 패키지를 도입해 `/sitemap.xml` 요청 시 동적으로 XML을 생성합니다.
+- `app/Http/Controllers/SitemapController.php`가 `config/sitemap.php`를 읽어 URL, `changefreq`, `priority`, `lastmod`를 조립합니다.
+- 현재 등록 대상은 메인, 소개, 공지 목록, 블로그 전체/카테고리, 포트폴리오입니다.
+
+2. robots.txt 동적 응답
+- 정적 `public/robots.txt`를 제거하고 `routes/web.php`에서 `/robots.txt`를 동적으로 응답합니다.
+- 응답 본문은 `resources/views/robots.blade.php`로 관리하고, 헤더는 `text/plain`으로 명시합니다.
+- 크롤링 허용 경로는 열고, 관리자/대시보드/회원/문의/푸시/비밀번호 재설정 관련 경로는 차단합니다.
+
+3. URL/카테고리 정합성
+- 블로그 URL은 `config/note.php` 기준으로 `/blogs/develop`, `/blogs/tour`, `/blogs/food`, `/blogs/cafe`, `/blogs/economy`를 사용합니다.
+- 노출 라벨도 기존 `음식`에서 `맛집`으로 정리해 메뉴명과 SEO 표현을 맞췄습니다.
+
+4. 운영 주의점
+- `APP_URL`이 비어 있거나 끝 슬래시가 잘못 들어가면 `Sitemap`/`robots.txt`의 절대 URL이 깨질 수 있습니다.
+- 새 공개 페이지를 추가하면 `config/sitemap.php` 등록과 `robots.txt` 허용 정책을 함께 검토해야 합니다.
+
 ## 9. 데이터 모델 핵심
 
 - `users`: 회원

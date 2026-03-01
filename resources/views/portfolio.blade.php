@@ -58,14 +58,15 @@
             <li><a href="#note-module">3. 블로그 서비스 모듈 구축</a><span class="toc-dots"></span><span class="toc-desc">CRUD 기반 설계/검증/권한</span></li>
             <li><a href="#flows">4. 핵심 흐름</a><span class="toc-dots"></span><span class="toc-desc">메일/배포</span></li>
             <li><a href="#pwa-push">5. PWA 설치/푸시</a><span class="toc-dots"></span><span class="toc-desc">허용/구독/캐시 대응</span></li>
-            <li><a href="#run">6. 실행</a><span class="toc-dots"></span><span class="toc-desc">로컬/큐</span></li>
-            <li><a href="#deploy">7. 배포</a><span class="toc-dots"></span><span class="toc-desc">SSH + git pull</span></li>
-            <li><a href="#infra">8. 운영 인프라</a><span class="toc-dots"></span><span class="toc-desc">Lightsail + Swap</span></li>
-            <li><a href="#backup">9. DB / 파일 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
-            <li><a href="#docker">10. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
-            <li><a href="#queue-service">11. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
-            <li><a href="#codex-skill">12. Codex 스킬</a><span class="toc-dots"></span><span class="toc-desc">SKILL.md 작성법과 파일 종류</span></li>
-            <li><a href="#appendix">13. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
+            <li><a href="#seo">6. 검색엔진 최적화</a><span class="toc-dots"></span><span class="toc-desc">sitemap/robots 운영</span></li>
+            <li><a href="#run">7. 실행</a><span class="toc-dots"></span><span class="toc-desc">로컬/큐</span></li>
+            <li><a href="#deploy">8. 배포</a><span class="toc-dots"></span><span class="toc-desc">SSH + git pull</span></li>
+            <li><a href="#infra">9. 운영 인프라</a><span class="toc-dots"></span><span class="toc-desc">Lightsail + Swap</span></li>
+            <li><a href="#backup">10. DB / 파일 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
+            <li><a href="#docker">11. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
+            <li><a href="#queue-service">12. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
+            <li><a href="#codex-skill">13. Codex 스킬</a><span class="toc-dots"></span><span class="toc-desc">SKILL.md 작성법과 파일 종류</span></li>
+            <li><a href="#appendix">14. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
           </ul>
         </div>
       </div>
@@ -317,9 +318,64 @@
   </div>
 </section>
 
+<section id="seo" class="section bg-light">
+  <div class="container">
+    <h2 class="h2x mb-3">6. 검색엔진 최적화</h2>
+    <div class="box pad">
+      <p class="leadx mb-3">공개 페이지가 검색엔진에 안정적으로 수집되도록 sitemap과 robots 정책을 정적 파일이 아니라 코드 기준으로 관리합니다.</p>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:22%">영역</th>
+              <th>구현 내용</th>
+              <th style="width:32%">기준 코드</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold">Sitemap 생성</td>
+              <td><code>spatie/laravel-sitemap</code> 기반으로 `/sitemap.xml` 요청 시 동적 XML 생성. URL별 <code>changefreq</code>, <code>priority</code>, <code>lastmod</code>를 코드에서 제어</td>
+              <td><code>app/Http/Controllers/SitemapController.php</code>, <code>config/sitemap.php</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">robots.txt 운영</td>
+              <td>정적 <code>public/robots.txt</code>를 제거하고 라우트 기반 동적 응답으로 전환. 크롤링 차단 경로와 sitemap 위치를 뷰에서 관리</td>
+              <td><code>routes/web.php</code>, <code>resources/views/robots.blade.php</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">공개 URL 범위</td>
+              <td>메인, 소개, 공지 목록, 블로그 전체/카테고리, 포트폴리오를 sitemap 대상에 포함</td>
+              <td><code>config/sitemap.php</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">차단 정책</td>
+              <td><code>/admin</code>, <code>/dashboard</code>, <code>/users</code>, <code>/inquiries</code>, <code>/push</code>, 비밀번호/계정 복구 관련 경로는 robots에서 비노출 처리</td>
+              <td><code>resources/views/robots.blade.php</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">카테고리 표현 정리</td>
+              <td>사용자 노출 명칭을 기존 <code>음식</code>에서 <code>맛집</code>으로 통일해 블로그 카테고리 의미와 검색 표현을 맞춤</td>
+              <td><code>config/note.php</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout mt-4">
+        <strong>운영 기준</strong>
+        <ul class="mb-0 mt-2">
+          <li><code>APP_URL</code>이 sitemap/robots 절대 URL의 기준이므로 운영 도메인 값이 정확해야 함</li>
+          <li>새 공개 페이지를 만들면 라우트 추가만으로 끝내지 않고 <code>config/sitemap.php</code>와 robots 정책도 함께 검토</li>
+          <li>검색엔진 노출은 동적 페이지보다 공개 목록/브랜드 소개/포트폴리오 중심으로 우선 관리</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="run" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">6. 실행</h2>
+    <h2 class="h2x mb-3">7. 실행</h2>
     <div class="box pad">
     <div class="codeblock">
       <div class="codehdr"><span>bash · 로컬 실행(예시)</span><button class="copybtn no-print" onclick="copyFrom('#localRun', this)">복사</button></div>
@@ -356,7 +412,7 @@ php artisan queue:failed</code></pre>
 
 <section id="deploy" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">7. 배포</h2>
+    <h2 class="h2x mb-3">8. 배포</h2>
     <div class="box pad">
     <div class="codeblock">
       <div class="codehdr"><span>bash · 서버 접속</span><button class="copybtn no-print" onclick="copyFrom('#sshCmd', this)">복사</button></div>
@@ -422,7 +478,7 @@ php artisan db:seed --class=NoteMasterSeeder --force</code></pre>
 
 <section id="infra" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">8. 운영 인프라 AWS Lightsail</h2>
+    <h2 class="h2x mb-3">9. 운영 인프라 AWS Lightsail</h2>
     <div class="box pad">
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
@@ -488,7 +544,7 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="backup" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">9. DB / 파일 백업</h2>
+    <h2 class="h2x mb-3">10. DB / 파일 백업</h2>
     <div class="box pad">
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
@@ -565,7 +621,7 @@ ls -lh /backup/laravel_files</code></pre>
 
 <section id="docker" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">10. 개발 검증 Docker</h2>
+    <h2 class="h2x mb-3">11. 개발 검증 Docker</h2>
     <div class="box pad">
       <p class="leadx mb-2">배포 전 동일한 Ubuntu 기반 환경을 검증하기 위해 Docker Compose를 사용합니다.</p>
       
@@ -612,7 +668,7 @@ SHOW TABLES;</code></pre>
 
 <section id="queue-service" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">11. Queue 영구 실행 systemd</h2>
+    <h2 class="h2x mb-3">12. Queue 영구 실행 systemd</h2>
     <div class="box pad">
       <div class="codeblock">
         <div class="codehdr"><span>bash · 서비스 파일 생성</span><button class="copybtn no-print" onclick="copyFrom('#queueSvcCreate', this)">복사</button></div>
@@ -652,7 +708,7 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="codex-skill" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">12. Codex 스킬 문서 가이드</h2>
+    <h2 class="h2x mb-3">13. Codex 스킬 문서 가이드</h2>
     <div class="box pad">
       <p class="leadx mb-3">
         티에이치스터디는 Codex 스킬을 작업 지침서처럼 사용합니다.
@@ -737,13 +793,14 @@ sudo systemctl status th-study-queue</code></pre>
 
 <section id="appendix" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">13. README 원문</h2>
+    <h2 class="h2x mb-3">14. README 원문</h2>
     <div class="box pad readme-summary">
       <p class="fw-bold mb-2">포트폴리오 관점 요약</p>
       <ul>
         <li>Laravel 10 기반 개발자 성장 플랫폼을 기획부터 운영까지 직접 구축</li>
         <li>핵심 아키텍처는 Controller-Service-Repository 분리와 정책 기반 접근 제어</li>
         <li>메일/큐/로그/백업 포함 운영 흐름을 실서비스 수준으로 문서화</li>
+        <li>sitemap, robots.txt, 공개 URL 정책까지 코드 중심으로 관리</li>
         <li>배포는 SSH + git pull + migrate + systemd queue 재시작 기준으로 표준화</li>
       </ul>
     </div>
@@ -1014,6 +1071,38 @@ resources/views/
 <li><code>resources/views/partials/head-scripts.blade.php</code>와 <code>resources/views/partials/head-styles.blade.php</code>에서 <code>filemtime(...)</code> 기반 <code>?v=</code>를 사용합니다.</li>
 <li><code>resources/views/layouts/app.blade.php</code>의 서비스워커 등록 URL에도 <code>?v=</code>를 붙이고 <code>reg.update()</code>를 호출합니다.</li>
 <li>배포 시 <code>php artisan optimize:clear</code>를 실행해 서버 캐시를 정리합니다.</li>
+</ul>
+<h3 id="readme-86-검색엔진-최적화seo-운영">8.6 검색엔진 최적화(SEO) 운영</h3>
+<p>검색엔진 크롤링과 색인 기준도 코드로 관리합니다.</p>
+<ol>
+<li>Sitemap 동적 생성</li>
+</ol>
+<ul>
+<li><code>spatie/laravel-sitemap</code> 패키지를 도입해 <code>/sitemap.xml</code> 요청 시 동적으로 XML을 생성합니다.</li>
+<li><code>app/Http/Controllers/SitemapController.php</code>가 <code>config/sitemap.php</code>를 읽어 URL, <code>changefreq</code>, <code>priority</code>, <code>lastmod</code>를 조립합니다.</li>
+<li>현재 등록 대상은 메인, 소개, 공지 목록, 블로그 전체/카테고리, 포트폴리오입니다.</li>
+</ul>
+<ol start="2">
+<li>robots.txt 동적 응답</li>
+</ol>
+<ul>
+<li>정적 <code>public/robots.txt</code>를 제거하고 <code>routes/web.php</code>에서 <code>/robots.txt</code>를 동적으로 응답합니다.</li>
+<li>응답 본문은 <code>resources/views/robots.blade.php</code>로 관리하고, 헤더는 <code>text/plain</code>으로 명시합니다.</li>
+<li>크롤링 허용 경로는 열고, 관리자/대시보드/회원/문의/푸시/비밀번호 재설정 관련 경로는 차단합니다.</li>
+</ul>
+<ol start="3">
+<li>URL/카테고리 정합성</li>
+</ol>
+<ul>
+<li>블로그 URL은 <code>config/note.php</code> 기준으로 <code>/blogs/develop</code>, <code>/blogs/tour</code>, <code>/blogs/food</code>, <code>/blogs/cafe</code>, <code>/blogs/economy</code>를 사용합니다.</li>
+<li>노출 라벨도 기존 <code>음식</code>에서 <code>맛집</code>으로 정리해 메뉴명과 SEO 표현을 맞췄습니다.</li>
+</ul>
+<ol start="4">
+<li>운영 주의점</li>
+</ol>
+<ul>
+<li><code>APP_URL</code>이 비어 있거나 끝 슬래시가 잘못 들어가면 <code>Sitemap</code>/<code>robots.txt</code>의 절대 URL이 깨질 수 있습니다.</li>
+<li>새 공개 페이지를 추가하면 <code>config/sitemap.php</code> 등록과 <code>robots.txt</code> 허용 정책을 함께 검토해야 합니다.</li>
 </ul>
 <h2 id="readme-9-데이터-모델-핵심">9. 데이터 모델 핵심</h2>
 <ul>
