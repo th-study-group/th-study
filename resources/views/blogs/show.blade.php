@@ -64,11 +64,14 @@
 @section('script')
   <script>
     $(function() {
+
       const listUrl = "{{ route("{$group}.index", ['slug' => $slug]) }}";
       const editUrl = "{{ route("{$group}.edit", ['slug' => $slug, 'idx' => $note->idx]) }}";
       const deleteUrl = "{{ route("{$group}.soft.delete", ['slug' => $slug, 'idx' => $note->idx]) }}";
       const useFlagUrl = "{{ route("{$group}.use_flag.update", ['slug' => $slug, 'idx' => $note->idx]) }}";
       const useFlag = "{{ $note->use_flag ?? 'N' }}";
+
+      initBlogDetailContentEnhancements();
 
       $(".btn_note_list").on("click", function() {
         location.href = listUrl;

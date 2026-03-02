@@ -1,0 +1,57 @@
+/* 기본 텍스트 링크 - 보라 느낌 */
+.blog-show-content a,
+.blog-detail-content a {
+    color: #7c3aed;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color .15s ease;
+}
+
+.blog-show-content a:hover,
+.blog-detail-content a:hover {
+    color: #6d28d9;
+}
+
+/* 문단에 링크 하나만 있으면 -> 자동 버튼 */
+.blog-show-content p > a:only-child,
+.blog-detail-content p > a:only-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    background-color: #7c3aed;
+    color: #ffffff;
+    border: 1px solid #7c3aed;
+
+    padding: 10px 18px;
+    border-radius: 999px;
+
+    text-decoration: none;
+    font-weight: 600;
+
+    transition: 
+        background-color .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease,
+        transform .05s ease;
+}
+
+.blog-show-content p > a:only-child:hover,
+.blog-detail-content p > a:only-child:hover {
+    background-color: #6d28d9;
+    border-color: #6d28d9;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.30);
+}
+
+/* 보라 버튼 외부링크 아이콘 */
+.blog-show-content a[target="_blank"]::after,
+.blog-detail-content a[target="_blank"]::after {
+    content: '↗';
+    font-size: 0.75em;
+    opacity: 0.75;
+    margin-left: 4px;
+    position: relative;
+    top: -1px;
+}

@@ -201,6 +201,17 @@
           <li>상세 공유 대응을 위해 메타/OG를 페이지 상속 구조로 정리</li>
         </ul>
       </div>
+      <div class="callout mt-4">
+        <strong>Toast UI Editor 링크 삽입 운영 기준</strong>
+        <ul class="mb-0 mt-2">
+          <li>Toast UI Editor에서 링크를 저장하면 단독 상세와 목록 팝업 상세에 같은 링크 스타일이 자동 반영되도록 구성했습니다.</li>
+          <li>일반 문장 안 링크는 보라색 텍스트 링크로 보이고, 문단에 링크 하나만 있으면 pill 버튼처럼 표시됩니다.</li>
+          <li>외부 사이트 링크는 새 창 이동 기준으로 보여 주고, 링크 뒤에 <code>↗</code> 아이콘이 함께 붙습니다.</li>
+          <li>Markdown 탭 예시: <code>[예시링크](https://example.com)</code></li>
+          <li>Markdown에서 버튼형 링크를 원하면 링크만 단독 문단으로 입력합니다.</li>
+          <li>WYSIWYG 탭에서는 텍스트 선택 후 상단 링크 아이콘을 눌러 URL을 넣으면 됩니다.</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>

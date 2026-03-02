@@ -4,6 +4,7 @@
 <link href="{{ asset('css/pwa-modal.css') }}?v={{ filemtime(public_path('css/pwa-modal.css')) }}" rel="stylesheet" />
 <link href="{{ asset('css/board.css') }}?v={{ filemtime(public_path('css/board.css')) }}" rel="stylesheet" />
 <link href="{{ asset('css/splash.css') }}?v={{ filemtime(public_path('css/splash.css')) }}" rel="stylesheet" />
+<link href="{{ asset('css/toast-editor-helper.css') }}?v={{ filemtime(public_path('css/toast-editor-helper.css')) }}" rel="stylesheet" />
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">

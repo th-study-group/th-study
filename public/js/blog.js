@@ -240,6 +240,37 @@ function createVisibilityBadgeHtml(useFlag, useFlagLabel, className) {
   `;
 }
 
+function applyExternalLinkAttributes(containerSelector) {
+  $(containerSelector).find('a').each(function () {
+    var href = String($(this).attr('href') || '').trim();
+
+    if (!href) {
+      return;
+    }
+
+    var isInternal =
+      href.startsWith('/') ||
+      href.startsWith('#') ||
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:') ||
+      href.indexOf(location.host) !== -1;
+
+    if (!isInternal) {
+      $(this)
+        .attr('target', '_blank')
+        .attr('rel', 'noopener noreferrer');
+    }
+  });
+}
+
+function enhanceBlogDetailContent(containerSelector) {
+  applyExternalLinkAttributes(containerSelector);
+}
+
+function initBlogDetailContentEnhancements() {
+  enhanceBlogDetailContent('.blog-show-content');
+}
+
 function syncBlogListItemVisibility(noteIdx, useFlag, useFlagLabel) {
   if (window.blogCanManageVisibility !== true) {
     return;
@@ -293,6 +324,7 @@ function applyBlogDetailState(state, payload) {
   $('#blogDetailTitle').text(note.subject || '-');
   $('#blogDetailDate').text(note.create_datetime || '-');
   $('#blogDetailContent').html(note.content_html || '');
+  enhanceBlogDetailContent('#blogDetailContent');
 
   const $visibility = $('#blogDetailVisibility');
   if (window.blogCanManageVisibility === true) {

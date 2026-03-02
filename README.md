@@ -953,6 +953,42 @@ sudo systemctl status th-study-queue
   - HTML 태그 제거 후 순수 텍스트 길이 기준 10자 이상 검증
   - `<p><br></p>` 같은 의미 없는 입력 통과 방지
 
+### 17.11 Toast UI Editor 링크 삽입 및 상세 반영 기준
+
+- 적용 파일
+  - `public/css/toast-editor-helper.css`
+  - `resources/views/partials/head-styles.blade.php`
+  - `public/js/blog.js`
+  - `resources/views/blogs/show.blade.php`
+- 반영 방식
+  - 상세 본문 래퍼인 `.blog-show-content`, 목록 팝업 본문 래퍼인 `.blog-detail-content` 하위 링크 스타일을 `toast-editor-helper.css`에서 공통 처리
+  - 에디터에서 링크를 넣고 저장하면 단독 상세와 목록 팝업 상세에 같은 HTML/CSS 규칙이 적용됨
+  - 외부 링크는 `public/js/blog.js`의 공통 후처리에서 `target="_blank"`와 `rel="noopener noreferrer"`를 자동 부여
+- 링크 표시 규칙
+  - 일반 문장 안 링크: 보라색 텍스트 링크로 표시
+  - 문단 안에 링크 하나만 있는 경우: pill 형태 버튼처럼 자동 표시
+  - 외부 링크(`target="_blank"`)는 `↗` 아이콘이 뒤에 자동 추가
+- Markdown 탭 입력 기준
+  - 일반 링크: `[예시링크](https://example.com)`
+  - 버튼형 링크: 링크만 한 줄에 단독으로 입력
+  - 예시:
+
+```md
+본문 안에서 [예시링크](https://example.com) 를 함께 사용할 수 있습니다.
+
+[예시링크](https://example.com)
+```
+
+- WYSIWYG 탭 입력 기준
+  - 링크로 만들 텍스트 선택
+  - 상단 툴바의 링크 아이콘 클릭
+  - URL 입력 후 적용
+  - 버튼형 링크를 원하면 링크만 단독 문단으로 작성
+- 운영 메모
+  - 버튼형 스타일은 `.blog-show-content p > a:only-child`, `.blog-detail-content p > a:only-child` 조건으로 동작하므로 링크 앞뒤에 다른 텍스트가 있으면 일반 링크로 보임
+  - `resources/views/blogs/show.blade.php`에서는 `initBlogDetailContentEnhancements()`로 단독 상세 초기화를 호출하고, 목록 팝업은 `public/js/blog.js`에서 본문 주입 직후 같은 공통 함수를 재사용함
+  - 링크 스타일 수정은 `public/css/toast-editor-helper.css`만 변경하면 상세보기 전체에 공통 반영됨
+
 ## 18. 블로그 목록/상세 고도화 작업 기록 (2026-02-27 기준)
 
 ### 18.1 목록 조회 구조(초기 진입 + AJAX 공용화)
