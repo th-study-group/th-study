@@ -1,3 +1,12 @@
+.pwa-link-modal,
+.pwa-image-modal{
+    z-index: 2147483645;
+}
+
+body.pwa-overlay-open .modal-backdrop{
+    z-index: 2147483644 !important;
+}
+
 .pwa-link-modal .modal-content,
 .pwa-image-modal .modal-content{
     border: 0;
@@ -5,7 +14,7 @@
     overflow: hidden;
 }
 .pwa-image-modal{
-    z-index: 1080;
+    z-index: 2147483645;
 }
 .pwa-link-modal-copy{
     margin-bottom: 12px;

@@ -27,6 +27,17 @@ function initPwaStandaloneLinkGuards()
     const imageModal = new bootstrap.Modal(imageModalEl);
     let pendingExternalUrl = '';
 
+    externalModalEl.addEventListener('show.bs.modal', function () {
+        document.body.classList.add('pwa-overlay-open');
+    });
+
+    imageModalEl.addEventListener('show.bs.modal', function () {
+        document.body.classList.add('pwa-overlay-open');
+    });
+
+    externalModalEl.addEventListener('hidden.bs.modal', syncPwaOverlayState);
+    imageModalEl.addEventListener('hidden.bs.modal', syncPwaOverlayState);
+
     $(document).on('click', 'a[href], img', function (event) {
         const target = event.target;
         const anchor = target.closest ? target.closest('a[href]') : null;
@@ -98,6 +109,16 @@ function initPwaStandaloneLinkGuards()
         document.body.classList.add('pwa-image-preview-open');
         imageTargetEl.setAttribute('src', url);
         imageModal.show();
+    }
+
+    function syncPwaOverlayState() {
+        const hasShownModal =
+            externalModalEl.classList.contains('show') ||
+            imageModalEl.classList.contains('show');
+
+        if (!hasShownModal) {
+            document.body.classList.remove('pwa-overlay-open');
+        }
     }
 }
 
