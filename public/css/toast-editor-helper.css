@@ -17,8 +17,9 @@
 /* 문단에 링크 하나만 있으면 -> 자동 버튼 */
 .blog-show-content p > a:only-child,
 .blog-detail-content p > a:only-child {
-    display: block;
+    display: inline-block;
     position: relative;
+    width: fit-content;
     max-width: 100%;
     min-width: 0;
     overflow: hidden;
