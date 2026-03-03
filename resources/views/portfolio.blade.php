@@ -348,7 +348,7 @@
   <div class="container">
     <h2 class="h2x mb-3">6. 검색엔진 최적화</h2>
     <div class="box pad">
-      <p class="leadx mb-3">공개 페이지가 검색엔진에 안정적으로 수집되도록 sitemap과 robots 정책을 정적 파일이 아니라 코드 기준으로 관리합니다.</p>
+      <p class="leadx mb-3">공개 페이지가 검색엔진에 안정적으로 수집되도록 sitemap, robots, 웹마스터 인증 메타 코드를 정적 메모가 아니라 코드 기준으로 관리합니다.</p>
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
           <thead>
@@ -389,6 +389,11 @@
               <td>네이버 서치어드바이저에 사이트를 등록해 국내 검색엔진 수집 경로를 추가하고, 운영 기준 URL은 <code>/robots.txt</code>와 <code>/sitemap.xml</code>로 통일</td>
               <td>네이버 서치어드바이저, <code>routes/web.php</code>, <code>config/sitemap.php</code></td>
             </tr>
+            <tr>
+              <td class="fw-bold">웹마스터 인증 코드</td>
+              <td>소유권 확인용 메타 코드를 공통 레이아웃 <code>&lt;head&gt;</code>에 두어 전체 페이지에 일관되게 반영하고, Git 이력으로 변경 내역을 추적</td>
+              <td><code>resources/views/layouts/app.blade.php</code></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -399,6 +404,7 @@
           <li>새 공개 페이지를 만들면 라우트 추가만으로 끝내지 않고 <code>config/sitemap.php</code>와 robots 정책도 함께 검토</li>
           <li>검색 유입 관리는 Google 색인만 보지 않고 네이버 서치어드바이저 수집 상태도 함께 확인</li>
           <li>검색엔진 노출은 동적 페이지보다 공개 목록/브랜드 소개/포트폴리오 중심으로 우선 관리</li>
+          <li>웹마스터 인증 메타 코드는 공통 레이아웃에 두고 버전 관리해, 페이지별 누락 없이 운영 변경 이력을 남김</li>
         </ul>
       </div>
     </div>
