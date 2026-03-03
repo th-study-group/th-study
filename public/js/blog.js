@@ -242,7 +242,8 @@ function createVisibilityBadgeHtml(useFlag, useFlagLabel, className) {
 
 function applyExternalLinkAttributes(containerSelector) {
   $(containerSelector).find('a').each(function () {
-    var href = String($(this).attr('href') || '').trim();
+    var $link = $(this);
+    var href = String($link.attr('href') || '').trim();
 
     if (!href) {
       return;
@@ -255,11 +256,20 @@ function applyExternalLinkAttributes(containerSelector) {
       href.startsWith('tel:') ||
       href.indexOf(location.host) !== -1;
 
+    $link.removeAttr('data-link-kind');
+
     if (!isInternal) {
-      $(this)
+      $link
+        .attr('data-link-kind', 'external')
         .attr('target', '_blank')
         .attr('rel', 'noopener noreferrer');
+      return;
     }
+
+    $link
+      .attr('data-link-kind', 'internal')
+      .removeAttr('target')
+      .removeAttr('rel');
   });
 }
 

@@ -50,10 +50,9 @@
     box-shadow: 0 4px 12px rgba(124, 58, 237, 0.30);
 }
 
-/* 보라 버튼 외부링크 아이콘 */
-.blog-show-content a[target="_blank"]::after,
-.blog-detail-content a[target="_blank"]::after {
-    content: '↗';
+/* 링크 방향 아이콘: 내부 이동은 화살표, 외부 이동은 새창 화살표 */
+.blog-show-content a[data-link-kind]::after,
+.blog-detail-content a[data-link-kind]::after {
     font-size: 0.75em;
     opacity: 0.75;
     margin-left: 4px;
@@ -61,9 +60,20 @@
     top: -1px;
 }
 
-.blog-show-content p > a[target="_blank"]:only-child::after,
-.blog-detail-content p > a[target="_blank"]:only-child::after {
-    position: absolute;
+.blog-show-content a[data-link-kind="external"]::after,
+.blog-detail-content a[data-link-kind="external"]::after {
+    content: '↗';
+}
+
+.blog-show-content a[data-link-kind="internal"]::after,
+.blog-detail-content a[data-link-kind="internal"]::after {
+    content: '→';
+}
+
+.blog-show-content p > a[data-link-kind]:only-child::after,
+.blog-detail-content p > a[data-link-kind]:only-child::after {
+    font-size: 0.75em;
+    position: relative;
     top: 50%;
     right: 18px;
     margin-left: 0;
