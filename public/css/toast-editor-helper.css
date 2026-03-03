@@ -73,7 +73,7 @@
 .blog-show-content p > a[data-link-kind]:only-child::after,
 .blog-detail-content p > a[data-link-kind]:only-child::after {
     font-size: 0.75em;
-    position: relative;
+    position: absolute;
     top: 50%;
     right: 18px;
     margin-left: 0;
