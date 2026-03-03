@@ -58,7 +58,7 @@
             </li>
             </ol>
 
-            <p class="mb-0 text-muted">시행일자: 2026년 2월 10일(예정)</p>
+            <p class="mb-0 text-muted">시행일자: 2026년 2월 10일</p>
         </section>
     </main>
 @endsection

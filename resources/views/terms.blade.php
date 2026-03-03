@@ -47,7 +47,7 @@
             </li>
             <li class="mb-0">
                 <strong>부칙</strong>
-                <p class="mb-0">본 약관은 2026년 2월 10일(예정)부터 적용됩니다.</p>
+                <p class="mb-0">본 약관은 2026년 2월 10일부터 적용됩니다.</p>
             </li>
             </ol>
         </section>
