@@ -177,7 +177,7 @@
             </tr>
             <tr>
               <td class="fw-bold">히스토리</td>
-              <td>블로그 글 등록 시 이벤트 기반으로 <code>note_histories</code> 기록(작업구분, IP, UA, referer 포함)</td>
+              <td>블로그 글 등록 시 이벤트 기반으로 <code>note_histories</code> 기록(작업구분, IP, UA, referer 포함). 프록시 환경에서는 <code>RequestIp</code> 기준(<code>CF-Connecting-IP</code> -&gt; <code>X-Forwarded-For</code> -&gt; <code>X-Real-IP</code>)으로 실클라이언트 IP를 저장</td>
             </tr>
             <tr>
               <td class="fw-bold">태그/파일 정리</td>
@@ -527,6 +527,7 @@ php artisan db:seed --class=NoteMasterSeeder --force</code></pre>
             <tr><td class="fw-bold">DB</td><td>MySQL</td></tr>
             <tr><td class="fw-bold">도메인/DNS</td><td>가비아 등록 도메인 + Cloudflare 네임서버/DNS 운영 (<code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code>)</td></tr>
             <tr><td class="fw-bold">대표 메일</td><td><code>admin@th-study.com</code> -> Cloudflare Email Routing -> <code>inbox@example.com</code> (예시)</td></tr>
+            <tr><td class="fw-bold">실클라이언트 IP</td><td><code>TrustProxies</code> + <code>RequestIp</code> 적용으로 로그인/게시판/히스토리에 프록시 IP가 아닌 사용자 IP 저장</td></tr>
             <tr><td class="fw-bold">운영 특징</td><td>도커 없이 직접 설치 운영</td></tr>
           </tbody>
         </table>
@@ -844,6 +845,7 @@ sudo systemctl status th-study-queue</code></pre>
         <li>핵심 아키텍처는 Controller-Service-Repository 분리와 정책 기반 접근 제어</li>
         <li>메일/큐/로그/백업 포함 운영 흐름을 실서비스 수준으로 문서화</li>
         <li>도메인은 가비아에서 등록하고 Cloudflare 네임서버/DNS/Email Routing으로 외부 노출 주소를 운영</li>
+        <li>Cloudflare 프록시 환경에서도 로그인/게시판/히스토리에 실클라이언트 IP가 저장되도록 추출 정책을 표준화</li>
         <li>sitemap, robots.txt, 공개 URL 정책까지 코드 중심으로 관리</li>
         <li>배포는 SSH + git pull + migrate + systemd queue 재시작 기준으로 표준화</li>
       </ul>

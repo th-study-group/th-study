@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Posts\PostSearchRequest;
 use App\Services\PostService;
+use App\Support\RequestIp;
 use Illuminate\Http\Request;
 
 /**
@@ -42,7 +43,7 @@ class PostController extends Controller
         $post = $this->postService->getPublicByIdxWithHistory(
             $idx,
             $postType,
-            request()->ip(),
+            RequestIp::resolve(),
             request()->userAgent()
         );
 

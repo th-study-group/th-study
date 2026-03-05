@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Services\CommentService;
 use App\Services\InquiryService;
+use App\Support\RequestIp;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -49,7 +50,7 @@ class InquiryController extends Controller
         $post = $this->inquiryService->getByIdxWithHistory(
             $idx,
             'inquiries',
-            request()->ip(),
+            RequestIp::resolve(),
             request()->userAgent()
         );
         $comments = $this->commentService->getByPostIdx($post->idx);
@@ -77,7 +78,7 @@ class InquiryController extends Controller
 
         $updatedPost = $this->inquiryService->updateStatus($post, [
             'status' => $validated['status'],
-            'ip' => $request->ip(),
+            'ip' => RequestIp::resolve($request),
             'user_agent' => $request->userAgent(),
         ]);
 
@@ -100,7 +101,7 @@ class InquiryController extends Controller
         $this->authorize('inquiryDelete', $post);
 
         $payload = [
-            'ip' => request()->ip(),
+            'ip' => RequestIp::resolve(),
             'user_agent' => request()->userAgent(),
         ];
         $this->inquiryService->delete($post, $payload);

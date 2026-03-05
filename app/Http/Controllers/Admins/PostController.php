@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Posts\Admin\StorePostRequest;
 use App\Http\Requests\Posts\Admin\PostSearchRequest;
 use App\Services\PostService;
+use App\Support\RequestIp;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -71,7 +72,7 @@ class PostController extends Controller
         $post = $this->postService->getByIdxWithHistory(
             $idx,
             $postType,
-            request()->ip(),
+            RequestIp::resolve(),
             request()->userAgent()
         );
         $useFlag = (($post->use_flag ?? 0) == 1) ? 'Y' : 'N';
@@ -111,7 +112,7 @@ class PostController extends Controller
         $this->authorize('update', $post);
 
         $payload = $request->safe()->only(['title', 'content']);
-        $payload['ip'] = $request->ip();
+        $payload['ip'] = RequestIp::resolve($request);
         $payload['user_agent'] = $request->userAgent();
         $this->postService->update($payload, $post);
 
@@ -133,7 +134,7 @@ class PostController extends Controller
         $this->authorize('delete', $post);
 
         $payload = [
-            'ip' => request()->ip(),
+            'ip' => RequestIp::resolve(),
             'user_agent' => request()->userAgent(),
         ];
         $this->postService->delete($post, $payload);
@@ -154,7 +155,7 @@ class PostController extends Controller
         $current = $post->use_flag ?? 0;
         $payload = [
             'use_flag' => $current === 1 ? 0 : 1,
-            'ip' => $request->ip(),
+            'ip' => RequestIp::resolve($request),
             'user_agent' => $request->userAgent(),
         ];
 

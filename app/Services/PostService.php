@@ -6,6 +6,7 @@ use App\Events\PostHistoryEvent;
 use App\Http\Requests\Posts\Admin\StorePostRequest;
 use App\Models\Post;
 use App\Repositories\PostRepository;
+use App\Support\RequestIp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -52,7 +53,7 @@ class PostService
                 tableName: $post->getTable(),
                 postType: $post->post_type,
                 createUserIdx: $userIdx,
-                ip: $request->ip(),
+                ip: RequestIp::resolve($request),
                 userAgent: $request->userAgent()
             ));
 
@@ -62,7 +63,7 @@ class PostService
                 'post_type' => $post->post_type,
                 'status' => $post->status,
                 'use_flag' => $post->use_flag,
-                'ip' => $request->ip(),
+                'ip' => RequestIp::resolve($request),
             ]);
 
             return $post;
@@ -136,7 +137,7 @@ class PostService
             'user_idx' => auth()->id(),
             'post_type' => $postType,
             'page' => $page,
-            'ip' => request()->ip(),
+            'ip' => RequestIp::resolve(),
         ]);
 
         return $posts;
@@ -164,7 +165,7 @@ class PostService
             'user_idx' => auth()->id(),
             'post_type' => $postType,
             'page' => $page,
-            'ip' => request()->ip(),
+            'ip' => RequestIp::resolve(),
         ]);
 
         return $posts;

@@ -9,6 +9,7 @@ use App\Mail\InquiryCreatedMail;
 use App\Models\Post;
 use App\Models\User;
 use App\Repositories\PostRepository;
+use App\Support\RequestIp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -50,7 +51,7 @@ class InquiryService
                 tableName: $post->getTable(),
                 postType: $post->post_type,
                 createUserIdx: $userIdx,
-                ip: $request->ip(),
+                ip: RequestIp::resolve($request),
                 userAgent: $request->userAgent()
             ));
 
@@ -82,7 +83,7 @@ class InquiryService
             'user_idx' => $userIdx,
             'post_type' => 'inquiries',
             'page' => $page,
-            'ip' => request()->ip(),
+            'ip' => RequestIp::resolve(),
         ]);
 
         return $posts;
@@ -108,7 +109,7 @@ class InquiryService
             'user_idx' => auth()->id(),
             'post_type' => 'inquiries',
             'page' => $page,
-            'ip' => request()->ip(),
+            'ip' => RequestIp::resolve(),
         ]);
 
         return $posts;
@@ -338,7 +339,7 @@ class InquiryService
             'post_idx' => $post->idx,
             'target_user_count' => $admins->count(),
             'result' => $pushResult,
-            'ip' => request()->ip(),
+            'ip' => RequestIp::resolve(),
         ]);
     }
 }

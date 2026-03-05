@@ -7,6 +7,7 @@ use App\Http\Requests\Inquiries\UpdateInquiryRequest;
 use App\Http\Requests\Inquiries\InquirySearchRequest;
 use App\Services\CommentService;
 use App\Services\InquiryService;
+use App\Support\RequestIp;
 
 /**
  * 문의내역
@@ -71,7 +72,7 @@ class InquiryController extends Controller
         $post = $this->inquiryService->getByIdxWithHistory(
             $idx,
             'inquiries',
-            request()->ip(),
+            RequestIp::resolve(),
             request()->userAgent()
         );
  
@@ -113,7 +114,7 @@ class InquiryController extends Controller
         $this->authorize('inquiryUpdate', $post);
 
         $payload = $request->safe()->only(['title', 'content']);
-        $payload['ip'] = $request->ip();
+        $payload['ip'] = RequestIp::resolve($request);
         $payload['user_agent'] = $request->userAgent();
         $this->inquiryService->update($payload, $post);
 
@@ -132,7 +133,7 @@ class InquiryController extends Controller
         $this->authorize('inquiryDelete', $post);
 
         $payload = [
-            'ip' => request()->ip(),
+            'ip' => RequestIp::resolve(),
             'user_agent' => request()->userAgent(),
         ];
         $this->inquiryService->delete($post, $payload);

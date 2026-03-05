@@ -154,6 +154,20 @@ resources/views/
 - 미들웨어는 "입구 보안"
 - Policy는 "행동 권한"
 
+### 실클라이언트 IP 저장 정책
+
+Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 저장되도록 아래 기준을 적용합니다.
+
+- 공통 추출기: `app/Support/RequestIp.php`
+- 추출 우선순위: `CF-Connecting-IP` -> `X-Forwarded-For`(첫 IP) -> `X-Real-IP` -> `request()->ip()`
+- 적용 범위(핵심):
+  - 로그인: `app/Http/Controllers/LoginController.php`
+  - 게시판/문의 히스토리: `app/Http/Controllers/PostController.php`, `app/Http/Controllers/InquiryController.php`
+  - 관리자 게시판/문의: `app/Http/Controllers/Admins/PostController.php`, `app/Http/Controllers/Admins/InquiryController.php`
+  - 게시판/문의 서비스 로그: `app/Services/PostService.php`, `app/Services/InquiryService.php`
+- 프록시 신뢰 설정: `app/Http/Middleware/TrustProxies.php`에서 `protected $proxies = '*';`
+- 운영 주의: 외부 프록시를 직접 노출하지 않고, 신뢰 가능한 프록시 계층 뒤에서만 운영합니다.
+
 ### 슈퍼어드민 시더 정책
 
 - 기준 파일: `database/seeders/DatabaseSeeder.php`
@@ -1056,6 +1070,7 @@ sudo systemctl status th-study-queue
 - 블로그 서비스에서 목록 조회/단건 조회 로그 추가(`Log::info`)
 - 로그 필수 필드로 `ip` 포함 여부 점검 및 일관성 유지
 - 히스토리 테이블 기록과 별개로 운영 추적 로그를 동일 패턴으로 보강
+- 프록시 환경에서는 `app/Support/RequestIp.php`로 실클라이언트 IP를 우선 추출해 저장
 
 ### 18.10 수정 폼/편집 UX 보강
 

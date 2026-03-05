@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Users\LoginUserRequest;
 use App\Services\UserService;
+use App\Support\RequestIp;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -42,8 +43,9 @@ class LoginController extends Controller
     {
         $payload = $request->safe()->only(['email', 'password']);
         $payload['remember'] = $request->boolean('remember');
+        $clientIp = RequestIp::resolve($request);
 
-        $ok = $this->userService->authenticate($payload, $request->ip());
+        $ok = $this->userService->authenticate($payload, $clientIp);
 
         if (!$ok) {
             return back()
