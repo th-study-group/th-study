@@ -42,4 +42,8 @@ return [
         'vapid_private_key' => env('VAPID_PRIVATE_KEY'), // 개인키
         'vapid_subject' => 'mailto:' . env('VAPID_SUBJECT'), // 이메일
     ],
+
+    'ga4' => [
+        'measurement_id' => env('GA4_MEASUREMENT_ID'),
+    ],
 ];

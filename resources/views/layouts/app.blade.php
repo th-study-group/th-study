@@ -7,6 +7,17 @@
         {{-- 네이버 검색엔진 SEO 서치어드바이저 --}}
         <meta name="naver-site-verification" content="2a350b8a4be67f3a443b1eafc451fe588a8ee0b5" />
 
+
+        {{-- 구글 애널리틱스 ga4 --}}
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.ga4.measurement_id') }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '{{ config('services.ga4.measurement_id') }}');
+        </script>
+
         {{-- 아이폰 주소, 날짜, 이메일 등 밑줄 방지 --}}
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
 
