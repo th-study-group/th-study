@@ -323,12 +323,21 @@ function applyBlogDetailState(state, payload) {
     : [];
   const useFlag = String(note.use_flag || 'N');
   const useFlagLabel = String(note.use_flag_label || (useFlag === 'Y' ? '공개' : '비공개'));
+  const noteIdx = Number(note.idx || 0);
 
   state.currentDetail = {
     note,
     actions,
     permissions,
   };
+  state.pendingDetailScrollTop = 0;
+
+  if (noteIdx > 0) {
+    const savedScrollTop = Number(state.detailScrollByNoteIdx?.[noteIdx] ?? 0);
+    state.pendingDetailScrollTop = Number.isFinite(savedScrollTop) && savedScrollTop > 0
+      ? savedScrollTop
+      : 0;
+  }
 
   $('#blogDetailCategory').text(note.group_topic_name || '-');
   $('#blogDetailTitle').text(note.subject || '-');
@@ -365,7 +374,30 @@ function applyBlogDetailState(state, payload) {
   $('#blogDetailPublicBtn').toggle(!!permissions.can_update_use_flag);
 }
 
-function openBlogDetailModal() {
+function getBlogDetailBody() {
+  return $('#blogDetailModal .blog-detail-body').first();
+}
+
+function saveBlogDetailScrollPosition(state) {
+  if (!state || !state.currentDetail) {
+    return;
+  }
+
+  const noteIdx = Number(state.currentDetail?.note?.idx || 0);
+  if (noteIdx <= 0) {
+    return;
+  }
+
+  const $body = getBlogDetailBody();
+  if ($body.length === 0) {
+    return;
+  }
+
+  state.detailScrollByNoteIdx = state.detailScrollByNoteIdx || {};
+  state.detailScrollByNoteIdx[noteIdx] = $body.scrollTop();
+}
+
+function openBlogDetailModal(state) {
   const $modal = $('#blogDetailModal');
   if ($modal.length && !$modal.parent().is('body')) {
     $modal.appendTo('body');
@@ -374,9 +406,20 @@ function openBlogDetailModal() {
   $('html, body').addClass('blog-modal-open');
   $modal.css('display', 'flex');
   $modal.attr('aria-hidden', 'false');
+
+  const nextScrollTop = Number(state?.pendingDetailScrollTop ?? 0);
+  const safeScrollTop = Number.isFinite(nextScrollTop) && nextScrollTop > 0 ? nextScrollTop : 0;
+  const $body = getBlogDetailBody();
+  if ($body.length > 0) {
+    $body.scrollTop(safeScrollTop);
+    requestAnimationFrame(function () {
+      $body.scrollTop(safeScrollTop);
+    });
+  }
 }
 
-function closeBlogDetailModal() {
+function closeBlogDetailModal(state) {
+  saveBlogDetailScrollPosition(state);
   $('html, body').removeClass('blog-modal-open');
   $('#blogDetailModal').hide();
   $('#blogDetailModal').attr('aria-hidden', 'true');
@@ -423,6 +466,8 @@ function fetchBlogListPage(state, page, shouldAppend) {
 }
 
 function fetchBlogDetail(state, detailUrl) {
+  saveBlogDetailScrollPosition(state);
+
   requestAjax({
     method: 'GET',
     url: detailUrl,
@@ -433,7 +478,7 @@ function fetchBlogDetail(state, detailUrl) {
     },
     onSuccess: function (res) {
       applyBlogDetailState(state, res || {});
-      openBlogDetailModal();
+      openBlogDetailModal(state);
     },
     onError: function () {
       alert('상세 정보를 불러오는 중 오류가 발생했습니다.');

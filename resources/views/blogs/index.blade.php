@@ -137,6 +137,8 @@
         searchKeyword: String(initialData?.filters?.search_keyword || ''),
         pagination: initialData?.pagination || {},
         currentDetail: null,
+        detailScrollByNoteIdx: {},
+        pendingDetailScrollTop: 0,
         isLoadingList: false,
         listUrl: listUrl,
       };
@@ -200,7 +202,7 @@
       });
 
       $("#blogDetailCloseBtn, #blogDetailBottomCloseBtn").on("click", function() {
-        closeBlogDetailModal();
+        closeBlogDetailModal(state);
       });
 
       $("#blogDetailEditBtn").on("click", function() {
@@ -235,7 +237,7 @@
             'X-CSRF-TOKEN': csrfToken,
           },
           onSuccess: function() {
-            closeBlogDetailModal();
+            closeBlogDetailModal(state);
 
             const nextTotal = Math.max(0, Number(state.pagination?.total || 0) - 1);
             state.pagination.total = nextTotal;
