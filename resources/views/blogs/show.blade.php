@@ -2,6 +2,9 @@
 
 @section('title', $metaTitle ?? '상세내역')
 @section('meta_description', $metaDescription ?? '')
+@section('meta_keywords', (($note->tags ?? collect())->isNotEmpty()
+  ? ($note->tags ?? collect())->pluck('name')->filter()->unique()->implode(',')
+  : ''))
 @section('og_title', $metaTitle ?? '')
 @section('og_description', $metaDescription ?? '')
 @section('og_image', $metaImage ?? asset('images/og/001.png'))

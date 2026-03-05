@@ -137,6 +137,8 @@
         searchKeyword: String(initialData?.filters?.search_keyword || ''),
         pagination: initialData?.pagination || {},
         currentDetail: null,
+        initialMetaKeywords: String($('meta[name="keywords"]').attr('content') || ''),
+        currentMetaKeywords: String($('meta[name="keywords"]').attr('content') || ''),
         detailScrollByNoteIdx: {},
         pendingDetailScrollTop: 0,
         isLoadingList: false,

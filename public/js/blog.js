@@ -372,10 +372,33 @@ function applyBlogDetailState(state, payload) {
   $('#blogDetailEditBtn').toggle(!!permissions.can_update);
   $('#blogDetailDeleteBtn').toggle(!!permissions.can_delete);
   $('#blogDetailPublicBtn').toggle(!!permissions.can_update_use_flag);
+
+  updateBlogMetaKeywords(state, tags);
 }
 
 function getBlogDetailBody() {
   return $('#blogDetailModal .blog-detail-body').first();
+}
+
+function updateBlogMetaKeywords(state, tags) {
+  const $metaKeywords = $('meta[name="keywords"]');
+  if ($metaKeywords.length === 0) {
+    return;
+  }
+
+  const nextKeywords = Array.isArray(tags)
+    ? tags
+        .map(function (tag) {
+          return String(tag || '').trim();
+        })
+        .filter(function (tag) {
+          return tag !== '';
+        })
+        .join(',')
+    : '';
+
+  $metaKeywords.attr('content', nextKeywords);
+  state.currentMetaKeywords = nextKeywords;
 }
 
 function saveBlogDetailScrollPosition(state) {
@@ -420,6 +443,12 @@ function openBlogDetailModal(state) {
 
 function closeBlogDetailModal(state) {
   saveBlogDetailScrollPosition(state);
+  const $metaKeywords = $('meta[name="keywords"]');
+  if ($metaKeywords.length > 0) {
+    $metaKeywords.attr('content', String(state?.initialMetaKeywords ?? ''));
+    state.currentMetaKeywords = String(state?.initialMetaKeywords ?? '');
+  }
+
   $('html, body').removeClass('blog-modal-open');
   $('#blogDetailModal').hide();
   $('#blogDetailModal').attr('aria-hidden', 'true');
