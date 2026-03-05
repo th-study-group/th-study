@@ -87,6 +87,10 @@
           <span id="blogDetailVisibility" class="blog-detail-visibility-badge"></span>
         </div>
         <div id="blogDetailContent" class="blog-detail-content"></div>
+        <section id="blogDetailRelatedWrap" class="blog-detail-related" aria-label="관련 글 목록">
+          <h3 id="blogDetailRelatedTitle" class="blog-detail-related-title"></h3>
+          <ul id="blogDetailRelatedList" class="blog-detail-related-list"></ul>
+        </section>
         <ul id="blogDetailTags" class="blog-detail-tags"></ul>
         <div class="blog-detail-actions">
           <button type="button" id="blogDetailEditBtn" class="blog-detail-action-btn blog-action-icon-btn is-edit btn" aria-label="수정" title="수정">
@@ -205,6 +209,15 @@
 
       $("#blogDetailCloseBtn, #blogDetailBottomCloseBtn").on("click", function() {
         closeBlogDetailModal(state);
+      });
+
+      $("#blogDetailRelatedList").on("click", ".js-blog-detail-related-open", function(e) {
+        e.preventDefault();
+        const detailUrl = String($(this).data("show-url") || '');
+        if (!detailUrl) {
+          return;
+        }
+        fetchBlogDetail(state, detailUrl);
       });
 
       $("#blogDetailEditBtn").on("click", function() {

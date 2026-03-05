@@ -306,6 +306,9 @@ function applyBlogDetailState(state, payload) {
   const note = payload.note || {};
   const actions = payload.actions || {};
   const permissions = payload.permissions || {};
+  const relatedTitle = String(payload.related_title || '');
+  const relatedNotes = Array.isArray(payload.related_notes) ? payload.related_notes : [];
+  const topicName = String(note.topic_name || '').trim();
   const tags = Array.isArray(note.tags)
     ? note.tags
         .map(function (tag) {
@@ -344,6 +347,35 @@ function applyBlogDetailState(state, payload) {
   $('#blogDetailDate').text(note.create_datetime || '-');
   $('#blogDetailContent').html(note.content_html || '');
   enhanceBlogDetailContent('#blogDetailContent');
+
+  const $relatedWrap = $('#blogDetailRelatedWrap');
+  const $relatedTitle = $('#blogDetailRelatedTitle');
+  const $relatedList = $('#blogDetailRelatedList');
+  const resolvedTopicName = topicName !== ''
+    ? topicName
+    : String(relatedTitle).replace(/ 카테고리의 다른 글$/, '').trim();
+  $relatedTitle.html(
+    `<span class="blog-detail-related-topic">${escapeHtmlText(resolvedTopicName || '-')}</span>` +
+    `<span>카테고리의 다른 글</span>`
+  );
+  $relatedList.empty();
+
+  if (relatedNotes.length > 0) {
+    relatedNotes.forEach(function (related) {
+      const showUrl = String(related?.show_url || '');
+      const subject = String(related?.subject || '');
+      const relativeTime = String(related?.relative_time || '-');
+      $relatedList.append(
+        `<li class="blog-detail-related-item">` +
+          `<a href="${escapeHtmlText(showUrl)}" class="blog-detail-related-subject js-blog-detail-related-open" data-show-url="${escapeHtmlText(showUrl)}">${escapeHtmlText(subject)}</a>` +
+          `<span class="blog-detail-related-date">${escapeHtmlText(relativeTime)}</span>` +
+        `</li>`
+      );
+    });
+    $relatedWrap.show();
+  } else {
+    $relatedWrap.hide();
+  }
 
   const $visibility = $('#blogDetailVisibility');
   if (window.blogCanManageVisibility === true) {

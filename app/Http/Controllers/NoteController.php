@@ -12,6 +12,7 @@ use App\Http\Requests\Notes\UpdateNoteUseFlagRequest;
 use App\Models\Note;
 use App\Services\NoteService;
 use Illuminate\Support\Str;
+use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -93,6 +94,12 @@ class NoteController extends Controller
     {
         $noteGroup = $request->route('group');
         $note = $this->noteService->getNoteDetail($noteGroup, $slug, $idx);
+        $relatedNotes = $this->noteService->getLatestRelatedNotes(
+            $noteGroup,
+            $slug,
+            $note->idx,
+            5
+        );
         $contentHtml = $this->noteService->toRenderableHtml($note->content ?? '');
         
         $metaTitle = $note->subject ?? '상세내역';
@@ -102,14 +109,26 @@ class NoteController extends Controller
             ? url(Storage::url((string) $note->thumbnail_path))
             : asset('images/og/001.png');
 
+        $relatedNoteItems = $this->buildRelatedNoteItems($noteGroup, $slug, $relatedNotes);
+
         if ($request->ajax()) {
-            return response()->json($this->buildNoteDetailResponse($request, $noteGroup, $slug, $note, $contentHtml));
+            return response()->json(
+                $this->buildNoteDetailResponse(
+                    $request,
+                    $noteGroup,
+                    $slug,
+                    $note,
+                    $contentHtml,
+                    $relatedNoteItems
+                )
+            );
         }
 
         return view("{$noteGroup}.show", [
             'group' => $noteGroup,
             'slug' => $slug,
             'note' => $note,
+            'relatedNotes' => $relatedNoteItems,
             'contentHtml' => $contentHtml,
             'useFlag' => $note->use_flag ?? 'N',
             'metaTitle' => $metaTitle,
@@ -377,8 +396,14 @@ class NoteController extends Controller
      *
      * @return array<string, mixed>
      */
-    private function buildNoteDetailResponse(Request $request, string $group, string $slug, Note $note, string $contentHtml): array
-    {
+    private function buildNoteDetailResponse(
+        Request $request,
+        string $group,
+        string $slug,
+        Note $note,
+        string $contentHtml,
+        array $relatedNoteItems = []
+    ): array {
         $user = $request->user();
         $canUpdate = $user ? $user->can('update', $note) : false;
         $canDelete = $user ? $user->can('delete', $note) : false;
@@ -389,6 +414,7 @@ class NoteController extends Controller
                 'idx' => $note->idx,
                 'subject' => $note->subject ?? '',
                 'group_topic_name' => $note->group_topic_name ?? '-',
+                'topic_name' => $note->topic?->name ?? '-',
                 'create_datetime' => $note->create_datetime?->format('Y-m-d H:i:s') ?? '-',
                 'content_html' => $contentHtml,
                 'use_flag' => $note->use_flag ?? 'N',
@@ -410,6 +436,67 @@ class NoteController extends Controller
                 'can_delete' => $canDelete,
                 'can_update_use_flag' => $canUpdateUseFlag,
             ],
+            'related_title' => ($note->topic?->name ?? '-') . ' 카테고리의 다른 글',
+            'related_notes' => $relatedNoteItems,
         ];
+    }
+
+    /**
+     * 관련 노트 뷰 응답 데이터 변환
+     *
+     * @param string $group
+     * @param string $slug
+     * @param \Illuminate\Support\Collection<int, Note> $relatedNotes
+     * @return array<int, array<string, mixed>>
+     */
+    private function buildRelatedNoteItems(string $group, string $slug, $relatedNotes): array
+    {
+        return collect($relatedNotes)->map(function (Note $related) use ($group, $slug): array {
+            return [
+                'idx' => (int) $related->idx,
+                'subject' => (string) ($related->subject ?? ''),
+                'relative_time' => $this->formatRelativeTimeKorean($related->create_datetime),
+                'show_url' => route("{$group}.show", ['slug' => $slug, 'idx' => $related->idx]),
+            ];
+        })->values()->all();
+    }
+
+    /**
+     * 상대시간 한글 포맷
+     */
+    private function formatRelativeTimeKorean(?CarbonInterface $dateTime): string
+    {
+        if (! $dateTime) {
+            return '-';
+        }
+
+        $diffSec = max(0, now()->diffInSeconds($dateTime, false));
+
+        if ($diffSec < 60) {
+            return '방금 전';
+        }
+
+        $diffMin = intdiv($diffSec, 60);
+        if ($diffMin < 60) {
+            return $diffMin . '분 전';
+        }
+
+        $diffHour = intdiv($diffMin, 60);
+        if ($diffHour < 24) {
+            return $diffHour . '시간 전';
+        }
+
+        $diffDay = intdiv($diffHour, 24);
+        if ($diffDay < 30) {
+            return $diffDay . '일 전';
+        }
+
+        $diffMonth = intdiv($diffDay, 30);
+        if ($diffMonth < 12) {
+            return $diffMonth . '달 전';
+        }
+
+        $diffYear = intdiv($diffMonth, 12);
+        return $diffYear . '년 전';
     }
 }

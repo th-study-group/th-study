@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Note;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -99,5 +100,34 @@ class NoteRepository
             )
             ->orderByDesc('idx')
             ->paginate($perPage);
+    }
+
+    /**
+     * 같은 그룹/카테고리 최신 노트 조회 (현재 노트 제외)
+     *
+     * @param string $groupCode
+     * @param string $categoryCode
+     * @param int $excludeIdx
+     * @param bool $isAdmin
+     * @param int $limit
+     * @return Collection<int, Note>
+     */
+    public function getLatestByCodesExcluding(
+        string $groupCode,
+        string $categoryCode,
+        int $excludeIdx,
+        bool $isAdmin,
+        int $limit = 5
+    ): Collection {
+        return Note::with(['topic'])
+            ->where('group_code', $groupCode)
+            ->where('categories_code', $categoryCode)
+            ->where('idx', '!=', $excludeIdx)
+            ->when(! $isAdmin, function ($query) {
+                $query->where('use_flag', 1);
+            })
+            ->orderByDesc('idx')
+            ->limit($limit)
+            ->get();
     }
 }

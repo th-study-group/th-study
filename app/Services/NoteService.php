@@ -235,6 +235,44 @@ class NoteService
     }
 
     /**
+     * 같은 카테고리 최신 관련 노트 조회 (현재 노트 제외)
+     *
+     * @param string $groupCode
+     * @param string $categoryCode
+     * @param int $excludeIdx
+     * @param int $limit
+     * @return Collection<int, Note>
+     */
+    public function getLatestRelatedNotes(
+        string $groupCode,
+        string $categoryCode,
+        int $excludeIdx,
+        int $limit = 5
+    ): Collection {
+        $resolvedGroupCode = config("note.group.{$groupCode}", $groupCode);
+        $isAdmin = auth()->check() && (auth()->user()?->level === 'admin');
+        $relatedNotes = $this->noteRepository->getLatestByCodesExcluding(
+            $resolvedGroupCode,
+            $categoryCode,
+            $excludeIdx,
+            $isAdmin,
+            $limit
+        );
+
+        Log::info('[Note][Related][List] 조회 완료', [
+            'user_idx' => auth()->id(),
+            'group_code' => $groupCode,
+            'resolved_group_code' => $resolvedGroupCode,
+            'category_code' => $categoryCode,
+            'exclude_idx' => $excludeIdx,
+            'count' => $relatedNotes->count(),
+            'ip' => request()->ip(),
+        ]);
+
+        return $relatedNotes;
+    }
+
+    /**
      * 수정/삭제용 노트 조회
      *
      * @param string $groupCode

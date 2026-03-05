@@ -34,6 +34,26 @@
 
       <article class="blog-show-content">{!! $contentHtml !!}</article>
 
+      <section class="blog-show-related" aria-label="관련 글 목록">
+        <h2 class="blog-show-related-title">
+          <span class="blog-show-related-topic">{{ $note->topic?->name ?? '-' }}</span>
+          <span>카테고리의 다른 글</span>
+        </h2>
+        <ul class="blog-show-related-list">
+          @forelse(($relatedNotes ?? []) as $related)
+            <li class="blog-show-related-item">
+              <a href="{{ $related['show_url'] }}" class="blog-show-related-subject">{{ $related['subject'] }}</a>
+              <span class="blog-show-related-date">{{ $related['relative_time'] }}</span>
+            </li>
+          @empty
+            <li class="blog-show-related-item">
+              <span class="blog-show-related-subject">관련 글이 없습니다.</span>
+              <span class="blog-show-related-date">-</span>
+            </li>
+          @endforelse
+        </ul>
+      </section>
+
       @if (($note->tags ?? collect())->isNotEmpty())
         <ul class="blog-show-tags">
           @foreach ($note->tags as $tag)
