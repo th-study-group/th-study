@@ -470,7 +470,7 @@ class NoteController extends Controller
             return '-';
         }
 
-        $diffSec = max(0, now()->diffInSeconds($dateTime, false));
+        $diffSec = max(0, $dateTime->diffInSeconds(now(), false));
 
         if ($diffSec < 60) {
             return '방금 전';
