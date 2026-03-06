@@ -14,7 +14,7 @@ class EditorContentProcessor
     private array $allowedTags = [
         'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's',
         'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'a',
+        'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'a', 'div', 'span',
     ];
 
     public function sanitizeForStorage(string $content): string
@@ -40,7 +40,7 @@ class EditorContentProcessor
 
     private function looksLikeHtml(string $value): bool
     {
-        return (bool) preg_match('/<\s*\/?\s*(p|br|strong|b|em|i|u|s|h[1-6]|ul|ol|li|blockquote|pre|code|a)\b/i', $value);
+        return (bool) preg_match('/<\s*\/?\s*(p|br|strong|b|em|i|u|s|h[1-6]|ul|ol|li|blockquote|pre|code|a|div|span)\b/i', $value);
     }
 
     private function sanitizeHtml(string $html): string
@@ -81,7 +81,7 @@ class EditorContentProcessor
             $tag = strtolower($node->tagName);
 
             if (! in_array($tag, $this->allowedTags, true) && $tag !== 'html' && $tag !== 'body') {
-                $node->parentNode?->removeChild($node);
+                $this->unwrapNode($node);
                 continue;
             }
 
@@ -128,6 +128,21 @@ class EditorContentProcessor
         }
 
         return trim($result);
+    }
+
+    private function unwrapNode(\DOMElement $node): void
+    {
+        $parent = $node->parentNode;
+
+        if (! $parent) {
+            return;
+        }
+
+        while ($node->firstChild) {
+            $parent->insertBefore($node->firstChild, $node);
+        }
+
+        $parent->removeChild($node);
     }
 
     private function normalizeUtf8(string $value): string
