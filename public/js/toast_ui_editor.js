@@ -20,6 +20,14 @@ function getToastEditorDefaultToolbarItems() {
     ];
 }
 
+function looksLikeHtmlContent(value) {
+    if (typeof value !== 'string') {
+        return false;
+    }
+
+    return /<\s*\/?\s*(p|br|strong|b|em|i|u|s|h[1-6]|ul|ol|li|blockquote|pre|code|a|div|span)\b/i.test(value);
+}
+
 window.initToastUiEditor = function (options) {
     var config = options || {};
     var Editor = window.toastui && window.toastui.Editor;
@@ -29,6 +37,7 @@ window.initToastUiEditor = function (options) {
     var initialValue = typeof config.initialValue === 'string'
         ? config.initialValue
         : (sourceEl ? (sourceEl.value || '') : '');
+    var hasInitialHtml = looksLikeHtmlContent(initialValue);
 
     if (!Editor || !editorEl) {
         return null;
@@ -39,9 +48,14 @@ window.initToastUiEditor = function (options) {
         height: config.height || '500px',
         initialEditType: config.initialEditType || 'wysiwyg',
         previewStyle: config.previewStyle || 'vertical',
-        initialValue: initialValue,
+        // HTML 콘텐츠는 생성 후 setHTML로 주입해야 안정적으로 보인다.
+        initialValue: hasInitialHtml ? '' : initialValue,
         toolbarItems: config.toolbarItems || getToastEditorDefaultToolbarItems()
     });
+
+    if (hasInitialHtml && typeof editor.setHTML === 'function') {
+        editor.setHTML(initialValue, false);
+    }
 
     if (sourceEl && syncOnChange) {
         sourceEl.value = editor.getHTML();
