@@ -29,6 +29,7 @@ return [
         ['group_code' => 'blog', 'category_code' => 'food', 'name' => '국내맛집', 'memo' => '국내 맛집 후기 정리'],
         ['group_code' => 'blog', 'category_code' => 'cafe', 'name' => '국내카페', 'memo' => '국내 카페 후기 정리'],
         ['group_code' => 'blog', 'category_code' => 'economy', 'name' => '경제상식', 'memo' => '초딩도 쉽게 이해하는 경제상식'],
-        ['group_code' => 'blog', 'category_code' => 'shopping', 'name' => '쇼핑', 'memo' => '온오프라인 구매 후기 정리'],
+        ['group_code' => 'blog', 'category_code' => 'shopping', 'name' => 'IT/가전', 'memo' => 'IT 및 가전제품 구매 후기'],
+        ['group_code' => 'blog', 'category_code' => 'shopping', 'name' => '일상', 'memo' => '일상속 쇼핑 구매 후기'],
     ],
 ];
