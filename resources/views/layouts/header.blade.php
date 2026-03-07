@@ -4,9 +4,6 @@
             <div class="modal-body text-center py-4">
                 <div class="spinner-border text-primary mb-3" role="status" aria-hidden="true"></div>
                 <div class="fw-semibold small">잠시만 기다려 주세요.</div>
-                <div class="progress mt-3" style="height: 6px;">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
-                </div>
             </div>
         </div>
     </div>

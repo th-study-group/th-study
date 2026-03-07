@@ -486,18 +486,53 @@ function closeBlogDetailModal(state) {
   $('#blogDetailModal').attr('aria-hidden', 'true');
 }
 
+function setMoreButtonLoading(state, isLoading) {
+  if (!state || !state.$moreButton || state.$moreButton.length === 0) {
+    return;
+  }
+
+  const $button = state.$moreButton;
+  const originalHtml = $button.data('original-html');
+
+  if (isLoading) {
+    if (!originalHtml) {
+      $button.data('original-html', $button.html());
+    }
+    $button
+      .prop('disabled', true)
+      .html(
+        '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>' +
+        '<span>불러오는 중...</span>'
+      );
+    return;
+  }
+
+  $button.prop('disabled', false);
+  if (originalHtml) {
+    $button.html(originalHtml);
+  } else {
+    $button.html('+ 목록 더보기');
+  }
+}
+
 function fetchBlogListPage(state, page, shouldAppend) {
   if (state.isLoadingList) {
     return;
   }
 
+  const isAppendLoad = shouldAppend === true;
   state.isLoadingList = true;
-  state.$moreButton.prop('disabled', true);
+  if (isAppendLoad) {
+    setMoreButtonLoading(state, true);
+  } else {
+    state.$moreButton.prop('disabled', true);
+  }
 
   requestAjax({
     method: 'GET',
     url: state.listUrl,
     dataType: 'json',
+    showLoading: !isAppendLoad,
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
       'Accept': 'application/json',
@@ -521,7 +556,11 @@ function fetchBlogListPage(state, page, shouldAppend) {
     },
     onComplete: function () {
       state.isLoadingList = false;
-      state.$moreButton.prop('disabled', false);
+      if (isAppendLoad) {
+        setMoreButtonLoading(state, false);
+      } else {
+        state.$moreButton.prop('disabled', false);
+      }
     },
   });
 }
