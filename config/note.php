@@ -50,6 +50,10 @@ return [
             'title' => '경제',
             'url' => '/blogs/economy'
         ],
+        'shopping' => [
+            'title' => '쇼핑',
+            'url' => '/blogs/shopping'
+        ],
     ],
     'maps' => [
         'food' => [
