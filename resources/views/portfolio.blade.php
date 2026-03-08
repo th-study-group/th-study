@@ -394,6 +394,11 @@
               <td>소유권 확인용 메타 코드를 공통 레이아웃 <code>&lt;head&gt;</code>에 두어 전체 페이지에 일관되게 반영하고, Git 이력으로 변경 내역을 추적</td>
               <td><code>resources/views/layouts/app.blade.php</code></td>
             </tr>
+            <tr>
+              <td class="fw-bold">내부 유입 구조</td>
+              <td>외부 유입 점검(네이버/구글)과 별도로 내부 유입 원천은 사용자/봇 raw 로그로 분리 저장하고, 일 집계는 페이지/디바이스 기준으로 누적. 수집/집계 코드는 미들웨어 직접 처리 대신 서비스/레퍼지토리 계층으로 분리 운영</td>
+              <td><code>app/Http/Middleware/TrackAccessLog.php</code>, <code>app/Services/TrafficAnalyticsService.php</code>, <code>app/Repositories/TrafficLogRepository.php</code>, <code>app/Repositories/TrafficStatRepository.php</code></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -403,6 +408,7 @@
           <li><code>APP_URL</code>이 sitemap/robots 절대 URL의 기준이므로 운영 도메인 값이 정확해야 함</li>
           <li>새 공개 페이지를 만들면 라우트 추가만으로 끝내지 않고 <code>config/sitemap.php</code>와 robots 정책도 함께 검토</li>
           <li>검색 유입 관리는 Google 색인만 보지 않고 네이버 서치어드바이저 수집 상태도 함께 확인</li>
+          <li>내부 유입 데이터는 <code>access_logs/bot_access_logs</code> raw와 <code>daily_page_stats</code> 집계를 분리해 조회/확장(월/연 단위) 기준을 유지</li>
           <li>검색엔진 노출은 동적 페이지보다 공개 목록/브랜드 소개/포트폴리오 중심으로 우선 관리</li>
           <li>웹마스터 인증 메타 코드는 공통 레이아웃에 두고 버전 관리해, 페이지별 누락 없이 운영 변경 이력을 남김</li>
         </ul>

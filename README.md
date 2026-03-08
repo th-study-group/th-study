@@ -322,7 +322,13 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - 운영 기준은 `/robots.txt`, `/sitemap.xml` 같은 공개 크롤링 기준 URL을 함께 유지하는 것입니다.
 - 검색 유입 점검 시에는 Google 계열 색인과 별개로 네이버 수집 상태도 같이 확인합니다.
 
-5. 운영 주의점
+5. 내부 유입 수집/집계 구조
+- 외부 유입 점검(네이버/구글)과 별개로, 내부에서는 방문 raw 로그를 `access_logs`(사용자), `bot_access_logs`(봇)로 분리 저장합니다.
+- 유입 집계는 `daily_page_stats`에 일자/페이지/디바이스 단위로 누적합니다.
+- 계층 분리는 `TrackAccessLog`(수집 진입) -> `TrafficAnalyticsService`(오케스트레이션) -> `TrafficLogRepository`/`TrafficStatRepository`(저장/집계) 구조로 운영합니다.
+- 현재 일 단위 집계(`stats:aggregate-daily`)를 기준으로 두고, 월/연 집계는 같은 서비스/레퍼지토리 계층에 확장 가능한 형태로 설계했습니다.
+
+6. 운영 주의점
 - `APP_URL`이 비어 있거나 끝 슬래시가 잘못 들어가면 `Sitemap`/`robots.txt`의 절대 URL이 깨질 수 있습니다.
 - 새 공개 페이지를 추가하면 `config/sitemap.php` 등록과 `robots.txt` 허용 정책을 함께 검토해야 합니다.
 - 웹마스터 인증 코드는 레이아웃 공통 `<head>`에 둘 때 누락 가능성이 줄어들고, 단일 페이지 하드코딩보다 운영 안정성이 높습니다.
