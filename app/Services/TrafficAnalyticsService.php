@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\TrafficLogRepository;
 use App\Repositories\TrafficStatRepository;
+use App\Support\RequestIp;
 use Illuminate\Http\Request;
 use Jenssegers\Agent\Agent;
 
@@ -27,7 +28,8 @@ class TrafficAnalyticsService
 
         $refererUrl = $request->headers->get('referer');
         $pagePath = $this->getPagePath($request);
-        $refererHost = $this->parseHost($refererUrl) ?? $request->getHost();
+        $refererHost = $this->resolveRefererHost($refererUrl);
+        $clientIp = RequestIp::resolve($request);
         $now = now();
 
         if ($agent->isRobot()) {
@@ -57,7 +59,7 @@ class TrafficAnalyticsService
             'device_model' => $deviceInfo['device_model'],
             'os' => $agent->platform(),
             'browser' => detectBrowserName($request->userAgent(), $agent),
-            'ip' => $request->ip(),
+            'ip' => $clientIp,
             'referer_url' => $refererUrl,
             'user_agent' => $request->userAgent() ?? '',
             'session_id' => $request->hasSession() ? $request->session()->getId() : null,
@@ -104,5 +106,22 @@ class TrafficAnalyticsService
         }
 
         return parse_url($url, PHP_URL_HOST) ?: null;
+    }
+
+    private function resolveRefererHost(?string $refererUrl): string
+    {
+        $host = $this->parseHost($refererUrl);
+        if (!is_string($host) || $host === '') {
+            return 'direct';
+        }
+
+        $normalized = strtolower($host);
+
+        // 서버/프록시 IP가 referer_host로 들어오지 않게 차단한다.
+        if (in_array($normalized, config('bot.access_log_excluded_ips', []), true)) {
+            return 'direct';
+        }
+
+        return $normalized;
     }
 }
