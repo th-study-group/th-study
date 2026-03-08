@@ -1209,3 +1209,65 @@ description: 언제 이 스킬을 사용해야 하는지 설명
 - 즉, 실사용 중인 파일은 Markdown 스킬 문서이며,
   `SKILL.md`, `agents/openai.yaml`, `scripts/`, `references/`, `assets/` 구조는
   향후 확장 시 적용 가능한 표준 형태입니다.
+
+## 라라벨 크론탭 등록(통계 집계)
+
+### 서버 크론 등록 (Ubuntu)
+
+```bash
+sudo crontab -e
+```
+
+추가:
+
+```bash
+* * * * * cd /[프로젝트경로] && php artisan schedule:run >> /dev/null 2>&1
+```
+
+예시:
+
+```bash
+* * * * * cd /var/www/th-study && php artisan schedule:run >> /dev/null 2>&1
+```
+
+### 수동 실행 방법
+
+```bash
+# 오늘 집계
+php artisan stats:aggregate-daily
+
+# 전날 집계 (Ubuntu)
+php artisan stats:aggregate-daily $(date -d "yesterday" +%F)
+
+# 전날 집계 (직접 입력 예시: YYYY-MM-DD 권장)
+php artisan stats:aggregate-daily 2026-03-01
+
+# 스케줄 트리거 수동 실행
+php artisan schedule:run
+```
+
+### 서버에서 크론 실행 로그 확인
+
+```bash
+# 1) cron 데몬 로그 실시간 확인
+sudo journalctl -u cron -f
+
+# 2) syslog에서 CRON 실행 이력 확인
+sudo grep CRON /var/log/syslog | tail -n 100
+
+# 3) Laravel 애플리케이션 로그 확인
+tail -f /var/www/th-study/storage/logs/app.log
+# 또는
+tail -f /var/www/th-study/storage/logs/laravel.log
+
+# 4) 스케줄 커맨드 출력 로그(일자별 파일)
+tail -f /var/www/th-study/storage/logs/schedule-stats-$(date +%F).log
+tail -f /var/www/th-study/storage/logs/schedule-logs-cleanup-$(date +%F).log
+```
+
+### 스케줄 출력 파일 정책
+
+- `stats:aggregate-daily` 출력: `storage/logs/schedule-stats-YYYY-MM-DD.log`
+- `logs:cleanup` 출력: `storage/logs/schedule-logs-cleanup-YYYY-MM-DD.log`
+- 앱 로그 파일은 서버 설정에 따라 `app.log` 또는 `laravel.log`를 사용합니다.
+- 날짜 인자는 `YYYY-MM-DD` 형식을 권장합니다. (예: `2026-03-01`)

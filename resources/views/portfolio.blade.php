@@ -445,6 +445,61 @@ journalctl -u th-study-queue -f
 php artisan queue:failed</code></pre>
     </div>
     </div></div>
+    <div class="mt-4">
+    <div class="codeblock">
+      <div class="codehdr"><span>bash · 라라벨 크론탭 등록(통계)</span><button class="copybtn no-print" onclick="copyFrom('#scheduleCron', this)">복사</button></div>
+      <pre id="scheduleCron"><code># Ubuntu 기준
+sudo crontab -e
+
+# 1분마다 스케줄 러너 실행
+* * * * * cd /var/www/th-study && php artisan schedule:run >> /dev/null 2>&1</code></pre>
+    </div>
+    </div>
+    <div class="mt-4">
+    <div class="codeblock">
+      <div class="codehdr"><span>bash · 통계 수동 실행</span><button class="copybtn no-print" onclick="copyFrom('#statsManual', this)">복사</button></div>
+      <pre id="statsManual"><code># 오늘 집계
+php artisan stats:aggregate-daily
+
+# 전날 집계 (Ubuntu)
+php artisan stats:aggregate-daily $(date -d "yesterday" +%F)
+
+# 전날 집계 (직접 입력 예시: YYYY-MM-DD 권장)
+php artisan stats:aggregate-daily 2026-03-01
+
+# 스케줄 트리거 수동 실행
+php artisan schedule:run</code></pre>
+    </div>
+    </div>
+    <div class="mt-4">
+    <div class="codeblock">
+      <div class="codehdr"><span>bash · 서버 크론 로그 확인</span><button class="copybtn no-print" onclick="copyFrom('#cronLogs', this)">복사</button></div>
+      <pre id="cronLogs"><code># cron 데몬 로그 실시간
+sudo journalctl -u cron -f
+
+# syslog CRON 실행 이력
+sudo grep CRON /var/log/syslog | tail -n 100
+
+# Laravel 앱 로그
+tail -f /var/www/th-study/storage/logs/app.log
+# 또는
+tail -f /var/www/th-study/storage/logs/laravel.log
+
+# 스케줄 커맨드 출력 로그(일자별)
+tail -f /var/www/th-study/storage/logs/schedule-stats-$(date +%F).log
+tail -f /var/www/th-study/storage/logs/schedule-logs-cleanup-$(date +%F).log</code></pre>
+    </div>
+    </div>
+    <div class="callout mt-4">
+      <strong>스케줄 출력 파일 정책</strong><br>
+      <ul class="mb-0" style="margin-left:18px;">
+        <li><code>stats:aggregate-daily</code> 출력: <code>storage/logs/schedule-stats-YYYY-MM-DD.log</code></li>
+        <li><code>logs:cleanup</code> 출력: <code>storage/logs/schedule-logs-cleanup-YYYY-MM-DD.log</code></li>
+        <li>앱 로그 파일은 서버 설정에 따라 <code>app.log</code> 또는 <code>laravel.log</code>를 사용</li>
+        <li>날짜 인자는 <code>YYYY-MM-DD</code> 형식 권장 (예: <code>2026-03-01</code>)</li>
+      </ul>
+    </div>
+    </div>
   </div>
 </section>
 

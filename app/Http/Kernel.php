@@ -37,6 +37,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\ForcePasswordChange::class,
             \App\Http\Middleware\CheckSessionVersion::class,
+            \App\Http\Middleware\TrackAccessLog::class,
         ],
 
         'api' => [

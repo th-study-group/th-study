@@ -1,5 +1,7 @@
 <?php
 
+use Jenssegers\Agent\Agent;
+
 if (! function_exists('env_default')) {
     /**
      * env 디폴트값 부여
@@ -21,6 +23,99 @@ if (! function_exists('env_default')) {
         }
 
         return $value;
+    }
+}
+
+if (! function_exists('detectDeviceType')) {
+    /**
+     * 접속 디바이스 타입 식별
+     */
+    function detectDeviceType(Agent $agent): string
+    {
+        if ($agent->isTablet()) {
+            return 'tablet';
+        }
+
+        if ($agent->isMobile()) {
+            return 'mobile';
+        }
+
+        return 'desktop';
+    }
+}
+
+if (! function_exists('detectDeviceInfo')) {
+    /**
+     * User-Agent 기반 디바이스 제조사/모델 식별
+     *
+     * @return array{device_brand: ?string, device_model: ?string}
+     */
+    function detectDeviceInfo(?string $userAgent): array
+    {
+        $ua = $userAgent ?? '';
+
+        $deviceBrand = null;
+        $deviceModel = null;
+
+        if (stripos($ua, 'iPhone') !== false) {
+            $deviceBrand = 'Apple';
+            $deviceModel = 'iPhone';
+        } elseif (stripos($ua, 'iPad') !== false) {
+            $deviceBrand = 'Apple';
+            $deviceModel = 'iPad';
+        } elseif (preg_match('/SM-[A-Z0-9]+/i', $ua, $matches)) {
+            $deviceBrand = 'Samsung';
+            $deviceModel = strtoupper($matches[0]);
+        } elseif (stripos($ua, 'Galaxy') !== false) {
+            $deviceBrand = 'Samsung';
+            $deviceModel = 'Galaxy';
+        } elseif (stripos($ua, 'Pixel') !== false) {
+            $deviceBrand = 'Google';
+            $deviceModel = 'Pixel';
+        } elseif (stripos($ua, 'Macintosh') !== false) {
+            $deviceBrand = 'Apple';
+            $deviceModel = 'Mac';
+        } elseif (stripos($ua, 'Windows') !== false) {
+            $deviceBrand = 'Microsoft';
+            $deviceModel = 'Windows PC';
+        }
+
+        return [
+            'device_brand' => $deviceBrand,
+            'device_model' => $deviceModel,
+        ];
+    }
+}
+
+if (! function_exists('detectBrowserName')) {
+    /**
+     * User-Agent 기반 브라우저명 식별
+     */
+    function detectBrowserName(?string $userAgent, Agent $agent): ?string
+    {
+        $ua = $userAgent ?? '';
+
+        if (stripos($ua, 'Whale') !== false) {
+            return 'Whale';
+        }
+
+        if (stripos($ua, 'SamsungBrowser') !== false) {
+            return 'Samsung Internet';
+        }
+
+        if (stripos($ua, 'Edg/') !== false || stripos($ua, 'Edge/') !== false) {
+            return 'Edge';
+        }
+
+        if (stripos($ua, 'Chrome') !== false && stripos($ua, 'Chromium') === false) {
+            return 'Chrome';
+        }
+
+        if (stripos($ua, 'Safari') !== false && stripos($ua, 'Chrome') === false) {
+            return 'Safari';
+        }
+
+        return $agent->browser();
     }
 }
 
