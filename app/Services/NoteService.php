@@ -172,13 +172,15 @@ class NoteService
             abort(404);
         }
 
-        event(new NoteHistoryEvent(
-            noteIdx: $note->idx,
-            jobType: '조회',
-            createUserIdx: $userIdx,
-            ip: request()->ip(),
-            userAgent: request()->userAgent() ?? '',
-        ));
+        if ($groupCode !== 'blogs') {
+            event(new NoteHistoryEvent(
+                noteIdx: $note->idx,
+                jobType: '조회',
+                createUserIdx: $userIdx,
+                ip: request()->ip(),
+                userAgent: request()->userAgent() ?? '',
+            ));
+        }
 
         Log::info('[Note][View] 조회 완료', [
             'user_idx' => $userIdx,

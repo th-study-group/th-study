@@ -84,16 +84,6 @@ class PostService
         $userIdx = auth()->id();
         $post = $this->postRepository->findByIdxAndType($idx, $postType);
 
-        event(new PostHistoryEvent(
-            postIdx: $post->idx,
-            jobType: '조회',
-            tableName: $post->getTable(),
-            postType: $post->post_type,
-            createUserIdx: $userIdx,
-            ip: $ip,
-            userAgent: $userAgent
-        ));
-
         Log::info('[Post][View] 조회 완료', [
             'user_idx' => $userIdx,
             'post_idx' => $post->idx,
@@ -188,16 +178,6 @@ class PostService
         if (($post->use_flag ?? 0) != 1) {
             abort(404);
         }
-
-        event(new PostHistoryEvent(
-            postIdx: $post->idx,
-            jobType: '조회',
-            tableName: $post->getTable(),
-            postType: $post->post_type,
-            createUserIdx: $userIdx ?? 0,
-            ip: $ip,
-            userAgent: $userAgent
-        ));
 
         Log::info('[Post][View] 조회 완료', [
             'user_idx' => $userIdx,
