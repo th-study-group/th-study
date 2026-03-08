@@ -2,13 +2,19 @@
 
 namespace App\Console\Commands;
 
+use App\Services\TrafficAnalyticsService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class AggregateDailyPageStats extends Command
 {
+    public function __construct(
+        private TrafficAnalyticsService $trafficAnalyticsService
+    ) {
+        parent::__construct();
+    }
+
     protected $signature = 'stats:aggregate-daily {date?}';
     protected $description = '일별 페이지 통계 집계';
 
@@ -18,41 +24,11 @@ class AggregateDailyPageStats extends Command
         Log::info('Daily page stats aggregation started', ['date' => $date]);
 
         try {
-            $now = now();
-
-            $accessRows = DB::table('access_logs')
-                ->selectRaw("
-                    access_date as stat_date,
-                    access_page,
-                    device_type,
-                    COUNT(*) as total_access_count,
-                    COUNT(DISTINCT COALESCE(session_id, ip)) as real_access_count
-                ")
-                ->whereDate('access_date', $date)
-                ->groupBy('access_date', 'access_page', 'device_type')
-                ->get();
-
-            if ($accessRows->isNotEmpty()) {
-                DB::table('daily_page_stats')->upsert(
-                    $accessRows->map(function ($row) use ($now) {
-                        return [
-                            'stat_date' => $row->stat_date,
-                            'access_page' => $row->access_page,
-                            'device_type' => $row->device_type,
-                            'total_access_count' => $row->total_access_count,
-                            'real_access_count' => $row->real_access_count,
-                            'create_datetime' => $now,
-                            'update_datetime' => $now,
-                        ];
-                    })->all(),
-                    ['stat_date', 'access_page', 'device_type'],
-                    ['total_access_count', 'real_access_count', 'update_datetime']
-                );
-            }
+            $rowCount = $this->trafficAnalyticsService->aggregateDaily($date);
 
             Log::info('Daily page stats aggregation completed', [
                 'date' => $date,
-                'rows' => $accessRows->count(),
+                'rows' => $rowCount,
             ]);
         } catch (Throwable $e) {
             Log::error('Daily page stats aggregation failed', [

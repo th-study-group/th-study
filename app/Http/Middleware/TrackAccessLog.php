@@ -2,12 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\AccessLog;
-use App\Models\BotAccessLog;
+use App\Services\TrafficAnalyticsService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Jenssegers\Agent\Agent;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -16,6 +14,10 @@ use Throwable;
  */
 class TrackAccessLog
 {
+    public function __construct(
+        private TrafficAnalyticsService $trafficAnalyticsService
+    ) {}
+
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
@@ -30,44 +32,7 @@ class TrackAccessLog
         }
 
         try {
-            $agent = new Agent();
-            $agent->setUserAgent($request->userAgent() ?? '');
-            $refererUrl = $request->headers->get('referer');
-            $pagePath = $this->getPagePath($request);
-
-            if ($agent->isRobot()) {
-                BotAccessLog::create([
-                    'access_date' => now()->toDateString(),
-                    'access_datetime' => now(),
-                    'access_page' => $pagePath,
-                    'referer_host' => $this->parseHost($refererUrl) ?? $request->getHost(),
-                    'bot_name' => $agent->robot(),
-                    'referer_url' => $refererUrl,
-                    'user_agent' => $request->userAgent() ?? '',
-                ]);
-
-                return $response;
-            }
-
-            $deviceInfo = detectDeviceInfo($request->userAgent());
-            $user = $request->user();
-
-            AccessLog::create([
-                'access_date' => now()->toDateString(),
-                'access_datetime' => now(),
-                'access_page' => $pagePath,
-                'referer_host' => $this->parseHost($refererUrl) ?? $request->getHost(),
-                'device_type' => detectDeviceType($agent),
-                'device_brand' => $deviceInfo['device_brand'],
-                'device_model' => $deviceInfo['device_model'],
-                'os' => $agent->platform(),
-                'browser' => detectBrowserName($request->userAgent(), $agent),
-                'ip' => $request->ip(),
-                'referer_url' => $refererUrl,
-                'user_agent' => $request->userAgent() ?? '',
-                'session_id' => $request->hasSession() ? $request->session()->getId() : null,
-                'user_idx' => $user?->idx,
-            ]);
+            $this->trafficAnalyticsService->trackRequest($request);
         } catch (Throwable $e) {
             Log::error('TrackAccessLog failed', [
                 'message' => $e->getMessage(),
@@ -135,20 +100,6 @@ class TrackAccessLog
         }
 
         return false;
-    }
-
-    private function getPagePath(Request $request): string
-    {
-        return $request->path() === '/' ? '/' : '/' . ltrim($request->path(), '/');
-    }
-
-    private function parseHost(?string $url): ?string
-    {
-        if (empty($url)) {
-            return null;
-        }
-
-        return parse_url($url, PHP_URL_HOST) ?: null;
     }
 
 }
