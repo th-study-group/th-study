@@ -244,6 +244,30 @@ function normalizeQueryAmp(value) {
   return String(value || '').replace(/([?&])amp;/g, '$1');
 }
 
+function isUnsafeHref(href) {
+  return /^\s*(javascript:|data:)/i.test(String(href || ''));
+}
+
+function isInternalHrefForOutbound(href) {
+  var resolvedHref = String(href || '').trim();
+
+  if (
+    resolvedHref.startsWith('/') ||
+    resolvedHref.startsWith('#') ||
+    resolvedHref.startsWith('mailto:') ||
+    resolvedHref.startsWith('tel:')
+  ) {
+    return true;
+  }
+
+  try {
+    var parsed = new URL(resolvedHref, location.origin);
+    return parsed.host === location.host;
+  } catch (e) {
+    return false;
+  }
+}
+
 function buildOutboundTrackingHref(targetUrl, conversionType) {
   var params = new URLSearchParams({
     url: String(targetUrl || ''),
@@ -278,10 +302,60 @@ function isOutboundTrackingHref(href) {
   }
 }
 
+function normalizeOutboundLinkHref(href, options) {
+  var resolved = normalizeQueryAmp(String(href || '').trim());
+  var trackInternal = !!(options && options.trackInternal === true);
+
+  if (!resolved || isUnsafeHref(resolved)) {
+    return resolved;
+  }
+
+  if (resolved.startsWith('/outbound')) {
+    try {
+      var outboundUrl = new URL(resolved, location.origin);
+      var targetUrl = outboundUrl.searchParams.get('url');
+      var conversionType =
+        outboundUrl.searchParams.get('conversion_type') ||
+        outboundUrl.searchParams.get('amp;conversion_type') ||
+        'outbound';
+
+      if (!targetUrl) {
+        return resolved;
+      }
+
+      return buildOutboundTrackingHref(targetUrl, conversionType);
+    } catch (e) {
+      return resolved;
+    }
+  }
+
+  if (!isInternalHrefForOutbound(resolved) || trackInternal) {
+    return buildOutboundTrackingHref(resolved, 'outbound');
+  }
+
+  return resolved;
+}
+
+function rewriteHtmlAnchorHrefsToOutbound(contentHtml, options) {
+  var container = document.createElement('div');
+  container.innerHTML = String(contentHtml || '');
+
+  container.querySelectorAll('a[href]').forEach(function (anchor) {
+    var href = anchor.getAttribute('href');
+    var normalizedHref = normalizeOutboundLinkHref(href, options);
+
+    if (normalizedHref) {
+      anchor.setAttribute('href', normalizedHref);
+    }
+  });
+
+  return container.innerHTML;
+}
+
 function applyExternalLinkAttributes(containerSelector) {
   $(containerSelector).find('a').each(function () {
     var $link = $(this);
-    var href = normalizeQueryAmp(String($link.attr('href') || '').trim());
+    var href = normalizeOutboundLinkHref($link.attr('href'));
 
     if (!href) {
       return;
@@ -292,14 +366,7 @@ function applyExternalLinkAttributes(containerSelector) {
     }
 
     var isOutboundTracking = isOutboundTrackingHref(href);
-    var isInternal =
-      !isOutboundTracking && (
-      href.startsWith('/') ||
-      href.startsWith('#') ||
-      href.startsWith('mailto:') ||
-      href.startsWith('tel:') ||
-      href.indexOf(location.host) !== -1
-    );
+    var isInternal = !isOutboundTracking && isInternalHrefForOutbound(href);
 
     $link.removeAttr('data-link-kind');
 
