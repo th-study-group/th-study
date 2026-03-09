@@ -60,7 +60,27 @@
 @section('script')
     <script>
         $(function(){
+            let isSubmitting = false;
+
+            $('#form-notice').on('submit', function (e) {
+                if (isSubmitting) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                isSubmitting = true;
+                $('#btn_save').prop('disabled', true);
+
+                if (typeof window.showLoading === 'function') {
+                    window.showLoading();
+                }
+            });
+
             $("#btn_save").on("click", function(){ 
+                if (isSubmitting) {
+                    return;
+                }
+
                 if ($.trim($('#title').val()) === '') {
                     alert('제목을 입력해 주세요.');
                     $('#title').focus();

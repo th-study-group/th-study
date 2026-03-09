@@ -155,12 +155,31 @@
         .map(function (tag) { return String(tag).trim(); })
         .filter(function (tag) { return tag !== ''; });
       let isComposingTag = false;
+      let isSubmitting = false;
 
       initialTags.forEach(function (tag) {
         tagManager.addTag(tag);
       });
 
+      $('#form-note').on('submit', function (e) {
+        if (isSubmitting) {
+          e.preventDefault();
+          return false;
+        }
+
+        isSubmitting = true;
+        $('#btn_save').prop('disabled', true);
+
+        if (typeof window.showLoading === 'function') {
+          window.showLoading();
+        }
+      });
+
       $("#btn_save").on("click", function() {
+        if (isSubmitting) {
+          return;
+        }
+
         if (confirm("적용하시겠습니까?") == false) {
           return;
         }
