@@ -25,6 +25,11 @@ class CleanupOldPageStatLogs extends Command
             ->where('access_date', '<', now()->subDays(30)->toDateString())
             ->delete();
 
+        // 90일
+        DB::table('conversion_logs')
+            ->where('conversion_date', '<', now()->subDays(90)->toDateString())
+            ->delete();
+
         $this->info('오래된 로그 삭제 완료');
 
         return self::SUCCESS;
