@@ -25,6 +25,7 @@ return [
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '라라벨 개발환경 구성', 'memo' => '실전에 필요한 라라벨 웹 환경 설치방법 정리해요'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'AI MCP', 'memo' => 'AI MCP 개발'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'PHP', 'memo' => 'PHP 개발'],
+        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'PHP', 'memo' => 'SEO 개발'],
         ['group_code' => 'blog', 'category_code' => 'tour', 'name' => '국내여행', 'memo' => '국내 여행 후기 정리'],
         ['group_code' => 'blog', 'category_code' => 'food', 'name' => '국내맛집', 'memo' => '국내 맛집 후기 정리'],
         ['group_code' => 'blog', 'category_code' => 'cafe', 'name' => '국내카페', 'memo' => '국내 카페 후기 정리'],
