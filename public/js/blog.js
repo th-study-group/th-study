@@ -248,6 +248,24 @@ function isUnsafeHref(href) {
   return /^\s*(javascript:|data:)/i.test(String(href || ''));
 }
 
+function isSkippableOutboundHref(href) {
+  var resolvedHref = String(href || '').trim().toLowerCase();
+
+  if (!resolvedHref) {
+    return true;
+  }
+
+  if (resolvedHref.startsWith('#')) {
+    return true;
+  }
+
+  if (resolvedHref.startsWith('mailto:') || resolvedHref.startsWith('tel:')) {
+    return true;
+  }
+
+  return isUnsafeHref(resolvedHref);
+}
+
 function isInternalHrefForOutbound(href) {
   var resolvedHref = String(href || '').trim();
 
@@ -306,7 +324,7 @@ function normalizeOutboundLinkHref(href, options) {
   var resolved = normalizeQueryAmp(String(href || '').trim());
   var trackInternal = !!(options && options.trackInternal === true);
 
-  if (!resolved || isUnsafeHref(resolved)) {
+  if (isSkippableOutboundHref(resolved)) {
     return resolved;
   }
 
@@ -329,8 +347,17 @@ function normalizeOutboundLinkHref(href, options) {
     }
   }
 
-  if (!isInternalHrefForOutbound(resolved) || trackInternal) {
+  if (!isInternalHrefForOutbound(resolved)) {
     return buildOutboundTrackingHref(resolved, 'outbound');
+  }
+
+  if (trackInternal) {
+    try {
+      var internalTarget = new URL(resolved, location.origin).toString();
+      return buildOutboundTrackingHref(internalTarget, 'outbound');
+    } catch (e) {
+      return resolved;
+    }
   }
 
   return resolved;
@@ -355,7 +382,7 @@ function rewriteHtmlAnchorHrefsToOutbound(contentHtml, options) {
 function applyExternalLinkAttributes(containerSelector) {
   $(containerSelector).find('a').each(function () {
     var $link = $(this);
-    var href = normalizeOutboundLinkHref($link.attr('href'));
+    var href = normalizeOutboundLinkHref($link.attr('href'), { trackInternal: true });
 
     if (!href) {
       return;
