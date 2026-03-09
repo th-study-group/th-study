@@ -324,8 +324,11 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 
 5. 내부 유입 수집/집계 구조
 - 외부 유입 점검(네이버/구글)과 별개로, 내부에서는 방문 raw 로그를 `access_logs`(사용자), `bot_access_logs`(봇)로 분리 저장합니다.
+- 전환 raw 로그는 `conversion_logs`에 저장하며, 블로그 외부 링크는 `/outbound?url=...&conversion_type=outbound` 경유로 기록합니다.
 - 유입 집계는 `daily_page_stats`에 일자/페이지/디바이스 단위로 누적합니다.
+- 일 집계(`stats:aggregate-daily`)는 `total_access_count`, `real_access_count`와 함께 `conversion_count`도 병합 업데이트합니다.
 - 계층 분리는 `TrackAccessLog`(수집 진입) -> `TrafficAnalyticsService`(오케스트레이션) -> `TrafficLogRepository`/`TrafficStatRepository`(저장/집계) 구조로 운영합니다.
+- 전환 타입은 `config/traffic.php`의 `traffic.conversion_types`를 기준으로 FormRequest + Service 이중 검증으로 관리합니다.
 - 현재 일 단위 집계(`stats:aggregate-daily`)를 기준으로 두고, 월/연 집계는 같은 서비스/레퍼지토리 계층에 확장 가능한 형태로 설계했습니다.
 
 6. 운영 주의점
@@ -344,6 +347,9 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - `mail_logs`: 메일 발송/수신 로그
 - `web_push_subscriptions`: 디바이스별 웹 푸시 구독
 - `web_push_messages`: 푸시 발송/클릭/성공여부 이력
+- `access_logs`, `bot_access_logs`: 내부 유입 raw 로그(사용자/봇 분리)
+- `conversion_logs`: 내부 전환 raw 로그(페이지/디바이스/타입/타겟 URL)
+- `daily_page_stats`: 일별 페이지 통계(`total_access_count`, `real_access_count`, `conversion_count`)
 - `jobs`, `failed_jobs`, `sessions`, `password_reset_tokens`: 큐/세션/복구
 
 ## 10. 로컬 실행
@@ -1251,6 +1257,9 @@ php artisan stats:aggregate-daily 2026-03-01
 # 스케줄 트리거 수동 실행
 php artisan schedule:run
 ```
+
+집계 기준:
+- `stats:aggregate-daily`는 `access_logs` + `conversion_logs`를 병합해 `daily_page_stats.conversion_count`까지 함께 반영합니다.
 
 ### 서버에서 크론 실행 로그 확인
 
