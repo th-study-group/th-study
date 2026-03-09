@@ -1228,7 +1228,7 @@ description: 언제 이 스킬을 사용해야 하는지 설명
 ### 서버 크론 등록 (Ubuntu)
 
 ```bash
-sudo crontab -e
+crontab -e
 ```
 
 추가:

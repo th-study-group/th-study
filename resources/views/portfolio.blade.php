@@ -457,7 +457,7 @@ php artisan queue:failed</code></pre>
     <div class="codeblock">
       <div class="codehdr"><span>bash · 라라벨 크론탭 등록(통계)</span><button class="copybtn no-print" onclick="copyFrom('#scheduleCron', this)">복사</button></div>
       <pre id="scheduleCron"><code># Ubuntu 기준
-sudo crontab -e
+crontab -e
 
 # 1분마다 스케줄 러너 실행
 * * * * * cd /var/www/th-study && php artisan schedule:run >> /dev/null 2>&1</code></pre>

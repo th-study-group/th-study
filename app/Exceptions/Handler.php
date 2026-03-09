@@ -82,21 +82,6 @@ class Handler extends ExceptionHandler
             ? (int) $e->getStatusCode()
             : 500;
 
-        // reportable 누락/비보고 예외여도 500 원인 추적이 가능하도록 강제 기록
-        if ($status === 500) {
-            Log::error('HTTP 500 rendered', [
-                'type' => get_class($e),
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'method' => $request->method(),
-                'path' => $request->path(),
-                'url' => $request->fullUrl(),
-                'ip' => $request->ip(),
-                'user_idx' => $request->user()?->idx,
-            ]);
-        }
-
         $page = $this->friendlyErrorPages[$status] ?? null;
 
         if ($page === null) {
