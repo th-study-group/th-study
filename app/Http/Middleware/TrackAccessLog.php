@@ -110,7 +110,7 @@ class TrackAccessLog
 
     private function isExcludedAccessLogIp(Request $request): bool
     {
-        $excludedIps = config('bot.access_log_excluded_ips', []);
+        $excludedIps = config('traffic.access_log_excluded_ips', []);
         if (empty($excludedIps)) {
             return false;
         }

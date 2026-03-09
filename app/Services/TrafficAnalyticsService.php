@@ -6,6 +6,7 @@ use App\Repositories\TrafficLogRepository;
 use App\Repositories\TrafficStatRepository;
 use App\Support\RequestIp;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 use Jenssegers\Agent\Agent;
 
 /**
@@ -76,14 +77,33 @@ class TrafficAnalyticsService
     {
         $now = now();
         $accessRows = $this->trafficStatRepository->getDailyAccessRows($date);
+        $conversionRows = $this->trafficStatRepository->getDailyConversionRows($date);
 
-        $rows = $accessRows->map(function ($row) use ($now) {
+        $accessMap = $accessRows->keyBy(function ($row) {
+            return $row->stat_date . '|' . $row->access_page . '|' . $row->device_type;
+        });
+
+        $conversionMap = $conversionRows->keyBy(function ($row) {
+            return $row->stat_date . '|' . $row->access_page . '|' . $row->device_type;
+        });
+
+        $allKeys = collect(array_merge(
+            $accessMap->keys()->all(),
+            $conversionMap->keys()->all()
+        ))->unique();
+
+        $rows = $allKeys->map(function ($key) use ($accessMap, $conversionMap, $now) {
+            [$statDate, $accessPage, $deviceType] = explode('|', $key);
+            $access = $accessMap->get($key);
+            $conversion = $conversionMap->get($key);
+
             return [
-                'stat_date' => $row->stat_date,
-                'access_page' => $row->access_page,
-                'device_type' => $row->device_type,
-                'total_access_count' => (int) $row->total_access_count,
-                'real_access_count' => (int) $row->real_access_count,
+                'stat_date' => $statDate,
+                'access_page' => $accessPage,
+                'device_type' => $deviceType,
+                'total_access_count' => (int) ($access->total_access_count ?? 0),
+                'real_access_count' => (int) ($access->real_access_count ?? 0),
+                'conversion_count' => (int) ($conversion->conversion_count ?? 0),
                 'create_datetime' => $now,
                 'update_datetime' => $now,
             ];
@@ -91,7 +111,42 @@ class TrafficAnalyticsService
 
         $this->trafficStatRepository->upsertDailyPageStats($rows);
 
-        return $accessRows->count();
+        return count($rows);
+    }
+
+    /**
+     * 전환 원시 로그 저장
+     */
+    public function trackConversion(Request $request, string $conversionType, ?string $targetPage = null): void
+    {
+        $this->assertValidConversionType($conversionType);
+
+        $agent = new Agent();
+        $agent->setUserAgent($request->userAgent() ?? '');
+
+        $refererUrl = $request->headers->get('referer');
+        $now = now();
+        $deviceInfo = detectDeviceInfo($request->userAgent());
+        $user = $request->user();
+
+        $this->trafficLogRepository->createConversion([
+            'conversion_date' => $now->toDateString(),
+            'conversion_datetime' => $now,
+            'access_page' => $this->getPagePath($request),
+            'conversion_type' => $conversionType,
+            'target_page' => $targetPage,
+            'referer_host' => $this->resolveRefererHost($refererUrl),
+            'device_type' => detectDeviceType($agent),
+            'device_brand' => $deviceInfo['device_brand'],
+            'device_model' => $deviceInfo['device_model'],
+            'os' => $agent->platform(),
+            'browser' => detectBrowserName($request->userAgent(), $agent),
+            'ip' => RequestIp::resolve($request),
+            'referer_url' => $refererUrl,
+            'user_agent' => $request->userAgent() ?? '',
+            'session_id' => $request->hasSession() ? $request->session()->getId() : null,
+            'user_idx' => $user?->idx,
+        ]);
     }
 
     private function getPagePath(Request $request): string
@@ -118,10 +173,19 @@ class TrafficAnalyticsService
         $normalized = strtolower($host);
 
         // 서버/프록시 IP가 referer_host로 들어오지 않게 차단한다.
-        if (in_array($normalized, config('bot.access_log_excluded_ips', []), true)) {
+        if (in_array($normalized, config('traffic.access_log_excluded_ips', []), true)) {
             return 'direct';
         }
 
         return $normalized;
+    }
+
+    private function assertValidConversionType(string $conversionType): void
+    {
+        $types = config('traffic.conversion_types', []);
+
+        if (!array_key_exists($conversionType, $types)) {
+            throw new InvalidArgumentException("Invalid conversion type: {$conversionType}");
+        }
     }
 }

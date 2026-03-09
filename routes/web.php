@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConversionLogController;
 use App\Http\Controllers\PushController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
@@ -55,3 +56,7 @@ Route::get('/robots.txt', function () {
         ->view('robots')
         ->header('Content-Type', 'text/plain');
 });
+
+// 아웃바운드 전환 추적 후 외부 이동
+Route::get('/outbound', [ConversionLogController::class, 'outbound'])
+    ->name('conversion.outbound');

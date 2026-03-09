@@ -142,6 +142,89 @@
 @section('script')
   <script>
     $(function () {
+      function normalizeQueryAmp(value) {
+        return String(value || '').replace(/([?&])amp;/g, '$1');
+      }
+
+      function isUnsafeHref(href) {
+        return /^\s*(javascript:|data:)/i.test(href);
+      }
+
+      function isInternalHref(href) {
+        if (
+          href.startsWith('/') ||
+          href.startsWith('#') ||
+          href.startsWith('mailto:') ||
+          href.startsWith('tel:')
+        ) {
+          return true;
+        }
+
+        try {
+          const parsed = new URL(href, window.location.origin);
+          return parsed.host === window.location.host;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function buildOutboundHref(targetUrl, conversionType = 'outbound') {
+        const query = new URLSearchParams({
+          url: String(targetUrl || ''),
+          conversion_type: String(conversionType || 'outbound'),
+        });
+
+        return '/outbound?' + query.toString();
+      }
+
+      function normalizeLinkHref(href) {
+        const resolved = normalizeQueryAmp(String(href || '').trim());
+        if (!resolved || isUnsafeHref(resolved)) {
+          return resolved;
+        }
+
+        if (resolved.startsWith('/outbound')) {
+          try {
+            const outboundUrl = new URL(resolved, window.location.origin);
+            const targetUrl = outboundUrl.searchParams.get('url');
+            const conversionType =
+              outboundUrl.searchParams.get('conversion_type') ||
+              outboundUrl.searchParams.get('amp;conversion_type') ||
+              'outbound';
+
+            if (!targetUrl) {
+              return resolved;
+            }
+
+            return buildOutboundHref(targetUrl, conversionType);
+          } catch (e) {
+            return resolved;
+          }
+        }
+
+        if (!isInternalHref(resolved)) {
+          return buildOutboundHref(resolved, 'outbound');
+        }
+
+        return resolved;
+      }
+
+      function rewriteEditorLinksForOutbound(contentHtml) {
+        const container = document.createElement('div');
+        container.innerHTML = String(contentHtml || '');
+
+        container.querySelectorAll('a[href]').forEach(function (anchor) {
+          const href = anchor.getAttribute('href');
+          const normalizedHref = normalizeLinkHref(href);
+
+          if (normalizedHref) {
+            anchor.setAttribute('href', normalizedHref);
+          }
+        });
+
+        return container.innerHTML;
+      }
+
       const isEditMode = {{ $isEditMode ? 'true' : 'false' }};
       const thumbnailDestroyUrl = "{{ $thumbnailDestroyUrl ?? '' }}";
       const tagsDestroyUrl = "{{ $tagsDestroyUrl ?? '' }}";
@@ -212,7 +295,8 @@
 
           return;
         }
-        
+
+        $('#content').val(rewriteEditorLinksForOutbound(content));
         $("#form-note").submit();
       });
 

@@ -19,6 +19,7 @@ class DailyPageStat extends Model
         'device_type',
         'total_access_count',
         'real_access_count',
+        'conversion_count',
         'create_datetime',
         'update_datetime',
     ];
@@ -27,6 +28,7 @@ class DailyPageStat extends Model
         'stat_date' => 'date',
         'total_access_count' => 'integer',
         'real_access_count' => 'integer',
+        'conversion_count' => 'integer',
         'create_datetime' => 'datetime',
         'update_datetime' => 'datetime',
     ];

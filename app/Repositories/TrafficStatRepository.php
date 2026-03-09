@@ -29,6 +29,23 @@ class TrafficStatRepository
     }
 
     /**
+     * 일별 전환 집계 원천 데이터 조회
+     */
+    public function getDailyConversionRows(string $date): Collection
+    {
+        return DB::table('conversion_logs')
+            ->selectRaw("
+                conversion_date as stat_date,
+                access_page,
+                device_type,
+                COUNT(*) as conversion_count
+            ")
+            ->whereDate('conversion_date', $date)
+            ->groupBy('conversion_date', 'access_page', 'device_type')
+            ->get();
+    }
+
+    /**
      * 일별 페이지 통계 upsert
      */
     public function upsertDailyPageStats(array $rows): void
@@ -40,7 +57,7 @@ class TrafficStatRepository
         DB::table('daily_page_stats')->upsert(
             $rows,
             ['stat_date', 'access_page', 'device_type'],
-            ['total_access_count', 'real_access_count', 'update_datetime']
+            ['total_access_count', 'real_access_count', 'conversion_count', 'update_datetime']
         );
     }
 }

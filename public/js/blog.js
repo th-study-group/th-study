@@ -240,26 +240,90 @@ function createVisibilityBadgeHtml(useFlag, useFlagLabel, className) {
   `;
 }
 
+function normalizeQueryAmp(value) {
+  return String(value || '').replace(/([?&])amp;/g, '$1');
+}
+
+function buildOutboundTrackingHref(targetUrl, conversionType) {
+  var params = new URLSearchParams({
+    url: String(targetUrl || ''),
+    conversion_type: String(conversionType || 'outbound'),
+  });
+
+  return '/outbound?' + params.toString();
+}
+
+function isInternalTargetForOutboundHref(href) {
+  try {
+    var outboundUrl = new URL(String(href || ''), location.origin);
+    var target = String(outboundUrl.searchParams.get('url') || '').trim();
+
+    if (!target) {
+      return false;
+    }
+
+    var resolved = new URL(target, location.origin);
+    return resolved.host === location.host;
+  } catch (e) {
+    return false;
+  }
+}
+
+function isOutboundTrackingHref(href) {
+  try {
+    var resolved = new URL(String(href || ''), location.origin);
+    return resolved.pathname === '/outbound';
+  } catch (e) {
+    return false;
+  }
+}
+
 function applyExternalLinkAttributes(containerSelector) {
   $(containerSelector).find('a').each(function () {
     var $link = $(this);
-    var href = String($link.attr('href') || '').trim();
+    var href = normalizeQueryAmp(String($link.attr('href') || '').trim());
 
     if (!href) {
       return;
     }
 
+    if (href !== String($link.attr('href') || '').trim()) {
+      $link.attr('href', href);
+    }
+
+    var isOutboundTracking = isOutboundTrackingHref(href);
     var isInternal =
+      !isOutboundTracking && (
       href.startsWith('/') ||
       href.startsWith('#') ||
       href.startsWith('mailto:') ||
       href.startsWith('tel:') ||
-      href.indexOf(location.host) !== -1;
+      href.indexOf(location.host) !== -1
+    );
 
     $link.removeAttr('data-link-kind');
 
+    if (isOutboundTracking) {
+      var isInternalTarget = isInternalTargetForOutboundHref(href);
+
+      $link.attr('data-link-kind', isInternalTarget ? 'internal' : 'external');
+
+      if (isInternalTarget) {
+        $link
+          .removeAttr('target')
+          .removeAttr('rel');
+      } else {
+        $link
+          .attr('target', '_blank')
+          .attr('rel', 'noopener noreferrer');
+      }
+
+      return;
+    }
+
     if (!isInternal) {
       $link
+        .attr('href', buildOutboundTrackingHref(href, 'outbound'))
         .attr('data-link-kind', 'external')
         .attr('target', '_blank')
         .attr('rel', 'noopener noreferrer');
