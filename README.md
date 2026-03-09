@@ -330,6 +330,7 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - 계층 분리는 `TrackAccessLog`(수집 진입) -> `TrafficAnalyticsService`(오케스트레이션) -> `TrafficLogRepository`/`TrafficStatRepository`(저장/집계) 구조로 운영합니다.
 - 전환 타입은 `config/traffic.php`의 `traffic.conversion_types`를 기준으로 FormRequest + Service 이중 검증으로 관리합니다.
 - 현재 일 단위 집계(`stats:aggregate-daily`)를 기준으로 두고, 월/연 집계는 같은 서비스/레퍼지토리 계층에 확장 가능한 형태로 설계했습니다.
+- 로그 정리(`logs:cleanup`)는 매일 실행되며 `access_logs` 60일, `bot_access_logs` 30일, `conversion_logs` 90일 기준으로 삭제합니다.
 
 6. 운영 주의점
 - `APP_URL`이 비어 있거나 끝 슬래시가 잘못 들어가면 `Sitemap`/`robots.txt`의 절대 URL이 깨질 수 있습니다.
