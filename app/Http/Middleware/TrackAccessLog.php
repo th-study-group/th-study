@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Support\RequestIp;
+use App\Support\TrafficTrackingGuard;
 use App\Services\TrafficAnalyticsService;
 use Closure;
 use Illuminate\Http\Request;
@@ -17,7 +18,8 @@ use Throwable;
 class TrackAccessLog
 {
     public function __construct(
-        private TrafficAnalyticsService $trafficAnalyticsService
+        private TrafficAnalyticsService $trafficAnalyticsService,
+        private TrafficTrackingGuard $trafficTrackingGuard
     ) {}
 
     public function handle(Request $request, Closure $next): Response
@@ -65,8 +67,7 @@ class TrackAccessLog
             return false;
         }
 
-        $user = $request->user();
-        if ($user && $user->level === 'admin') {
+        if ($this->trafficTrackingGuard->shouldSkip($request->user())) {
             return false;
         }
 

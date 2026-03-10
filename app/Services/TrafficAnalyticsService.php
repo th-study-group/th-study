@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\TrafficLogRepository;
 use App\Repositories\TrafficStatRepository;
 use App\Support\RequestIp;
+use App\Support\TrafficTrackingGuard;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Jenssegers\Agent\Agent;
@@ -16,7 +17,8 @@ class TrafficAnalyticsService
 {
     public function __construct(
         private TrafficLogRepository $trafficLogRepository,
-        private TrafficStatRepository $trafficStatRepository
+        private TrafficStatRepository $trafficStatRepository,
+        private TrafficTrackingGuard $trafficTrackingGuard
     ) {}
 
     /**
@@ -128,6 +130,10 @@ class TrafficAnalyticsService
         $now = now();
         $deviceInfo = detectDeviceInfo($request->userAgent());
         $user = $request->user();
+
+        if ($this->trafficTrackingGuard->shouldSkip($user)) {
+            return;
+        }
 
         $this->trafficLogRepository->createConversion([
             'conversion_date' => $now->toDateString(),
