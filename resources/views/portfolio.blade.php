@@ -395,9 +395,14 @@
               <td><code>resources/views/layouts/app.blade.php</code></td>
             </tr>
             <tr>
+              <td class="fw-bold">ads.txt 운영</td>
+              <td>애드센스 크롤러 인증용 <code>ads.txt</code>를 공개 루트(<code>/ads.txt</code>)로 노출해 검색/광고 검증 경로를 운영 코드와 함께 관리</td>
+              <td><code>public/ads.txt</code></td>
+            </tr>
+            <tr>
               <td class="fw-bold">내부 유입 구조</td>
-              <td>외부 유입 점검(네이버/구글)과 별도로 내부 유입 원천은 사용자/봇 raw 로그로 분리 저장하고, 전환 raw 로그는 <code>conversion_logs</code>로 별도 저장. 블로그 외부 링크는 <code>/outbound</code> 경유로 전환을 기록하며, 일 집계는 페이지/디바이스 기준으로 <code>conversion_count</code>까지 누적</td>
-              <td><code>app/Http/Middleware/TrackAccessLog.php</code>, <code>app/Services/TrafficAnalyticsService.php</code>, <code>app/Repositories/TrafficLogRepository.php</code>, <code>app/Repositories/TrafficStatRepository.php</code></td>
+              <td>외부 유입 점검(네이버/구글)과 별도로 내부 유입 원천은 사용자/봇 raw 로그로 분리 저장하고, 전환 raw 로그는 <code>conversion_logs</code>로 별도 저장. 블로그 외부 링크는 <code>/outbound</code> 경유로 전환을 기록하며, 일 집계는 페이지/디바이스 기준으로 <code>conversion_count</code>까지 누적. <code>admin</code> 계정은 공통 가드로 유입/전환 수집에서 제외</td>
+              <td><code>app/Http/Middleware/TrackAccessLog.php</code>, <code>app/Services/TrafficAnalyticsService.php</code>, <code>app/Support/TrafficTrackingGuard.php</code>, <code>app/Repositories/TrafficLogRepository.php</code>, <code>app/Repositories/TrafficStatRepository.php</code></td>
             </tr>
           </tbody>
         </table>
@@ -409,6 +414,7 @@
           <li>새 공개 페이지를 만들면 라우트 추가만으로 끝내지 않고 <code>config/sitemap.php</code>와 robots 정책도 함께 검토</li>
           <li>검색 유입 관리는 Google 색인만 보지 않고 네이버 서치어드바이저 수집 상태도 함께 확인</li>
           <li>내부 유입 데이터는 <code>access_logs/bot_access_logs</code> raw, 전환 데이터는 <code>conversion_logs</code> raw로 분리하고, 집계는 <code>daily_page_stats(conversion_count 포함)</code>를 기준으로 조회/확장(월/연 단위)</li>
+          <li><code>user.level=admin</code>은 <code>TrafficTrackingGuard</code> 기준으로 유입/전환 로그를 모두 스킵</li>
           <li>로그 정리(<code>logs:cleanup</code>)는 매일 실행하며 <code>access_logs</code> 60일, <code>bot_access_logs</code> 30일, <code>conversion_logs</code> 90일 기준으로 삭제</li>
           <li>전환 타입은 <code>traffic.conversion_types</code> 기준으로 FormRequest + Service 이중 검증으로 통일</li>
           <li>검색엔진 노출은 동적 페이지보다 공개 목록/브랜드 소개/포트폴리오 중심으로 우선 관리</li>

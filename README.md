@@ -318,6 +318,7 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 4. 네이버 서치어드바이저 등록
 - 네이버 서치어드바이저에 사이트를 등록해 국내 검색엔진 수집 채널도 별도로 확보했습니다.
 - 소유권 확인용 웹마스터 메타 코드는 `resources/views/layouts/app.blade.php`의 `<head>`에 넣어 전체 페이지 공통으로 반영하고, Git으로 함께 버전 관리합니다.
+- 애드센스 크롤러 인증용 `ads.txt`는 `public/ads.txt`에 두고 공개 루트(`/ads.txt`)로 제공해 검증 상태를 유지합니다.
 - 이렇게 두면 운영 중 검증 코드 변경 이력도 코드 변경 이력과 같이 추적할 수 있습니다.
 - 운영 기준은 `/robots.txt`, `/sitemap.xml` 같은 공개 크롤링 기준 URL을 함께 유지하는 것입니다.
 - 검색 유입 점검 시에는 Google 계열 색인과 별개로 네이버 수집 상태도 같이 확인합니다.
@@ -328,6 +329,7 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - 유입 집계는 `daily_page_stats`에 일자/페이지/디바이스 단위로 누적합니다.
 - 일 집계(`stats:aggregate-daily`)는 `total_access_count`, `real_access_count`와 함께 `conversion_count`도 병합 업데이트합니다.
 - 계층 분리는 `TrackAccessLog`(수집 진입) -> `TrafficAnalyticsService`(오케스트레이션) -> `TrafficLogRepository`/`TrafficStatRepository`(저장/집계) 구조로 운영합니다.
+- `user.level = admin`은 공통 규칙(`TrafficTrackingGuard`)으로 유입/전환 모두 수집에서 제외합니다.
 - 전환 타입은 `config/traffic.php`의 `traffic.conversion_types`를 기준으로 FormRequest + Service 이중 검증으로 관리합니다.
 - 현재 일 단위 집계(`stats:aggregate-daily`)를 기준으로 두고, 월/연 집계는 같은 서비스/레퍼지토리 계층에 확장 가능한 형태로 설계했습니다.
 - 로그 정리(`logs:cleanup`)는 매일 실행되며 `access_logs` 60일, `bot_access_logs` 30일, `conversion_logs` 90일 기준으로 삭제합니다.
