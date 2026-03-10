@@ -21,7 +21,7 @@ class ConversionLogRequest extends FormRequest
             'conversion_type' => [
                 'required',
                 'string',
-                Rule::in(array_keys(config('traffic.conversion_types', []))),
+                Rule::in(config('traffic.conversion_types', [])),
             ],
         ];
     }

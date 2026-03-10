@@ -190,7 +190,7 @@ class TrafficAnalyticsService
     {
         $types = config('traffic.conversion_types', []);
 
-        if (!array_key_exists($conversionType, $types)) {
+        if (!in_array($conversionType, $types, true)) {
             throw new InvalidArgumentException("Invalid conversion type: {$conversionType}");
         }
     }

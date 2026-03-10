@@ -18,18 +18,18 @@ return [
     | Conversion Types
     |--------------------------------------------------------------------------
     |
-    | 유입 전환 로그(conversion_logs.conversion_type)에 사용하는 표준 키/값입니다.
+    | 유입 전환 로그(conversion_logs.conversion_type)에 사용하는 표준 값 목록입니다.
     |
     */
     'conversion_types' => [
-        'page_view' => 'page_view',
-        'signup' => 'signup',
-        'login' => 'login',
-        'purchase' => 'purchase',
-        'click' => 'click',
-        'outbound' => 'outbound',
-        'download' => 'download',
-        'share' => 'share',
-        'search' => 'search',
+        'page_view',
+        'signup',
+        'login',
+        'purchase',
+        'click',
+        'outbound',
+        'download',
+        'share',
+        'search',
     ],
 ];
