@@ -130,8 +130,9 @@ class TrafficAnalyticsService
         $now = now();
         $deviceInfo = detectDeviceInfo($request->userAgent());
         $user = $request->user();
+        $clientIp = RequestIp::resolve($request);
 
-        if ($this->trafficTrackingGuard->shouldSkip($user)) {
+        if ($this->trafficTrackingGuard->shouldSkip($user, $clientIp)) {
             return;
         }
 
@@ -147,7 +148,7 @@ class TrafficAnalyticsService
             'device_model' => $deviceInfo['device_model'],
             'os' => $agent->platform(),
             'browser' => detectBrowserName($request->userAgent(), $agent),
-            'ip' => RequestIp::resolve($request),
+            'ip' => $clientIp,
             'referer_url' => $refererUrl,
             'user_agent' => $request->userAgent() ?? '',
             'session_id' => $request->hasSession() ? $request->session()->getId() : null,

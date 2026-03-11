@@ -8,7 +8,6 @@ use App\Services\TrafficAnalyticsService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Jenssegers\Agent\Agent;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -63,11 +62,8 @@ class TrackAccessLog
             return false;
         }
 
-        if ($this->isExcludedAccessLogIp($request)) {
-            return false;
-        }
-
-        if ($this->trafficTrackingGuard->shouldSkip($request->user())) {
+        $clientIp = RequestIp::resolve($request);
+        if ($this->trafficTrackingGuard->shouldSkip($request->user(), $clientIp)) {
             return false;
         }
 
@@ -108,28 +104,4 @@ class TrackAccessLog
 
         return false;
     }
-
-    private function isExcludedAccessLogIp(Request $request): bool
-    {
-        $excludedIps = config('traffic.access_log_excluded_ips', []);
-        if (empty($excludedIps)) {
-            return false;
-        }
-
-        $agent = new Agent();
-        $agent->setUserAgent($request->userAgent() ?? '');
-
-        // 제외 IP는 사람(access_logs) 기록에만 적용하고, 봇 로그는 계속 기록한다.
-        if ($agent->isRobot()) {
-            return false;
-        }
-
-        $clientIp = RequestIp::resolve($request);
-        if ($clientIp === '') {
-            return false;
-        }
-
-        return in_array($clientIp, $excludedIps, true);
-    }
-
 }
