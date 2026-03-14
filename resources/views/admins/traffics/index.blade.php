@@ -133,8 +133,11 @@
                     </thead>
                     <tbody>
                         @forelse ($logs as $log)
+                            @php
+                                $number = $logs->total() - (($logs->currentPage() - 1) * $logs->perPage()) - $loop->index;
+                            @endphp
                             <tr class="text-center">
-                                <td class="text-nowrap">{{ (($logs->currentPage() - 1) * $logs->perPage()) + $loop->iteration }}</td>
+                                <td class="text-nowrap">{{ $number }}</td>
                                 <td class="text-nowrap">{{ $log->access_datetime?->format('Y-m-d H:i:s') ?? '-' }}</td>
                                 <td class="text-start text-break">
                                     @if (!empty($log->access_page_href))
