@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ConversionLogRequest;
 use App\Services\TrafficAnalyticsService;
 
-class ConversionLogController extends Controller
+class TrafficController extends Controller
 {
     public function outbound(
         ConversionLogRequest $request,
