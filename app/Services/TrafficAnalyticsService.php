@@ -6,7 +6,9 @@ use App\Repositories\TrafficLogRepository;
 use App\Repositories\TrafficStatRepository;
 use App\Support\RequestIp;
 use App\Support\TrafficTrackingGuard;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Jenssegers\Agent\Agent;
 
@@ -154,6 +156,28 @@ class TrafficAnalyticsService
             'session_id' => $request->hasSession() ? $request->session()->getId() : null,
             'user_idx' => $user?->idx,
         ]);
+    }
+
+    /**
+     * 관리자 일일 유입 현황 조회
+     */
+    public function getDailyAccessLogs(array $filters): LengthAwarePaginator
+    {
+        $page = $filters['page'] ?? 1;
+        $logs = $this->trafficLogRepository->paginateDailyAccessLogs($filters, 50);
+
+        Log::info('[Admin][Traffic][List] 조회 완료', [
+            'user_idx' => auth()->id(),
+            'search_date' => $filters['search_date'] ?? null,
+            'search_device' => $filters['search_device'] ?? null,
+            'search_ip' => $filters['search_ip'] ?? null,
+            'search_order' => $filters['search_order'] ?? null,
+            'page' => $page,
+            'per_page' => 50,
+            'ip' => RequestIp::resolve(),
+        ]);
+
+        return $logs;
     }
 
     private function getPagePath(Request $request): string

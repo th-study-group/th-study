@@ -12,4 +12,9 @@ return [
         'Y' => '공개',
         'N' => '비공개'
     ],
+    'device_kind' => [
+        'mobile' => '모바일',
+        'pc' => 'PC',
+        'tablet' => '태블릿',
+    ],
 ];

@@ -20,6 +20,7 @@ return [
         'admins.posts.show' => 'admin',
         'admins.guest_posts.index' => 'admin',
         'admins.guest_posts.edit' => 'admin',
+        'admins.traffics.index' => 'admin',
     ],
 
     'menus' => [
@@ -56,6 +57,9 @@ return [
                 'params' => [
                     'post_type' => 'inquiries',
                 ],
+            ],
+            'admins.traffics.index' => [
+                'title' => '일일 유입 현황',
             ],
         ],
     ],

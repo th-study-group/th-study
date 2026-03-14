@@ -5,6 +5,7 @@ use App\Http\Controllers\Admins\GuestPostController;
 use App\Http\Controllers\Admins\InquiryController;
 use App\Http\Controllers\Admins\MemberController;
 use App\Http\Controllers\Admins\PostController;
+use App\Http\Controllers\Admins\TrafficController;
 use App\Http\Controllers\PushController;
 use Illuminate\Support\Facades\Route;
 
@@ -61,4 +62,9 @@ Route::prefix("comments")->name("comments.")->group(function() {
 // 웹 푸시 발송
 Route::middleware(['throttle:5,1'])->prefix('push')->group(function () {
     Route::post('/send-to-user', [PushController::class, 'sendToUser'])->name('send.push'); // 발송(다중)
+});
+
+// 유입 전환 관리자
+Route::prefix("traffics")->name("traffics.")->group(function() {
+    Route::get("/", [TrafficController::class, 'index'])->name('index'); 
 });
