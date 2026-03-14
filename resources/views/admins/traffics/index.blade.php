@@ -133,20 +133,29 @@
                     </thead>
                     <tbody>
                         @forelse ($logs as $log)
-                            @php
-                                $number = (($logs->currentPage() - 1) * $logs->perPage()) + $loop->iteration;
-                                $deviceLabel = match ($log->device_type) {
-                                    'desktop' => 'PC',
-                                    'mobile' => '모바일',
-                                    'tablet' => '태블릿',
-                                    default => $log->device_type ?? '-',
-                                };
-                            @endphp
                             <tr class="text-center">
-                                <td class="text-nowrap">{{ $number }}</td>
-                                <td class="text-nowrap">{{ optional($log->access_datetime)->format('Y-m-d H:i:s') ?? '-' }}</td>
-                                <td class="text-start text-break">{{ $log->access_page ?? '-' }}</td>
-                                <td class="text-nowrap">{{ $deviceLabel }}</td>
+                                <td class="text-nowrap">{{ (($logs->currentPage() - 1) * $logs->perPage()) + $loop->iteration }}</td>
+                                <td class="text-nowrap">{{ $log->access_datetime?->format('Y-m-d H:i:s') ?? '-' }}</td>
+                                <td class="text-start text-break">
+                                    @if (!empty($log->access_page_href))
+                                        <a href="{{ $log->access_page_href }}"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           class="text-decoration-none text-dark">
+                                            {{ $log->access_page ?? '-' }}
+                                            <span class="ms-1 text-secondary" aria-hidden="true">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
+                                                    <path d="M10 2H14V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M14 2L8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M14 9V12.5C14 13.3284 13.3284 14 12.5 14H3.5C2.67157 14 2 13.3284 2 12.5V3.5C2 2.67157 2.67157 2 3.5 2H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </span>
+                                        </a>
+                                    @else
+                                        {{ $log->access_page ?? '-' }}
+                                    @endif
+                                </td>
+                                <td class="text-nowrap">{{ $log->device_label ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->device_brand ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->device_model ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->os ?? '-' }}</td>
