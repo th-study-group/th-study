@@ -54,10 +54,10 @@ return [
             'title' => '쇼핑',
             'url' => '/blogs/shopping'
         ],
-        'real-estate' => [
-            'title' => '부동산',
-            'url' => '/blogs/real-estate'
-        ],
+        //'real-estate' => [
+        //    'title' => '부동산',
+        //    'url' => '/blogs/real-estate'
+        //],
     ],
     'maps' => [
         'food' => [
