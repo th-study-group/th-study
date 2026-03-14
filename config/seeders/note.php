@@ -18,6 +18,8 @@ return [
         ['group_code' => 'blog', 'code' => 'cafe', 'name' => '카페', 'memo' => '카페 정보를 정리해요'],
         ['group_code' => 'blog', 'code' => 'economy', 'name' => '경제', 'memo' => '경제 정보를 정리해요'],
         ['group_code' => 'blog', 'code' => 'shopping', 'name' => '쇼핑', 'memo' => '쇼핑 관련 후기 정리해요.'],
+        ['group_code' => 'blog', 'code' => 'shopping', 'name' => '쇼핑', 'memo' => '쇼핑 관련 후기 정리해요.'],
+        ['group_code' => 'blog', 'code' => 'real-estate', 'name' => '부동산', 'memo' => '부동산 관련 정보 정리해요.'],
     ],
 
     'topics' => [
@@ -32,5 +34,6 @@ return [
         ['group_code' => 'blog', 'category_code' => 'economy', 'name' => '경제상식', 'memo' => '초딩도 쉽게 이해하는 경제상식'],
         ['group_code' => 'blog', 'category_code' => 'shopping', 'name' => 'IT/가전', 'memo' => 'IT 및 가전제품 구매 후기'],
         ['group_code' => 'blog', 'category_code' => 'shopping', 'name' => '일상', 'memo' => '일상속 쇼핑 구매 후기'],
+        ['group_code' => 'blog', 'category_code' => 'real-estate', 'name' => '국내부동산', 'memo' => '국내 부동산 정보 정리'],
     ],
 ];
