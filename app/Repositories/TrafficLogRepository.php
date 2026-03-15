@@ -45,23 +45,22 @@ class TrafficLogRepository
         $searchDevice = $filters['search_device'] ?? null;
         $searchIp = trim($filters['search_ip'] ?? '');
         $searchOrder = $filters['search_order'] ?? 'desc';
+        $deviceTypeMap = [
+            'pc' => 'desktop',
+            'mobile' => 'mobile',
+            'tablet' => 'tablet',
+        ];
 
         $query = AccessLog::query()
             ->with(['user:idx,email'])
             ->whereDate('access_datetime', $searchDate);
 
         $query
-            ->when($searchDevice === 'pc', function ($q) {
-                $q->where('device_type', 'desktop');
-            })
-            ->when($searchDevice === 'mobile', function ($q) {
-                $q->where('device_type', 'mobile');
-            })
-            ->when($searchDevice === 'tablet', function ($q) {
-                $q->where('device_type', 'tablet');
+            ->when($searchDevice !== null && $searchDevice !== '', function ($q) use ($searchDevice, $deviceTypeMap) {
+                $q->where('device_type', $deviceTypeMap[$searchDevice] ?? $searchDevice);
             })
             ->when($searchIp !== '', function ($q) use ($searchIp) {
-                $q->whereIn('ip', [$searchIp]);
+                $q->where('ip', 'like', $searchIp . '%');
             });
 
         return $query
