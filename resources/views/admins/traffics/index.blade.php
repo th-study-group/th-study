@@ -108,8 +108,8 @@
                         <col style="width: 160px;">
                         <col style="width: 120px;">
                         <col style="width: 130px;">
-                        <col style="width: 130px;">
-                        <col style="width: 330px;">
+                        <col style="width: 199px;">
+                        <col style="width: 280px;">
                         <col style="width: 380px;">
                         <col style="width: 220px;">
                         <col style="width: 220px;">
