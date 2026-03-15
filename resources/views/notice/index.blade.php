@@ -9,7 +9,7 @@
                 <div class="d-flex align-items-start justify-content-between gap-2 board-head-top">
                     <div class="flex-grow-1 board-min-w-0 board-head-text">
                         <h2 class="board-title h5 mb-1">공지사항</h2>
-                        <p class="text-secondary small mb-0 board-ellipsis-mobile">{{ config('app.name') }} 공지사항 전달헤드려요</p>
+                        <p class="text-secondary small mb-0 board-ellipsis-mobile">{{ config('app.name') }} 공지사항 전달해드려요</p>
                     </div>
                 </div>
 
