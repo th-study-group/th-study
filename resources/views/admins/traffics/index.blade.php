@@ -139,12 +139,12 @@
                             <tr class="text-center">
                                 <td class="text-nowrap">{{ $number }}</td>
                                 <td class="text-nowrap">{{ $log->access_datetime?->format('Y-m-d H:i:s') ?? '-' }}</td>
-                                <td class="text-start text-nowrap">
+                                <td class="text-start text-break">
                                     @if (!empty($log->access_page_href))
                                         <a href="{{ $log->access_page_href }}"
                                            target="_blank"
                                            rel="noopener noreferrer"
-                                           class="text-decoration-none text-dark d-inline-block text-nowrap">
+                                           class="text-decoration-none text-dark">
                                             {{ $log->access_page ?? '-' }}
                                             <span class="ms-1 text-secondary" aria-hidden="true">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
@@ -163,11 +163,11 @@
                                 <td class="text-nowrap">{{ $log->device_model ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->os ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->browser ?? '-' }}</td>
-                                <td class="text-nowrap traffic-col-ip">{{ $log->ip ?? '-' }}</td>
-                                <td class="text-start text-nowrap">{{ $log->referer_url ?? $log->referer_host ?? '-' }}</td>
-                                <td class="text-start traffic-col-user-agent">{{ $log->user_agent ?? '-' }}</td>
-                                <td class="text-start text-nowrap">{{ $log->session_id ?? '-' }}</td>
-                                <td class="text-start text-nowrap">{{ $log->user?->email ?? '-' }}</td>
+                                <td class="text-start text-break">{{ $log->ip ?? '-' }}</td>
+                                <td class="text-start text-break">{{ $log->referer_url ?? $log->referer_host ?? '-' }}</td>
+                                <td class="text-start text-break">{{ $log->user_agent ?? '-' }}</td>
+                                <td class="text-start text-break">{{ $log->session_id ?? '-' }}</td>
+                                <td class="text-start text-break">{{ $log->user?->email ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr>
@@ -183,27 +183,6 @@
             </nav>
         </div>
     </section>
-@endsection
-
-@section('style')
-    <style>
-        #traffic_table {
-            table-layout: auto;
-            width: max-content;
-            min-width: 100%;
-        }
-
-        #traffic_table .traffic-col-ip {
-            white-space: nowrap;
-            min-width: 160px;
-        }
-
-        #traffic_table .traffic-col-user-agent {
-            white-space: normal;
-            word-break: break-all;
-            min-width: 380px;
-        }
-    </style>
 @endsection
 
 @section('script')
