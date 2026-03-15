@@ -98,7 +98,7 @@
             </div>
 
             <div class="board-table-wrap mt-3">
-                <table id="traffic_table" class="table table-bordered table-hover align-middle mb-0 board-table">
+                <table id="traffic_table" class="table table-bordered table-hover align-middle mb-0 board-table board-table-break">
                     <colgroup>
                         <col style="width: 60px;">
                         <col style="width: 180px;">
@@ -109,7 +109,7 @@
                         <col style="width: 120px;">
                         <col style="width: 130px;">
                         <col style="width: 130px;">
-                        <col style="width: 280px;">
+                        <col style="width: 330px;">
                         <col style="width: 380px;">
                         <col style="width: 220px;">
                         <col style="width: 220px;">
@@ -139,7 +139,7 @@
                             <tr class="text-center">
                                 <td class="text-nowrap">{{ $number }}</td>
                                 <td class="text-nowrap">{{ $log->access_datetime?->format('Y-m-d H:i:s') ?? '-' }}</td>
-                                <td class="text-start text-break">
+                                <td class="text-start">
                                     @if (!empty($log->access_page_href))
                                         <a href="{{ $log->access_page_href }}"
                                            target="_blank"
@@ -163,11 +163,11 @@
                                 <td class="text-nowrap">{{ $log->device_model ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->os ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->browser ?? '-' }}</td>
-                                <td class="text-start text-break">{{ $log->ip ?? '-' }}</td>
-                                <td class="text-start text-break">{{ $log->referer_url ?? $log->referer_host ?? '-' }}</td>
-                                <td class="text-start text-break">{{ $log->user_agent ?? '-' }}</td>
-                                <td class="text-start text-break">{{ $log->session_id ?? '-' }}</td>
-                                <td class="text-start text-break">{{ $log->user?->email ?? '-' }}</td>
+                                <td class="text-start">{{ $log->ip ?? '-' }}</td>
+                                <td class="text-start">{{ $log->referer_url ?? $log->referer_host ?? '-' }}</td>
+                                <td class="text-start">{{ $log->user_agent ?? '-' }}</td>
+                                <td class="text-start">{{ $log->session_id ?? '-' }}</td>
+                                <td class="text-start">{{ $log->user?->email ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr>

@@ -167,6 +167,20 @@
     max-width: 100%;
 }
 
+/* Default wrapping mode for tables that opt in once via class */
+.board-table.board-table-break td {
+    white-space: normal;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+}
+
+.board-table.board-table-break td.text-nowrap,
+.board-table.board-table-break th.text-nowrap {
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+}
+
 @media (max-width: 767.98px) {
     .board-card {
         border-radius: 0.75rem;
