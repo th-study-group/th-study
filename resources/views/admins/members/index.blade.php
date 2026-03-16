@@ -156,6 +156,10 @@
     </section>
 @endsection
 
+@push('scripts')
+    <script src="{{ asset('js/board.js') }}?v={{ filemtime(public_path('js/board.js')) }}"></script>
+@endpush
+
 @section('script')
     <script>
         $(function(){
