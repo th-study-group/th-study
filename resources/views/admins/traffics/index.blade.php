@@ -164,7 +164,7 @@
                                 <td class="text-nowrap">{{ $log->os ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->browser ?? '-' }}</td>
                                 <td class="text-start">{{ $log->ip ?? '-' }}</td>
-                                <td class="text-start">{{ $log->referer_url ?? $log->referer_host ?? '-' }}</td>
+                                <td class="text-start">{{ $log->referer_display ?? '-' }}</td>
                                 <td class="text-start">{{ $log->user_agent ?? '-' }}</td>
                                 <td class="text-start">{{ $log->session_id ?? '-' }}</td>
                                 <td class="text-start">{{ $log->user?->email ?? '-' }}</td>

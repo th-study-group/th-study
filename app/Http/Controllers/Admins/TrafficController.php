@@ -37,11 +37,19 @@ class TrafficController extends Controller
         $logs->setCollection(
             $logs->getCollection()->map(function ($log) use ($deviceLabelMap, $baseUrl) {
                 $accessPage = trim((string) ($log->access_page ?? ''));
+                $refererUrl = trim((string) ($log->referer_url ?? ''));
 
                 $log->device_label = $deviceLabelMap[$log->device_type] ?? ($log->device_type ?? '-');
+               
                 $log->access_page_href = $accessPage !== ''
                     ? $baseUrl . '/' . ltrim($accessPage, '/')
                     : null;
+
+                if ($refererUrl !== '') {
+                    $log->referer_display = urldecode($refererUrl);
+                } else {
+                    $log->referer_display = $log->referer_host ?? '-';
+                }
 
                 return $log;
             })
