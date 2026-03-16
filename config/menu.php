@@ -21,6 +21,7 @@ return [
         'admins.guest_posts.index' => 'admin',
         'admins.guest_posts.edit' => 'admin',
         'admins.traffics.index' => 'admin',
+        'admins.readme' => 'admin',
     ],
 
     'menus' => [
@@ -60,6 +61,9 @@ return [
             ],
             'admins.traffics.index' => [
                 'title' => '일일 유입 현황',
+            ],
+            'admins.readme' => [
+                'title' => 'README.md',
             ],
         ],
     ],
