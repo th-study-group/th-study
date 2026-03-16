@@ -68,3 +68,6 @@ Route::middleware(['throttle:5,1'])->prefix('push')->group(function () {
 Route::prefix("traffics")->name("traffics.")->group(function() {
     Route::get("/", [TrafficController::class, 'index'])->name('index'); 
 });
+
+// readme.md 
+Route::view('/readme.md', 'readme')->name('readme');
