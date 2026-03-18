@@ -19,7 +19,7 @@ foreach (array_keys($noteGroups) as $group) {
 
                 return redirect($targetPath, 301);
             })
-                ->where('legacySlug', 'food|tour|shopping|shoppings')
+                ->where('legacySlug', 'cafe|food|tour|shopping')
                 ->where('rest', '.*');
         }
 
