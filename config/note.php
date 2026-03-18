@@ -34,26 +34,30 @@ return [
             'title' => '개발',
             'url'   => '/blogs/develop',
         ],
-        'tour' => [
-            'title' => '여행',
-            'url'   => '/blogs/tour',
-        ],
-        'food' => [
-            'title' => '맛집',
-            'url'   => '/blogs/food',
-        ],
-        'cafe' => [
-            'title' => '카페',
-            'url'   => '/blogs/cafe',
-        ],
+        //'tour' => [
+        //    'title' => '여행',
+        //    'url'   => '/blogs/tour',
+        //],
+        //'food' => [
+        //    'title' => '맛집',
+        //    'url'   => '/blogs/food',
+        //],
+        //'cafe' => [
+        //    'title' => '카페',
+        //    'url'   => '/blogs/cafe',
+        //],
         'economy' => [
             'title' => '경제',
             'url' => '/blogs/economy'
         ],
-        'shopping' => [
-            'title' => '쇼핑',
-            'url' => '/blogs/shopping'
+        'life' => [
+            'title' => '일상',
+            'url' => '/blogs/life'
         ],
+        //'shopping' => [
+        //    'title' => '쇼핑',
+        //    'url' => '/blogs/shopping'
+        //],
         //'real-estate' => [
         //    'title' => '부동산',
         //    'url' => '/blogs/real-estate'

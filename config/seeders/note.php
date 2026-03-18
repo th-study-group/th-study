@@ -20,6 +20,7 @@ return [
         ['group_code' => 'blog', 'code' => 'shopping', 'name' => '쇼핑', 'memo' => '쇼핑 관련 후기 정리해요.'],
         ['group_code' => 'blog', 'code' => 'shopping', 'name' => '쇼핑', 'memo' => '쇼핑 관련 후기 정리해요.'],
         ['group_code' => 'blog', 'code' => 'real-estate', 'name' => '부동산', 'memo' => '부동산 관련 정보 정리해요.'],
+        ['group_code' => 'blog', 'code' => 'life', 'name' => '일상', 'memo' => '여행, 맛집, 카페, 쇼핑 등 일상 정리해요.'],
     ],
 
     'topics' => [
