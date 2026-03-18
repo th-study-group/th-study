@@ -1,12 +1,28 @@
 <?php
 
 use App\Http\Controllers\NoteController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 $noteGroups = config('note.group', []);
 
 foreach (array_keys($noteGroups) as $group) {
     Route::prefix($group)->name($group . '.')->group(function () use ($group) {
+        if ($group === 'blogs') {
+            Route::get('/{legacySlug}/{rest?}', function (Request $request, string $legacySlug, ?string $rest = null) use ($group) {
+                $targetPath = '/' . $group . '/life' . ($rest !== null && $rest !== '' ? '/' . ltrim($rest, '/') : '');
+                $query = $request->getQueryString();
+
+                if ($query !== null && $query !== '') {
+                    $targetPath .= '?' . $query;
+                }
+
+                return redirect($targetPath, 301);
+            })
+                ->where('legacySlug', 'food|tour|shopping|shoppings')
+                ->where('rest', '.*');
+        }
+
         Route::get('/{slug?}', [NoteController::class, 'index'])
             ->name('index')
             ->defaults('group', $group)
