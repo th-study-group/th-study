@@ -32,6 +32,7 @@ return [
     'blogs' => [
         'develop' => [
             'title' => '개발',
+            'description' => '라라벨, 스프링부트, 파이썬 등 백엔드 개발과 AI, 바이브코딩까지 실무 중심으로 쉽게 정리한 콘텐츠',
             'url'   => '/blogs/develop',
         ],
         //'tour' => [
@@ -48,10 +49,12 @@ return [
         //],
         'economy' => [
             'title' => '경제',
+            'description' => '금리, 환율, 물가 등 실생활에 꼭 필요한 경제 개념과 최신 이슈를 쉽게 풀어 설명하는 콘텐츠',
             'url' => '/blogs/economy'
         ],
         'life' => [
             'title' => '일상',
+            'description' => '여행, 맛집, 카페, 쇼핑 등 직접 경험한 정보를 바탕으로 유용하게 정리한 콘텐츠',
             'url' => '/blogs/life'
         ],
         //'shopping' => [

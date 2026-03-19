@@ -371,14 +371,30 @@ function updateEmptyRowColspan(tableSelector, cellSelector)
 function initBirthDatePicker(selector, options = {}) 
 {
     const input = document.querySelector(selector);
+    const toYmd = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const baseOptions = {
       dateFormat: 'Y-m-d',
       minDate: '1950-01-01',
       maxDate: 'today',
       defaultDate: '1990-01-01',
       showMonths: 3,
+      disableMobile: true,
       ...options
     };
+
+    if (baseOptions.minDate instanceof Date) {
+      baseOptions.minDate = toYmd(baseOptions.minDate);
+    }
+
+    if (baseOptions.maxDate instanceof Date) {
+      baseOptions.maxDate = toYmd(baseOptions.maxDate);
+    }
 
     if (input && input.value) {
       baseOptions.defaultDate = input.value;
