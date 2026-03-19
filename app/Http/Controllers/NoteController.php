@@ -52,6 +52,9 @@ class NoteController extends Controller
         $canCreate = (bool) optional($request->user())->can('create', Note::class);
         $categoryTitle = (string) data_get($categoryConfig, "{$resolvedSlug}.title", '');
         $listTitle = $resolvedSlug !== '' && $categoryTitle !== '' ? "{$categoryTitle} 글" : '전체 글';
+        $listDescription = $resolvedSlug !== ''
+            ? (string) config("note.{$noteGroup}.{$resolvedSlug}.description", '')
+            : '';
 
         $filters = [
             'search_select_type' => (string) $request->query('search_select_type', 'title'),
@@ -76,6 +79,7 @@ class NoteController extends Controller
             'notes' => $notes,
             'filters' => $filters,
             'listTitle' => $listTitle,
+            'listDescription' => $listDescription,
             'writeUrl' => $resolvedSlug !== '' && $canCreate ? route("{$noteGroup}.create", ['slug' => $resolvedSlug]) : null,
             'initialPayload' => $initialPayload,
         ]);

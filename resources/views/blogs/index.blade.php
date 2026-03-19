@@ -10,8 +10,26 @@
   <main class="col-lg-10 content-col blog-page-scope">
     <section class="board-card blog-list-page p-3 p-lg-4 rounded-3 shadow-sm">
       <div class="blog-list-head">
-        <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
-          <h1 class="blog-list-title">{{ $listTitle ?? '전체 글' }}</h1>
+        <div class="d-flex align-items-center justify-content-between gap-2 blog-list-title-row">
+          <div class="blog-list-title-wrap">
+            <h1 class="blog-list-title">{{ $listTitle ?? '전체 글' }}</h1>
+            @if (!empty($listDescription))
+              <p class="blog-list-description-inline d-none d-md-inline-block mb-0">{{ $listDescription }}</p>
+              <div class="blog-list-description-mobile d-md-none">
+                <button
+                  type="button"
+                  id="blogDescToggle"
+                  class="blog-list-description-toggle"
+                  aria-label="설명 보기"
+                  aria-expanded="false"
+                  aria-controls="blogDescTooltip"
+                >?</button>
+                <div id="blogDescTooltip" class="blog-list-description-tooltip" role="tooltip" hidden>
+                  {{ $listDescription }}
+                </div>
+              </div>
+            @endif
+          </div>
           @if (!empty($writeUrl))
             <button type="button" id="btn_write_top" class="blog-write-top-btn" title="작성" aria-label="작성">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -155,6 +173,43 @@
       state.$items = $items;
       state.$moreWrap = $moreWrap;
       state.$moreButton = $moreButton;
+
+      const $descToggle = $("#blogDescToggle");
+      const $descTooltip = $("#blogDescTooltip");
+      if ($descToggle.length && $descTooltip.length) {
+        const closeDescriptionTooltip = function() {
+          $descToggle.attr("aria-expanded", "false");
+          $descTooltip.attr("hidden", "hidden");
+        };
+
+        const openDescriptionTooltip = function() {
+          $descToggle.attr("aria-expanded", "true");
+          $descTooltip.removeAttr("hidden");
+        };
+
+        $descToggle.on("click", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if ($descToggle.attr("aria-expanded") === "true") {
+            closeDescriptionTooltip();
+            return;
+          }
+          openDescriptionTooltip();
+        });
+
+        $(document).on("click", function(e) {
+          if ($(e.target).closest("#blogDescToggle, #blogDescTooltip").length) {
+            return;
+          }
+          closeDescriptionTooltip();
+        });
+
+        $(document).on("keydown", function(e) {
+          if (e.key === "Escape") {
+            closeDescriptionTooltip();
+          }
+        });
+      }
 
       $("#search_select_type").val(state.searchType);
       $("#search_keyword").val(state.searchKeyword);

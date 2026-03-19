@@ -396,6 +396,10 @@ function initBirthDatePicker(selector, options = {})
       baseOptions.maxDate = toYmd(baseOptions.maxDate);
     }
 
+    if (baseOptions.defaultDate instanceof Date) {
+      baseOptions.defaultDate = toYmd(baseOptions.defaultDate);
+    }
+
     if (input && input.value) {
       baseOptions.defaultDate = input.value;
     }
