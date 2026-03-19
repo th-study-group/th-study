@@ -54,7 +54,7 @@ class NoteController extends Controller
         $listTitle = $resolvedSlug !== '' && $categoryTitle !== '' ? "{$categoryTitle} 글" : '전체 글';
         $listDescription = $resolvedSlug !== ''
             ? (string) config("note.{$noteGroup}.{$resolvedSlug}.description", '')
-            : '';
+            : (string) config("note.default_descriptions.{$noteGroup}", '');
 
         $filters = [
             'search_select_type' => (string) $request->query('search_select_type', 'title'),

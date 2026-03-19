@@ -102,6 +102,9 @@ return [
             'url'   => '/documents/laravel',
         ],
     ],
+    'default_descriptions' => [
+        'blogs' => '개발, 경제, 일상 등 다양한 주제를 실무 경험과 실제 사례를 바탕으로 쉽게 정리한 콘텐츠',
+    ],
     'group' => [
         'photos' => 'photo',
         'videos' => 'video',
