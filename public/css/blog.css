@@ -697,30 +697,25 @@
   }
 
   .blog-list-title-row {
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 
   .blog-list-title-wrap {
     display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    align-items: flex-end;
+    gap: 8px;
     min-width: 0;
   }
 
-  .blog-list-description-wrap {
-    margin: 0 0 8px;
-    position: relative;
-  }
-
-  .blog-list-description {
-    margin: 0;
+  .blog-list-description-inline {
     color: #6c757d;
-    font-size: 15px;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    font-size: 13px;
+    line-height: 1.35;
+    margin-bottom: 2px;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: min(62vw, 720px);
     word-break: keep-all;
     overflow-wrap: anywhere;
   }
@@ -753,7 +748,7 @@
     top: calc(100% + 8px);
     left: 0;
     z-index: 20;
-    width: min(17rem, calc(100vw - 48px));
+    width: min(20rem, calc(100vw - 32px));
     border: 1px solid #d6deea;
     border-radius: 10px;
     padding: 10px 12px;
@@ -762,10 +757,7 @@
     font-size: 13px;
     line-height: 1.45;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
+    white-space: normal;
     word-break: keep-all;
     overflow-wrap: anywhere;
   }
@@ -1480,11 +1472,7 @@
     }
 
     .blog-list-title-wrap {
-      gap: 5px;
-    }
-
-    .blog-list-description-wrap {
-      margin: 0 0 6px;
+      gap: 6px;
     }
 
     .blog-item {
