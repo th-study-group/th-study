@@ -23,6 +23,7 @@ class ConversionLogRequest extends FormRequest
                 'string',
                 Rule::in(config('traffic.conversion_types', [])),
             ],
+            'source_page' => ['nullable', 'string', 'max:255', 'regex:/^\//'],
         ];
     }
 
@@ -33,6 +34,7 @@ class ConversionLogRequest extends FormRequest
             'url.url' => '올바른 URL 형식이 아닙니다.',
             'conversion_type.required' => '전환 타입은 필수입니다.',
             'conversion_type.in' => '허용되지 않은 전환 타입입니다.',
+            'source_page.regex' => '원본 페이지는 /로 시작해야 합니다.',
         ];
     }
 
@@ -44,6 +46,7 @@ class ConversionLogRequest extends FormRequest
             'ip' => $this->ip(),
             'url' => $this->input('url'),
             'conversion_type' => $this->input('conversion_type'),
+            'source_page' => $this->input('source_page'),
             'errors' => $validator->errors()->toArray(),
         ]);
 

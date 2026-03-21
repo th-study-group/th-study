@@ -286,10 +286,35 @@ function isInternalHrefForOutbound(href) {
   }
 }
 
+function extractPathWithQueryFromUrl(rawUrl) {
+  try {
+    var resolvedUrl = new URL(String(rawUrl || '').trim(), location.origin);
+    return String(resolvedUrl.pathname || '/') + String(resolvedUrl.search || '');
+  } catch (e) {
+    return '';
+  }
+}
+
+function resolveOutboundSourcePage() {
+  var preferredSourcePage = String(window.blogCurrentSourcePage || '').trim();
+  if (preferredSourcePage.startsWith('/')) {
+    return preferredSourcePage;
+  }
+
+  return String(location.pathname + location.search || '/').trim();
+}
+
 function buildOutboundTrackingHref(targetUrl, conversionType) {
+  var sourcePage = resolveOutboundSourcePage();
+  if (!sourcePage.startsWith('/')) {
+    sourcePage = '/' + sourcePage.replace(/^\/+/, '');
+  }
+  sourcePage = sourcePage.slice(0, 255);
+
   var params = new URLSearchParams({
     url: String(targetUrl || ''),
     conversion_type: String(conversionType || 'outbound'),
+    source_page: sourcePage || '/',
   });
 
   return '/outbound?' + params.toString();
@@ -380,7 +405,34 @@ function rewriteHtmlAnchorHrefsToOutbound(contentHtml, options) {
 }
 
 function applyExternalLinkAttributes(containerSelector) {
-  $(containerSelector).find('a').each(function () {
+  var $container = $(containerSelector);
+
+  $container.off('click.blogOutboundSource', 'a[href]');
+  $container.on('click.blogOutboundSource', 'a[href]', function () {
+    var currentHref = String($(this).attr('href') || '').trim();
+    if (!isOutboundTrackingHref(currentHref)) {
+      return;
+    }
+
+    try {
+      var outboundUrl = new URL(currentHref, location.origin);
+      var targetUrl = outboundUrl.searchParams.get('url');
+      var conversionType =
+        outboundUrl.searchParams.get('conversion_type') ||
+        outboundUrl.searchParams.get('amp;conversion_type') ||
+        'outbound';
+
+      if (!targetUrl) {
+        return;
+      }
+
+      $(this).attr('href', buildOutboundTrackingHref(targetUrl, conversionType));
+    } catch (e) {
+      return;
+    }
+  });
+
+  $container.find('a').each(function () {
     var $link = $(this);
     var href = normalizeOutboundLinkHref($link.attr('href'), { trackInternal: true });
 
@@ -491,6 +543,7 @@ function applyBlogDetailState(state, payload) {
     actions,
     permissions,
   };
+  window.blogCurrentSourcePage = extractPathWithQueryFromUrl(actions.show_url || '');
   state.pendingDetailScrollTop = 0;
 
   if (noteIdx > 0) {
@@ -642,6 +695,7 @@ function closeBlogDetailModal(state) {
   $('html, body').removeClass('blog-modal-open');
   $('#blogDetailModal').hide();
   $('#blogDetailModal').attr('aria-hidden', 'true');
+  window.blogCurrentSourcePage = '';
 }
 
 function setMoreButtonLoading(state, isLoading) {

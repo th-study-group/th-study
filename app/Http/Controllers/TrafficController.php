@@ -16,7 +16,8 @@ class TrafficController extends Controller
         $trafficAnalyticsService->trackConversion(
             $request,
             $payload['conversion_type'],
-            $payload['url']
+            $payload['url'],
+            $payload['source_page'] ?? null
         );
 
         return redirect()->away($payload['url']);

@@ -121,7 +121,12 @@ class TrafficAnalyticsService
     /**
      * 전환 원시 로그 저장
      */
-    public function trackConversion(Request $request, string $conversionType, ?string $targetPage = null): void
+    public function trackConversion(
+        Request $request,
+        string $conversionType,
+        ?string $targetPage = null,
+        ?string $sourcePage = null
+    ): void
     {
         $this->assertValidConversionType($conversionType);
 
@@ -141,7 +146,12 @@ class TrafficAnalyticsService
         $this->trafficLogRepository->createConversion([
             'conversion_date' => $now->toDateString(),
             'conversion_datetime' => $now,
-            'access_page' => $this->getPagePath($request),
+            'access_page' => $this->resolveConversionAccessPage(
+                $request,
+                $sourcePage,
+                $refererUrl,
+                $targetPage
+            ),
             'conversion_type' => $conversionType,
             'target_page' => $targetPage,
             'referer_host' => $this->resolveRefererHost($refererUrl),
@@ -156,6 +166,105 @@ class TrafficAnalyticsService
             'session_id' => $request->hasSession() ? $request->session()->getId() : null,
             'user_idx' => $user?->idx,
         ]);
+    }
+
+    private function resolveConversionAccessPage(
+        Request $request,
+        ?string $sourcePage,
+        ?string $refererUrl,
+        ?string $targetPage
+    ): string {
+        $showSourcePage = $this->normalizeShowPath($sourcePage);
+        if ($showSourcePage !== null) {
+            return $showSourcePage;
+        }
+
+        $refererPath = $this->resolveInternalRefererPath($request, $refererUrl);
+        if ($refererPath !== null) {
+            return $refererPath;
+        }
+
+        $internalTargetPath = $this->resolveInternalTargetShowPath($request, $targetPage);
+        if ($internalTargetPath !== null) {
+            return $internalTargetPath;
+        }
+
+        $normalizedSourcePage = trim((string) $sourcePage);
+        if ($normalizedSourcePage !== '' && str_starts_with($normalizedSourcePage, '/')) {
+            return mb_substr($normalizedSourcePage, 0, 255);
+        }
+
+        return $this->getPagePath($request);
+    }
+
+    private function normalizeShowPath(?string $path): ?string
+    {
+        $normalizedPath = trim((string) $path);
+        if ($normalizedPath === '') {
+            return null;
+        }
+
+        if (!preg_match('#^/[^/]+/[^/]+/\d+/show(?:\?.*)?$#', $normalizedPath)) {
+            return null;
+        }
+
+        return mb_substr($normalizedPath, 0, 255);
+    }
+
+    private function resolveInternalRefererPath(Request $request, ?string $refererUrl): ?string
+    {
+        if (!is_string($refererUrl) || trim($refererUrl) === '') {
+            return null;
+        }
+
+        $refererHost = parse_url($refererUrl, PHP_URL_HOST);
+        $requestHost = $request->getHost();
+        if (!is_string($refererHost) || !is_string($requestHost)) {
+            return null;
+        }
+
+        if (strcasecmp($refererHost, $requestHost) !== 0) {
+            return null;
+        }
+
+        $refererPath = parse_url($refererUrl, PHP_URL_PATH);
+        if (!is_string($refererPath) || $refererPath === '') {
+            return null;
+        }
+
+        if ($refererPath === '/outbound') {
+            return null;
+        }
+
+        return mb_substr($refererPath, 0, 255);
+    }
+
+    private function resolveInternalTargetShowPath(Request $request, ?string $targetPage): ?string
+    {
+        if (!is_string($targetPage) || trim($targetPage) === '') {
+            return null;
+        }
+
+        $targetHost = parse_url($targetPage, PHP_URL_HOST);
+        $requestHost = $request->getHost();
+        if (!is_string($targetHost) || !is_string($requestHost)) {
+            return null;
+        }
+
+        if (strcasecmp($targetHost, $requestHost) !== 0) {
+            return null;
+        }
+
+        $targetPath = parse_url($targetPage, PHP_URL_PATH);
+        if (!is_string($targetPath) || $targetPath === '') {
+            return null;
+        }
+
+        if (!preg_match('#^/[^/]+/[^/]+/\d+/show$#', $targetPath)) {
+            return null;
+        }
+
+        return mb_substr($targetPath, 0, 255);
     }
 
     /**

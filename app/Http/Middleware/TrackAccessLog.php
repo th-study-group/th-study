@@ -73,6 +73,7 @@ class TrackAccessLog
     private function isExcludedPath(Request $request): bool
     {
         $excludePatterns = [
+            'outbound',
             'admin*',
             'register',
             'login',
