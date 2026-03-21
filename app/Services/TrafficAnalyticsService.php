@@ -168,6 +168,9 @@ class TrafficAnalyticsService
         ]);
     }
 
+    /**
+     * 전환 access_page를 source/referer/target 우선순위로 결정한다.
+     */
     private function resolveConversionAccessPage(
         Request $request,
         ?string $sourcePage,
@@ -197,6 +200,9 @@ class TrafficAnalyticsService
         return $this->getPagePath($request);
     }
 
+    /**
+     * 블로그 상세 show 경로 형식이면 정규화해서 반환한다.
+     */
     private function normalizeShowPath(?string $path): ?string
     {
         $normalizedPath = trim((string) $path);
@@ -211,6 +217,9 @@ class TrafficAnalyticsService
         return mb_substr($normalizedPath, 0, 255);
     }
 
+    /**
+     * 동일 호스트 referer의 path만 추출하고 outbound 재유입은 제외한다.
+     */
     private function resolveInternalRefererPath(Request $request, ?string $refererUrl): ?string
     {
         if (!is_string($refererUrl) || trim($refererUrl) === '') {
@@ -239,6 +248,9 @@ class TrafficAnalyticsService
         return mb_substr($refererPath, 0, 255);
     }
 
+    /**
+     * 내부 이동 target이 블로그 상세 show 경로일 때만 path를 반환한다.
+     */
     private function resolveInternalTargetShowPath(Request $request, ?string $targetPage): ?string
     {
         if (!is_string($targetPage) || trim($targetPage) === '') {
@@ -289,11 +301,17 @@ class TrafficAnalyticsService
         return $logs;
     }
 
+    /**
+     * 현재 요청 path를 저장용 페이지 경로 형식으로 정규화한다.
+     */
     private function getPagePath(Request $request): string
     {
         return $request->path() === '/' ? '/' : '/' . ltrim($request->path(), '/');
     }
 
+    /**
+     * URL 문자열에서 host만 추출한다.
+     */
     private function parseHost(?string $url): ?string
     {
         if (empty($url)) {
@@ -303,6 +321,9 @@ class TrafficAnalyticsService
         return parse_url($url, PHP_URL_HOST) ?: null;
     }
 
+    /**
+     * referer host를 정규화하고 제외 대상이면 direct로 치환한다.
+     */
     private function resolveRefererHost(?string $refererUrl): string
     {
         $host = $this->parseHost($refererUrl);
@@ -320,6 +341,9 @@ class TrafficAnalyticsService
         return $normalized;
     }
 
+    /**
+     * 허용된 전환 타입인지 검증한다.
+     */
     private function assertValidConversionType(string $conversionType): void
     {
         $types = config('traffic.conversion_types', []);
