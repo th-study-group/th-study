@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ConversionLogRequest;
+use App\Http\Requests\Traffics\ConversionLogRequest;
 use App\Services\TrafficAnalyticsService;
 
 class TrafficController extends Controller
