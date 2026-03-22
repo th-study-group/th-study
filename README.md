@@ -15,6 +15,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - 비로그인 게스트 문의 접수 및 관리자 처리
 - 댓글(일반 게시글 및 운영 답변 흐름)
 - 메일 발송/수신 로그, 로그인 로그, 게시글 히스토리 로그
+- 내부 유입 로그, 전환 로그, 일별 페이지 통계 집계
 
 ### 브랜드 슬로건
 
@@ -40,15 +41,34 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Domain/DNS: Gabia 등록 + Cloudflare 네임서버/DNS/Email Routing
 - Study: Python 3, venv, FastAPI, Uvicorn
 
+### 유입/전환 분석 구성
+
+- Raw Log: `access_logs`, `bot_access_logs`, `conversion_logs`
+- Aggregate: `daily_page_stats`
+- Flow: `TrackAccessLog` -> `TrafficAnalyticsService` -> `TrafficLogRepository` / `TrafficStatRepository`
+- Rule: `admin` 계정은 유입/전환 수집 제외
+
 ## 2.1 FastAPI 학습 메모
 
 FastAPI는 Python 기반 API 개발 흐름을 익히기 위한 별도 학습 주제로 정리합니다.
+
+학습 방향:
+
+- PHP/Laravel 외에 Python 기반 API 프레임워크 흐름을 익히기 위한 확장 학습
+- API 서버를 Python 생태계로 다뤄 보면서 향후 인공지능, AI, 데이터 처리 학습으로 이어질 수 있는 기반 확보
+- FastAPI의 빠른 개발 속도와 자동 문서화 기능을 통해 API 구조를 직관적으로 이해하는 데 초점
 
 핵심 기준:
 
 - `python3`
 - `python3 -m pip`
 - `venv`
+
+FastAPI 장점:
+
+- 타입 힌트 기반으로 API 구조를 명확하게 작성 가능
+- Swagger UI가 자동 연동되어 문서와 테스트 화면을 바로 확인 가능
+- Python 생태계와 연결이 쉬워 AI/ML 확장 학습 방향과도 자연스럽게 이어짐
 
 ### 로컬 설치 흐름
 
@@ -79,6 +99,16 @@ python3 -m pip install fastapi uvicorn
 python3 -m pip show fastapi
 ```
 
+빠른 시작 전체 흐름:
+
+```bash
+mkdir fastapi-study
+cd fastapi-study
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install fastapi uvicorn
+```
+
 ### 기본 소스
 
 `main.py`
@@ -90,7 +120,7 @@ app = FastAPI()
 
 @app.get("/")
 def home():
-    return {"message": "hello 태희"}
+    return {"message": "hello world"}
 ```
 
 ### 로컬 실행
@@ -103,6 +133,12 @@ uvicorn main:app --reload
 
 - `http://127.0.0.1:8000`
 - `http://127.0.0.1:8000/docs`
+
+문서 확인:
+
+- `http://127.0.0.1:8000/docs` 는 FastAPI가 기본 제공하는 Swagger UI 문서 화면
+- 라우트를 추가하면 문서와 테스트 화면이 함께 자동 반영됨
+- 학습 초기에는 브라우저에서 바로 요청을 보내 보면서 API 응답 구조를 확인하기 좋음
 
 정리 원칙:
 
