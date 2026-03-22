@@ -38,6 +38,76 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Realtime(실험): Pusher + Laravel Echo
 - Infra: Ubuntu(Nginx + PHP-FPM) self-hosted deploy
 - Domain/DNS: Gabia 등록 + Cloudflare 네임서버/DNS/Email Routing
+- Study: Python 3, venv, FastAPI, Uvicorn
+
+## 2.1 FastAPI 학습 메모
+
+FastAPI는 Python 기반 API 개발 흐름을 익히기 위한 별도 학습 주제로 정리합니다.
+
+핵심 기준:
+
+- `python3`
+- `python3 -m pip`
+- `venv`
+
+### 로컬 설치 흐름
+
+```bash
+brew install python
+python3 --version
+```
+
+프로젝트 생성:
+
+```bash
+mkdir fastapi-study
+cd fastapi-study
+```
+
+가상환경:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+패키지 설치:
+
+```bash
+python3 -m pip --version
+python3 -m pip install fastapi uvicorn
+python3 -m pip show fastapi
+```
+
+### 기본 소스
+
+`main.py`
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"message": "hello 태희"}
+```
+
+### 로컬 실행
+
+```bash
+uvicorn main:app --reload
+```
+
+확인 주소:
+
+- `http://127.0.0.1:8000`
+- `http://127.0.0.1:8000/docs`
+
+정리 원칙:
+
+- 설치와 실행은 로컬 기준으로만 정리합니다.
+- 운영 배포, 시스템 서비스 등록, DNS, 프록시 같은 민감한 운영 정보는 이 FastAPI 학습 메모 범위에 포함하지 않습니다.
 
 ### 프론트 라이브러리 구성(`app.blade.php` 기준)
 
