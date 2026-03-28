@@ -12,30 +12,19 @@ function initPwaStandaloneLinkGuards()
         return;
     }
 
-    const externalModalEl = document.getElementById('pwaExternalLinkModal');
     const imageModalEl = document.getElementById('pwaImagePreviewModal');
-    const externalUrlEl = document.getElementById('pwaExternalLinkUrl');
     const imageTargetEl = document.getElementById('pwaImagePreviewTarget');
-    const copyBtn = document.getElementById('pwaExternalLinkCopyBtn');
-    const openBtn = document.getElementById('pwaExternalLinkOpenBtn');
 
-    if (!externalModalEl || !imageModalEl || !externalUrlEl || !imageTargetEl || !copyBtn || !openBtn) {
+    if (!imageModalEl || !imageTargetEl) {
         return;
     }
 
-    const externalModal = new bootstrap.Modal(externalModalEl);
     const imageModal = new bootstrap.Modal(imageModalEl);
-    let pendingExternalUrl = '';
-
-    externalModalEl.addEventListener('show.bs.modal', function () {
-        document.body.classList.add('pwa-overlay-open');
-    });
 
     imageModalEl.addEventListener('show.bs.modal', function () {
         document.body.classList.add('pwa-overlay-open');
     });
 
-    externalModalEl.addEventListener('hidden.bs.modal', syncPwaOverlayState);
     imageModalEl.addEventListener('hidden.bs.modal', syncPwaOverlayState);
 
     $(document).on('click', 'a[href], img', function (event) {
@@ -54,13 +43,6 @@ function initPwaStandaloneLinkGuards()
                 return;
             }
 
-            if (isNavigableBrowserUrl(href)) {
-                event.preventDefault();
-                pendingExternalUrl = href;
-                externalUrlEl.textContent = href;
-                externalModal.show();
-            }
-
             return;
         }
 
@@ -77,32 +59,6 @@ function initPwaStandaloneLinkGuards()
         openImagePreview(src);
     });
 
-    copyBtn.addEventListener('click', function () {
-        if (!pendingExternalUrl) {
-            return;
-        }
-
-        copyTextToClipboard(pendingExternalUrl)
-            .then(function () {
-                alert('URL이 복사되었습니다.');
-            })
-            .catch(function () {
-                window.prompt('아래 URL을 복사해 주세요.', pendingExternalUrl);
-            });
-    });
-
-    openBtn.addEventListener('click', function () {
-        if (!pendingExternalUrl) {
-            return;
-        }
-
-        externalModal.hide();
-        const popup = window.open(pendingExternalUrl, '_blank', 'noopener,noreferrer');
-        if (!popup) {
-            window.location.href = pendingExternalUrl;
-        }
-    });
-
     imageModalEl.addEventListener('hidden.bs.modal', function () {
         document.body.classList.remove('pwa-image-preview-open');
         imageTargetEl.setAttribute('src', '');
@@ -115,9 +71,7 @@ function initPwaStandaloneLinkGuards()
     }
 
     function syncPwaOverlayState() {
-        const hasShownModal =
-            externalModalEl.classList.contains('show') ||
-            imageModalEl.classList.contains('show');
+        const hasShownModal = imageModalEl.classList.contains('show');
 
         if (!hasShownModal) {
             document.body.classList.remove('pwa-overlay-open');
@@ -181,15 +135,6 @@ function isImageUrl(href)
     } catch (error) {
         return false;
     }
-}
-
-function copyTextToClipboard(text)
-{
-    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-        return navigator.clipboard.writeText(text);
-    }
-
-    return Promise.reject(new Error('clipboard_unavailable'));
 }
 
 function shouldOpenImageElementInPwa(imageElement)

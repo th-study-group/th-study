@@ -406,6 +406,10 @@ function rewriteHtmlAnchorHrefsToOutbound(contentHtml, options) {
 
 function applyExternalLinkAttributes(containerSelector) {
   var $container = $(containerSelector);
+  var shouldOpenInNewWindow = !(
+    typeof isStandalonePwa === 'function' &&
+    isStandalonePwa()
+  );
 
   $container.off('click.blogOutboundSource', 'a[href]');
   $container.on('click.blogOutboundSource', 'a[href]', function () {
@@ -454,9 +458,15 @@ function applyExternalLinkAttributes(containerSelector) {
 
       $link.attr('data-link-kind', isInternalTarget ? 'internal' : 'external');
 
-      $link
-        .attr('target', '_blank')
-        .attr('rel', 'noopener noreferrer');
+      if (shouldOpenInNewWindow) {
+        $link
+          .attr('target', '_blank')
+          .attr('rel', 'noopener noreferrer');
+      } else {
+        $link
+          .removeAttr('target')
+          .removeAttr('rel');
+      }
 
       return;
     }
@@ -464,16 +474,32 @@ function applyExternalLinkAttributes(containerSelector) {
     if (!isInternal) {
       $link
         .attr('href', buildOutboundTrackingHref(href, 'outbound'))
-        .attr('data-link-kind', 'external')
-        .attr('target', '_blank')
-        .attr('rel', 'noopener noreferrer');
+        .attr('data-link-kind', 'external');
+
+      if (shouldOpenInNewWindow) {
+        $link
+          .attr('target', '_blank')
+          .attr('rel', 'noopener noreferrer');
+      } else {
+        $link
+          .removeAttr('target')
+          .removeAttr('rel');
+      }
       return;
     }
 
     $link
-      .attr('data-link-kind', 'internal')
-      .attr('target', '_blank')
-      .attr('rel', 'noopener noreferrer');
+      .attr('data-link-kind', 'internal');
+
+    if (shouldOpenInNewWindow) {
+      $link
+        .attr('target', '_blank')
+        .attr('rel', 'noopener noreferrer');
+    } else {
+      $link
+        .removeAttr('target')
+        .removeAttr('rel');
+    }
   });
 }
 
