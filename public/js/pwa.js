@@ -54,7 +54,7 @@ function initPwaStandaloneLinkGuards()
                 return;
             }
 
-            if (isExternalUrl(href)) {
+            if (isNavigableBrowserUrl(href)) {
                 event.preventDefault();
                 pendingExternalUrl = href;
                 externalUrlEl.textContent = href;
@@ -97,7 +97,10 @@ function initPwaStandaloneLinkGuards()
         }
 
         externalModal.hide();
-        window.location.href = pendingExternalUrl;
+        const popup = window.open(pendingExternalUrl, '_blank', 'noopener,noreferrer');
+        if (!popup) {
+            window.location.href = pendingExternalUrl;
+        }
     });
 
     imageModalEl.addEventListener('hidden.bs.modal', function () {
@@ -160,11 +163,11 @@ function shouldIgnorePwaGuard(anchor, href)
     return ['mailto:', 'tel:', 'sms:', 'intent:'].includes(protocol);
 }
 
-function isExternalUrl(href)
+function isNavigableBrowserUrl(href)
 {
     try {
         const url = new URL(href);
-        return ['http:', 'https:'].includes(url.protocol) && url.origin !== window.location.origin;
+        return ['http:', 'https:'].includes(url.protocol);
     } catch (error) {
         return false;
     }

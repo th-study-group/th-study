@@ -454,15 +454,9 @@ function applyExternalLinkAttributes(containerSelector) {
 
       $link.attr('data-link-kind', isInternalTarget ? 'internal' : 'external');
 
-      if (isInternalTarget) {
-        $link
-          .removeAttr('target')
-          .removeAttr('rel');
-      } else {
-        $link
-          .attr('target', '_blank')
-          .attr('rel', 'noopener noreferrer');
-      }
+      $link
+        .attr('target', '_blank')
+        .attr('rel', 'noopener noreferrer');
 
       return;
     }
@@ -478,8 +472,8 @@ function applyExternalLinkAttributes(containerSelector) {
 
     $link
       .attr('data-link-kind', 'internal')
-      .removeAttr('target')
-      .removeAttr('rel');
+      .attr('target', '_blank')
+      .attr('rel', 'noopener noreferrer');
   });
 }
 

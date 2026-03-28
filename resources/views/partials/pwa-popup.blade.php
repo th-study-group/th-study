@@ -2,11 +2,11 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h5 class="modal-title" id="pwaExternalLinkModalLabel">외부 사이트 이동</h5>
+                <h5 class="modal-title" id="pwaExternalLinkModalLabel">링크 이동</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
             </div>
             <div class="modal-body pt-0">
-                <p class="pwa-link-modal-copy">PWA 앱에서는 외부 사이트가 브라우저로 열릴 수 있습니다.</p>
+                <p class="pwa-link-modal-copy">PWA 앱에서는 링크가 브라우저에서 열릴 수 있습니다.</p>
                 <div class="pwa-link-modal-url" id="pwaExternalLinkUrl" aria-live="polite"></div>
             </div>
             <div class="modal-footer border-0">
