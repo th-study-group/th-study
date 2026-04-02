@@ -39,6 +39,7 @@ return [
         ['group_code' => 'blog', 'category_code' => 'shopping', 'name' => '일상', 'memo' => '일상속 쇼핑 구매 후기'],
         ['group_code' => 'blog', 'category_code' => 'real-estate', 'name' => '국내부동산', 'memo' => '국내 부동산 정보 정리'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '리액트', 'memo' => '프론트엔드 리액트에 대해 정리해요.'],
+        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'Vue', 'memo' => '프론트엔드 Vue 대해 정리해요.'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'AI', 'memo' => 'AI정보'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '파이썬', 'memo' => '파이썬에 대해 정리해요.'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'FastAPI', 'memo' => '파이썬 프레임워크 FastAPI에 대해서 정리해요.'],
