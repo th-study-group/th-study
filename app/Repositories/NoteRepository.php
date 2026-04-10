@@ -115,14 +115,16 @@ class NoteRepository
     public function getLatestByCodesExcluding(
         string $groupCode,
         string $categoryCode,
-        int $excludeIdx,
+        int $noteIdx,
+        int $topicIdx,
         bool $isAdmin,
         int $limit = 5
     ): Collection {
         return Note::with(['topic'])
             ->where('group_code', $groupCode)
             ->where('categories_code', $categoryCode)
-            ->where('idx', '!=', $excludeIdx)
+            ->where('topic_idx', $topicIdx)
+            ->where('idx', '!=', $noteIdx)
             ->when(! $isAdmin, function ($query) {
                 $query->where('use_flag', 1);
             })

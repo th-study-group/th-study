@@ -98,10 +98,12 @@ class NoteController extends Controller
     {
         $noteGroup = $request->route('group');
         $note = $this->noteService->getNoteDetail($noteGroup, $slug, $idx);
+
         $relatedNotes = $this->noteService->getLatestRelatedNotes(
             $noteGroup,
             $slug,
             $note->idx,
+            $note->topic_idx,
             5
         );
         $contentHtml = $this->noteService->toRenderableHtml($note->content ?? '');

@@ -37,7 +37,7 @@
       <section class="blog-show-related" aria-label="관련 글 목록">
         <h2 class="blog-show-related-title">
           <span class="blog-show-related-topic">{{ $note->topic?->name ?? '-' }}</span>
-          <span>카테고리의 다른 글</span>
+          <span>주제 다른 글</span>
         </h2>
         <ul class="blog-show-related-list">
           @forelse(($relatedNotes ?? []) as $related)

@@ -248,7 +248,8 @@ class NoteService
     public function getLatestRelatedNotes(
         string $groupCode,
         string $categoryCode,
-        int $excludeIdx,
+        int $noteIdx,
+        int $topicIdx,
         int $limit = 5
     ): Collection {
         $resolvedGroupCode = config("note.group.{$groupCode}", $groupCode);
@@ -256,7 +257,8 @@ class NoteService
         $relatedNotes = $this->noteRepository->getLatestByCodesExcluding(
             $resolvedGroupCode,
             $categoryCode,
-            $excludeIdx,
+            $noteIdx,
+            $topicIdx,
             $isAdmin,
             $limit
         );
@@ -266,7 +268,8 @@ class NoteService
             'group_code' => $groupCode,
             'resolved_group_code' => $resolvedGroupCode,
             'category_code' => $categoryCode,
-            'exclude_idx' => $excludeIdx,
+            'note_idx' => $noteIdx,
+            'topic_idx' => $topicIdx,   
             'count' => $relatedNotes->count(),
             'ip' => request()->ip(),
         ]);
