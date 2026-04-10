@@ -102,9 +102,9 @@
                     <colgroup>
                         <col style="width: 45px;">
                         <col style="width: 110px;">
-                        <col style="width: 110px;">
-                        <col style="width: 250px;">
-                        <col style="width: 170px;">
+                        <col style="width: 133px;">
+                        <col style="width: 280px;">
+                        <col style="width: 190px;">
                         <col style="width: 90px;">
                         <col style="width: 140px;">
                         <col style="width: 90px;">
