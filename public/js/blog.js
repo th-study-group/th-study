@@ -584,10 +584,10 @@ function applyBlogDetailState(state, payload) {
   const $relatedList = $('#blogDetailRelatedList');
   const resolvedTopicName = topicName !== ''
     ? topicName
-    : String(relatedTitle).replace(/ 카테고리의 다른 글$/, '').trim();
+    : String(relatedTitle).replace(/ 카테고리의 관련 글$/, '').trim();
   $relatedTitle.html(
     `<span class="blog-detail-related-topic">${escapeHtmlText(resolvedTopicName || '-')}</span>` +
-    `<span>주제 다른 글</span>`
+    `<span>관련 글</span>`
   );
   $relatedList.empty();
 
