@@ -83,14 +83,10 @@ class NoteController extends Controller
         }
 
         $initialPayload = $this->buildNoteListResponse($noteGroup, $resolvedSlug, $notes, $filters);
-        $writeUrl = null;
 
-        if ($canCreate) {
-            if ($resolvedSlug !== '') {
-                $writeUrl = route("{$noteGroup}.create", ['slug' => $resolvedSlug]);
-            } else {
-                $writeUrl = route("{$noteGroup}.create.blank");
-            }
+        $writeUrl = route("{$noteGroup}.create.blank");
+        if ($resolvedSlug !== '') {
+            $writeUrl = route("{$noteGroup}.create", ['slug' => $resolvedSlug]);
         }
 
         return view("{$noteGroup}.index", [

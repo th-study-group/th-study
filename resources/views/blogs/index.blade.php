@@ -31,15 +31,13 @@
               </div>
             @endif
           </div>
-          @if (!empty($writeUrl))
-            <button type="button" id="btn_write_top" class="blog-write-top-btn" title="작성" aria-label="작성">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M4 20h4l10-10-4-4L4 16v4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
-                <path d="M12.5 7.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-              </svg>
-              <span>작성</span>
-            </button>
-          @endif
+          <button type="button" id="btn_write_top" class="blog-write-top-btn" title="작성" aria-label="작성">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 20h4l10-10-4-4L4 16v4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+              <path d="M12.5 7.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+            <span>작성</span>
+          </button>
         </div>
 
         <form
@@ -120,14 +118,12 @@
         <button type="button" id="btn_refresh_fab" class="blog-fab blog-fab-refresh" title="새로고침" aria-label="새로고침">
           <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
         </button>
-        @if (!empty($writeUrl))
-          <button type="button" id="btn_write_fab" class="blog-fab blog-fab-write" title="작성" aria-label="작성">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 20h4l10-10-4-4L4 16v4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
-              <path d="M12.5 7.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-            </svg>
-          </button>
-        @endif
+        <button type="button" id="btn_write_fab" class="blog-fab blog-fab-write" title="작성" aria-label="작성">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 20h4l10-10-4-4L4 16v4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+            <path d="M12.5 7.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+        </button>
       </div>
     </main>
   </div>
@@ -217,6 +213,7 @@
 @section('script')
   <script>
     $(function() {
+      const userLevel = "{{ auth()->user()?->level }}";
       const listUrl = "{{ route("{$group}.index", ['slug' => $slug]) }}";
       const writeUrl = "{{ $writeUrl ?? '' }}";
       const filterBaseUrl = "{{ url($group) }}";
@@ -590,6 +587,11 @@
 
       if (writeUrl) {
         $("#btn_write_top, #btn_write_fab").on("click", function() {
+          if (userLevel !== 'admin') {
+            alert('글 작성 권한이 없습니다.');
+            return;
+          }
+          
           location.href = writeUrl;
         });
       }
