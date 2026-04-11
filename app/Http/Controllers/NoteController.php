@@ -55,6 +55,16 @@ class NoteController extends Controller
         $listDescription = $resolvedSlug !== ''
             ? (string) config("note.{$noteGroup}.{$resolvedSlug}.description", '')
             : (string) config("note.default_descriptions.{$noteGroup}", '');
+        $selectedTopic = trim((string) $request->query('topic', ''));
+        $categoryItems = $this->noteService->getNoteCategories($noteGroup)
+            ->map(function ($category): array {
+                return [
+                    'code' => (string) ($category->code ?? ''),
+                    'name' => (string) ($category->name ?? ''),
+                ];
+            })
+            ->values()
+            ->all();
 
         $filters = [
             'search_select_type' => (string) $request->query('search_select_type', 'title'),
@@ -91,6 +101,37 @@ class NoteController extends Controller
             'listDescription' => $listDescription,
             'writeUrl' => $writeUrl,
             'initialPayload' => $initialPayload,
+            'categoryItems' => $categoryItems,
+            'selectedTopic' => $selectedTopic,
+        ]);
+    }
+
+    /**
+     * 카테고리별 주제 목록 JSON 조회
+     */
+    public function getTopicsByCategory(Request $request)
+    {
+        $noteGroup = (string) $request->route('group');
+        $categoryCode = trim((string) $request->query('category', ''));
+
+        if ($categoryCode === '') {
+            return response()->json([
+                'topics' => [],
+            ]);
+        }
+
+        $topics = $this->noteService->getNoteTopics($noteGroup, $categoryCode)
+            ->map(function ($topic): array {
+                return [
+                    'idx' => (int) ($topic->idx ?? 0),
+                    'name' => (string) ($topic->name ?? ''),
+                ];
+            })
+            ->values()
+            ->all();
+
+        return response()->json([
+            'topics' => $topics,
         ]);
     }
 

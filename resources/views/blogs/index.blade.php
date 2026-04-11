@@ -7,9 +7,10 @@
 @endpush
 
 @section('content')
-  <main class="col-lg-10 content-col blog-page-scope">
-    <section class="board-card blog-list-page p-3 p-lg-4 rounded-3 shadow-sm">
-      <div class="blog-list-head">
+  <div id="blogIndexPageShell" class="blog-index-page-shell col-lg-10 content-col blog-page-scope">
+    <main>
+      <section class="board-card blog-list-page p-3 p-lg-4 rounded-3 shadow-sm">
+        <div class="blog-list-head">
         <div class="d-flex align-items-center justify-content-between gap-2 blog-list-title-row">
           <div class="blog-list-title-wrap">
             <h1 class="blog-list-title">{{ $listTitle ?? '전체 글' }}</h1>
@@ -49,19 +50,43 @@
           method="GET"
           autocomplete="off"
         >
-          <select id="search_select_type" name="search_select_type" class="blog-search-select">
-            <option value="title" @selected(($filters['search_select_type'] ?? 'title') === 'title')>제목</option>
-            <option value="content" @selected(($filters['search_select_type'] ?? 'title') === 'content')>내용</option>
-          </select>
-          <input
-            type="text"
-            id="search_keyword"
-            name="search_keyword"
-            class="blog-search-input"
-            value="{{ $filters['search_keyword'] ?? '' }}"
-            placeholder="검색어를 입력해 주세요."
-          >
-          <button type="button" id="btn_search" class="blog-search-btn">검색</button>
+          <input type="hidden" id="topic_filter" name="topic" value="{{ $selectedTopic ?? '' }}">
+
+          <div class="blog-search-panel">
+            <button type="button" id="btn_filter_sheet" class="blog-filter-sheet-trigger">
+              <span class="blog-filter-sheet-trigger__label" id="blogFilterTriggerLabel">카테고리 / 주제 선택</span>
+              <span class="blog-filter-sheet-trigger__summary is-hidden" id="blogFilterSummaryText"></span>
+              <span class="blog-filter-sheet-trigger__action" aria-hidden="true">
+                <i class="bi bi-box-arrow-up-right"></i>
+              </span>
+            </button>
+
+            <div class="blog-search-input-row">
+              <select id="search_select_type" name="search_select_type" class="blog-search-select blog-search-select-box">
+                <option value="title" @selected(($filters['search_select_type'] ?? 'title') === 'title')>제목</option>
+                <option value="content" @selected(($filters['search_select_type'] ?? 'title') === 'content')>내용</option>
+              </select>
+              <input
+                type="text"
+                id="search_keyword"
+                name="search_keyword"
+                class="blog-search-input"
+                value="{{ $filters['search_keyword'] ?? '' }}"
+                placeholder="검색어를 입력해 주세요."
+              >
+            </div>
+
+            <div class="blog-search-actions">
+              <button type="button" id="btn_search_reset" class="blog-search-reset-btn">
+                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+                <span>초기화</span>
+              </button>
+              <button type="button" id="btn_search" class="blog-search-btn">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <span>검색</span>
+              </button>
+            </div>
+          </div>
         </form>
 
 
@@ -82,29 +107,30 @@
         </div>
 
         <p class="blog-list-total" id="blog_list_total">총 0건</p>
-      </div>
+        </div>
 
-      <div id="blogItems" class="blog-items"></div>
+        <div id="blogItems" class="blog-items"></div>
 
-      <div class="blog-more-wrap">
-        <button type="button" class="btn_more blog-more-btn">+ 목록 더보기</button>
-      </div>
-    </section>
+        <div class="blog-more-wrap">
+          <button type="button" class="btn_more blog-more-btn">+ 목록 더보기</button>
+        </div>
+      </section>
 
-    <div class="blog-fab-wrap" id="blogFabWrap">
-      <button type="button" id="btn_refresh_fab" class="blog-fab blog-fab-refresh" title="새로고침" aria-label="새로고침">
-        <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
-      </button>
-      @if (!empty($writeUrl))
-        <button type="button" id="btn_write_fab" class="blog-fab blog-fab-write" title="작성" aria-label="작성">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M4 20h4l10-10-4-4L4 16v4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
-            <path d="M12.5 7.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-          </svg>
+      <div class="blog-fab-wrap" id="blogFabWrap">
+        <button type="button" id="btn_refresh_fab" class="blog-fab blog-fab-refresh" title="새로고침" aria-label="새로고침">
+          <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
         </button>
-      @endif
-    </div>
-  </main>
+        @if (!empty($writeUrl))
+          <button type="button" id="btn_write_fab" class="blog-fab blog-fab-write" title="작성" aria-label="작성">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 20h4l10-10-4-4L4 16v4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+              <path d="M12.5 7.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </button>
+        @endif
+      </div>
+    </main>
+  </div>
 
   <div id="blogDetailModal" class="blog-detail-modal" role="dialog" aria-modal="true" aria-labelledby="blogDetailTitle" aria-hidden="true">
     <div class="blog-detail-dialog">
@@ -130,6 +156,8 @@
           <ul id="blogDetailRelatedList" class="blog-detail-related-list"></ul>
         </section>
         <ul id="blogDetailTags" class="blog-detail-tags"></ul>
+      </div>
+      <div class="blog-detail-footer">
         <div class="blog-detail-actions">
           <button type="button" id="blogDetailEditBtn" class="blog-detail-action-btn blog-action-icon-btn is-edit btn" aria-label="수정" title="수정">
             <i class="bi bi-pencil-square" aria-hidden="true"></i>
@@ -151,6 +179,35 @@
       </div>
     </div>
   </div>
+
+  <div id="blogFilterSheet" class="blog-filter-sheet" aria-hidden="true">
+    <div class="blog-filter-sheet__backdrop"></div>
+    <div class="blog-filter-sheet__dialog" role="dialog" aria-modal="true" aria-labelledby="blogFilterSheetTitle">
+      <div class="blog-filter-sheet__head">
+        <strong id="blogFilterSheetTitle" class="blog-filter-sheet__title">카테고리 / 주제 선택</strong>
+        <button type="button" class="blog-filter-sheet__close" data-filter-close aria-label="닫기">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="blog-filter-sheet__body">
+        <section class="blog-filter-sheet__section">
+          <p class="blog-filter-sheet__label">카테고리</p>
+          <div id="blogCategoryOptions" class="blog-filter-sheet__grid"></div>
+        </section>
+        <section class="blog-filter-sheet__section">
+          <div class="blog-filter-sheet__label-row">
+            <p class="blog-filter-sheet__label mb-0">주제</p>
+            <!--<span class="blog-filter-sheet__hint">주제는 선택하지 않아도 됩니다.</span>-->
+          </div>
+          <div id="blogTopicOptions" class="blog-filter-sheet__grid is-topic"></div>
+          <p id="blogTopicEmpty" class="blog-filter-sheet__empty" hidden>선택 가능한 주제가 없습니다.</p>
+        </section>
+      </div>
+      <div class="blog-filter-sheet__foot">
+        <button type="button" id="btn_filter_apply" class="blog-filter-sheet__primary">적용</button>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @push('scripts')
@@ -162,7 +219,19 @@
     $(function() {
       const listUrl = "{{ route("{$group}.index", ['slug' => $slug]) }}";
       const writeUrl = "{{ $writeUrl ?? '' }}";
+      const filterBaseUrl = "{{ url($group) }}";
+      const topicsByCategoryUrl = "{{ route("{$group}.topics.category") }}";
       const csrfToken = "{{ csrf_token() }}";
+      const initialCategoryCode = "{{ $slug ?? '' }}";
+      const initialTopicValue = "{{ $selectedTopic ?? '' }}";
+      const categoryItems = JSON.parse(
+        new TextDecoder().decode(
+          Uint8Array.from(
+            atob("{{ base64_encode(json_encode($categoryItems ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) }}"),
+            c => c.charCodeAt(0)
+          )
+        )
+      );
       const initialData = JSON.parse(
         new TextDecoder().decode(
           Uint8Array.from(
@@ -221,6 +290,10 @@
       const state = {
         searchType: String(initialData?.filters?.search_select_type || 'title'),
         searchKeyword: String(initialData?.filters?.search_keyword || ''),
+        selectedCategoryCode: String(initialCategoryCode || ''),
+        selectedTopicValue: String(initialTopicValue || ''),
+        pendingCategoryCode: String(initialCategoryCode || ''),
+        pendingTopicValue: String(initialTopicValue || ''),
         pagination: initialData?.pagination || {},
         currentDetail: null,
         initialMetaKeywords: String($('meta[name="keywords"]').attr('content') || ''),
@@ -234,9 +307,179 @@
       const $items = $("#blogItems");
       const $moreWrap = $(".blog-more-wrap");
       const $moreButton = $(".btn_more");
+      const $filterSheet = $("#blogFilterSheet");
+      const $categoryOptions = $("#blogCategoryOptions");
+      const $topicOptions = $("#blogTopicOptions");
+      const $topicEmpty = $("#blogTopicEmpty");
+      const topicItemsByCategory = {};
+      const topicLoadingByCategory = {};
       state.$items = $items;
       state.$moreWrap = $moreWrap;
       state.$moreButton = $moreButton;
+
+      const findCategoryName = function(categoryCode) {
+        const matched = categoryItems.find(function(item) {
+          return String(item?.code || '') === String(categoryCode || '');
+        });
+
+        return String(matched?.name || '');
+      };
+
+      const getTopicItems = function(categoryCode) {
+        if (!categoryCode) {
+          return [];
+        }
+
+        return Array.isArray(topicItemsByCategory?.[categoryCode])
+          ? topicItemsByCategory[categoryCode]
+          : [];
+      };
+
+      const loadTopicsByCategory = function(categoryCode) {
+        const normalizedCategoryCode = String(categoryCode || '').trim();
+
+        if (normalizedCategoryCode === '') {
+          return Promise.resolve([]);
+        }
+
+        if (Array.isArray(topicItemsByCategory[normalizedCategoryCode])) {
+          return Promise.resolve(topicItemsByCategory[normalizedCategoryCode]);
+        }
+
+        if (topicLoadingByCategory[normalizedCategoryCode]) {
+          return topicLoadingByCategory[normalizedCategoryCode];
+        }
+
+        topicLoadingByCategory[normalizedCategoryCode] = new Promise(function(resolve) {
+          requestAjax({
+            method: 'GET',
+            url: topicsByCategoryUrl,
+            dataType: 'json',
+            data: {
+              category: normalizedCategoryCode,
+            },
+            showLoading: true,
+            onSuccess: function(res) {
+              const topics = Array.isArray(res?.topics) ? res.topics : [];
+              topicItemsByCategory[normalizedCategoryCode] = topics;
+              resolve(topics);
+            },
+            onError: function() {
+              topicItemsByCategory[normalizedCategoryCode] = [];
+              resolve([]);
+            },
+            onComplete: function() {
+              delete topicLoadingByCategory[normalizedCategoryCode];
+            },
+          });
+        });
+
+        return topicLoadingByCategory[normalizedCategoryCode];
+      };
+
+      const findTopicName = function(categoryCode, topicValue) {
+        const topics = getTopicItems(categoryCode);
+        const matched = topics.find(function(item) {
+          return String(item?.idx || '') === String(topicValue || '');
+        });
+
+        return String(matched?.name || '');
+      };
+
+      const updateFilterSummary = function() {
+        const categoryName = findCategoryName(state.selectedCategoryCode) || '전체';
+        const topicName = findTopicName(state.selectedCategoryCode, state.selectedTopicValue) || '';
+        const summaryText = topicName ? `${categoryName} > ${topicName}` : categoryName;
+        const isDefaultSelection = String(state.selectedCategoryCode || '').trim() === ''
+          && String(state.selectedTopicValue || '').trim() === '';
+
+        $("#blogFilterSummaryText")
+          .text(isDefaultSelection ? '' : summaryText)
+          .toggleClass("is-hidden", isDefaultSelection);
+        $("#blogFilterTriggerLabel").toggleClass("d-none", !isDefaultSelection);
+        $("#topic_filter").val(state.selectedTopicValue);
+      };
+
+      const renderCategoryOptions = function() {
+        const fragments = [];
+        const isAllActive = state.pendingCategoryCode === '';
+
+        fragments.push(
+          `<button type="button" class="blog-filter-line-btn ${isAllActive ? 'is-active' : ''}" data-category-code="">전체</button>`
+        );
+
+        categoryItems.forEach(function(category) {
+          const code = String(category?.code || '');
+          const name = String(category?.name || code);
+          const isActive = code === state.pendingCategoryCode;
+
+          fragments.push(
+            `<button type="button" class="blog-filter-line-btn ${isActive ? 'is-active' : ''}" data-category-code="${escapeHtmlText(code)}">${escapeHtmlText(name)}</button>`
+          );
+        });
+
+        $categoryOptions.html(fragments.join(''));
+      };
+
+      const renderTopicOptions = function() {
+        const topics = getTopicItems(state.pendingCategoryCode);
+
+        if (!state.pendingCategoryCode || topics.length === 0) {
+          $topicOptions.empty();
+          $topicEmpty.prop("hidden", false);
+          return;
+        }
+
+        const fragments = [
+          `<button type="button" class="blog-filter-line-btn ${state.pendingTopicValue === '' ? 'is-active' : ''}" data-topic-value="">전체</button>`
+        ];
+
+        topics.forEach(function(topic) {
+          const value = String(topic?.idx || '');
+          const name = String(topic?.name || value);
+          const isActive = value === state.pendingTopicValue;
+
+          fragments.push(
+            `<button type="button" class="blog-filter-line-btn ${isActive ? 'is-active' : ''}" data-topic-value="${escapeHtmlText(value)}">${escapeHtmlText(name)}</button>`
+          );
+        });
+
+        $topicOptions.html(fragments.join(''));
+        $topicEmpty.prop("hidden", true);
+      };
+
+      const openFilterSheet = function() {
+        if ($filterSheet.length && !$filterSheet.parent().is('body')) {
+          $filterSheet.appendTo('body');
+        }
+
+        state.pendingCategoryCode = state.selectedCategoryCode;
+        state.pendingTopicValue = state.selectedTopicValue;
+        renderCategoryOptions();
+        renderTopicOptions();
+        loadTopicsByCategory(state.pendingCategoryCode).then(function() {
+          renderTopicOptions();
+          updateFilterSummary();
+        });
+        $filterSheet.attr("aria-hidden", "false").addClass("is-open");
+        $("html, body").addClass("blog-filter-sheet-open");
+      };
+
+      const closeFilterSheet = function() {
+        $filterSheet.attr("aria-hidden", "true").removeClass("is-open");
+        $("html, body").removeClass("blog-filter-sheet-open");
+      };
+
+      const buildCategoryUrl = function(categoryCode, topicValue) {
+        const trimmedCategoryCode = String(categoryCode || '').trim();
+        let nextUrl = trimmedCategoryCode ? `${filterBaseUrl}/${encodeURIComponent(trimmedCategoryCode)}` : filterBaseUrl;
+
+        if (String(topicValue || '').trim() !== '') {
+          nextUrl += `?topic=${encodeURIComponent(String(topicValue).trim())}`;
+        }
+
+        return nextUrl;
+      };
 
       const $descToggle = $("#blogDescToggle");
       const $descTooltip = $("#blogDescTooltip");
@@ -277,6 +520,10 @@
 
       $("#search_select_type").val(state.searchType);
       $("#search_keyword").val(state.searchKeyword);
+      updateFilterSummary();
+      loadTopicsByCategory(state.selectedCategoryCode).then(function() {
+        updateFilterSummary();
+      });
 
       applyRefreshGuideState();
       updateRefreshTime(new Date());
@@ -285,8 +532,54 @@
       updateBlogMoreButton($moreWrap, state.pagination);
       $("#blog_list_total").text(`총 ${Number(state.pagination?.total || 0)}건`);
 
+      $("#btn_filter_sheet").on("click", function() {
+        openFilterSheet();
+      });
+
+      $filterSheet.on("click", ".blog-filter-sheet__close", function() {
+        closeFilterSheet();
+      });
+
+      $categoryOptions.on("click", "[data-category-code]", function() {
+        state.pendingCategoryCode = String($(this).data("category-code") || '');
+        state.pendingTopicValue = '';
+        renderCategoryOptions();
+        renderTopicOptions();
+        loadTopicsByCategory(state.pendingCategoryCode).then(function() {
+          renderTopicOptions();
+        });
+      });
+
+      $topicOptions.on("click", "[data-topic-value]", function() {
+        state.pendingTopicValue = String($(this).data("topic-value") || '');
+        renderTopicOptions();
+      });
+
+      $("#btn_filter_apply").on("click", function() {
+        const nextUrl = buildCategoryUrl(state.pendingCategoryCode, state.pendingTopicValue);
+        const currentUrl = buildCategoryUrl(state.selectedCategoryCode, state.selectedTopicValue);
+
+        state.selectedCategoryCode = state.pendingCategoryCode;
+        state.selectedTopicValue = state.pendingTopicValue;
+        updateFilterSummary();
+        closeFilterSheet();
+
+        if (nextUrl !== currentUrl) {
+          window.location.href = nextUrl;
+        }
+      });
+
       $("#btn_search").on("click", function() {
         $("#form_search").trigger("submit");
+      });
+
+      $("#btn_search_reset").on("click", function() {
+        state.searchType = 'title';
+        state.selectedTopicValue = '';
+        $("#search_select_type").val("title");
+        $("#topic_filter").val("");
+        $("#search_keyword").val("");
+        updateFilterSummary();
       });
 
       $("#search_keyword").on("keydown", function(e) {

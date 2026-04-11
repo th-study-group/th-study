@@ -34,6 +34,7 @@ foreach (array_keys($noteGroups) as $group) {
         Route::patch("/{slug}/{idx}/use-flag", [NoteController::class, 'updateUseFlag'])->name('use_flag.update')->defaults('group', $group);
         Route::patch("/{slug}/{idx}/thumbnail", [NoteController::class, 'destroyThumbnail'])->name('thumbnail.destroy')->defaults('group', $group);
         Route::delete("/{slug}/{idx}/tags", [NoteController::class, 'destroyTag'])->name('tags.destroy')->defaults('group', $group);
+        Route::get('/topics/category', [NoteController::class, 'getTopicsByCategory'])->name('topics.category')->defaults('group', $group);
         Route::get('/{slug?}', [NoteController::class, 'index'])
             ->name('index')
             ->defaults('group', $group)
