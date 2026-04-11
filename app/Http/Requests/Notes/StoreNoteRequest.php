@@ -33,6 +33,10 @@ class StoreNoteRequest extends FormRequest
                 'min:5',
                 'max:100',
             ],
+            'category' => [
+                'required',
+                'string',
+            ],
             'topic' => [
                 'required',
                 'integer',
@@ -87,17 +91,36 @@ class StoreNoteRequest extends FormRequest
             $topicIdx = $this->input('topic');
             $routeGroup = (string) $this->route('group', '');
             $routeSlug = (string) $this->route('slug', '');
+            $inputCategory = trim((string) $this->input('category', ''));
+            $targetCategoryCode = $routeSlug !== '' ? $routeSlug : $inputCategory;
             $resolvedGroupCode = (string) config("note.group.{$routeGroup}", $routeGroup);
 
-            if (empty($topicIdx) || $routeSlug === '' || $resolvedGroupCode === '') {
+            if ($targetCategoryCode === '' || $resolvedGroupCode === '') {
+                $validator->errors()->add('category', '카테고리를 선택해 주세요.');
+                return;
+            }
+
+            $categoryExists = \App\Models\NoteCategory::query()
+                ->where('code', $targetCategoryCode)
+                ->whereHas('group', function ($groupQuery) use ($resolvedGroupCode) {
+                    $groupQuery->where('code', $resolvedGroupCode);
+                })
+                ->exists();
+
+            if (! $categoryExists) {
+                $validator->errors()->add('category', '유효한 카테고리를 선택해 주세요.');
+                return;
+            }
+
+            if (empty($topicIdx)) {
                 return;
             }
 
             $exists = NoteTopic::query()
                 ->where('idx', $topicIdx)
                 ->where('use_flag', 1)
-                ->whereHas('category', function ($categoryQuery) use ($routeSlug, $resolvedGroupCode) {
-                    $categoryQuery->where('code', $routeSlug)
+                ->whereHas('category', function ($categoryQuery) use ($targetCategoryCode, $resolvedGroupCode) {
+                    $categoryQuery->where('code', $targetCategoryCode)
                         ->whereHas('group', function ($groupQuery) use ($resolvedGroupCode) {
                             $groupQuery->where('code', $resolvedGroupCode);
                         });

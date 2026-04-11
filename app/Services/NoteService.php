@@ -38,6 +38,28 @@ class NoteService
     ) {}
 
     /**
+     * 노트 카테고리 목록 조회
+     *
+     * @param string $groupCode
+     * @return Collection
+     */
+    public function getNoteCategories(string $groupCode): Collection
+    {
+        $resolvedGroupCode = (string) config("note.group.{$groupCode}", $groupCode);
+        $categories = $this->noteTopicRepository->getCategoriesByGroupCode($resolvedGroupCode);
+
+        Log::info('[Note][Category][List] 조회 완료', [
+            'user_idx' => auth()->id(),
+            'group_code' => $groupCode,
+            'resolved_group_code' => $resolvedGroupCode,
+            'count' => $categories->count(),
+            'ip' => request()->ip(),
+        ]);
+
+        return $categories;
+    }
+
+    /**
      * 노트 주제 목록 조회
      *
      * @param string $groupCode

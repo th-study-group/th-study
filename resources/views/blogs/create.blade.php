@@ -44,6 +44,21 @@
         </div>
 
         <div class="mb-3">
+          <label for="category" class="form-label blog-create-label">카테고리</label>
+          <select id="category" name="category" class="form-select blog-create-select">
+            <option value="">카테고리를 선택해 주세요.</option>
+            @foreach (($categories ?? collect()) as $category)
+              <option value="{{ $category->code }}" {{ old('category', $slug ?? '') == $category->code ? 'selected' : '' }}>
+                {{ $category->name }}
+              </option>
+            @endforeach
+          </select>
+          @error('category')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="mb-3">
           <label for="topic" class="form-label blog-create-label">주제</label>
           <select id="topic" name="topic" class="form-select blog-create-select @error('topic') is-invalid @enderror">
             <option value="">주제를 선택해 주세요.</option>
@@ -151,6 +166,8 @@
       }
 
       const isEditMode = {{ $isEditMode ? 'true' : 'false' }};
+      const createBaseUrl = "{{ url($group . '/create') }}";
+      const createCategoryBaseUrl = "{{ url($group) }}";
       const thumbnailDestroyUrl = "{{ $thumbnailDestroyUrl ?? '' }}";
       const tagsDestroyUrl = "{{ $tagsDestroyUrl ?? '' }}";
       const tagManager = createTagManager({
@@ -193,12 +210,19 @@
         }
 
         const subject = $('#subject').val().trim();
+        const category = $('#category').val().trim();
         const topic = $('#topic').val();
         const content = $('#content').val().trim();
 
         if (!subject) {
           alert('제목을 입력해 주세요.');
           $('#subject').trigger('focus');
+          return;
+        }
+
+        if (!category) {
+          alert('카테고리를 선택해 주세요.');
+          $('#category').trigger('focus');
           return;
         }
 
@@ -231,6 +255,21 @@
 
       $('#thumbnail_path').on('change', function () {
         updateThumbnailName(this, '#thumbnail_path_name');
+      });
+
+      $('#category').on('change', function () {
+        if (isEditMode) {
+          return;
+        }
+
+        const category = String($(this).val() || '').trim();
+
+        if (!category) {
+          window.location.href = createBaseUrl;
+          return;
+        }
+
+        window.location.href = createCategoryBaseUrl + '/' + encodeURIComponent(category) + '/create';
       });
 
       $('#blogTagInput').on('compositionstart', function () {

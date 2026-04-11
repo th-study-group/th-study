@@ -72,6 +72,15 @@ class NoteController extends Controller
         }
 
         $initialPayload = $this->buildNoteListResponse($noteGroup, $resolvedSlug, $notes, $filters);
+        $writeUrl = null;
+
+        if ($canCreate) {
+            if ($resolvedSlug !== '') {
+                $writeUrl = route("{$noteGroup}.create", ['slug' => $resolvedSlug]);
+            } else {
+                $writeUrl = route("{$noteGroup}.create.blank");
+            }
+        }
 
         return view("{$noteGroup}.index", [
             'group' => $noteGroup,
@@ -80,7 +89,7 @@ class NoteController extends Controller
             'filters' => $filters,
             'listTitle' => $listTitle,
             'listDescription' => $listDescription,
-            'writeUrl' => $resolvedSlug !== '' && $canCreate ? route("{$noteGroup}.create", ['slug' => $resolvedSlug]) : null,
+            'writeUrl' => $writeUrl,
             'initialPayload' => $initialPayload,
         ]);
     }
@@ -155,6 +164,7 @@ class NoteController extends Controller
     {
         $noteGroup = $request->route('group');
         $this->authorize('create', Note::class);
+        $categories = $this->noteService->getNoteCategories($noteGroup);
         $topics = $this->noteService->getNoteTopics($noteGroup, $slug);
 
         return view("{$noteGroup}.create", [
@@ -162,6 +172,7 @@ class NoteController extends Controller
             'slug' => $slug,
             'note' => null,
             'formAction' => route("{$noteGroup}.store", ['slug' => $slug]),
+            'categories' => $categories,
             'topics' => $topics,
             'isEditMode' => false,
             'hasSavedThumbnail' => false,
@@ -184,6 +195,7 @@ class NoteController extends Controller
     public function store(StoreNoteRequest $request, string $slug)
     {
         $this->authorize('create', Note::class);
+        
         $routeName = (string) $request->route()?->getName();
         $noteGroup = strtok($routeName, '.');
 
@@ -209,6 +221,7 @@ class NoteController extends Controller
         $noteGroup = $request->route('group');
         $note = $this->noteService->getNote($noteGroup, $slug, (int) $idx);
         $this->authorize('update', $note);
+        $categories = $this->noteService->getNoteCategories($noteGroup);
         $topics = $this->noteService->getNoteTopics($noteGroup, $slug);
         $savedThumbnailPath = (string) ($note->thumbnail_path ?? '');
         $hasSavedThumbnail = $savedThumbnailPath !== '';
@@ -219,6 +232,7 @@ class NoteController extends Controller
             'group' => $noteGroup,
             'slug' => $slug,
             'note' => $note,
+            'categories' => $categories,
             'topics' => $topics,
             'formAction' => route("{$noteGroup}.update", ['slug' => $slug, 'idx' => $idx]),
             'isEditMode' => true,
