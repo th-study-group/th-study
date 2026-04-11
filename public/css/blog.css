@@ -1108,6 +1108,8 @@
   .blog-filter-sheet__dialog {
     position: relative;
     width: min(760px, calc(100vw - 32px));
+    height: min(560px, calc(100dvh - 48px));
+    height: min(560px, calc(100svh - 48px));
     max-height: min(90vh, calc(100dvh - 48px));
     max-height: min(90vh, calc(100svh - 48px));
     margin: 0;
@@ -1936,7 +1938,7 @@
 
   @media (max-width: 991px) {
     .blog-filter-sheet {
-      align-items: flex-start;
+      align-items: center;
       justify-content: center;
       padding:
         calc(env(safe-area-inset-top, 0px) + 8px)
@@ -2021,8 +2023,19 @@
     }
 
     .blog-filter-sheet__body {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 16px;
+      display: block;
+      padding: 16px;
+    }
+
+    .blog-filter-sheet__section {
+      min-height: auto;
+      overflow: visible;
+    }
+
+    .blog-filter-sheet__section + .blog-filter-sheet__section {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #e5e7eb;
     }
 
     .blog-filter-sheet__foot {
