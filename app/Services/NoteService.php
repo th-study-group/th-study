@@ -233,13 +233,15 @@ class NoteService
         $isAdmin = auth()->check() && (auth()->user()?->level === 'admin');
         $searchType = (string) ($filters['search_select_type'] ?? 'title');
         $searchKeyword = trim((string) ($filters['search_keyword'] ?? ''));
+        $searchTopic = trim((string) ($filters['search_topic'] ?? ''));
         $notes = $this->noteRepository->paginateByCodes(
             $resolvedGroupCode,
             $categoryCode,
             $isAdmin,
             $perPage,
             $searchType,
-            $searchKeyword
+            $searchKeyword,
+            $searchTopic
         );
 
         Log::info('[Note][List] 조회 완료', [
@@ -249,6 +251,7 @@ class NoteService
             'category_code' => $categoryCode,
             'search_type' => $searchType,
             'search_keyword' => $searchKeyword,
+            'search_topic'   => $searchTopic,
             'page' => $notes->currentPage(),
             'per_page' => $notes->perPage(),
             'total' => $notes->total(),

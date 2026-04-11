@@ -50,7 +50,7 @@
           method="GET"
           autocomplete="off"
         >
-          <input type="hidden" id="topic_filter" name="topic" value="{{ $selectedTopic ?? '' }}">
+          <input type="hidden" id="topic_filter" name="search_topic" value="{{ $selectedTopic ?? '' }}">
 
           <div class="blog-search-panel">
             <button type="button" id="btn_filter_sheet" class="blog-filter-sheet-trigger">
@@ -475,7 +475,7 @@
         let nextUrl = trimmedCategoryCode ? `${filterBaseUrl}/${encodeURIComponent(trimmedCategoryCode)}` : filterBaseUrl;
 
         if (String(topicValue || '').trim() !== '') {
-          nextUrl += `?topic=${encodeURIComponent(String(topicValue).trim())}`;
+          nextUrl += `?search_topic=${encodeURIComponent(String(topicValue).trim())}`;
         }
 
         return nextUrl;

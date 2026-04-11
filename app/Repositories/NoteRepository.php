@@ -75,7 +75,8 @@ class NoteRepository
         bool $isAdmin,
         int $perPage = 10,
         ?string $searchType = null,
-        ?string $searchKeyword = null
+        ?string $searchKeyword = null,
+        ?string $searchTopic = null
     ): LengthAwarePaginator
     {
         return Note::with(['category', 'group', 'topic', 'tags'])
@@ -84,6 +85,12 @@ class NoteRepository
                 is_string($categoryCode) && trim($categoryCode) !== '',
                 function ($query) use ($categoryCode) {
                     $query->where('categories_code', trim((string) $categoryCode));
+                }
+            )
+            ->when(
+                is_string($searchTopic) && trim($searchTopic) !== '',
+                function ($query) use ($searchTopic) {
+                    $query->where('topic_idx', trim((string) $searchTopic));
                 }
             )
             ->when(! $isAdmin, function ($query) {

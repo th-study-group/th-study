@@ -16,8 +16,8 @@ class IndexNoteRequest extends FormRequest
         return [
             'search_select_type' => ['nullable', 'in:title,content'],
             'search_keyword' => ['nullable', 'string', 'max:100'],
+            'search_topic' => ['nullable', 'string', 'max:20'],
             'page' => ['nullable', 'integer', 'min:1'],
         ];
     }
 }
-

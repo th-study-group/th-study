@@ -55,7 +55,7 @@ class NoteController extends Controller
         $listDescription = $resolvedSlug !== ''
             ? (string) config("note.{$noteGroup}.{$resolvedSlug}.description", '')
             : (string) config("note.default_descriptions.{$noteGroup}", '');
-        $selectedTopic = trim((string) $request->query('topic', ''));
+        $selectedTopic = trim((string) $request->query('search_topic', $request->query('topic', '')));
         $categoryItems = $this->noteService->getNoteCategories($noteGroup)
             ->map(function ($category): array {
                 return [
@@ -69,6 +69,7 @@ class NoteController extends Controller
         $filters = [
             'search_select_type' => (string) $request->query('search_select_type', 'title'),
             'search_keyword' => trim((string) $request->query('search_keyword', '')),
+            'search_topic' => $selectedTopic,
         ];
         $notes = $this->noteService->getNotes(
             $noteGroup,

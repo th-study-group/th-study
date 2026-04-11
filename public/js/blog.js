@@ -773,6 +773,7 @@ function fetchBlogListPage(state, page, shouldAppend) {
       page: page,
       search_select_type: state.searchType,
       search_keyword: state.searchKeyword,
+      search_topic: state.selectedTopicValue,
     },
     onSuccess: function (res) {
       const items = Array.isArray(res.items) ? res.items : [];
