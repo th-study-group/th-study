@@ -60,10 +60,28 @@
             </button>
 
             <div class="blog-search-input-row">
-              <select id="search_select_type" name="search_select_type" class="blog-search-select blog-search-select-box">
-                <option value="title" @selected(($filters['search_select_type'] ?? 'title') === 'title')>제목</option>
-                <option value="content" @selected(($filters['search_select_type'] ?? 'title') === 'content')>내용</option>
-              </select>
+              <div class="blog-search-type-dropdown" id="blogSearchTypeDropdown">
+                <button
+                  type="button"
+                  id="blogSearchTypeToggle"
+                  class="blog-search-select blog-search-select-box blog-search-type-toggle"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                  aria-controls="blogSearchTypeMenu"
+                >
+                  <span id="blogSearchTypeLabel">제목</span>
+                </button>
+                <div id="blogSearchTypeMenu" class="blog-search-type-menu" role="listbox" aria-label="검색 타입 선택" hidden>
+                  <button type="button" class="blog-search-type-option" data-value="title" role="option">제목</button>
+                  <button type="button" class="blog-search-type-option" data-value="content" role="option">내용</button>
+                </div>
+                <input
+                  type="hidden"
+                  id="search_select_type"
+                  name="search_select_type"
+                  value="{{ $filters['search_select_type'] ?? 'title' }}"
+                >
+              </div>
               <input
                 type="text"
                 id="search_keyword"
@@ -308,11 +326,46 @@
       const $categoryOptions = $("#blogCategoryOptions");
       const $topicOptions = $("#blogTopicOptions");
       const $topicEmpty = $("#blogTopicEmpty");
+      const $searchTypeDropdown = $("#blogSearchTypeDropdown");
+      const $searchTypeToggle = $("#blogSearchTypeToggle");
+      const $searchTypeMenu = $("#blogSearchTypeMenu");
+      const $searchTypeLabel = $("#blogSearchTypeLabel");
       const topicItemsByCategory = {};
       const topicLoadingByCategory = {};
       state.$items = $items;
       state.$moreWrap = $moreWrap;
       state.$moreButton = $moreButton;
+
+      const resolveSearchTypeLabel = function(value) {
+        if (String(value || '') === 'content') {
+          return '내용';
+        }
+
+        return '제목';
+      };
+
+      const syncSearchTypeUi = function(value) {
+        const normalized = String(value || 'title') === 'content' ? 'content' : 'title';
+        state.searchType = normalized;
+        $("#search_select_type").val(normalized);
+        $searchTypeLabel.text(resolveSearchTypeLabel(normalized));
+
+        const $options = $searchTypeMenu.find(".blog-search-type-option");
+        $options.attr("aria-selected", "false").removeClass("is-active");
+        $options.filter(`[data-value="${normalized}"]`).attr("aria-selected", "true").addClass("is-active");
+      };
+
+      const closeSearchTypeMenu = function() {
+        $searchTypeMenu.attr("hidden", "hidden");
+        $searchTypeToggle.attr("aria-expanded", "false");
+        $searchTypeDropdown.removeClass("is-open");
+      };
+
+      const openSearchTypeMenu = function() {
+        $searchTypeMenu.removeAttr("hidden");
+        $searchTypeToggle.attr("aria-expanded", "true");
+        $searchTypeDropdown.addClass("is-open");
+      };
 
       const findCategoryName = function(categoryCode) {
         const matched = categoryItems.find(function(item) {
@@ -515,7 +568,7 @@
         });
       }
 
-      $("#search_select_type").val(state.searchType);
+      syncSearchTypeUi(state.searchType);
       $("#search_keyword").val(state.searchKeyword);
       updateFilterSummary();
       loadTopicsByCategory(state.selectedCategoryCode).then(function() {
@@ -570,10 +623,38 @@
         $("#form_search").trigger("submit");
       });
 
+      $searchTypeToggle.on("click", function(e) {
+        e.preventDefault();
+        if ($searchTypeDropdown.hasClass("is-open")) {
+          closeSearchTypeMenu();
+          return;
+        }
+        openSearchTypeMenu();
+      });
+
+      $searchTypeMenu.on("click", ".blog-search-type-option", function(e) {
+        e.preventDefault();
+        const nextValue = String($(this).data("value") || 'title');
+        syncSearchTypeUi(nextValue);
+        closeSearchTypeMenu();
+      });
+
+      $(document).on("click", function(e) {
+        if ($(e.target).closest("#blogSearchTypeDropdown").length) {
+          return;
+        }
+        closeSearchTypeMenu();
+      });
+
+      $(document).on("keydown", function(e) {
+        if (e.key === "Escape") {
+          closeSearchTypeMenu();
+        }
+      });
+
       $("#btn_search_reset").on("click", function() {
-        state.searchType = 'title';
+        syncSearchTypeUi('title');
         state.selectedTopicValue = '';
-        $("#search_select_type").val("title");
         $("#topic_filter").val("");
         $("#search_keyword").val("");
         updateFilterSummary();
