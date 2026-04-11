@@ -140,9 +140,7 @@
 
         <div class="blog-create-footer">
           <button type="button" id="btn_save" class="btn btn-primary">적용</button>
-          <a href="{{ route("{$group}.index", ['slug' => $slug]) }}" class="btn btn-outline-secondary">
-            목록
-          </a>
+          <button type="button" id="btn_list" class="btn btn-outline-secondary">목록</button>
         </div>
       </form>
     </div>
@@ -157,14 +155,7 @@
 @section('script')
   <script>
     $(function () {
-      function rewriteEditorLinksForOutbound(contentHtml) {
-        if (typeof rewriteHtmlAnchorHrefsToOutbound === 'function') {
-          return rewriteHtmlAnchorHrefsToOutbound(contentHtml);
-        }
-
-        return String(contentHtml || '');
-      }
-
+      const listUrl = "{{ url($group) }}{{ filled($slug ?? '') && ($slug ?? '') !== $group ? '/' . $slug : '' }}";
       const isEditMode = {{ $isEditMode ? 'true' : 'false' }};
       const createBaseUrl = "{{ url($group . '/create') }}";
       const createCategoryBaseUrl = "{{ url($group) }}";
@@ -247,6 +238,10 @@
 
         $('#content').val(rewriteEditorLinksForOutbound(content));
         $("#form-note").submit();
+      });
+
+      $('#btn_list').on('click', function () {
+        window.location.href = listUrl;
       });
 
       $('#thumbnail_path_trigger').on('click', function () {
@@ -361,5 +356,13 @@
 
       tagManager.render();
     });
+
+    function rewriteEditorLinksForOutbound(contentHtml) {
+      if (typeof rewriteHtmlAnchorHrefsToOutbound === 'function') {
+        return rewriteHtmlAnchorHrefsToOutbound(contentHtml);
+      }
+
+      return String(contentHtml || '');
+    }
   </script>
 @endsection
