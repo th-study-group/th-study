@@ -777,11 +777,21 @@ function fetchBlogListPage(state, page, shouldAppend) {
     onSuccess: function (res) {
       const items = Array.isArray(res.items) ? res.items : [];
       const pagination = res.pagination || {};
+      const now = new Date();
       state.pagination = pagination;
 
       renderBlogListItems(state.$items, items, shouldAppend);
       updateBlogMoreButton(state.$moreWrap, pagination);
       $('#blog_list_total').text(`총 ${Number(pagination.total || 0)}건`);
+      $('#blogRefreshTime')
+        .attr('datetime', now.toISOString())
+        .text(new Intl.DateTimeFormat('ko-KR', {
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        }).format(now));
     },
     onError: function () {
       alert('목록을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');

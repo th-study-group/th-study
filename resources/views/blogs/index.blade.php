@@ -64,6 +64,23 @@
           <button type="button" id="btn_search" class="blog-search-btn">검색</button>
         </form>
 
+
+        <div class="blog-refresh-guide" aria-live="polite">
+          <div class="blog-refresh-guide-main">
+            <button type="button" id="btn_refresh_top" class="blog-refresh-btn" title="새로고침" aria-label="새로고침">
+              <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+            </button>
+            <div class="blog-refresh-copy">
+              <p class="blog-refresh-title">최신 글 다시 불러오기</p>
+              <p class="blog-refresh-hint" id="blogRefreshHint">새로고침 버튼으로 최신 글을 다시 불러올 수 있습니다.</p>
+            </div>
+          </div>
+          <p class="blog-refresh-meta">
+            마지막 갱신
+            <time id="blogRefreshTime" datetime="">방금 전</time>
+          </p>
+        </div>
+
         <p class="blog-list-total" id="blog_list_total">총 0건</p>
       </div>
 
@@ -75,6 +92,9 @@
     </section>
 
     <div class="blog-fab-wrap" id="blogFabWrap">
+      <button type="button" id="btn_refresh_fab" class="blog-fab blog-fab-refresh" title="새로고침" aria-label="새로고침">
+        <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+      </button>
       @if (!empty($writeUrl))
         <button type="button" id="btn_write_fab" class="blog-fab blog-fab-write" title="작성" aria-label="작성">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -154,6 +174,50 @@
       const canManageVisibility = {{ auth()->check() && auth()->user()?->level === 'admin' ? 'true' : 'false' }};
       window.blogCanManageVisibility = canManageVisibility;
 
+
+      const formatRefreshDateTime = function(date) {
+        if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+          return '';
+        }
+
+        return new Intl.DateTimeFormat('ko-KR', {
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        }).format(date);
+      };
+
+      const resolveRefreshHintText = function() {
+        const isStandalone = typeof isStandalonePwa === 'function' && isStandalonePwa();
+        const isTouchDevice = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+
+        if (isStandalone) {
+          return '설치된 앱 화면에서는 새로고침 버튼으로 최신 글을 다시 불러오세요.';
+        }
+
+        if (isTouchDevice) {
+          return '모바일에서는 화면을 아래로 끌어 새로고침하거나 버튼을 눌러 최신 글을 불러올 수 있어요.';
+        }
+
+        return 'PC에서는 F5 또는 Ctrl+R, 이 버튼으로 최신 글을 다시 불러올 수 있어요.';
+      };
+
+      const applyRefreshGuideState = function() {
+        $('#blogRefreshHint').text(resolveRefreshHintText());
+      };
+
+      const updateRefreshTime = function(date) {
+        const refreshDate = date instanceof Date ? date : new Date();
+        const formatted = formatRefreshDateTime(refreshDate);
+        const isoString = Number.isNaN(refreshDate.getTime()) ? '' : refreshDate.toISOString();
+
+        $('#blogRefreshTime')
+          .attr('datetime', isoString)
+          .text(formatted || '방금 전');
+      };
+
       const state = {
         searchType: String(initialData?.filters?.search_select_type || 'title'),
         searchKeyword: String(initialData?.filters?.search_keyword || ''),
@@ -214,6 +278,9 @@
       $("#search_select_type").val(state.searchType);
       $("#search_keyword").val(state.searchKeyword);
 
+      applyRefreshGuideState();
+      updateRefreshTime(new Date());
+
       renderBlogListItems($items, initialData?.items || [], false);
       updateBlogMoreButton($moreWrap, state.pagination);
       $("#blog_list_total").text(`총 ${Number(state.pagination?.total || 0)}건`);
@@ -233,6 +300,26 @@
           location.href = writeUrl;
         });
       }
+      $('#btn_refresh_top, #btn_refresh_fab').on('click', function() {
+        location.reload();
+      });
+
+      if (window.matchMedia) {
+        const touchMedia = window.matchMedia('(pointer: coarse)');
+        const standaloneMedia = window.matchMedia('(display-mode: standalone)');
+        const refreshGuideHandler = function() {
+          applyRefreshGuideState();
+        };
+
+        if (typeof touchMedia.addEventListener === 'function') {
+          touchMedia.addEventListener('change', refreshGuideHandler);
+          standaloneMedia.addEventListener('change', refreshGuideHandler);
+        } else if (typeof touchMedia.addListener === 'function') {
+          touchMedia.addListener(refreshGuideHandler);
+          standaloneMedia.addListener(refreshGuideHandler);
+        }
+      }
+
 
       $moreButton.on("click", function() {
         if (!state.pagination || !state.pagination.has_more) {
