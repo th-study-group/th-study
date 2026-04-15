@@ -30,20 +30,6 @@
         @endif
 
         <div class="mb-3">
-          <label for="subject" class="form-label blog-create-label">제목</label>
-          <input type="text" 
-                 id="subject" 
-                 name="subject" 
-                 class="form-control blog-create-input @error('subject') is-invalid @enderror"
-                 value="{{ old('subject', $note->subject ?? '') }}"
-                 maxlength="255" 
-                 placeholder="제목을 입력하세요.">
-          @error('subject')
-            <div class="invalid-feedback d-block">{{ $message }}</div>
-          @enderror
-        </div>
-
-        <div class="mb-3">
           <label for="category" class="form-label blog-create-label">카테고리</label>
           <select id="category" name="category" class="form-select blog-create-select">
             <option value="">카테고리를 선택해 주세요.</option>
@@ -57,7 +43,7 @@
             <div class="invalid-feedback d-block">{{ $message }}</div>
           @enderror
         </div>
-
+        
         <div class="mb-3">
           <label for="topic" class="form-label blog-create-label">주제</label>
           <select id="topic" name="topic" class="form-select blog-create-select @error('topic') is-invalid @enderror">
@@ -69,6 +55,20 @@
             @endforeach
           </select>
           @error('topic')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="mb-3">
+          <label for="subject" class="form-label blog-create-label">제목</label>
+          <input type="text" 
+                 id="subject" 
+                 name="subject" 
+                 class="form-control blog-create-input @error('subject') is-invalid @enderror"
+                 value="{{ old('subject', $note->subject ?? '') }}"
+                 maxlength="255" 
+                 placeholder="제목을 입력하세요.">
+          @error('subject')
             <div class="invalid-feedback d-block">{{ $message }}</div>
           @enderror
         </div>
@@ -205,12 +205,6 @@
         const topic = $('#topic').val();
         const content = $('#content').val().trim();
 
-        if (!subject) {
-          alert('제목을 입력해 주세요.');
-          $('#subject').trigger('focus');
-          return;
-        }
-
         if (!category) {
           alert('카테고리를 선택해 주세요.');
           $('#category').trigger('focus');
@@ -220,6 +214,12 @@
         if (!topic) {
           alert('주제를 선택해 주세요.');
           $('#topic').trigger('focus');
+          return;
+        }
+
+        if (!subject) {
+          alert('제목을 입력해 주세요.');
+          $('#subject').trigger('focus');
           return;
         }
 
