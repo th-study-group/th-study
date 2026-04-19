@@ -43,6 +43,7 @@ return [
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'AI', 'memo' => 'AI정보'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '파이썬', 'memo' => '파이썬에 대해 정리해요.'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'FastAPI', 'memo' => '파이썬 프레임워크 FastAPI에 대해서 정리해요.'],
+        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '플러터', 'memo' => '플러터 앱 프레임워크에 대해서 정리해요.'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '장인정신', 'memo' => '개발자 장인정신에 대해 정리해요.'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '커리어', 'memo' => '개발자 커리어 정리해요.'],
     ],
