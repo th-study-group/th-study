@@ -479,7 +479,9 @@ class NoteController extends Controller
                 'use_flag_label' => config("const.use_flag.{$note->use_flag}", '-'),
                 'tags' => ($note->tags ?? collect())
                     ->pluck('name')
-                    ->filter(static fn ($name) => is_string($name) && trim($name) !== '')
+                    ->filter(static function ($name): bool {
+                        return is_string($name) && trim($name) !== '';
+                    })
                     ->values()
                     ->all(),
             ],

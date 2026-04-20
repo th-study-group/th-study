@@ -17,6 +17,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -170,6 +171,8 @@ class NoteService
                 'tag_count' => count($tagIdxList),
                 'ip' => request()->ip(),
             ]);
+
+            $this->forgetHomeLatestBlogsCacheIfBlog($resolvedGroupCode);
 
             return $note;
         });
@@ -412,6 +415,8 @@ class NoteService
                 'ip' => request()->ip(),
             ]);
 
+            $this->forgetHomeLatestBlogsCacheIfBlog($resolvedGroupCode);
+
             return $note;
         });
     }
@@ -458,6 +463,8 @@ class NoteService
                 'note_idx' => $note->idx,
                 'ip' => $ip,
             ]);
+
+            $this->forgetHomeLatestBlogsCacheIfBlog((string) ($note->group_code ?? ''));
         });
     }
 
@@ -494,6 +501,8 @@ class NoteService
                 'use_flag' => $note->use_flag,
                 'ip' => $ip,
             ]);
+
+            $this->forgetHomeLatestBlogsCacheIfBlog((string) ($note->group_code ?? ''));
 
             return $note;
         });
@@ -730,6 +739,13 @@ class NoteService
             ])->saveQuietly();
 
             $tag->delete();
+        }
+    }
+
+    private function forgetHomeLatestBlogsCacheIfBlog(string $groupCode): void
+    {
+        if ($groupCode === 'blog') {
+            Cache::forget(HomeService::LATEST_BLOGS_CACHE_KEY);
         }
     }
 }

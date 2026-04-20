@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PushController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TrafficController;
@@ -17,11 +18,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 // 메인화면
-Route::get('/', function () {
-    return view('home', [
-        'postType' => 'inquiries'
-    ]);
-})->name('home')->defaults('hideSide', true);
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home')
+    ->defaults('hideSide', true);
 
 // 소개페이지
 Route::get('/intro', function () {

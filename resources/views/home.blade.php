@@ -63,6 +63,40 @@
             </div>
         </header>
 
+        <section id="latest-blogs" class="section-pad anchor-offset">
+            <div class="container reveal">
+                <div class="d-flex align-items-end justify-content-between flex-wrap gap-2 mb-4">
+                    <div>
+                        <span class="kicker mb-2">Blogs</span>
+                        <h2 class="fw-bold mb-1">최신 블로그 글</h2>
+                        <p class="muted mb-0">최근에 올린 블로그 글을 한곳에 모았습니다.</p>
+                    </div>
+
+                    <a class="btn btn-outline-dark" href="{{ route('blogs.index') }}">전체 글 보기</a>
+                </div>
+
+                <div class="row g-3">
+                    @forelse($latestBlogs ?? [] as $blog)
+                        <div class="col-md-6 col-xl">
+                            <article class="latest-blog-card soft-card h-100">
+                                <div class="latest-blog-meta">{{ $blog['category'] }} · {{ $blog['date'] }}</div>
+                                <h5 class="latest-blog-title">{{ $blog['title'] }}</h5>
+                                <p class="latest-blog-desc muted">{{ $blog['description'] }}</p>
+                                <a class="latest-blog-link" href="{{ $blog['show_url'] }}">읽어보기</a>
+                            </article>
+                        </div>
+                    @empty
+                        <div class="col-12">
+                            <article class="latest-blog-card latest-blog-empty soft-card">
+                                <h5 class="latest-blog-title mb-2">아직 등록된 블로그 글이 없습니다.</h5>
+                                <p class="latest-blog-desc muted mb-0">공개된 글이 등록되면 이 영역에 최신글 5개가 표시됩니다.</p>
+                            </article>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </section>
+
         <section id="highlights" class="section-pad anchor-offset">
             <div class="container reveal">
                 <div class="d-flex align-items-end justify-content-between flex-wrap gap-2 mb-4">
