@@ -82,7 +82,7 @@
                                 <div class="latest-blog-meta">{{ $blog['category'] }} · {{ $blog['date'] }}</div>
                                 <h5 class="latest-blog-title">{{ $blog['title'] }}</h5>
                                 <p class="latest-blog-desc muted">{{ $blog['description'] }}</p>
-                                <a class="latest-blog-link" href="{{ $blog['show_url'] }}">읽어보기</a>
+                                <a class="latest-blog-link" href="{{ $blog['show_url'] }}">자세히보기</a>
                             </article>
                         </div>
                     @empty
