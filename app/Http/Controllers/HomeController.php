@@ -13,6 +13,9 @@ class HomeController extends Controller
 
     public function index(): View
     {
-        return view('home', $this->homeService->getHomeData());
+        return view('home', [
+            'postType' => 'inquiries',
+            'latestBlogs' => $this->homeService->getLatestBlogs(),
+        ]);
     }
 }

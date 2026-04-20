@@ -17,14 +17,6 @@ class HomeService
         private HomeRepository $homeRepository
     ) {}
 
-    public function getHomeData(): array
-    {
-        return [
-            'postType' => 'inquiries',
-            'latestBlogs' => $this->getLatestBlogs(),
-        ];
-    }
-
     public function getLatestBlogs(): array
     {
         return Cache::remember(
