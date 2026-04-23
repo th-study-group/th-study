@@ -151,7 +151,10 @@ function formatRelativeTimeKorean(dateString) {
 function createBlogListItemHtml(item) {
   const thumbUrl = String(item.thumbnail_url || '/images/no_image.png');
   const safeThumbUrl = escapeHtmlText(thumbUrl);
-  const thumbnailHtml = `
+  const normalizedThumbUrl = thumbUrl.split('?')[0].split('#')[0].toLowerCase();
+  const isNoImage = normalizedThumbUrl.endsWith('/images/no_image.png') || normalizedThumbUrl.endsWith('/no_image.png');
+  const hasThumbnail = String(item.thumbnail_url || '').trim() !== '' && !isNoImage;
+  const thumbnailHtml = hasThumbnail ? `
     <a
       href="${safeThumbUrl}"
       class="blog-item-image-link"
@@ -161,7 +164,12 @@ function createBlogListItemHtml(item) {
       title="이미지 보기"
     >
       <img src="${safeThumbUrl}" alt="" class="blog-item-thumb" data-pwa-image-preview>
+      <span class="blog-item-image-zoom" aria-hidden="true">
+        <i class="bi bi-zoom-in"></i>
+      </span>
     </a>
+  ` : `
+    <img src="${safeThumbUrl}" alt="" class="blog-item-thumb is-placeholder">
   `;
   const showUrl = escapeHtmlText(item.show_url || '');
   const useFlag = String(item.use_flag || 'N');
