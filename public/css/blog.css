@@ -1283,13 +1283,13 @@
   }
 
   .blog-item-right {
-    --blog-item-thumb-width: 280px;
+    --blog-item-thumb-width: 220px;
     --blog-item-thumb-height: 140px;
     --blog-item-thumb-padding: 10px;
     display: flex;
     justify-content: flex-end;
-    width: 280px;
-    max-width: 34%;
+    width: var(--blog-item-thumb-width);
+    max-width: var(--blog-item-thumb-width);
     flex-shrink: 0;
   }
 
@@ -1315,7 +1315,7 @@
   .blog-item-thumb {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: fill;
     display: block;
     cursor: zoom-in;
   }
