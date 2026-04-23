@@ -1297,7 +1297,7 @@
 
   .blog-item-thumb {
     width: 100%;
-    height: 105px;
+    height: 74px;
     object-fit: contain;
     display: block;
     cursor: zoom-in;
@@ -2112,7 +2112,7 @@
     }
 
     .blog-item-thumb {
-      height: 71px;
+      height: 50px;
     }
 
     .blog-item-image-zoom {
