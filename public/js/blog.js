@@ -163,17 +163,13 @@ function createBlogListItemHtml(item) {
       aria-label="이미지 보기"
       title="이미지 보기"
     >
-      <span class="blog-item-thumb-frame">
-        <img src="${safeThumbUrl}" alt="" class="blog-item-thumb" data-pwa-image-preview>
-        <span class="blog-item-image-zoom" aria-hidden="true">
-          <i class="bi bi-zoom-in"></i>
-        </span>
+      <img src="${safeThumbUrl}" alt="" class="blog-item-thumb" data-pwa-image-preview>
+      <span class="blog-item-image-zoom" aria-hidden="true">
+        <i class="bi bi-zoom-in"></i>
       </span>
     </a>
   ` : `
-    <span class="blog-item-thumb-frame is-placeholder">
-      <img src="${safeThumbUrl}" alt="" class="blog-item-thumb is-placeholder">
-    </span>
+    <img src="${safeThumbUrl}" alt="" class="blog-item-thumb is-placeholder">
   `;
   const showUrl = escapeHtmlText(item.show_url || '');
   const useFlag = String(item.use_flag || 'N');
