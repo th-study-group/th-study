@@ -31,7 +31,7 @@ return [
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '바이브코딩', 'memo' => 'AI 바이브코딩 정보 정리해요.'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'PHP', 'memo' => 'PHP 개발'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'PHP', 'memo' => 'SEO 개발'],
-        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'IOT', 'memo' => 'IOT 개발'],
+        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'IoT', 'memo' => 'IoT 개발'],
         ['group_code' => 'blog', 'category_code' => 'economy', 'name' => '경제상식', 'memo' => '초딩도 쉽게 이해하는 경제상식'],
         ['group_code' => 'blog', 'category_code' => 'real-estate', 'name' => '국내부동산', 'memo' => '국내 부동산 정보 정리'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '리액트', 'memo' => '프론트엔드 리액트에 대해 정리해요.'],
