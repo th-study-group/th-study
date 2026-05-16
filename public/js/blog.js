@@ -446,7 +446,7 @@ function applyExternalLinkAttributes(containerSelector) {
 
   $container.find('a').each(function () {
     var $link = $(this);
-    var href = normalizeOutboundLinkHref($link.attr('href'), { trackInternal: true });
+    var href = normalizeOutboundLinkHref($link.attr('href'), { trackInternal: false });
 
     if (!href) {
       return;

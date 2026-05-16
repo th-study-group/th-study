@@ -16,5 +16,7 @@ Disallow: /password
 Disallow: /find-account
 Disallow: /find-password
 Disallow: /reset-password
+Disallow: /outbound
+Disallow: /outbound/
 
 Sitemap: {{ config('app.url') }}/sitemap.xml

@@ -20,6 +20,7 @@ class TrafficController extends Controller
             $payload['source_page'] ?? null
         );
 
-        return redirect()->away($payload['url']);
+        return redirect()->away($payload['url'], 302)
+            ->header('X-Robots-Tag', 'noindex, nofollow');
     }
 }
