@@ -296,6 +296,14 @@
               <i class="devicon-github-original"></i> GitHub
             </a>
 
+            <a class="actionbtn" href="https://blog.naver.com/laravel-kimtakgu" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" fill="#03C75A" />
+                <path d="M8.2 16.2V7.8h2.2l3.4 4.8V7.8H16v8.4h-2.2l-3.4-4.8v4.8H8.2Z" fill="#fff" />
+              </svg>
+              네이버 블로그
+            </a>
+
             <a class="actionbtn" href="https://th-study.tistory.com" target="_blank" rel="noopener" id="tistoryBtn">
               <span class="iconSlot"></span> 티스토리
             </a>
