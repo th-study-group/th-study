@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 /**
  * 회원 (사용자)
  */
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use SoftDeletes;
 
@@ -149,5 +150,30 @@ class User extends Authenticatable
         }
 
         return $this->phone ?? '-';
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    public function canAccessMcp(): bool
+    {
+        //return blank($this->retirementDate);
+        return true;
+    }
+
+    public function mcpBlockedReason(): string
+    {
+        //if (filled($this->retirementDate)) {
+        //    return 'Retired employee cannot access MCP API.';
+        //}
+
+        return 'Forbidden.';
     }
 }

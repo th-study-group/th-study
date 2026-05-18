@@ -69,6 +69,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'level' => \App\Http\Middleware\EnsureUserHasLevel::class,
-        'local.only' =>\App\Http\Middleware\LocalOnly::class,
+        'local.only' => \App\Http\Middleware\LocalOnly::class,
+        'auth.mcp.jwt' => \App\Http\Middleware\McpJwtAuthenticate::class,
     ];
 }

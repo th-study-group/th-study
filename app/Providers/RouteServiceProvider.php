@@ -40,6 +40,10 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
 
+            // MCP (OAuth2 보호 리소스, 인증 서버, MCP API)
+            Route::middleware('web')
+                ->group(base_path('routes/mcp.php'));   
+
             // 게시판, 댓글, 문의사항 등 고객 관리
             Route::middleware('web')
                 ->group(base_path('routes/user.php'));
