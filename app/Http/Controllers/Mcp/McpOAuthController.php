@@ -58,7 +58,7 @@ class McpOAuthController extends Controller
     public function login(McpLoginRequest $request)
     {
         $validated = $request->validated();
-        $mcpGuard = Auth::guard('mcp_jwt');
+        $mcpGuard = Auth::guard('mcp_web');
         $candidateUser = User::where('email', $validated['email'])->first();
         $mcpToken = false;
 

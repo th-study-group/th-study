@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'mcp_web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
         'mcp_jwt' => [
             'driver' => 'jwt',
             'provider' => 'users',
