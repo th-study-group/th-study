@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -59,18 +58,17 @@ class McpOAuthController extends Controller
     public function login(McpLoginRequest $request)
     {
         $validated = $request->validated();
+        $mcpGuard = Auth::guard('mcp_jwt');
         $candidateUser = User::where('email', $validated['email'])->first();
+        $mcpToken = false;
 
         Log::info('MCP OAuth login entered', [
             'email' => $validated['email'],
             'client_id' => $validated['client_id'],
             'redirect_uri' => $validated['redirect_uri'],
-            'session_user_idx' => Auth::id(),
+            'guard' => 'mcp_jwt',
             'candidate_user_idx' => $candidateUser?->idx,
             'password_length' => mb_strlen((string) $validated['password']),
-            'manual_hash_check' => $candidateUser
-                ? Hash::check($validated['password'], (string) $candidateUser->password)
-                : false,
         ]);
 
         if ($validated['client_id'] !== config('mcp.oauth.client_id')) {
@@ -81,14 +79,15 @@ class McpOAuthController extends Controller
                 ]);
         }
 
-        $loggedIn = Auth::attempt([
+        $mcpToken = $mcpGuard->attempt([
             'email' => $validated['email'],
             'password' => $validated['password'],
         ]);
 
-        if (!$loggedIn) {
+        if (!$mcpToken) {
             Log::warning('MCP OAuth login failed', [
                 'email' => $validated['email'],
+                'guard' => 'mcp_jwt',
             ]);
 
             return back()
@@ -98,12 +97,14 @@ class McpOAuthController extends Controller
                 ]);
         }
 
-        $user = Auth::user();
+        $user = $mcpGuard->user();
 
         if (!$user instanceof User) {
-            Auth::logout();
-
-            Log::warning('MCP OAuth user type invalid');
+            Log::warning('MCP OAuth user type invalid', [
+                'guard' => 'mcp_jwt',
+                'candidate_user_idx' => $candidateUser?->idx,
+                'token_generated' => true,
+            ]);
 
             return back()
                 ->withInput()
@@ -113,10 +114,9 @@ class McpOAuthController extends Controller
         }
 
         if (!$user->canAccessMcp()) {
-            Auth::logout();
-
             Log::warning('MCP OAuth login blocked', [
                 'user_idx' => $user->getAuthIdentifier(),
+                'guard' => 'mcp_jwt',
                 'reason' => $user->mcpBlockedReason(),
             ]);
 
