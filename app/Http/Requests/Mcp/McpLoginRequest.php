@@ -32,8 +32,8 @@ class McpLoginRequest extends FormRequest
             'client_id' => ['required', 'string'],
             'redirect_uri' => ['required', 'string'],
             'state' => ['nullable', 'string'],
-            'code_challenge' => ['nullable', 'string'],
-            'code_challenge_method' => ['nullable', 'string'],
+            'code_challenge' => ['nullable', 'string', 'min:43', 'max:128'],
+            'code_challenge_method' => ['nullable', 'string', 'required_with:code_challenge', 'in:S256'],
         ];
     }
 

@@ -5,62 +5,81 @@ namespace App\Http\Controllers\Mcp;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\McpLoginRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
-/**
- * 챗지피티 oauth인증
- */
 class McpOAuthController extends Controller
 {
-    /**
-     * MCP OAuth 인증 요청 화면 : 챗지피티 
-     *
-     * @param Request $request
-     * 
-     * @return void
-     */
     public function auth(Request $request)
     {
         Log::info('MCP OAuth authorize entered', [
             'client_id' => $request->query('client_id'),
             'redirect_uri' => $request->query('redirect_uri'),
             'response_type' => $request->query('response_type'),
-            'state_exists' => $request->query('state') ? true : false,
+            'state_exists' => $request->filled('state'),
+            'code_challenge_exists' => $request->filled('code_challenge'),
         ]);
 
-        if ($request->query('response_type') !== 'code') {
-            return response('Invalid response_type.', 400);
+        $validator = Validator::make($request->query(), [
+            'response_type' => ['required', 'string', 'in:code'],
+            'client_id' => ['required', 'string'],
+            'redirect_uri' => ['required', 'string'],
+            'state' => ['nullable', 'string'],
+            'code_challenge' => ['nullable', 'string', 'min:43', 'max:128'],
+            'code_challenge_method' => ['nullable', 'string', 'required_with:code_challenge', 'in:S256'],
+        ]);
+
+        if ($validator->fails()) {
+            Log::warning('MCP OAuth authorize validation failed', [
+                'errors' => $validator->errors()->toArray(),
+                'client_id' => $request->query('client_id'),
+                'redirect_uri' => $request->query('redirect_uri'),
+            ]);
+
+            return response()->json([
+                'message' => 'Invalid authorization request.',
+                'errors' => $validator->errors(),
+            ], 400, $this->noStoreHeaders());
         }
 
-        if ($request->query('client_id') !== config('mcp.oauth.client_id')) {
+        $validated = $validator->validated();
+
+        if ($validated['client_id'] !== config('mcp.oauth.client_id')) {
+            Log::warning('MCP OAuth invalid client_id', [
+                'client_id' => $validated['client_id'],
+            ]);
+
             return response('Invalid client_id.', 400);
         }
 
+        if (!$this->isAllowedRedirectUri($validated['redirect_uri'])) {
+            Log::warning('MCP OAuth invalid redirect_uri', [
+                'redirect_uri' => $validated['redirect_uri'],
+            ]);
+
+            return response('Invalid redirect_uri.', 400);
+        }
+
         return view('mcp.chatgpt.login', [
-            'client_id' => $request->query('client_id'),
-            'redirect_uri' => $request->query('redirect_uri'),
-            'state' => $request->query('state'),
-            'code_challenge' => $request->query('code_challenge'),
-            'code_challenge_method' => $request->query('code_challenge_method'),
+            'client_id' => $validated['client_id'],
+            'redirect_uri' => $validated['redirect_uri'],
+            'state' => $validated['state'] ?? null,
+            'code_challenge' => $validated['code_challenge'] ?? null,
+            'code_challenge_method' => $validated['code_challenge_method'] ?? null,
         ]);
     }
 
-    /**
-     * Mcp oAuth 로그인 처리 : 챗지피티
-     *
-     * @param Request $request
-     * @return void
-     */
     public function login(McpLoginRequest $request)
     {
         $validated = $request->validated();
-        $mcpGuard = Auth::guard('mcp_web');
+        $mcpGuard = Auth::guard('mcp_jwt');
         $candidateUser = User::where('email', $validated['email'])->first();
-        $mcpToken = false;
 
         Log::info('MCP OAuth login entered', [
             'email' => $validated['email'],
@@ -69,6 +88,8 @@ class McpOAuthController extends Controller
             'guard' => 'mcp_jwt',
             'candidate_user_idx' => $candidateUser?->idx,
             'password_length' => mb_strlen((string) $validated['password']),
+            'state_exists' => !empty($validated['state']),
+            'code_challenge_exists' => !empty($validated['code_challenge']),
         ]);
 
         if ($validated['client_id'] !== config('mcp.oauth.client_id')) {
@@ -76,6 +97,14 @@ class McpOAuthController extends Controller
                 ->withInput()
                 ->withErrors([
                     'email' => 'OAuth 클라이언트 정보가 올바르지 않습니다.',
+                ]);
+        }
+
+        if (!$this->isAllowedRedirectUri($validated['redirect_uri'])) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'email' => '리디렉션 주소가 허용되지 않았습니다.',
                 ]);
         }
 
@@ -130,7 +159,7 @@ class McpOAuthController extends Controller
         $code = Str::random(80);
 
         Cache::put(
-            'mcp_oauth_code:' . $code,
+            $this->authorizationCodeCacheKey($code),
             [
                 'user_id' => $user->getAuthIdentifier(),
                 'client_id' => $validated['client_id'],
@@ -138,7 +167,7 @@ class McpOAuthController extends Controller
                 'code_challenge' => $validated['code_challenge'] ?? null,
                 'code_challenge_method' => $validated['code_challenge_method'] ?? null,
             ],
-            now()->addMinutes(config('mcp.oauth.code_ttl', 5))
+            now()->addMinutes((int) config('mcp.oauth.code_ttl', 5))
         );
 
         Log::info('MCP OAuth authorize success', [
@@ -148,16 +177,271 @@ class McpOAuthController extends Controller
             'code_prefix' => substr($code, 0, 8),
         ]);
 
-        $query = [
+        return redirect()->away($this->buildRedirectUrl($validated['redirect_uri'], [
             'code' => $code,
-        ];
+            'state' => $validated['state'] ?? null,
+        ]));
+    }
 
-        if (!empty($validated['state'])) {
-            $query['state'] = $validated['state'];
+    public function token(Request $request): JsonResponse
+    {
+        Log::info('MCP OAuth token entered', [
+            'grant_type' => $request->input('grant_type'),
+            'client_id' => $request->input('client_id'),
+            'code_exists' => $request->filled('code'),
+            'refresh_token_exists' => $request->filled('refresh_token'),
+        ]);
+
+        $request->validate([
+            'grant_type' => ['required', 'string'],
+            'client_id' => ['required', 'string'],
+            'client_secret' => ['required', 'string'],
+        ]);
+
+        if ($request->input('client_id') !== config('mcp.oauth.client_id')) {
+            Log::warning('MCP OAuth token invalid client_id', [
+                'client_id' => $request->input('client_id'),
+            ]);
+
+            return $this->jsonOAuthError('invalid_client', 401);
         }
 
-        return redirect()->away(
-            $validated['redirect_uri'] . '?' . http_build_query($query)
-        );
+        if ($request->input('client_secret') !== config('mcp.oauth.client_secret')) {
+            Log::warning('MCP OAuth token invalid client_secret', [
+                'client_id' => $request->input('client_id'),
+            ]);
+
+            return $this->jsonOAuthError('invalid_client', 401);
+        }
+
+        return match ($request->input('grant_type')) {
+            'authorization_code' => $this->issueTokenByCode($request),
+            'refresh_token' => $this->issueTokenByRefreshToken($request),
+            default => $this->unsupportedGrantTypeResponse($request),
+        };
+    }
+
+    private function issueTokenByCode(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'code' => ['required', 'string'],
+            'redirect_uri' => ['required', 'string'],
+            'code_verifier' => ['nullable', 'string', 'min:43', 'max:128'],
+        ]);
+
+        $codeData = Cache::pull($this->authorizationCodeCacheKey($validated['code']));
+
+        if (!$codeData) {
+            Log::warning('MCP OAuth invalid authorization code');
+
+            return $this->jsonOAuthError('invalid_grant', 400);
+        }
+
+        if (($codeData['client_id'] ?? null) !== $request->input('client_id')) {
+            Log::warning('MCP OAuth authorization code client mismatch', [
+                'cached_client_id' => $codeData['client_id'] ?? null,
+                'request_client_id' => $request->input('client_id'),
+            ]);
+
+            return $this->jsonOAuthError('invalid_grant', 400);
+        }
+
+        if (($codeData['redirect_uri'] ?? null) !== $validated['redirect_uri']) {
+            Log::warning('MCP OAuth authorization code redirect mismatch', [
+                'cached_redirect_uri' => $codeData['redirect_uri'] ?? null,
+                'request_redirect_uri' => $validated['redirect_uri'],
+            ]);
+
+            return $this->jsonOAuthError('invalid_grant', 400);
+        }
+
+        if (!$this->passesPkceVerification($codeData, $validated['code_verifier'] ?? null)) {
+            Log::warning('MCP OAuth PKCE verification failed');
+
+            return $this->jsonOAuthError('invalid_grant', 400);
+        }
+
+        $user = User::find($codeData['user_id'] ?? null);
+
+        if (!$user || !$user->canAccessMcp()) {
+            Log::warning('MCP OAuth token access denied', [
+                'user_id' => $codeData['user_id'] ?? null,
+            ]);
+
+            return $this->jsonOAuthError('access_denied', 403);
+        }
+
+        JWTAuth::factory()->setTTL((int) config('jwt.ttl', 30));
+
+        $accessToken = JWTAuth::claims([
+            'token_type' => 'access',
+        ])->fromUser($user);
+
+        JWTAuth::factory()->setTTL((int) config('jwt.refresh_ttl', 20160));
+
+        $refreshToken = JWTAuth::claims([
+            'token_type' => 'refresh',
+        ])->fromUser($user);
+
+        JWTAuth::factory()->setTTL((int) config('jwt.ttl', 30));
+
+        Log::info('MCP OAuth token issued', [
+            'user_id' => $user->getKey(),
+            'client_id' => $codeData['client_id'] ?? null,
+            'expires_in' => (int) config('jwt.ttl', 30) * 60,
+        ]);
+
+        return response()->json([
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
+            'token_type' => 'Bearer',
+            'expires_in' => (int) config('jwt.ttl', 30) * 60,
+        ], 200, $this->noStoreHeaders());
+    }
+
+    private function issueTokenByRefreshToken(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'refresh_token' => ['required', 'string'],
+        ]);
+
+        try {
+            $refreshToken = $validated['refresh_token'];
+
+            $payload = JWTAuth::setToken($refreshToken)->getPayload();
+
+            if (($payload->get('token_type') ?? '') !== 'refresh') {
+                Log::warning('MCP OAuth refresh invalid token type', [
+                    'token_type' => $payload->get('token_type'),
+                ]);
+
+                return $this->jsonOAuthError('invalid_grant', 401);
+            }
+
+            $user = JWTAuth::setToken($refreshToken)->authenticate();
+
+            if (!$user || !$user->canAccessMcp()) {
+                Log::warning('MCP OAuth refresh access denied', [
+                    'user_id' => $user?->getKey(),
+                ]);
+
+                return $this->jsonOAuthError('access_denied', 403);
+            }
+
+            JWTAuth::factory()->setTTL((int) config('jwt.ttl', 30));
+
+            $accessToken = JWTAuth::claims([
+                'token_type' => 'access',
+            ])->fromUser($user);
+
+            Log::info('MCP OAuth access token refreshed', [
+                'user_id' => $user->getKey(),
+                'expires_in' => (int) config('jwt.ttl', 30) * 60,
+            ]);
+
+            return response()->json([
+                'access_token' => $accessToken,
+                'token_type' => 'Bearer',
+                'expires_in' => (int) config('jwt.ttl', 30) * 60,
+            ], 200, $this->noStoreHeaders());
+        } catch (\Throwable $e) {
+            Log::warning('MCP OAuth refresh failed', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->jsonOAuthError('invalid_grant', 401);
+        }
+    }
+
+    private function unsupportedGrantTypeResponse(Request $request): JsonResponse
+    {
+        Log::warning('MCP OAuth unsupported grant_type', [
+            'grant_type' => $request->input('grant_type'),
+        ]);
+
+        return $this->jsonOAuthError('unsupported_grant_type', 400);
+    }
+
+    private function authorizationCodeCacheKey(string $code): string
+    {
+        return 'mcp_oauth_code:' . $code;
+    }
+
+    private function buildRedirectUrl(string $redirectUri, array $query): string
+    {
+        $filteredQuery = array_filter($query, static fn ($value) => $value !== null && $value !== '');
+        $separator = str_contains($redirectUri, '?') ? '&' : '?';
+
+        return $redirectUri . $separator . http_build_query($filteredQuery);
+    }
+
+    private function isAllowedRedirectUri(string $redirectUri): bool
+    {
+        if (!filter_var($redirectUri, FILTER_VALIDATE_URL)) {
+            return false;
+        }
+
+        $parts = parse_url($redirectUri);
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        $host = strtolower((string) ($parts['host'] ?? ''));
+
+        if ($scheme === '' || $host === '') {
+            return false;
+        }
+
+        $isLocalHost = in_array($host, ['localhost', '127.0.0.1'], true);
+
+        if (!$isLocalHost && $scheme !== 'https') {
+            return false;
+        }
+
+        if ($isLocalHost && !in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        $allowedRedirectUris = config('mcp.oauth.redirect_uris', []);
+
+        if ($allowedRedirectUris === []) {
+            return true;
+        }
+
+        return in_array($redirectUri, $allowedRedirectUris, true);
+    }
+
+    private function passesPkceVerification(array $codeData, ?string $codeVerifier): bool
+    {
+        $codeChallenge = $codeData['code_challenge'] ?? null;
+        $codeChallengeMethod = $codeData['code_challenge_method'] ?? null;
+
+        if (blank($codeChallenge) && blank($codeChallengeMethod)) {
+            return true;
+        }
+
+        if (blank($codeVerifier) || $codeChallengeMethod !== 'S256') {
+            return false;
+        }
+
+        $computedChallenge = rtrim(strtr(
+            base64_encode(hash('sha256', $codeVerifier, true)),
+            '+/',
+            '-_'
+        ), '=');
+
+        return hash_equals($codeChallenge, $computedChallenge);
+    }
+
+    private function jsonOAuthError(string $error, int $status): JsonResponse
+    {
+        return response()->json([
+            'error' => $error,
+        ], $status, $this->noStoreHeaders());
+    }
+
+    private function noStoreHeaders(): array
+    {
+        return [
+            'Cache-Control' => 'no-store',
+            'Pragma' => 'no-cache',
+        ];
     }
 }
