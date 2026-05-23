@@ -1,4 +1,4 @@
-# TH-STUDY MCP Postman 테스트 + ChatGPT OAuth 등록 정리
+# 티에이치스터디 MCP Postman 테스트 + ChatGPT OAuth 등록 정리
 
 ## 1. Postman 공통 헤더
 
