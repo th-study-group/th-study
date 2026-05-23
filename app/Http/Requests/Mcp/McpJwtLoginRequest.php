@@ -2,21 +2,29 @@
 
 namespace App\Http\Requests\Mcp;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Log;
 
 /**
- * MCP 로그인 요청 유효성 검사 클래스
+ * JWT 로그인 유효성 검사 및 권한 검증을 담당하는 FormRequest 클래스
  */
-class McpLoginRequest extends FormRequest
+class McpJwtLoginRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
@@ -32,30 +40,29 @@ class McpLoginRequest extends FormRequest
                 'max:25',
                 'regex:/^(?=.*[A-Za-z])(?=.*\d).+$/',
             ],
-            'client_id' => ['required', 'string'],
-            'redirect_uri' => ['required', 'string'],
-            'state' => ['nullable', 'string'],
-            'code_challenge' => ['nullable', 'string', 'min:43', 'max:128'],
-            'code_challenge_method' => ['nullable', 'string', 'required_with:code_challenge', 'in:S256'],
         ];
+    }
+
+    protected function failedAuthorization(): void
+    {
+        Log::channel('mcp')->warning('MCP direct JWT login authorization failed', [
+            'action' => 'authorize',
+            'email' => $this->input('email'),
+            'ip' => $this->ip(),
+        ]);
+
+        throw new AuthorizationException;
     }
 
     protected function failedValidation(Validator $validator): void
     {
-        Log::info('MCP OAuth login validation failed', [
+        Log::channel('mcp')->warning('MCP direct JWT login validation failed', [
             'action' => 'validate',
             'email' => $this->input('email'),
-            'client_id' => $this->input('client_id'),
-            'redirect_uri' => $this->input('redirect_uri'),
             'ip' => $this->ip(),
             'errors' => $validator->errors()->toArray(),
         ]);
 
-        throw new HttpResponseException(
-            redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput()
-        );
+        parent::failedValidation($validator);
     }
 }

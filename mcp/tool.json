@@ -1,0 +1,77 @@
+[
+  {
+    "name": "blog_search",
+    "description": "블로그 게시글 조회 템플릿. 사용자 입력 조건만 검색 조건에 포함합니다.",
+    "url": "/api/mcp/tools/blog-search",
+    "method": "POST",
+    "x-meta": {
+      "domain": "blogs",
+      "keywords": [
+        "블로그",
+        "블로그검색",
+        "게시글",
+        "게시글검색",
+        "글찾기",
+        "라라벨",
+        "FastAPI",
+        "최근글",
+        "오래된글",
+        "SEO"
+      ],
+      "comment": "블로그 게시글을 제목, 상태, 작성일 기준으로 조회합니다.\n\n예:\n- 라라벨 글 찾아줘\n- 최근 블로그 글 보여줘\n- 2026년 5월 글 조회\n- 오래된 글 찾아줘",
+      "fieldLabels": {
+        "title": "제목",
+        "status": "상태",
+        "created_at": "작성일",
+        "view_count": "조회수"
+      },
+      "date_filter_rules": [
+        {
+          "column": "created_at",
+          "exact_key": "created_at",
+          "from_key": "created_at_from",
+          "to_key": "created_at_to",
+          "apply_range_when": "from_to_both_present",
+          "range_ops": [
+            ">=",
+            "<="
+          ],
+          "apply_single_when": "only_one_present",
+          "single_day_op": "=",
+          "long_range_days": 365,
+          "long_range_message": "1년 이상 장기간 조회는 월별 또는 분기별로 나누어 조회하는 것을 권장합니다."
+        }
+      ]
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "검색할 게시글 제목 키워드"
+        },
+        "status": {
+          "type": "string",
+          "description": "게시글 상태. 예: published, draft"
+        },
+        "created_at": {
+          "type": "string",
+          "description": "특정 작성일. 예: 2026-05-19"
+        },
+        "created_at_from": {
+          "type": "string",
+          "description": "검색 시작일. 예: 2026-01-01"
+        },
+        "created_at_to": {
+          "type": "string",
+          "description": "검색 종료일. 예: 2026-12-31"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "조회 개수. 기본 20개, 최대 100개"
+        }
+      },
+      "required": []
+    }
+  }
+]

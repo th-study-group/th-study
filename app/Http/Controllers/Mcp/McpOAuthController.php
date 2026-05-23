@@ -18,7 +18,7 @@ class McpOAuthController extends Controller
 {
     public function auth(Request $request)
     {
-        Log::info('MCP OAuth authorize entered', [
+        Log::channel('mcp')->info('MCP OAuth authorize entered', [
             'client_id' => $request->query('client_id'),
             'redirect_uri' => $request->query('redirect_uri'),
             'response_type' => $request->query('response_type'),
@@ -36,7 +36,7 @@ class McpOAuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            Log::warning('MCP OAuth authorize validation failed', [
+            Log::channel('mcp')->warning('MCP OAuth authorize validation failed', [
                 'errors' => $validator->errors()->toArray(),
                 'client_id' => $request->query('client_id'),
                 'redirect_uri' => $request->query('redirect_uri'),
@@ -51,7 +51,7 @@ class McpOAuthController extends Controller
         $validated = $validator->validated();
 
         if ($validated['client_id'] !== config('mcp.oauth.client_id')) {
-            Log::warning('MCP OAuth invalid client_id', [
+            Log::channel('mcp')->warning('MCP OAuth invalid client_id', [
                 'client_id' => $validated['client_id'],
             ]);
 
@@ -59,7 +59,7 @@ class McpOAuthController extends Controller
         }
 
         if (!$this->isAllowedRedirectUri($validated['redirect_uri'])) {
-            Log::warning('MCP OAuth invalid redirect_uri', [
+            Log::channel('mcp')->warning('MCP OAuth invalid redirect_uri', [
                 'redirect_uri' => $validated['redirect_uri'],
             ]);
 
@@ -114,7 +114,7 @@ class McpOAuthController extends Controller
         ]);
 
         if (!$mcpToken) {
-            Log::warning('MCP OAuth login failed', [
+            Log::channel('mcp')->warning('MCP OAuth login failed', [
                 'email' => $validated['email'],
                 'guard' => 'mcp_jwt',
             ]);
@@ -129,7 +129,7 @@ class McpOAuthController extends Controller
         $user = $mcpGuard->user();
 
         if (!$user instanceof User) {
-            Log::warning('MCP OAuth user type invalid', [
+            Log::channel('mcp')->warning('MCP OAuth user type invalid', [
                 'guard' => 'mcp_jwt',
                 'candidate_user_idx' => $candidateUser?->idx,
                 'token_generated' => true,
@@ -143,7 +143,7 @@ class McpOAuthController extends Controller
         }
 
         if (!$user->canAccessMcp()) {
-            Log::warning('MCP OAuth login blocked', [
+            Log::channel('mcp')->warning('MCP OAuth login blocked', [
                 'user_idx' => $user->getAuthIdentifier(),
                 'guard' => 'mcp_jwt',
                 'reason' => $user->mcpBlockedReason(),
@@ -199,7 +199,7 @@ class McpOAuthController extends Controller
         ]);
 
         if ($request->input('client_id') !== config('mcp.oauth.client_id')) {
-            Log::warning('MCP OAuth token invalid client_id', [
+            Log::channel('mcp')->warning('MCP OAuth token invalid client_id', [
                 'client_id' => $request->input('client_id'),
             ]);
 
@@ -207,7 +207,7 @@ class McpOAuthController extends Controller
         }
 
         if ($request->input('client_secret') !== config('mcp.oauth.client_secret')) {
-            Log::warning('MCP OAuth token invalid client_secret', [
+            Log::channel('mcp')->warning('MCP OAuth token invalid client_secret', [
                 'client_id' => $request->input('client_id'),
             ]);
 
@@ -225,20 +225,18 @@ class McpOAuthController extends Controller
     {
         $validated = $request->validate([
             'code' => ['required', 'string'],
-            'redirect_uri' => ['required', 'string'],
-            'code_verifier' => ['nullable', 'string', 'min:43', 'max:128'],
         ]);
 
         $codeData = Cache::pull($this->authorizationCodeCacheKey($validated['code']));
 
         if (!$codeData) {
-            Log::warning('MCP OAuth invalid authorization code');
+            Log::channel('mcp')->warning('MCP OAuth invalid authorization code');
 
             return $this->jsonOAuthError('invalid_grant', 400);
         }
 
         if (($codeData['client_id'] ?? null) !== $request->input('client_id')) {
-            Log::warning('MCP OAuth authorization code client mismatch', [
+            Log::channel('mcp')->warning('MCP OAuth authorization code client mismatch', [
                 'cached_client_id' => $codeData['client_id'] ?? null,
                 'request_client_id' => $request->input('client_id'),
             ]);
@@ -246,25 +244,10 @@ class McpOAuthController extends Controller
             return $this->jsonOAuthError('invalid_grant', 400);
         }
 
-        if (($codeData['redirect_uri'] ?? null) !== $validated['redirect_uri']) {
-            Log::warning('MCP OAuth authorization code redirect mismatch', [
-                'cached_redirect_uri' => $codeData['redirect_uri'] ?? null,
-                'request_redirect_uri' => $validated['redirect_uri'],
-            ]);
-
-            return $this->jsonOAuthError('invalid_grant', 400);
-        }
-
-        if (!$this->passesPkceVerification($codeData, $validated['code_verifier'] ?? null)) {
-            Log::warning('MCP OAuth PKCE verification failed');
-
-            return $this->jsonOAuthError('invalid_grant', 400);
-        }
-
         $user = User::find($codeData['user_id'] ?? null);
 
         if (!$user || !$user->canAccessMcp()) {
-            Log::warning('MCP OAuth token access denied', [
+            Log::channel('mcp')->warning('MCP OAuth token access denied', [
                 'user_id' => $codeData['user_id'] ?? null,
             ]);
 
@@ -285,7 +268,7 @@ class McpOAuthController extends Controller
 
         JWTAuth::factory()->setTTL((int) config('jwt.ttl', 30));
 
-        Log::info('MCP OAuth token issued', [
+        Log::channel('mcp')->info('MCP OAuth token issued', [
             'user_id' => $user->getKey(),
             'client_id' => $codeData['client_id'] ?? null,
             'expires_in' => (int) config('jwt.ttl', 30) * 60,
@@ -311,7 +294,7 @@ class McpOAuthController extends Controller
             $payload = JWTAuth::setToken($refreshToken)->getPayload();
 
             if (($payload->get('token_type') ?? '') !== 'refresh') {
-                Log::warning('MCP OAuth refresh invalid token type', [
+                Log::channel('mcp')->warning('MCP OAuth refresh invalid token type', [
                     'token_type' => $payload->get('token_type'),
                 ]);
 
@@ -321,7 +304,7 @@ class McpOAuthController extends Controller
             $user = JWTAuth::setToken($refreshToken)->authenticate();
 
             if (!$user || !$user->canAccessMcp()) {
-                Log::warning('MCP OAuth refresh access denied', [
+                Log::channel('mcp')->warning('MCP OAuth refresh access denied', [
                     'user_id' => $user?->getKey(),
                 ]);
 
@@ -334,7 +317,7 @@ class McpOAuthController extends Controller
                 'token_type' => 'access',
             ])->fromUser($user);
 
-            Log::info('MCP OAuth access token refreshed', [
+            Log::channel('mcp')->info('MCP OAuth access token refreshed', [
                 'user_id' => $user->getKey(),
                 'expires_in' => (int) config('jwt.ttl', 30) * 60,
             ]);
@@ -345,7 +328,7 @@ class McpOAuthController extends Controller
                 'expires_in' => (int) config('jwt.ttl', 30) * 60,
             ], 200, $this->noStoreHeaders());
         } catch (\Throwable $e) {
-            Log::warning('MCP OAuth refresh failed', [
+            Log::channel('mcp')->warning('MCP OAuth refresh failed', [
                 'message' => $e->getMessage(),
             ]);
 
@@ -355,7 +338,7 @@ class McpOAuthController extends Controller
 
     private function unsupportedGrantTypeResponse(Request $request): JsonResponse
     {
-        Log::warning('MCP OAuth unsupported grant_type', [
+        Log::channel('mcp')->warning('MCP OAuth unsupported grant_type', [
             'grant_type' => $request->input('grant_type'),
         ]);
 
@@ -406,28 +389,6 @@ class McpOAuthController extends Controller
         }
 
         return in_array($redirectUri, $allowedRedirectUris, true);
-    }
-
-    private function passesPkceVerification(array $codeData, ?string $codeVerifier): bool
-    {
-        $codeChallenge = $codeData['code_challenge'] ?? null;
-        $codeChallengeMethod = $codeData['code_challenge_method'] ?? null;
-
-        if (blank($codeChallenge) && blank($codeChallengeMethod)) {
-            return true;
-        }
-
-        if (blank($codeVerifier) || $codeChallengeMethod !== 'S256') {
-            return false;
-        }
-
-        $computedChallenge = rtrim(strtr(
-            base64_encode(hash('sha256', $codeVerifier, true)),
-            '+/',
-            '-_'
-        ), '=');
-
-        return hash_equals($codeChallenge, $computedChallenge);
     }
 
     private function jsonOAuthError(string $error, int $status): JsonResponse
