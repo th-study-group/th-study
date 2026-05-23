@@ -18,5 +18,7 @@ Disallow: /find-password
 Disallow: /reset-password
 Disallow: /outbound
 Disallow: /outbound/
+Disallow: /api/mcp
+Disallow: /mcp/oauth
 
 Sitemap: {{ config('app.url') }}/sitemap.xml
