@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Users\RegisterUserRequest;
 use App\Services\EmailVerificationService;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 회원가입 컨트롤러
@@ -25,6 +26,10 @@ class RegisterController extends Controller
      */
     public function create()
     {
+        if (Auth::check()) {
+            return to_route('dashboard');
+        }
+
         return view('users.join');
     }
 
