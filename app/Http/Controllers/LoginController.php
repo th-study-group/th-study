@@ -26,10 +26,6 @@ class LoginController extends Controller
      */
     public function login()
     {
-        if (Auth::check()) {
-            return to_route('dashboard');
-        }
-
         return view('users.login');
     }
 

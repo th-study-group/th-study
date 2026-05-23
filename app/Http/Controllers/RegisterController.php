@@ -26,10 +26,6 @@ class RegisterController extends Controller
      */
     public function create()
     {
-        if (Auth::check()) {
-            return to_route('dashboard');
-        }
-
         return view('users.join');
     }
 
