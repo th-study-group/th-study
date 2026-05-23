@@ -163,6 +163,60 @@ uvicorn main:app --reload
 - Unsplash: `https://unsplash.com/ko`
 - Devicon: `https://devicon.dev/`
 
+## 2.2 MCP 연동 메모
+
+TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP(Model Context Protocol)용 인증 흐름과 툴 호출 구조를 별도로 정리했습니다.
+
+구현 목적:
+
+- 기존 웹 서비스 로그인 흐름과 분리된 MCP 전용 인증 경로 제공
+- OAuth authorization code + JWT access/refresh token 조합으로 보호 리소스 접근 구성
+- 블로그 데이터를 MCP tool 형태로 노출해 AI 클라이언트가 검색 가능하도록 준비
+- 툴 정의 파일(`mcp/tool.json`) 기준으로 `tools/list`, `tools/call`을 처리하는 구조 확보
+
+핵심 구성:
+
+- OAuth authorize 화면: `GET /mcp/oauth/authorize`
+- OAuth 로그인 처리: `POST /mcp/oauth/login`
+- OAuth 토큰 발급: `POST /api/mcp/oauth/token`
+- 직접 JWT 로그인: `POST /api/mcp/login`
+- JWT refresh: `POST /api/mcp/refresh`
+- MCP API 엔드포인트: `GET|POST /api/mcp`
+- 개별 툴 엔드포인트: `POST /api/mcp/tools/blog-search`
+- Well-known 메타데이터:
+  - `GET /.well-known/oauth-protected-resource`
+  - `GET /.well-known/oauth-authorization-server`
+
+인증/보호 구조:
+
+- `config/auth.php`에 `mcp_web`, `mcp_jwt` 가드를 분리해 MCP 인증 흐름을 일반 웹 접근과 분리
+- `McpOAuthController`에서 `client_id`, `redirect_uri`, PKCE 파라미터를 검증한 뒤 로그인 화면 제공
+- 로그인 성공 시 authorization code를 캐시에 짧은 TTL로 저장하고 redirect URI로 반환
+- 토큰 교환 시 `authorization_code` 또는 `refresh_token` grant를 처리해 JWT access token / refresh token 발급
+- `McpJwtAuthenticate` 미들웨어에서 Bearer 토큰 존재 여부, `token_type=access`, MCP 접근 가능 사용자 여부를 검증
+- 인증 실패 시 `WWW-Authenticate` 헤더에 protected resource metadata 경로를 포함해 MCP 클라이언트가 재인증 흐름을 찾을 수 있도록 처리
+
+툴 처리 방식:
+
+- `McpApiController`는 `initialize`, `tools/list`, `tools/call` 메서드를 JSON-RPC 형식으로 처리
+- `tools/list`는 `mcp/tool.json`을 읽어 현재 노출 가능한 MCP tool 목록을 반환
+- `ToolRunner`는 tool 이름으로 정의를 찾은 뒤 내부 서브 요청으로 실제 Laravel 라우트에 전달
+- 이 구조 덕분에 MCP 진입점과 실제 비즈니스 로직을 분리하면서도 기존 컨트롤러/서비스 계층을 재사용 가능
+
+현재 연결된 MCP tool:
+
+- `blog_search`
+  - 블로그 게시글 제목, 상태, 작성일 기준 검색
+  - 지원 필드: `title`, `status`, `created_at`, `created_at_from`, `created_at_to`, `limit`
+  - 1년 초과 장기 조회는 월/분기 단위 분할을 권장하도록 응답
+  - 실제 검색 로직은 `app/Services/mcp/tools/BlogSearchToolService.php`에 분리
+
+운영 포인트:
+
+- MCP 관련 로그는 별도 `mcp` 로그 채널로 분리
+- OAuth client 정보와 code TTL은 `config/mcp.php` + `.env`에서 관리
+- MCP 툴을 늘릴 때는 `mcp/tool.json` 정의, 개별 라우트, 서비스 로직을 같은 패턴으로 추가하면 됨
+- 현재는 블로그 검색 중심의 최소 기능부터 열어 두고, 이후 사내/개인 서비스 데이터 조회 도구로 확장 가능한 구조로 설계
 ## 3. 디렉터리 빠른 가이드
 
 ```text

@@ -70,8 +70,9 @@
             <li><a href="#docker">11. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
             <li><a href="#queue-service">12. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
             <li><a href="#codex-skill">13. Codex 스킬</a><span class="toc-dots"></span><span class="toc-desc">SKILL.md 작성법과 파일 종류</span></li>
-            <li><a href="#fastapi-study">14. FastAPI 학습</a><span class="toc-dots"></span><span class="toc-desc">로컬 설치와 기본 API</span></li>
-            <li><a href="#appendix">15. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
+            <li><a href="#mcp-oauth">14. MCP OAuth/JWT 연동</a><span class="toc-dots"></span><span class="toc-desc">ChatGPT tool 연결 구조</span></li>
+            <li><a href="#fastapi-study">15. FastAPI 학습</a><span class="toc-dots"></span><span class="toc-desc">로컬 설치와 기본 API</span></li>
+            <li><a href="#appendix">16. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
           </ul>
         </div>
       </div>
@@ -918,9 +919,89 @@ sudo systemctl status th-study-queue</code></pre>
   </div>
 </section>
 
+<section id="mcp-oauth" class="section bg-light">
+  <div class="container">
+    <h2 class="h2x mb-3">14. MCP OAuth/JWT 연동</h2>
+    <div class="box pad">
+      <p class="leadx mb-3">
+        ChatGPT 같은 MCP 클라이언트가 TH-Study 안의 데이터를 안전하게 조회할 수 있도록
+        OAuth authorization code 흐름, JWT access/refresh token, MCP API, tool dispatch 구조를 직접 연결했습니다.
+      </p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="p-3 border rounded-4 h-100">
+            <div class="fw-bold mb-2">핵심 구현 포인트</div>
+            <ul class="mb-0" style="margin-left:18px;">
+              <li><code>/mcp/oauth/authorize</code> 에서 MCP 로그인 화면 제공</li>
+              <li><code>/api/mcp/oauth/token</code> 에서 authorization code / refresh token 교환 처리</li>
+              <li><code>mcp_jwt</code> 가드와 전용 미들웨어로 MCP 보호 API 분리</li>
+              <li><code>/.well-known/*</code> 메타데이터를 노출해 클라이언트가 인증 서버 정보를 찾도록 구성</li>
+              <li><code>mcp/tool.json</code> 기반으로 <code>tools/list</code>, <code>tools/call</code> 응답</li>
+              <li>현재 <code>blog_search</code> tool을 연결해 블로그 제목, 상태, 작성일 기준 검색 가능</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="codeblock">
+            <div class="codehdr"><span>flow · MCP 인증/호출</span></div>
+            <pre><code>ChatGPT
+  -> /mcp/oauth/authorize
+  -> /mcp/oauth/login
+  -> /api/mcp/oauth/token
+  -> Bearer access token 발급
+  -> /api/mcp (initialize, tools/list, tools/call)
+  -> /api/mcp/tools/blog-search</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive mt-4">
+        <table class="table table-bordered align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:24%">구성 요소</th>
+              <th>정리</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold">인증 진입점</td>
+              <td><code>McpOAuthController</code>에서 <code>client_id</code>, <code>redirect_uri</code>, PKCE 파라미터를 검증하고 로그인 화면을 제공합니다.</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">토큰 발급</td>
+              <td>authorization code를 캐시에 짧게 저장한 뒤 access / refresh JWT를 발급하고, refresh token으로 access token 재발급까지 처리합니다.</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">보호 API</td>
+              <td><code>McpJwtAuthenticate</code>에서 Bearer 토큰 존재 여부, <code>token_type=access</code>, MCP 접근 가능 사용자인지 검증합니다.</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">MCP 메서드</td>
+              <td><code>McpApiController</code>에서 <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>을 JSON-RPC 형식으로 응답합니다.</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">툴 라우팅</td>
+              <td><code>ToolRunner</code>가 <code>mcp/tool.json</code> 정의를 읽어 내부 서브 요청으로 개별 Laravel 컨트롤러/서비스에 연결합니다.</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">첫 번째 tool</td>
+              <td><code>blog_search</code>는 제목, 상태, 작성일 범위, limit 기준 검색을 지원하고 1년 초과 장기 조회는 분할 조회를 권장하도록 응답합니다.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout mt-4">
+        <strong>정리 포인트</strong><br>
+        단순한 “AI 연결”이 아니라 인증 화면, 토큰 수명, 보호 리소스 메타데이터, 툴 정의 파일, 내부 서비스 재사용 구조까지
+        운영 가능한 형태로 묶어 둔 작업입니다.
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="fastapi-study" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">14. FastAPI 학습</h2>
+    <h2 class="h2x mb-3">15. FastAPI 학습</h2>
     <div class="box pad">
       <p class="leadx mb-3">FastAPI는 Python 기반 API 프레임워크 학습을 위해 별도 정리했습니다. Laravel/PHP 중심 개발 흐름에서 Python API 개발로 확장해 보면서, 향후 인공지능과 AI 학습 생태계에 접근할 수 있는 기반을 만드는 방향으로 학습하고 있습니다.</p>
       <div class="row g-3">
@@ -988,12 +1069,13 @@ uvicorn main:app --reload</code></pre>
 
 <section id="appendix" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">15. README 원문</h2>
+    <h2 class="h2x mb-3">16. README 원문</h2>
     <div class="box pad readme-summary">
       <p class="fw-bold mb-2">포트폴리오 관점 요약</p>
       <ul>
         <li>Laravel 10 기반 개발자 성장 플랫폼을 기획부터 운영까지 직접 구축</li>
         <li>핵심 아키텍처는 Controller-Service-Repository 분리와 정책 기반 접근 제어</li>
+        <li>MCP 구간은 OAuth/JWT 인증, well-known 메타데이터, JSON-RPC tool 호출 구조까지 직접 구성</li>
         <li>메일/큐/로그/백업 포함 운영 흐름을 실서비스 수준으로 문서화</li>
         <li>도메인은 가비아에서 등록하고 Cloudflare 네임서버/DNS/Email Routing으로 외부 노출 주소를 운영</li>
         <li>Cloudflare 프록시 환경에서도 로그인/게시판/히스토리에 실클라이언트 IP가 저장되도록 추출 정책을 표준화</li>
