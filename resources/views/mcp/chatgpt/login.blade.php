@@ -276,6 +276,37 @@
             transform: translateY(0);
         }
 
+        .th-auth-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .th-auth-link-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 54px;
+            padding: 0 18px;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 18px;
+            color: var(--th-text);
+            font-size: 0.98rem;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            text-decoration: none;
+            background: rgba(15, 23, 42, 0.7);
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+        }
+
+        .th-auth-link-button:hover {
+            transform: translateY(-1px);
+            border-color: rgba(96, 165, 250, 0.5);
+            background: rgba(30, 41, 59, 0.92);
+        }
+
         .th-auth-help {
             margin: 18px 0 0;
             color: var(--th-text-faded);
@@ -410,9 +441,15 @@
                             >
                         </div>
 
-                        <button type="button" id="btn_oauth_login" class="btn_oauth_login">
-                            계정 연결하기
-                        </button>
+                        <div class="th-auth-actions">
+                            <button type="button" id="btn_oauth_login" class="btn_oauth_login">
+                                계정 연결하기
+                            </button>
+
+                            <a href="{{ route('register.form') }}" class="th-auth-link-button">
+                                회원가입
+                            </a>
+                        </div>
                     </form>
 
                     <p class="th-auth-help">
