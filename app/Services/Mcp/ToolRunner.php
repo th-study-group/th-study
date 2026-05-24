@@ -58,6 +58,24 @@ class ToolRunner
             ];
         }
 
+        $user = auth()->user();
+        $userLevel = $user->level ?? null;
+        $allowedLevels = $toolInfo['levels'] ?? [];
+
+        if (!$userLevel || empty($allowedLevels) || !in_array($userLevel, $allowedLevels, true)) {
+            Log::channel('mcp')->warning('MCP tool permission denied', [
+                'tool' => $tool,
+                'user_id' => $user->id ?? null,
+                'user_level' => $userLevel,
+                'allowed_levels' => $allowedLevels,
+            ]);
+
+            return [
+                'error' => '이 도구를 사용할 권한이 없습니다.',
+                'status' => 403,
+            ];
+        }
+
         $url = $toolInfo['url'] ?? null;
 
         if (!$url) {

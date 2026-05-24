@@ -4,6 +4,7 @@
     "description": "블로그 게시글 조회 템플릿. 사용자 입력 조건만 검색 조건에 포함합니다.",
     "url": "/api/mcp/tools/blog-search",
     "method": "POST",
+    "levels": ["admin"],
     "x-meta": {
       "domain": "blogs",
       "keywords": [
