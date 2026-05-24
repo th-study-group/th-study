@@ -936,8 +936,8 @@ sudo systemctl status th-study-queue</code></pre>
               <li><code>/api/mcp/oauth/token</code> 에서 authorization code / refresh token 교환 처리</li>
               <li><code>mcp_jwt</code> 가드와 전용 미들웨어로 MCP 보호 API 분리</li>
               <li><code>/.well-known/*</code> 메타데이터를 노출해 클라이언트가 인증 서버 정보를 찾도록 구성</li>
-              <li><code>mcp/tool.json</code> 기반으로 <code>tools/list</code>, <code>tools/call</code> 응답</li>
-              <li>현재 <code>blog_search</code> tool을 연결해 블로그 제목, 상태, 작성일 기준 검색 가능</li>
+              <li><code>mcp/tool.json</code> 기반으로 <code>tools/list</code>, <code>tools/call</code>을 처리하고 tool별 <code>levels</code>로 허용 계정 레벨 관리</li>
+              <li>현재 <code>blog_search</code> tool은 <code>admin</code> 계정에만 허용되며 블로그 제목, 상태, 작성일 기준 검색 가능</li>
             </ul>
           </div>
         </div>
@@ -977,15 +977,15 @@ sudo systemctl status th-study-queue</code></pre>
             </tr>
             <tr>
               <td class="fw-bold">MCP 메서드</td>
-              <td><code>McpApiController</code>에서 <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>을 JSON-RPC 형식으로 응답합니다.</td>
+              <td><code>McpApiController</code>에서 <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>을 JSON-RPC 형식으로 응답하고, tool 정의는 <code>mcp/tool.json</code> 기준으로 조회합니다.</td>
             </tr>
             <tr>
               <td class="fw-bold">툴 라우팅</td>
-              <td><code>ToolRunner</code>가 <code>mcp/tool.json</code> 정의를 읽어 내부 서브 요청으로 개별 Laravel 컨트롤러/서비스에 연결합니다.</td>
+              <td><code>ToolRunner</code>가 <code>mcp/tool.json</code> 정의를 읽고 로그인 계정의 <code>user.level</code>이 tool의 <code>levels</code>에 포함되는지 확인한 뒤, 허용된 경우에만 내부 서브 요청으로 개별 Laravel 컨트롤러/서비스에 연결합니다.</td>
             </tr>
             <tr>
               <td class="fw-bold">첫 번째 tool</td>
-              <td><code>blog_search</code>는 제목, 상태, 작성일 범위, limit 기준 검색을 지원하고 1년 초과 장기 조회는 분할 조회를 권장하도록 응답합니다.</td>
+              <td><code>blog_search</code>는 현재 <code>admin</code> 계정 전용이며, 제목, 상태, 작성일 범위, limit 기준 검색을 지원하고 1년 초과 장기 조회는 분할 조회를 권장하도록 응답합니다.</td>
             </tr>
           </tbody>
         </table>
