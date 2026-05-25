@@ -49,7 +49,6 @@ class NoteController extends Controller
             abort(404);
         }
 
-        $canCreate = (bool) optional($request->user())->can('create', Note::class);
         $categoryTitle = (string) data_get($categoryConfig, "{$resolvedSlug}.title", '');
         $listTitle = $resolvedSlug !== '' && $categoryTitle !== '' ? "{$categoryTitle} 글" : '전체 글';
         $listDescription = $resolvedSlug !== ''
@@ -252,7 +251,7 @@ class NoteController extends Controller
     /**
      * 수정 폼
      *
-     * @return void
+     * @return View
      */
     public function edit(Request $request, string $slug, string $idx) : View
     {
