@@ -42,9 +42,9 @@ class Note extends Base
         $this->attributes['use_flag'] = $value === 'Y' ? 1 : 0;
     }
 
-    public function getUseFlagAttribute(string $value): string
+    public function getUseFlagAttribute(mixed $value): string
     {
-        return $value === 1 ? 'Y' : 'N';
+        return (string) $value === '1' ? 'Y' : 'N';
     }
 
     public function getGroupTopicNameAttribute(): string
