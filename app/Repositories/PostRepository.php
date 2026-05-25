@@ -45,7 +45,7 @@ class PostRepository
     /**
      * 게시글 조회
      *
-     * @param integer $idx
+     * @param string $idx
      * @param string $postType
      * @return Post
      */

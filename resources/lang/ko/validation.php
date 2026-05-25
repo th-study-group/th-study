@@ -210,4 +210,23 @@ return [
         'personal_info_agree' => '개인정보 수집 및 이용 동의',
         'marketing_info_agree' => '마케팅 정보 수신 동의',
     ],
+
+    'mcp' => [
+        'group_code_required_with' => '카테고리 또는 주제 조회 시 그룹명은 필수입니다.',
+        'categories_code_required_with' => '주제 조회 시 카테고리명 필수입니다.',
+
+        'integer' => ':attribute 항목은 숫자만 입력 가능합니다.',
+        'min' => ':attribute 항목은 최소 :min 이상이어야 합니다.',
+        'max_string' => ':attribute 항목은 최대 :max자까지 입력 가능합니다.',
+
+        'attributes' => [
+            'title' => '제목',
+            'content' => '내용',
+            'group_code' => '그룹',
+            'categories_code' => '카테고리',
+            'topic_code' => '주제',
+            'page' => '페이지',
+            'per_page' => '페이지당 개수',
+        ],
+    ],
 ];

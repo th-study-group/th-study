@@ -15,7 +15,7 @@ class NoteTopic extends Base
         //'categories_idx',
         'name',
         'memo',
-        //'usg_flag',
+        'use_flag',
         //'create_user_idx',
         //'update_user_idx',
         //'delete_user_idx',

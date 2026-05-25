@@ -17,6 +17,7 @@ class NoteCategory extends Base
         'code',
         'name',
         'memo',
+        'use_flag',
         //'create_user_idx',
         //'update_user_idx',
         //'delete_user_idx',
