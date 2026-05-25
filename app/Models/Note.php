@@ -37,12 +37,12 @@ class Note extends Base
         'delete_datetime' => 'datetime',
     ];
 
-    public function setUseFlagAttribute($value): void
+    public function setUseFlagAttribute(string $value): void
     {
         $this->attributes['use_flag'] = $value === 'Y' ? 1 : 0;
     }
 
-    public function getUseFlagAttribute($value): string
+    public function getUseFlagAttribute(string $value): string
     {
         return $value === 1 ? 'Y' : 'N';
     }
