@@ -98,4 +98,24 @@ class NoteRequest extends FormRequest
     {
         return __('validation.mcp.attributes');
     }
+
+    public function withValidator(Validator $validator)
+{
+    $validator->after(function (Validator $validator) {
+
+        $hasSearchCondition =
+            !empty($this->subject) ||
+            !empty($this->group_code) ||
+            !empty($this->categories_code) ||
+            !empty($this->topic_code);
+
+        if (!$hasSearchCondition) {
+
+            $validator->errors()->add(
+                'search',
+                '최소 하나 이상의 검색 조건이 필요합니다.'
+            );
+        }
+    });
+}
 }
