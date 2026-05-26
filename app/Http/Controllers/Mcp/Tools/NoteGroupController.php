@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\Tools\NoteGroupRequest;
 use App\Services\Mcp\Tools\NoteGroupService;
 use App\Http\Resources\Mcp\Tools\NoteGroupResource;
+use Illuminate\Http\JsonResponse;
 
 /**
  * 노트 그룹 컨트롤러
@@ -20,9 +21,9 @@ class NoteGroupController extends Controller
      * 노트 그룹 목록 반환 
      *
      * @param NoteGroupRequest $request
-     * @return void
+     * @return JsonResponse
      */
-    public function index(NoteGroupRequest $request)
+    public function index(NoteGroupRequest $request) : JsonResponse
     {
         $data = $request->validated();
 

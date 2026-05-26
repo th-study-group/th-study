@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\Tools\NoteRequest;
 use App\Http\Resources\Mcp\Tools\NoteResource;
 use App\Services\Mcp\Tools\NoteService;
+use Illuminate\Http\JsonResponse;
 
 /**
  * 블로그 MCP API 컨트롤러
@@ -20,9 +21,9 @@ class NoteController extends Controller
      * 블로그 글 목록 반환 
      *
      * @param NoteRequest $request
-     * @return void
+     * @return JsonResponse
      */
-    public function index(NoteRequest $request)
+    public function index(NoteRequest $request) : JsonResponse
     {
         $data = $request->validated();
 
