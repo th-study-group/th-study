@@ -5,6 +5,7 @@ use App\Http\Controllers\Mcp\McpJwtAuthController;
 use App\Http\Controllers\Mcp\McpOAuthController;
 use App\Http\Controllers\Mcp\Tools\BlogSearchToolController;
 use App\Http\Controllers\Mcp\Tools\NoteController;
+use App\Http\Controllers\Mcp\Tools\NoteGroupController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/oauth/token', [McpOAuthController::class, 'token'])
@@ -24,5 +25,8 @@ Route::middleware(['auth.mcp.jwt'])->group(function () {
         ->name('mcp.tools.blog-search'); 
     
     Route::post('/tools/notes', [NoteController::class, 'index'])
-        ->name('mcp.tools.note.index'); 
+        ->name('mcp.tools.note.index');
+        
+    Route::post('/tools/note-groups', [NoteGroupController::class, 'index'])
+        ->name('mcp.tools.note-group.index');
 });
