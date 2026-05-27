@@ -4,6 +4,7 @@ use App\Http\Controllers\Mcp\McpApiController;
 use App\Http\Controllers\Mcp\McpJwtAuthController;
 use App\Http\Controllers\Mcp\McpOAuthController;
 use App\Http\Controllers\Mcp\Tools\BlogSearchToolController;
+use App\Http\Controllers\Mcp\Tools\NoteCategoriesController;
 use App\Http\Controllers\Mcp\Tools\NoteController;
 use App\Http\Controllers\Mcp\Tools\NoteGroupController;
 use Illuminate\Support\Facades\Route;
@@ -29,4 +30,7 @@ Route::middleware(['auth.mcp.jwt'])->group(function () {
         
     Route::post('/tools/note-groups', [NoteGroupController::class, 'index'])
         ->name('mcp.tools.note-group.index');
+
+    Route::post('/tools/note-categories', [NoteCategoriesController::class, 'index'])
+        ->name('mcp.tools.note-category.index');    
 });

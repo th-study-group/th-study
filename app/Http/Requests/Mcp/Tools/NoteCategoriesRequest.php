@@ -3,14 +3,14 @@
 namespace App\Http\Requests\Mcp\Tools;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Contracts\Validation\Validator;
 
 /**
- * 블로그 MCP API 요청 검증 클래스
+ * 노트 카테고리 MCP API 요청 검증 클래스
  */
-class NoteRequest extends FormRequest
+class NoteCategoriesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,21 +28,18 @@ class NoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject' => ['nullable', 'string', 'max:100'],
-            'content' => ['nullable', 'string'],
             'group_code' => [
-                'nullable', 
-                'string', 
-                'max:20', 
-                'required_with:categories_code,topic_code'
-            ],
-            'categories_code' => [
-                'nullable', 
+                'required',
                 'string', 
                 'max:20',
-                'required_with:topic_code'
+                'required_with:categories_code',
             ],
-            'topic_code' => [
+            'categories_code' => [
+                'nullable',
+                'string', 
+                'max:20'
+            ],
+            'categories_name' => [
                 'nullable',
                 'string', 
                 'max:30'
@@ -62,7 +59,7 @@ class NoteRequest extends FormRequest
 
     protected function failedValidation(Validator $validator): void
     {
-        Log::info('Mcp Blog index validation failed', [
+        Log::info('Mcp NoteCategories index validation failed', [
             'action' => 'validate',
             'model' => 'Post',
             'ip' => $this->ip(),
@@ -83,7 +80,6 @@ class NoteRequest extends FormRequest
     {
         return [
             'group_code.required_with' => __('validation.mcp.group_code_required_with'),
-            'categories_code.required_with' => __('validation.mcp.categories_code_required_with'),
 
             'page.integer' => __('validation.mcp.integer'),
             'per_page.integer' => __('validation.mcp.integer'),
@@ -104,16 +100,13 @@ class NoteRequest extends FormRequest
         $validator->after(function (Validator $validator) {
 
             $hasSearchCondition =
-                !empty($this->subject) ||
-                !empty($this->group_code) ||
-                !empty($this->categories_code) ||
-                !empty($this->topic_code);
+                !empty($this->group_code);
 
             if (!$hasSearchCondition) {
 
                 $validator->errors()->add(
                     'search',
-                    '최소 하나 이상의 검색 조건이 필요합니다.'
+                    '노트 그룹은 필수입니다.'
                 );
             }
         });

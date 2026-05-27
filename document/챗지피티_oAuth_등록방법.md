@@ -13,12 +13,14 @@ Bearer 토큰이 필요한 요청은 아래도 추가합니다.
 Authorization: Bearer JWT_ACCESS_TOKEN
 ```
 
+---
+
 ## 2. JWT 로그인 테스트
 
 요청
 
 ```http
-POST https://www.th-study.com/api/mcp/login
+POST http://localhost:8000/api/mcp/login
 ```
 
 Body
@@ -41,12 +43,14 @@ Body
 }
 ```
 
+---
+
 ## 3. JWT refresh 테스트
 
 요청
 
 ```http
-POST https://www.th-study.com/api/mcp/refresh
+POST http://localhost:8000/api/mcp/refresh
 ```
 
 Body
@@ -66,6 +70,8 @@ Body
   "expires_in": 1800
 }
 ```
+
+---
 
 ## 4. OAuth authorize 테스트
 
@@ -89,12 +95,14 @@ http://localhost:8000/mcp/oauth/authorize?client_id=thstudy-chatgpt&redirect_uri
 http://localhost:8000/mcp/oauth-test?code=AUTHORIZATION_CODE&state=test123
 ```
 
+---
+
 ## 5. OAuth token 발급 테스트
 
 요청
 
 ```http
-POST https://www.th-study.com/api/mcp/oauth/token
+POST http://localhost:8000/api/mcp/oauth/token
 ```
 
 Body
@@ -119,12 +127,14 @@ Body
 }
 ```
 
+---
+
 ## 6. OAuth refresh 테스트
 
 요청
 
 ```http
-POST https://www.th-study.com/api/mcp/oauth/token
+POST http://localhost:8000/api/mcp/oauth/token
 ```
 
 Body
@@ -148,12 +158,14 @@ Body
 }
 ```
 
+---
+
 ## 7. MCP initialize 테스트
 
 요청
 
 ```http
-POST https://www.th-study.com/api/mcp
+POST http://localhost:8000/api/mcp
 ```
 
 Header
@@ -172,12 +184,14 @@ Body
 }
 ```
 
+---
+
 ## 8. MCP tools/list 테스트
 
 요청
 
 ```http
-POST https://www.th-study.com/api/mcp
+POST http://localhost:8000/api/mcp
 ```
 
 Header
@@ -196,12 +210,14 @@ Body
 }
 ```
 
+---
+
 ## 9. MCP tools/call 테스트
 
 요청
 
 ```http
-POST https://www.th-study.com/api/mcp
+POST http://localhost:8000/api/mcp
 ```
 
 Header
@@ -227,6 +243,8 @@ Body
 }
 ```
 
+---
+
 # ChatGPT MCP OAuth 앱 등록
 
 ## 앱 이름
@@ -244,7 +262,7 @@ Body
 ## MCP 서버 URL
 
 ```text
-https://www.th-study.com/api/mcp
+http://localhost:8000/api/mcp
 ```
 
 ## 인증 방식
@@ -259,34 +277,42 @@ OAuth
 사용자 정의 OAuth 클라이언트
 ```
 
+주의:
+
+```text
+동적 클라이언트 등록(DCR) 선택하면 안 됨
+```
+
+---
+
 ## 인증 URL
 
 ```text
-https://www.th-study.com/mcp/oauth/authorize
+http://localhost:8000/mcp/oauth/authorize
 ```
 
 ## 토큰 URL
 
 ```text
-https://www.th-study.com/api/mcp/oauth/token
+http://localhost:8000/api/mcp/oauth/token
 ```
 
 ## 등록 URL
 
 ```text
-https://www.th-study.com
+http://localhost:8000
 ```
 
 ## 인증 서버 기본
 
 ```text
-https://www.th-study.com
+http://localhost:8000
 ```
 
 ## 리소스
 
 ```text
-https://www.th-study.com/api/mcp
+http://localhost:8000/api/mcp
 ```
 
 ## Client ID
@@ -307,8 +333,149 @@ OAUTH_CLIENT_SECRET 값
 비워둠
 ```
 
-## 주의
+---
+
+# OAUTH_CLIENT_SECRET 정책
+
+현재 구조는 OAuth 서버가 자동 발급하는 방식이 아니라 직접 랜덤 문자열을 생성해서 사용하는 구조입니다.
+
+즉:
 
 ```text
-동적 클라이언트 등록(DCR) 선택하지 말고 사용자 정의 OAuth 클라이언트를 선택합니다.
+개발자가 직접 랜덤 문자열 생성
+→ .env 저장
+→ config/mcp.php 연결
+```
+
+구조입니다.
+
+---
+
+# OAUTH_CLIENT_SECRET 발급 방법
+
+artisan tinker 실행
+
+```bash
+php artisan tinker
+```
+
+랜덤 문자열 생성
+
+```php
+Illuminate\Support\Str::random(128)
+```
+
+또는
+
+```php
+Str::random(128)
+```
+
+출력 예시
+
+```text
+bK39B2K9EBsbZa4CezsuO0lb3lkiz7VR37F7kSvVEkufdUbuYuXPks4sjd804FR9L1p822kDTUY4TaIgrjfV7gQOinFtkXnL5PHgQaXwBwmC9BFlzbii41rFFobztpGi
+```
+
+---
+
+# .env 설정
+
+```env
+OAUTH_CLIENT_SECRET=생성한랜덤문자열
+```
+
+예시
+
+```env
+OAUTH_CLIENT_SECRET=bK39B2K9EBsbZa4CezsuO0lb3lkiz7VR37F7kSvVEkufdUbuYuXPks4sjd804FR9L1p822kDTUY4TaIgrjfV7gQOinFtkXnL5PHgQaXwBwmC9BFlzbii41rFFobztpGi
+```
+
+---
+
+# config/mcp.php 연결
+
+```php
+<?php
+
+return [
+
+    'oauth' => [
+        'client_id' => env('OAUTH_CLIENT_ID', 'thstudy-chatgpt'),
+        'client_secret' => env('OAUTH_CLIENT_SECRET'),
+        'code_ttl' => (int) env('OAUTH_CODE_TTL', 5),
+    ],
+
+    'tool_path' => base_path('mcp/tool.json'),
+];
+```
+
+---
+
+# JWT 정책
+
+현재 JWT 구조는 아래와 같습니다.
+
+## access_token
+
+```text
+30분
+```
+
+## refresh_token
+
+```text
+14일
+```
+
+예시
+
+```env
+JWT_TTL=30
+JWT_REFRESH_TTL=20160
+```
+
+---
+
+# refresh_token 정책
+
+정상 흐름
+
+```text
+access_token 만료
+→ refresh_token으로 새 access_token 발급
+```
+
+refresh_token까지 만료되면:
+
+```text
+invalid_grant
+```
+
+응답 후 다시 로그인해야 합니다.
+
+즉:
+
+```text
+refresh_token 만료
+→ OAuth authorize 다시 진행
+→ 새 authorization_code 발급
+→ 새 access_token / refresh_token 발급
+```
+
+구조입니다.
+
+---
+
+# 현재 최종 상태
+
+```text
+OAuth 연결 성공
+JWT 로그인 성공
+OAuth token 발급 성공
+refresh_token 발급 성공
+MCP initialize 성공
+tools/list 성공
+tools/call 성공
+ChatGPT MCP 연결 성공
 ```

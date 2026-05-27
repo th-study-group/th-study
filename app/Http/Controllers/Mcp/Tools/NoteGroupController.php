@@ -9,7 +9,7 @@ use App\Http\Resources\Mcp\Tools\NoteGroupResource;
 use Illuminate\Http\JsonResponse;
 
 /**
- * 노트 그룹 컨트롤러
+ * 노트 그룹 MCP API 컨트롤러
  */
 class NoteGroupController extends Controller
 {
@@ -18,7 +18,7 @@ class NoteGroupController extends Controller
     ) {}
 
     /**
-     * 노트 그룹 목록 반환 
+     * 노트 그룹 반환 목록
      *
      * @param NoteGroupRequest $request
      * @return JsonResponse
