@@ -4,7 +4,9 @@ namespace App\Http\Resources\Mcp\Tools;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-
+/**
+ * 노트 MCP API 리소스
+ */
 class NoteResource extends JsonResource
 {
     /**

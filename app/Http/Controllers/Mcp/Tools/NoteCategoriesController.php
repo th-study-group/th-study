@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mcp\Tools;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\Tools\NoteCategoriesRequest;
+use App\Http\Resources\Mcp\Tools\NoteCategoriesResource;
 use App\Services\Mcp\Tools\NoteCategoriesService;
 use Illuminate\Http\Request;
 
@@ -30,7 +31,18 @@ class NoteCategoriesController extends Controller
         return response()->json([
             'success' => true,
             'message' => '노트 카테고리 목록 조회 성공',
-            'data' => $noteCategories,
+            'data' => NoteCategoriesResource::collection(
+                $noteCategories->items()
+            ),
+            'pagination' => [
+                'current_page' => $noteCategories->currentPage(),
+                'per_page' => $noteCategories->perPage(),
+                'total' => $noteCategories->total(),
+                'last_page' => $noteCategories->lastPage(),
+                'has_more' => $noteCategories->hasMorePages(),
+                'next_page' => $noteCategories->hasMorePages()
+                    ? $noteCategories->currentPage() + 1 : null,
+            ],
         ]);
     }
 }
