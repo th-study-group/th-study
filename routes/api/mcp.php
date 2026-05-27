@@ -7,6 +7,7 @@ use App\Http\Controllers\Mcp\Tools\BlogSearchToolController;
 use App\Http\Controllers\Mcp\Tools\NoteCategoriesController;
 use App\Http\Controllers\Mcp\Tools\NoteController;
 use App\Http\Controllers\Mcp\Tools\NoteGroupController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::post('/oauth/token', [McpOAuthController::class, 'token'])
