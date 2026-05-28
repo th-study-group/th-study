@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 강제 로그아웃 하기 위한 미들웨어
@@ -28,7 +29,7 @@ class CheckSessionVersion
             }
 
             if (session('session_version') != $user->session_version) {
-                auth()->logout();
+                Auth::logout();
 
                 session()->invalidate();
                 $request->session()->regenerateToken();
