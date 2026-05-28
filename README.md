@@ -223,31 +223,67 @@ TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP
 
 ```text
 app/
-  Http/Controllers   # 요청 진입점
-  Http/Requests      # 유효성 검증(FormRequest)
-  Services           # 비즈니스 로직
-  Repositories       # DB 접근 로직
-  Models             # Eloquent 모델
-  Policies           # 권한 판단
-  Middleware         # 요청 정책
-  Events/Listeners   # 로그/이력 이벤트 처리
-  Jobs               # 비동기 작업(메일 큐)
+  Console/                    # 스케줄/통계 집계 Artisan 커맨드
+  Events/Listeners/           # 로그인·메일·게시글·노트·푸시 이력 이벤트 처리
+  Http/
+    Controllers/              # 웹, 관리자, MCP, 툴 엔드포인트 진입점
+    Middleware/               # 인증, 권한, 이메일검증, 접근추적, MCP JWT 등 요청 정책
+    Requests/                 # 화면/관리자/MCP/API 입력 검증(FormRequest)
+    Resources/Mcp/Tools/      # MCP 응답 리소스 포맷
+  Jobs/                       # 메일/웹푸시 비동기 작업
+  Mail/                       # 서비스 메일 클래스
+  Models/                     # 사용자, 게시글, 문의, 노트, 푸시, 트래픽 로그 모델
+  Policies/                   # User/Post/Comment/Note 권한 판단
+  Providers/                  # Auth, Event, ViewComposer, Pagination 등 서비스 등록
+  Repositories/               # DB 조회/저장 캡슐화
+  Services/
+    Mcp/Tools/                # MCP tool 실행용 서비스
+                              # 일반 서비스는 회원, 게시판, 문의, 노트, 푸시, 트래픽 처리
+  Support/                    # IP 추출, 에디터 콘텐츠 정리, 트래픽 추적 보조 유틸
 
 routes/
-  web.php            # 홈/정적 페이지
-  auth.php           # 인증/계정 관련
-  login.php          # 로그인 사용자 영역
-  user.php           # 공개 게시판/게스트문의
-  admin.php          # 관리자 영역
-  content.php        # 카테고리형 콘텐츠 페이지
-  dev.php            # 로컬 전용 테스트 라우트
+  web.php                     # 홈/정적 페이지
+  auth.php                    # 회원가입, 비밀번호 재설정, 인증 흐름
+  login.php                   # 로그인 사용자 전용 영역
+  user.php                    # 공개 게시판, 문의, 댓글, 게스트 글
+  admin.php                   # 관리자 화면
+  content.php                 # 블로그·공지·문서·사진·영상·지도 등 콘텐츠 라우트
+  mcp.php / api/mcp.php       # MCP OAuth, JWT, JSON-RPC, 개별 tool 라우트
+  api.php                     # 일반 API 엔드포인트
+  dev.php                     # 로컬 전용 테스트 라우트
+  console.php / channels.php  # 콘솔 스케줄, 브로드캐스트 채널
 
-resources/views/
-  layouts/           # 공통 레이아웃
-  users/             # 회원/인증 화면
-  inquiries/         # 사용자 문의 화면
-  admins/            # 관리자 화면
-  emails/            # 메일 템플릿
+resources/
+  views/
+    layouts/                  # 공통 레이아웃 및 헤더/푸터
+    partials/                 # head script/style, PWA 팝업 등 공통 조각
+    users/                    # 회원/인증 화면
+    blogs/, notice/, documents/
+                              # 노트 기반 콘텐츠 화면
+    inquiries/, comments/     # 문의/댓글 화면
+    admins/                   # 관리자 화면
+    emails/                   # 메일 템플릿
+    mcp/                      # MCP 로그인 화면
+  js/                         # Vite 진입 스크립트
+  css/                        # Vite 스타일 진입점
+
+public/
+  js/, css/                   # 실제 사용 중인 프론트 스크립트/스타일
+  js/intro/, css/intro/       # 홈/소개/포트폴리오 전용 리소스
+  images/                     # OG, 파비콘, 소개, 기본 이미지
+  service-worker.js           # PWA 서비스워커
+  site.webmanifest            # PWA 메타데이터
+
+database/
+  migrations/                 # 스키마 변경 이력
+  seeders/                    # 기본 계정, 노트 마스터 데이터 시딩
+
+config/                       # 인증, 게시판, 노트, MCP, 트래픽, 푸시 등 설정
+mcp/tool.json                 # MCP tool 정의
+skill/                        # 프로젝트 작업 규칙 문서
+document/                     # 운영/업그레이드 메모
+tests/                        # Feature / Unit 테스트
+docker/                       # PHP, Nginx 개발용 Docker 설정
 ```
 
 ## 4. 요청 처리 원리
