@@ -108,7 +108,7 @@
         <table class="table table-bordered align-middle mb-0">
           <thead><tr><th style="width:28%">항목</th><th>버전</th></tr></thead>
           <tbody>
-            <tr><td class='fw-bold'>Laravel</td><td>11</td></tr>
+            <tr><td class='fw-bold'>Laravel</td><td>12</td></tr>
             <tr><td class='fw-bold'>PHP</td><td>8.2</td></tr>
             <tr><td class='fw-bold'>MySQL</td><td>8.0.45</td></tr>
             <tr><td class='fw-bold'>Ubuntu</td><td>Ubuntu 22.04</td></tr>

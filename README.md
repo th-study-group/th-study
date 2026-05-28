@@ -31,7 +31,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 
 ## 2. 기술 스택
 
-- Backend: PHP 8.2, Laravel 11
+- Backend: PHP 8.2, Laravel 12
 - DB: MySQL
 - Frontend: Blade, Bootstrap 5, jQuery
 - Date UI: Flatpickr
