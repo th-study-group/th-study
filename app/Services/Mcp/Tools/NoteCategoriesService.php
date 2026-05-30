@@ -5,6 +5,7 @@ namespace App\Services\Mcp\Tools;
 use App\Repositories\Mcp\Tools\NoteCategoriesRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 노트 카테고리 MCP API 서비스
@@ -26,7 +27,7 @@ class NoteCategoriesService
         $noteCategories = $this->noteCategoriesRepository->paginateCategories($data);
 
         Log::info('[NoteCategory][MCP] Service 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'parameters' => $data,
             'pagination' => [
                 'current_page' => $noteCategories->currentPage(),

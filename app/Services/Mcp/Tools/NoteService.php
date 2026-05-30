@@ -6,7 +6,7 @@ use App\Repositories\Mcp\Tools\NoteRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
-
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 블로그 MCP API 서비스
@@ -27,7 +27,7 @@ class NoteService
         $notes = $this->noteRepository->paginateNotes($data);
 
         Log::info('[Note][MCP] Service 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'parameters' => $data,
             'pagination' => [
                 'current_page' => $notes->currentPage(),
