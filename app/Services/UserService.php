@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+
 class UserService
 {
     private UserRepository $userRepository;
@@ -144,7 +145,7 @@ class UserService
         $members = $this->userRepository->paginate($filters, 20);
 
         Log::info('[Admin][Member][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'page' => $page,
             'ip' => request()->ip(),
         ]);
@@ -172,7 +173,7 @@ class UserService
      */
     public function updateMemo(User $user, array $payload): User
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
 
         $user->forceFill([
             'memo' => $payload['memo'] ?? null,

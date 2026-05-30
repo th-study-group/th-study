@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 게시글 서비스
@@ -34,7 +35,7 @@ class InquiryService
      */
     public function create(StoreInquiryRequest $request, string $postType): Post
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
 
         return DB::transaction(function () use ($request, $postType, $userIdx) {
             $post = $this->postRepository->create([
@@ -69,7 +70,7 @@ class InquiryService
      */
     public function getMyInquiries(array $filters): LengthAwarePaginator
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
         $page = $filters['page'] ?? 1;
 
         $posts = $this->postRepository->paginateByUserAndType(
@@ -106,7 +107,7 @@ class InquiryService
         );
 
         Log::info('[Admin][Inquiry][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'post_type' => 'inquiries',
             'page' => $page,
             'ip' => RequestIp::resolve(),
@@ -138,7 +139,7 @@ class InquiryService
      */
     public function getByIdxWithHistory(string $idx, string $postType, string $ip, string $userAgent): Post
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
         $post = $this->postRepository->findByIdxAndType($idx, $postType);
 
         event(new PostHistoryEvent(
@@ -170,7 +171,7 @@ class InquiryService
      */
     public function update(array $payload, Post $post): Post
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
 
         return DB::transaction(function () use ($payload, $post, $userIdx) {
             $post = $this->postRepository->update($post, [
@@ -209,7 +210,7 @@ class InquiryService
      */
     public function delete(Post $post, array $payload): void
     {
-        $userIdx = (int) auth()->id();
+        $userIdx = (int) Auth::id();
         $ip = $payload['ip'] ?? '';
         $userAgent = $payload['user_agent'] ?? '';
 
@@ -249,7 +250,7 @@ class InquiryService
      */
     public function updateStatus(Post $post, array $payload): Post
     {
-        $userIdx = (int) auth()->id();
+        $userIdx = (int) Auth::id();
         $status = $payload['status'] ?? 'wait';
         $ip = $payload['ip'] ?? '';
         $userAgent = $payload['user_agent'] ?? '';

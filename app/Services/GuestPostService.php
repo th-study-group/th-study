@@ -10,6 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 미인증 게시글 서비스 
@@ -113,7 +114,7 @@ class GuestPostService
         $posts = $this->guestPostRepository->paginateByType($postType, $filters, 20);
 
         Log::info('[Admin][GuestPost][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'post_type' => $postType,
             'page' => $page,
             'ip' => request()->ip(),
@@ -143,7 +144,7 @@ class GuestPostService
      */
     public function update(GuestPost $post, array $payload): GuestPost
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
 
         $updated = $this->guestPostRepository->update($post, [
             'memo' => $payload['memo'] ?? null,
@@ -170,7 +171,7 @@ class GuestPostService
      */
     public function delete(GuestPost $post): void
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
 
         $post->forceFill([
             'delete_user_idx' => $userIdx,

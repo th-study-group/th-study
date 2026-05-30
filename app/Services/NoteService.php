@@ -24,6 +24,7 @@ use Illuminate\Validation\ValidationException;
 use Intervention\Image\Encoders\JpegEncoder;
 use Intervention\Image\Encoders\PngEncoder;
 use Intervention\Image\ImageManager;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 노트 서비스
@@ -50,7 +51,7 @@ class NoteService
         $categories = $this->noteTopicRepository->getCategoriesByGroupCode($resolvedGroupCode);
 
         Log::info('[Note][Category][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'group_code' => $groupCode,
             'resolved_group_code' => $resolvedGroupCode,
             'count' => $categories->count(),
@@ -73,7 +74,7 @@ class NoteService
         $topics = $this->noteTopicRepository->getActiveTopicsByGroupAndCategory($resolvedGroupCode, $categoryCode);
 
         Log::info('[Note][Topic][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'group_code' => $groupCode,
             'resolved_group_code' => $resolvedGroupCode,
             'category_code' => $categoryCode,
@@ -104,7 +105,7 @@ class NoteService
 
         if (! $isMatch) {
             Log::warning('[Note][Create] topic mismatch', [
-                'user_idx' => auth()->id(),
+                'user_idx' => Auth::id(),
                 'group_code' => $groupCode,
                 'resolved_group_code' => $resolvedGroupCode,
                 'category_code' => $categoryCode,
@@ -118,7 +119,7 @@ class NoteService
         }
 
         return DB::transaction(function () use ($request, $topic, $resolvedGroupCode, $topicIdx): Note {
-            $userIdx = (int) (auth()->id() ?? 0);
+            $userIdx = (int) (Auth::id() ?? 0);
             $thumbnailPath = null;
 
             if ($request->hasFile('thumbnail_path')) {
@@ -162,7 +163,7 @@ class NoteService
             ));
 
             Log::info('[Note][Create] 등록 완료', [
-                'user_idx' => auth()->id(),
+                'user_idx' => Auth::id(),
                 'note_idx' => $note->idx,
                 'group_code' => $resolvedGroupCode,
                 'category_code' => $topic->category->code,
@@ -189,8 +190,8 @@ class NoteService
     public function getNoteDetail(string $groupCode, string $categoryCode, int $idx): Note
     {
         $resolvedGroupCode = (string) config("note.group.{$groupCode}", $groupCode);
-        $userIdx = (int) (auth()->id() ?? 0);
-        $isAdmin = auth()->check() && (auth()->user()?->level === 'admin');
+        $userIdx = (int) (Auth::id() ?? 0);
+        $isAdmin = Auth::check() && (Auth::user()?->level === 'admin');
         $note = $this->noteRepository->findByIdxAndCodes($idx, $resolvedGroupCode, $categoryCode);
 
         if (! $isAdmin && ($note->use_flag ?? 'N') !== 'Y') {
@@ -233,7 +234,7 @@ class NoteService
     ): LengthAwarePaginator
     {
         $resolvedGroupCode = (string) config("note.group.{$groupCode}", $groupCode);
-        $isAdmin = auth()->check() && (auth()->user()?->level === 'admin');
+        $isAdmin = Auth::check() && (Auth::user()?->level === 'admin');
         $searchType = (string) ($filters['search_select_type'] ?? 'title');
         $searchKeyword = trim((string) ($filters['search_keyword'] ?? ''));
         $searchTopic = trim((string) ($filters['search_topic'] ?? ''));
@@ -248,7 +249,7 @@ class NoteService
         );
 
         Log::info('[Note][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'group_code' => $groupCode,
             'resolved_group_code' => $resolvedGroupCode,
             'category_code' => $categoryCode,
@@ -281,7 +282,7 @@ class NoteService
         int $limit = 5
     ): Collection {
         $resolvedGroupCode = config("note.group.{$groupCode}", $groupCode);
-        $isAdmin = auth()->check() && (auth()->user()?->level === 'admin');
+        $isAdmin = Auth::check() && (Auth::user()?->level === 'admin');
         $relatedNotes = $this->noteRepository->getLatestByCodesExcluding(
             $resolvedGroupCode,
             $categoryCode,
@@ -292,7 +293,7 @@ class NoteService
         );
 
         Log::info('[Note][Related][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'group_code' => $groupCode,
             'resolved_group_code' => $resolvedGroupCode,
             'category_code' => $categoryCode,
@@ -319,7 +320,7 @@ class NoteService
         $note = $this->noteRepository->findByIdxAndCodes($idx, $resolvedGroupCode, $categoryCode);
 
         Log::info('[Note][Target] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'note_idx' => $note->idx,
             'group_code' => $groupCode,
             'resolved_group_code' => $resolvedGroupCode,
@@ -345,7 +346,7 @@ class NoteService
         $note = $this->noteRepository->findByIdxAndCodes($idx, $resolvedGroupCode, $categoryCode);
         $topicIdx = (int) $request->integer('topic');
         $topic = NoteTopic::with(['category.group'])->findOrFail($topicIdx);
-        $userIdx = (int) (auth()->id() ?? 0);
+        $userIdx = (int) (Auth::id() ?? 0);
 
         $isMatch = ($topic->use_flag ?? 'N') === 'Y'
             && ($topic->category?->code === $categoryCode)

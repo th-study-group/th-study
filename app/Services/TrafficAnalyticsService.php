@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Jenssegers\Agent\Agent;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 유입/집계 서비스
@@ -288,7 +289,7 @@ class TrafficAnalyticsService
         $logs = $this->trafficLogRepository->paginateDailyAccessLogs($filters, 50);
 
         Log::info('[Admin][Traffic][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'search_date' => $filters['search_date'] ?? null,
             'search_device' => $filters['search_device'] ?? null,
             'search_ip' => $filters['search_ip'] ?? null,

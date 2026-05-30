@@ -8,6 +8,7 @@ use App\Repositories\WebPushMessageRepository;
 use App\Repositories\WebPushSubScriptionRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 웹 푸시 서비스
@@ -158,7 +159,7 @@ class PushService
         $pushEnabledUserIds = $this->userRepository->getPushEnabledUserIds($targetUserIds);
         if (empty($pushEnabledUserIds)) {
             Log::info('[Push][SendToUser] 푸시 수신 동의 사용자 없음', [
-                'user_idx' => auth()->id(),
+                'user_idx' => Auth::id(),
                 'target_user_count' => count($targetUserIds),
                 'ip' => request()->ip(),
             ]);
@@ -178,13 +179,13 @@ class PushService
                 targetUrl: $data['target_url'],
                 tableName: $data['table_name'],
                 senderUserAgent: $senderUserAgent,
-                requestUserIdx: auth()->id(),
+                requestUserIdx: Auth::id(),
                 requestIp: request()->ip()
             );
         }
 
         Log::info('[Push][SendToUser] 큐 등록 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'target_user_count' => count($targetUserIds),
             'push_enabled_user_count' => count($pushEnabledUserIds),
             'ip' => request()->ip(),

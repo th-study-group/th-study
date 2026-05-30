@@ -9,6 +9,7 @@ use App\Repositories\CommentRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 댓글 서비스
@@ -32,7 +33,7 @@ class CommentService
         $comments = $this->commentRepository->getByPostIdx($postIdx, $perPage);
 
         Log::info('[Comment][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'post_idx' => $postIdx,
             'per_page' => $perPage,
             'ip' => request()->ip(),
@@ -81,7 +82,7 @@ class CommentService
         $comment = $this->commentRepository->findByIdx($idx);
 
         Log::info('[Comment][View] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'comment_idx' => $comment->idx,
             'post_idx' => $comment->post_idx,
             'ip' => request()->ip(),

@@ -10,6 +10,7 @@ use App\Support\RequestIp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 게시글 서비스
@@ -29,8 +30,8 @@ class PostService
      */
     public function create(StorePostRequest $request, string $postType): Post
     {
-        $userIdx = auth()->id();
-
+        $userIdx = Auth::id();
+    
         return DB::transaction(function () use ($request, $postType, $userIdx) {
             $payload = [
                 'user_idx' => $userIdx,
@@ -81,7 +82,7 @@ class PostService
      */
     public function getByIdxWithHistory(string $idx, string $postType, string $ip, string $userAgent): Post
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
         $post = $this->postRepository->findByIdxAndType($idx, $postType);
 
         Log::info('[Post][View] 조회 완료', [
@@ -124,7 +125,7 @@ class PostService
         );
 
         Log::info('[Admin][Post][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'post_type' => $postType,
             'page' => $page,
             'ip' => RequestIp::resolve(),
@@ -152,7 +153,7 @@ class PostService
         );
 
         Log::info('[Post][List] 조회 완료', [
-            'user_idx' => auth()->id(),
+            'user_idx' => Auth::id(),
             'post_type' => $postType,
             'page' => $page,
             'ip' => RequestIp::resolve(),
@@ -172,7 +173,7 @@ class PostService
      */
     public function getPublicByIdxWithHistory(string $idx, string $postType, string $ip, string $userAgent): Post
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
         $post = $this->postRepository->findByIdxAndType($idx, $postType);
 
         if (($post->use_flag ?? 0) != 1) {
@@ -198,7 +199,7 @@ class PostService
      */
     public function update(array $payload, Post $post): Post
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
 
         return DB::transaction(function () use ($payload, $post, $userIdx) {
             $post = $this->postRepository->update($post, [
@@ -237,7 +238,7 @@ class PostService
      */
     public function delete(Post $post, array $payload): void
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
         $ip = $payload['ip'] ?? '';
         $userAgent = $payload['user_agent'] ?? '';
 
@@ -277,7 +278,7 @@ class PostService
      */
     public function updateUseFlag(Post $post, array $payload): Post
     {
-        $userIdx = auth()->id();
+        $userIdx = Auth::id();
         $useFlag = (int) ($payload['use_flag'] ?? 0);
 
         return DB::transaction(function () use ($post, $userIdx, $useFlag, $payload) {
