@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,7 +26,7 @@ class ViewComposerServiceProvider extends ServiceProvider
 
             $sideMenuKey = $menuAuths[$routeName] ?? '';
 
-            $userLevel = auth()->user()?->level ?? 'normal';
+            $userLevel = Auth::user()?->level ?? 'normal';
 
             $menuFlag = array_filter(
                 $menus[$sideMenuKey] ?? [],
@@ -42,13 +43,13 @@ class ViewComposerServiceProvider extends ServiceProvider
                 'sideMenuFlag' => $userLevel,
                 'sideMenuAuth' => array_keys($menuAuths),
                 'sideMenus' => $menuFlag,
-                'accountIdx' => auth()->user()?->idx,
+                'accountIdx' => Auth::user()?->idx,
             ]);
         });
 
         View::composer('*', function ($view) {
             $view->with([
-                'accountIdx' => auth()->id(),
+                'accountIdx' => Auth::id(),
             ]);
         });
     }
