@@ -18,8 +18,6 @@ class NoteCategoriesResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'group_code' => $this->group->code,
-            'group_name' => $this->group->name,
             'categories_code' => $this->code,
             'categories_name' => $this->name,
             'categories_memo' => $this->memo,
