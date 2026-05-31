@@ -24,7 +24,7 @@ class NoteCategoriesService
      */
     public function getNoteCategories(array $data) : LengthAwarePaginator
     {
-        $noteCategories = $this->noteCategoriesRepository->paginateCategories($data);
+        $noteCategories = $this->noteCategoriesRepository->paginateNoteCategories($data);
 
         Log::info('[NoteCategory][MCP] Service 조회 완료', [
             'user_idx' => Auth::id(),

@@ -16,7 +16,7 @@ class NoteGroupRepository
      *
      * @return LengthAwarePaginator
      */
-    public function paginateNotes(array $data) : LengthAwarePaginator
+    public function paginateNoteGroups(array $data) : LengthAwarePaginator
     {
         $perPage = $data['per_page'] ?? 20;
 

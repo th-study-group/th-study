@@ -17,14 +17,15 @@ class NoteGroupService
         private readonly NoteGroupRepository $noteGroupRepository
     ) {}
 
-    /* 노트 그룹 목록 반환
+    /**
+     * 노트 그룹 목록 반환
      *
      * @param array $data
      * @return LengthAwarePaginator
      */
     public function getNoteGroups(array $data): LengthAwarePaginator
     {
-        $noteGroups = $this->noteGroupRepository->paginateNotes($data);
+        $noteGroups = $this->noteGroupRepository->paginateNoteGroups($data);
 
         Log::info('[NoteGroup][MCP] Service 조회 완료', [
             'user_idx' => Auth::id(),
