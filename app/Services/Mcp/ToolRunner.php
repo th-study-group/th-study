@@ -3,6 +3,7 @@
 namespace App\Services\Mcp;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ToolRunner
@@ -58,7 +59,7 @@ class ToolRunner
             ];
         }
 
-        $user = auth()->user();
+        $user = Auth::user();
         $userLevel = $user->level ?? null;
         $allowedLevels = $toolInfo['levels'] ?? [];
 
@@ -118,9 +119,9 @@ class ToolRunner
                 );
             }
 
-            if (auth()->check()) {
+            if (Auth::check()) {
                 $subRequest->setUserResolver(function () {
-                    return auth()->user();
+                    return Auth::user();
                 });
             }
 
