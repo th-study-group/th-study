@@ -34,7 +34,7 @@ class NoteTopicRepository
             )
             ->where('use_flag', 1)
             ->when(!empty($data['topic_code']), function ($query) use ($data) {
-                $query->where('name', 'like', "%{$data['topic_code']}%");
+                $query->where('name', $data['topic_code']);
             })
             ->when(!empty($data['topic_memo']), function ($query) use ($data) {
                 $query->where('memo', 'like', "%{$data['topic_memo']}%");
