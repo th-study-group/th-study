@@ -214,6 +214,7 @@ return [
     'mcp' => [
         'group_code_required_with' => '카테고리 또는 주제 조회 시 그룹명은 필수입니다.',
         'categories_code_required_with' => '주제 조회 시 카테고리명 필수입니다.',
+        'tag_required' => '해시태그 검색 조건은 필수입니다.',
 
         'integer' => ':attribute 항목은 숫자만 입력 가능합니다.',
         'min' => ':attribute 항목은 최소 :min 이상이어야 합니다.',
@@ -229,6 +230,8 @@ return [
             'topic_code' => '주제',
             'topic_name' => '주제명',
             'page' => '페이지',
+            'tag' => '해시태그',
+            'has_thumbnail' => '썸네일 여부',
             'per_page' => '페이지당 개수',
         ],
     ],
