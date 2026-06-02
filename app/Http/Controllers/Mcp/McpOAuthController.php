@@ -79,7 +79,10 @@ class McpOAuthController extends Controller
     {
         $validated = $request->validated();
         $mcpGuard = Auth::guard('mcp_jwt');
-        $candidateUser = User::where('email', $validated['email'])->first();
+        $candidateUser = User::query()
+            ->where('email', $validated['email'])
+            ->whereNotNull('email_verify_datetime')
+            ->first();
 
         Log::info('MCP OAuth login entered', [
             'email' => $validated['email'],
