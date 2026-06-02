@@ -57,6 +57,7 @@ class NoteTagRepository
                       ->where('use_flag', true);
                 });
             })
+            ->orderBy('create_datetime', 'desc')
             ->paginate($perPage);
 
         return $noteTags;
