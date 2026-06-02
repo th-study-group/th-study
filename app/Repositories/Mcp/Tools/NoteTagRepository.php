@@ -37,7 +37,11 @@ class NoteTagRepository
             })
             ->when(!empty($data['has_thumbnail']), function ($query) use ($data) {
                 $query->whereHas('notes', function ($q) use ($data) {
-                    $q->whereNotNull('thumbnail_path');
+                    if ($data['has_thumbnail'] == true) {   
+                        $q->whereNotNull('thumbnail_path');
+                    } else {
+                        $q->whereNull('thumbnail_path');
+                    }
                 });
             })
             ->when(!empty($data['group_code']), function ($query) use ($data) {
