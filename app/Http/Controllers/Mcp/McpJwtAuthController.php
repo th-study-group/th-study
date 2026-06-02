@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mcp;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\McpJwtLoginRequest;
 use App\Http\Requests\Mcp\McpJwtRefreshRequest;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -28,6 +29,17 @@ class McpJwtAuthController extends Controller
         Log::channel('mcp')->info('MCP direct JWT login entered', [
             'email' => $validated['email'],
         ]);
+
+        $candidateUser = User::query()
+            ->where('email', $validated['email'])
+            ->whereNotNull('email_verify_datetime')
+            ->first();
+
+        if (!$candidateUser) {
+            return response()->json([
+                'message' => '이메일 인증이 완료된 계정만 로그인할 수 있습니다.',
+            ], 403);
+        }
 
         $credentials = [
             'email' => $validated['email'],
