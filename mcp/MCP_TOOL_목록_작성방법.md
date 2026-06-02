@@ -188,7 +188,6 @@ Tool 카테고리
 가능 예시
 
 ```text
-blogs
 notes
 members
 orders
