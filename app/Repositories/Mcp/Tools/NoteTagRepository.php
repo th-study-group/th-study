@@ -35,9 +35,9 @@ class NoteTagRepository
             ->when(!empty($data['tag']), function ($query) use ($data) {
                 $query->where('name', 'like', '%' . $data['tag'] . '%');
             })
-            ->when(!empty($data['has_thumbnail']), function ($query) use ($data) {
+            ->when(isset($data['has_thumbnail']), function ($query) use ($data) {
                 $query->whereHas('notes', function ($q) use ($data) {
-                    if ($data['has_thumbnail'] == true) {   
+                    if ($data['has_thumbnail'] === true) {   
                         $q->whereNotNull('thumbnail_path');
                     } else {
                         $q->whereNull('thumbnail_path');
