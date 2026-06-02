@@ -57,7 +57,7 @@ class NoteTagRepository
             })
             ->when(!empty($data['topic_code']), function ($query) use ($data) {
                 $query->whereHas('notes.topic', function ($q) use ($data) {
-                    $q->where('name', $data['topic_code'])
+                    $q->where('name', 'like', "%{$data['topic_code']}%")
                       ->where('use_flag', true);
                 });
             })

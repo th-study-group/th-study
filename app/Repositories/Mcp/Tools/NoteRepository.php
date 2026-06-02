@@ -54,7 +54,7 @@ class NoteRepository
             ->when(!empty($data['topic_code']), function ($query) use ($data) {
                 $query->whereHas('topic', function ($topicQuery) use ($data) {
                     $topicQuery
-                        ->where('name', $data['topic_code'])
+                        ->where('name', 'like', "%{$data['topic_code']}%")
                         ->where('use_flag', 1)
                         ->when(!empty($data['categories_code']), function ($categoriesQuery) use ($data) {
                             $categoriesQuery->whereHas('category', function ($q) use ($data) {
