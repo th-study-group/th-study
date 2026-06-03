@@ -131,6 +131,11 @@ class User extends Authenticatable implements JWTSubject
         return config('const.terms_word.' . $this->marketing_info_agree, 'NONE');
     }
 
+    public function getPushNotificationAgreeLabelAttribute()
+    {
+        return config('const.terms_word.' . $this->push_notification_agree, 'NONE');
+    }
+
     public function getPhoneFormattedAttribute(): string
     {
         $phone = preg_replace('/\D+/', '', (string) $this->phone);

@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             'last_access_datetime' => $this->last_access_datetime?->format('Y-m-d H:i:s'),
             'personal_info_agree' => $this->personal_info_agree_label,
             'marketing_info_agree' => $this->marketing_info_agree_label,
+            'push_notification_agree' => $this->push_notification_agree_label,
             'level_label' => $this->level_label,
             'memo' => $this->memo,
             'create_datetime' => $this->create_datetime?->format('Y-m-d H:i:s'),

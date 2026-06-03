@@ -32,6 +32,7 @@ class UserRepository
                 'phone',
                 'personal_info_agree',
                 'marketing_info_agree',
+                'push_notification_agree',
                 'level',
                 'ip',
                 'last_access_datetime',
