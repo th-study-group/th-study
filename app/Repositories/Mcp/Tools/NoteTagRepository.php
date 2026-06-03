@@ -27,7 +27,7 @@ class NoteTagRepository
                 'create_user_idx'
             )
             ->with([
-                'notes:idx,group_idx,categories_idx,topic_idx,subject,content,create_datetime,create_user_idx',
+                'notes:idx,group_idx,categories_idx,topic_idx,subject,create_datetime,create_user_idx',
                 'notes.group:idx,code,name',
                 'notes.category:idx,group_idx,code,name,memo,use_flag',
                 'notes.topic:idx,categories_idx,name,memo,use_flag',
