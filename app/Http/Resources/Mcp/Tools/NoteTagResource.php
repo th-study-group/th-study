@@ -26,7 +26,8 @@ class NoteTagResource extends JsonResource
                     'group_name' => $note->group?->name,
                     'categories_name' => $note->category?->name,
                     'topic_name' => $note->topic?->name,
-                    'subject' => $note->subject,
+                    'note_idx' => $note?->idx,
+                    'subject' => $note?->subject,
                 ];
             }),
         ]; 
