@@ -1,78 +1,472 @@
-[
-  {
-    "name": "blog_search",
-    "description": "블로그 게시글 조회 템플릿. 사용자 입력 조건만 검색 조건에 포함합니다.",
-    "url": "/api/mcp/tools/blog-search",
-    "method": "POST",
-    "levels": ["admin"],
-    "x-meta": {
-      "domain": "blogs",
-      "keywords": [
-        "블로그",
-        "블로그검색",
-        "게시글",
-        "게시글검색",
-        "글찾기",
-        "라라벨",
-        "FastAPI",
-        "최근글",
-        "오래된글",
-        "SEO"
-      ],
-      "comment": "블로그 게시글을 제목, 상태, 작성일 기준으로 조회합니다.\n\n예:\n- 라라벨 글 찾아줘\n- 최근 블로그 글 보여줘\n- 2026년 5월 글 조회\n- 오래된 글 찾아줘",
-      "fieldLabels": {
-        "title": "제목",
-        "status": "상태",
-        "created_at": "작성일",
-        "view_count": "조회수"
+{
+  "common": {
+    "pagination": {
+      "request": {
+        "page": "조회 페이지 번호. 기본값 1",
+        "per_page": "페이지당 조회 개수. 기본값 20, 최대 100"
       },
-      "date_filter_rules": [
-        {
-          "column": "created_at",
-          "exact_key": "created_at",
-          "from_key": "created_at_from",
-          "to_key": "created_at_to",
-          "apply_range_when": "from_to_both_present",
-          "range_ops": [
-            ">=",
-            "<="
-          ],
-          "apply_single_when": "only_one_present",
-          "single_day_op": "=",
-          "long_range_days": 365,
-          "long_range_message": "1년 이상 장기간 조회는 월별 또는 분기별로 나누어 조회하는 것을 권장합니다."
-        }
-      ]
-    },
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string",
-          "description": "검색할 게시글 제목 키워드"
-        },
-        "status": {
-          "type": "string",
-          "description": "게시글 상태. 예: published, draft"
-        },
-        "created_at": {
-          "type": "string",
-          "description": "특정 작성일. 예: 2026-05-19"
-        },
-        "created_at_from": {
-          "type": "string",
-          "description": "검색 시작일. 예: 2026-01-01"
-        },
-        "created_at_to": {
-          "type": "string",
-          "description": "검색 종료일. 예: 2026-12-31"
-        },
-        "limit": {
-          "type": "integer",
-          "description": "조회 개수. 기본 20개, 최대 100개"
-        }
+      "response": {
+        "current_page": "현재 페이지",
+        "per_page": "페이지당 조회 개수",
+        "total": "전체 데이터 개수",
+        "last_page": "마지막 페이지 번호",
+        "has_more": "다음 페이지 존재 여부",
+        "next_page": "다음 페이지 번호. 다음 페이지가 없으면 null"
       },
-      "required": []
+      "usage": "has_more가 true이면 next_page 값으로 다음 페이지를 추가 조회할 수 있습니다."
     }
-  }
-]
+  },
+  "tools": [
+    {
+      "name": "note_group_search",
+      "description": "노트 그룹 목록 조회. 그룹 코드 또는 그룹명을 통해 그룹 정보를 검색할 수 있습니다.",
+      "url": "/api/mcp/tools/note-groups",
+      "method": "POST",
+      "levels": [
+        "normal",
+        "admin"
+      ],
+      "x-meta": {
+        "domain": "notes",
+        "uses_common": [
+          "pagination"
+        ],
+        "keywords": [
+          "그룹",
+          "노트그룹",
+          "그룹조회",
+          "그룹검색",
+          "블로그",
+          "영상",
+          "문서",
+          "지도",
+          "사진"
+        ],
+        "comment": "티에이치스터디의 그룹 정보를 조회합니다.\n\n그룹은 최상위 분류이며 블로그, 영상, 문서, 지도, 사진 등으로 구성됩니다.\n\ncreate_user_idx는 그룹을 등록한 사용자의 IDX 값입니다. 등록자 정보가 필요한 경우 사용자 API에서 idx 조건으로 조회할 수 있습니다.",
+        "fieldLabels": {
+          "group_code": "그룹코드",
+          "group_name": "그룹명",
+          "create_datetime": "등록일시",
+          "create_user_idx": "등록자 사용자 IDX"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "group_code": {
+            "type": "string",
+            "description": "그룹 코드 정확히 일치 검색(=). 예: blog"
+          },
+          "group_name": {
+            "type": "string",
+            "description": "그룹명 포함 검색(LIKE '%키워드%'). 예: 블로그"
+          },
+          "create_user_idx": {
+            "type": "integer",
+            "description": "그룹을 등록한 사용자의 IDX 값 정확히 일치 검색(=). 등록자 정보가 필요한 경우 사용자 API에서 idx로 조회할 수 있습니다. 예: 1"
+          },
+          "page": {
+            "type": "integer",
+            "description": "조회 페이지 번호. 기본값 1"
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "페이지당 조회 개수. 기본값 20, 최대 100"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "note_category_search",
+      "description": "노트 카테고리 목록 조회. 그룹 코드 기준으로 카테고리를 조회할 수 있습니다.",
+      "url": "/api/mcp/tools/note-categories",
+      "method": "POST",
+      "levels": [
+        "normal",
+        "admin"
+      ],
+      "x-meta": {
+        "domain": "notes",
+        "uses_common": [
+          "pagination"
+        ],
+        "keywords": [
+          "카테고리",
+          "노트카테고리",
+          "카테고리조회",
+          "카테고리검색",
+          "일상",
+          "개발",
+          "맛집",
+          "여행",
+          "부동산"
+        ],
+        "comment": "티에이치스터디의 카테고리 정보를 조회합니다.\n\n카테고리는 그룹 하위 분류입니다.\n\ngroup_code는 필수값입니다.\n\ncategories_code 검색 시 반드시 group_code와 함께 사용해야 합니다.\n\ncreate_user_idx는 카테고리를 등록한 사용자의 IDX 값입니다. 등록자 정보가 필요한 경우 사용자 API에서 idx 조건으로 조회할 수 있습니다.",
+        "fieldLabels": {
+          "group_code": "그룹코드",
+          "categories_code": "카테고리코드",
+          "categories_name": "카테고리명",
+          "categories_memo": "카테고리설명",
+          "create_datetime": "등록일시",
+          "create_user_idx": "등록자 사용자 IDX"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "group_code": {
+            "type": "string",
+            "description": "그룹 코드 정확히 일치 검색(=). 필수값. 예: blog"
+          },
+          "categories_code": {
+            "type": "string",
+            "description": "카테고리 코드 정확히 일치 검색(=). group_code와 함께 사용해야 합니다. 예: develop"
+          },
+          "categories_name": {
+            "type": "string",
+            "description": "카테고리명 포함 검색(LIKE '%키워드%'). 예: 개발"
+          },
+          "create_user_idx": {
+            "type": "integer",
+            "description": "카테고리를 등록한 사용자의 IDX 값 정확히 일치 검색(=). 등록자 정보가 필요한 경우 사용자 API에서 idx로 조회할 수 있습니다. 예: 1"
+          },
+          "page": {
+            "type": "integer",
+            "description": "조회 페이지 번호. 기본값 1"
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "페이지당 조회 개수. 기본값 20, 최대 100"
+          }
+        },
+        "required": [
+          "group_code"
+        ]
+      }
+    },
+    {
+      "name": "note_topic_search",
+      "description": "노트 주제 목록 조회. 그룹 코드와 카테고리 코드를 기준으로 주제 정보를 검색할 수 있습니다.",
+      "url": "/api/mcp/tools/note-topics",
+      "method": "POST",
+      "levels": [
+        "normal",
+        "admin"
+      ],
+      "x-meta": {
+        "domain": "notes",
+        "uses_common": [
+          "pagination"
+        ],
+        "keywords": [
+          "주제",
+          "노트주제",
+          "주제조회",
+          "주제검색",
+          "라라벨",
+          "리액트",
+          "스프링",
+          "국내여행",
+          "국내맛집"
+        ],
+        "comment": "티에이치스터디의 주제 정보를 조회합니다.\n\n주제는 그룹과 카테고리 하위의 세부 분류입니다.\n\ngroup_code와 categories_code는 필수값입니다.\n\ntopic_code 검색 시 반드시 group_code와 categories_code를 함께 사용해야 합니다.\n\ncreate_user_idx는 주제를 등록한 사용자의 IDX 값입니다. 등록자 정보가 필요한 경우 사용자 API에서 idx 조건으로 조회할 수 있습니다.",
+        "fieldLabels": {
+          "group_name": "그룹명",
+          "categories_name": "카테고리명",
+          "topic_name": "주제명",
+          "create_datetime": "등록일시",
+          "create_user_idx": "등록자 사용자 IDX"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "group_code": {
+            "type": "string",
+            "description": "그룹 코드 정확히 일치 검색(=). 필수값. 예: blog"
+          },
+          "categories_code": {
+            "type": "string",
+            "description": "카테고리 코드 정확히 일치 검색(=). 필수값. group_code와 함께 사용해야 합니다. 예: develop"
+          },
+          "topic_code": {
+            "type": "string",
+            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code와 함께 사용해야 합니다. 예: react"
+          },
+          "create_user_idx": {
+            "type": "integer",
+            "description": "주제를 등록한 사용자의 IDX 값 정확히 일치 검색(=). 등록자 정보가 필요한 경우 사용자 API에서 idx로 조회할 수 있습니다. 예: 1"
+          },
+          "page": {
+            "type": "integer",
+            "description": "조회 페이지 번호. 기본값 1"
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "페이지당 조회 개수. 기본값 20, 최대 100"
+          }
+        },
+        "required": [
+          "group_code",
+          "categories_code"
+        ]
+      }
+    },
+    {
+      "name": "note_search",
+      "description": "노트 목록 조회. note_idx, subject, group_code, categories_code, topic_code 중 하나 이상 입력해야 조회할 수 있습니다.",
+      "url": "/api/mcp/tools/notes",
+      "method": "POST",
+      "levels": [
+        "normal",
+        "admin"
+      ],
+      "x-meta": {
+        "domain": "notes",
+        "uses_common": [
+          "pagination"
+        ],
+        "keywords": [
+          "노트",
+          "노트조회",
+          "노트검색",
+          "게시글",
+          "콘텐츠",
+          "블로그글",
+          "썸네일",
+          "이미지",
+          "라라벨",
+          "리액트",
+          "스프링",
+          "개발글",
+          "티에이치스터디"
+        ],
+        "comment": "티에이치스터디의 노트 정보를 조회합니다.\n\n노트는 그룹, 카테고리, 주제, 사용자 정보를 기반으로 관리되는 티에이치스터디의 핵심 콘텐츠입니다.\n\n노트 API는 전체 데이터 조회를 지원하지 않습니다.\n\nnote_idx, subject, group_code, categories_code, topic_code 중 하나 이상 입력해야 조회할 수 있습니다.\n\nnote_idx는 노트의 고유 IDX 값입니다. 특정 노트 1건을 정확히 조회할 때 사용할 수 있습니다.\n\ncontent는 응답에 포함될 수 있지만 성능 문제로 검색 조건에는 사용하지 않습니다. 본문 검색이 필요한 경우 현재는 subject 제목 검색을 우선 사용합니다.\n\ncontent에는 줄바꿈 태그 또는 줄바꿈 문자가 포함될 수 있습니다.\n\nthumbnail_url은 노트와 직접 관련된 대표 이미지 URL입니다. 노트 내용을 사용자에게 보여줄 때 제목, 내용 요약과 함께 썸네일 이미지를 함께 표시할 수 있습니다.\n\nhas_thumbnail이 true이면 썸네일이 있는 노트만 조회하고, false이면 썸네일이 없는 노트만 조회합니다.\n\ncategories_code 검색 시 group_code와 함께 사용해야 합니다.\n\ntopic_code 검색 시 group_code와 categories_code를 함께 사용해야 합니다.\n\ncreate_user_idx는 노트를 등록한 사용자의 IDX 값입니다. 등록자 정보가 필요한 경우 사용자 API에서 idx 조건으로 조회할 수 있습니다.",
+        "fieldLabels": {
+          "note_idx": "노트 IDX",
+          "group_name": "그룹명",
+          "categories_name": "카테고리명",
+          "topic_name": "주제명",
+          "subject": "노트 제목",
+          "content": "노트 내용",
+          "thumbnail_url": "노트 관련 이미지 URL",
+          "create_datetime": "등록일시",
+          "create_user_idx": "등록자 사용자 IDX"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "note_idx": {
+            "type": "integer",
+            "description": "노트의 고유 IDX 값 정확히 일치 검색(=). 특정 노트 1건을 조회할 때 사용합니다. 예: 1"
+          },
+          "group_code": {
+            "type": "string",
+            "description": "그룹 코드 정확히 일치 검색(=). 검색 조건 중 하나로 사용할 수 있습니다. 예: blog"
+          },
+          "categories_code": {
+            "type": "string",
+            "description": "카테고리 코드 정확히 일치 검색(=). group_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: develop"
+          },
+          "topic_code": {
+            "type": "string",
+            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: react"
+          },
+          "subject": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "노트 제목 포함 검색(LIKE '%키워드%'). 본문 content는 성능 문제로 검색하지 않으므로 제목 검색에 사용합니다. 100자 이내. 검색 조건 중 하나로 사용할 수 있습니다. 예: 리액트"
+          },
+          "has_thumbnail": {
+            "type": "boolean",
+            "description": "썸네일 유무 검색. true는 썸네일이 있는 노트만 조회하고, false는 썸네일이 없는 노트만 조회합니다. 단독 검색 조건으로는 사용하지 말고 note_idx, subject, group_code, categories_code, topic_code 중 하나와 함께 사용하는 것을 권장합니다."
+          },
+          "create_user_idx": {
+            "type": "integer",
+            "description": "노트를 등록한 사용자의 IDX 값 정확히 일치 검색(=). 등록자 정보가 필요한 경우 사용자 API에서 idx로 조회할 수 있습니다. 단독 검색 조건으로는 사용하지 말고 note_idx, subject, group_code, categories_code, topic_code 중 하나와 함께 사용하는 것을 권장합니다. 예: 1"
+          },
+          "page": {
+            "type": "integer",
+            "description": "조회 페이지 번호. 기본값 1"
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "페이지당 조회 개수. 기본값 20, 최대 100"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "note_tag_search",
+      "description": "노트 해시태그 목록 조회. 태그명과 노트 분류 조건을 기준으로 해시태그와 연결된 노트 정보를 검색할 수 있습니다.",
+      "url": "/api/mcp/tools/note-tags",
+      "method": "POST",
+      "levels": [
+        "normal",
+        "admin"
+      ],
+      "x-meta": {
+        "domain": "notes",
+        "uses_common": [
+          "pagination"
+        ],
+        "keywords": [
+          "태그",
+          "해시태그",
+          "노트태그",
+          "태그조회",
+          "태그검색",
+          "라라벨",
+          "리액트",
+          "스프링",
+          "FastAPI"
+        ],
+        "comment": "티에이치스터디의 노트 해시태그 정보를 조회합니다.\n\n해시태그는 노트와 연결된 키워드입니다.\n\ntag는 필수 검색 조건이며 최대 20자까지 입력할 수 있습니다.\n\n응답의 note 배열에는 해당 해시태그가 연결된 노트의 그룹명, 카테고리명, 주제명, note_idx, 제목이 포함됩니다.\n\nnote_idx는 노트의 고유 IDX 값이며, 노트 API에서 note_idx 조건으로 직접 조회할 수 있습니다.\n\ncategories_code 검색 시 group_code와 함께 사용해야 합니다.\n\ntopic_code 검색 시 group_code와 categories_code를 함께 사용해야 합니다.\n\ncreate_user_idx는 해시태그를 등록한 사용자의 IDX 값입니다. 등록자 정보가 필요한 경우 사용자 API에서 idx 조건으로 조회할 수 있습니다.",
+        "fieldLabels": {
+          "tag_name": "해시태그명",
+          "create_datetime": "등록일시",
+          "create_user_idx": "등록자 사용자 IDX",
+          "note": "해시태그가 연결된 노트 목록",
+          "group_name": "그룹명",
+          "categories_name": "카테고리명",
+          "topic_name": "주제명",
+          "note_idx": "노트 IDX",
+          "subject": "노트 제목"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "group_code": {
+            "type": "string",
+            "description": "그룹 코드 정확히 일치 검색(=). 예: blog"
+          },
+          "categories_code": {
+            "type": "string",
+            "description": "카테고리 코드 정확히 일치 검색(=). group_code와 함께 사용해야 합니다. 예: develop"
+          },
+          "topic_code": {
+            "type": "string",
+            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code와 함께 사용해야 합니다. 예: react"
+          },
+          "tag": {
+            "type": "string",
+            "maxLength": 20,
+            "description": "해시태그명 검색. 필수값이며 최대 20자까지 입력할 수 있습니다. 예: 라라벨"
+          },
+          "create_user_idx": {
+            "type": "integer",
+            "description": "해시태그를 등록한 사용자의 IDX 값 정확히 일치 검색(=). 등록자 정보가 필요한 경우 사용자 API에서 idx로 조회할 수 있습니다. 예: 1"
+          },
+          "page": {
+            "type": "integer",
+            "description": "조회 페이지 번호. 기본값 1"
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "페이지당 조회 개수. 기본값 20, 최대 100"
+          }
+        },
+        "required": [
+          "tag"
+        ]
+      }
+    },
+    {
+      "name": "user_search",
+      "description": "사용자 정보 조회. 개인정보가 포함될 수 있으므로 관리자 권한(admin) 사용자만 사용할 수 있습니다.",
+      "url": "/api/mcp/tools/users",
+      "method": "POST",
+      "levels": [
+        "admin"
+      ],
+      "x-meta": {
+        "domain": "users",
+        "uses_common": [
+          "pagination"
+        ],
+        "keywords": [
+          "사용자",
+          "회원",
+          "유저",
+          "회원조회",
+          "사용자조회",
+          "관리자",
+          "일반회원"
+        ],
+        "comment": "사용자 정보를 조회합니다.\n\n개인정보가 포함될 수 있으므로 관리자만 사용할 수 있습니다.\n\nidx는 사용자의 고유 IDX 값입니다.\n\nidx는 다른 API의 create_user_idx와 연결되는 값입니다.\n\nname, nick_name은 포함 검색(LIKE)을 지원합니다.\n\nemail, address, phone, ip 등 개인정보가 응답에 포함될 수 있으므로 외부 노출에 주의해야 합니다.",
+        "fieldLabels": {
+          "idx": "사용자 IDX",
+          "name": "사용자명",
+          "nick_name": "닉네임",
+          "sex": "성별",
+          "email": "이메일",
+          "address": "주소",
+          "phone": "휴대폰번호",
+          "ip": "접속 IP",
+          "last_access_datetime": "최근접속일시",
+          "personal_info_agree": "개인정보동의여부",
+          "marketing_info_agree": "마케팅동의여부",
+          "push_notification_agree": "푸시알림수신여부",
+          "level_label": "회원등급",
+          "memo": "비고",
+          "create_datetime": "등록일시",
+          "create_user_idx": "등록자 사용자 IDX"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "idx": {
+            "type": "integer",
+            "description": "사용자 고유 IDX 정확히 일치 검색(=). 다른 API의 create_user_idx와 연결되는 값입니다. 예: 1"
+          },
+          "name": {
+            "type": "string",
+            "description": "사용자명 포함 검색(LIKE '%키워드%'). 예: 이태희"
+          },
+          "nick_name": {
+            "type": "string",
+            "description": "닉네임 포함 검색(LIKE '%키워드%'). 예: 광개토태왕"
+          },
+          "sex": {
+            "type": "string",
+            "enum": [
+              "M",
+              "W"
+            ],
+            "description": "성별 정확히 일치 검색(=). 남성 M, 여성 W"
+          },
+          "marketing_info_agree": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "description": "마케팅 수신 동의 여부 정확히 일치 검색(=). 동의 1, 미동의 0"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "admin"
+            ],
+            "description": "회원 등급 정확히 일치 검색(=). normal은 일반회원, admin은 관리자"
+          },
+          "page": {
+            "type": "integer",
+            "description": "조회 페이지 번호. 기본값 1"
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "페이지당 조회 개수. 기본값 20, 최대 100"
+          }
+        },
+        "required": []
+      }
+    }
+  ]
+}
