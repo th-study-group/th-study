@@ -46,6 +46,7 @@ class NoteRequest extends FormRequest
                 'string', 
                 'max:30'
             ],
+            'note_idx' => ['nullable', 'integer', 'min:1'],
             'has_thumbnail' => ['nullable', 'boolean'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
@@ -107,7 +108,8 @@ class NoteRequest extends FormRequest
                 !empty($this->subject) ||
                 !empty($this->group_code) ||
                 !empty($this->categories_code) ||
-                !empty($this->topic_code);
+                !empty($this->topic_code) ||
+                !empty($this->note_idx);
 
             if (!$hasSearchCondition) {
 

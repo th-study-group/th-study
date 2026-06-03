@@ -158,7 +158,7 @@ Tool 접근 권한입니다.
 {
   "levels": [
     "admin",
-    "manager"
+    "normal"
   ]
 }
 ```
