@@ -89,6 +89,10 @@ class McpApiController extends Controller
                     ]);
                 }
 
+                if (isset($tools['tools']) && is_array($tools['tools'])) {
+                    $tools = $tools['tools'];
+                }
+
                 Log::channel('mcp')->info('MCP tools/list completed', [
                     'tool_count' => count($tools),
                 ]);

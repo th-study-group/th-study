@@ -46,6 +46,10 @@ class ToolRunner
             ];
         }
 
+        if (isset($tools['tools']) && is_array($tools['tools'])) {
+            $tools = $tools['tools'];
+        }
+
         $toolInfo = collect($tools)->firstWhere('name', $tool);
 
         if (!$toolInfo) {
@@ -97,6 +101,7 @@ class ToolRunner
             'url' => $url,
             'method' => $method,
             'args_keys' => array_keys($args),
+            'args' => $args,
         ]);
 
         try {
@@ -108,9 +113,11 @@ class ToolRunner
                 [],
                 [
                     'HTTP_ACCEPT' => 'application/json',
-                    'CONTENT_TYPE' => 'application/json',
+                    'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
                 ]
             );
+
+            $subRequest->request->replace($args);
 
             if (request()->header('Authorization')) {
                 $subRequest->headers->set(
