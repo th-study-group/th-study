@@ -41,6 +41,9 @@ class UserRepository
                 'create_user_idx',
             )
             ->whereNotNull('email_verify_datetime')
+            ->when(!empty($data['idx']), function ($query) use ($data) {
+                $query->where('idx', $data['idx']);
+            })
             ->when(!empty($data['name']), function ($query) use ($data) {
                 $query->where('name', 'like', "%{$data['name']}%");
             })
