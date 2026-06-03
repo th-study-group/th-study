@@ -56,7 +56,9 @@ class User extends Authenticatable implements JWTSubject
 
     protected $casts = [
         'password' => 'hashed', // 라라벨 10 이상에서 지원하는 해시드 캐스트 
-        'create_datetime' => 'datetime'
+        'create_datetime' => 'datetime',
+        'birth_date' => 'date', 
+        'last_access_datetime' => 'datetime',
     ];
 
     protected $hidden = [
@@ -119,6 +121,16 @@ class User extends Authenticatable implements JWTSubject
         return config('member.levels.' . $this->level, 'NONE');
     }
 
+    public function getPersonalInfoAgreeLabelAttribute()
+    {
+        return config('const.terms_word.' . $this->personal_info_agree, 'NONE');
+    }
+
+    public function getMarketingInfoAgreeLabelAttribute()
+    {
+        return config('const.terms_word.' . $this->marketing_info_agree, 'NONE');
+    }
+
     public function getPhoneFormattedAttribute(): string
     {
         $phone = preg_replace('/\D+/', '', (string) $this->phone);
@@ -150,6 +162,15 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return $this->phone ?? '-';
+    }
+
+    public function getSexLabelAttribute(): string
+    {
+        return match ($this->sex) {
+            'M' => '남성',
+            'W' => '여성',
+            default => '-',
+        };
     }
 
     public function getJWTIdentifier()

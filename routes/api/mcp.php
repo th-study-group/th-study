@@ -9,6 +9,7 @@ use App\Http\Controllers\Mcp\Tools\NoteController;
 use App\Http\Controllers\Mcp\Tools\NoteGroupController;
 use App\Http\Controllers\Mcp\Tools\NoteTagController;
 use App\Http\Controllers\Mcp\Tools\NoteTopicController;
+use App\Http\Controllers\Mcp\Tools\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/oauth/token', [McpOAuthController::class, 'token'])
@@ -41,4 +42,7 @@ Route::middleware(['auth.mcp.jwt'])->group(function () {
 
     Route::post('/tools/note-tags', [NoteTagController::class, 'index'])
         ->name('mcp.tools.note-tag.index');
+
+    Route::post('/tools/users', [UserController::class, 'index'])
+        ->name('mcp.tools.user.index');
 });

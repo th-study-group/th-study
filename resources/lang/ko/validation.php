@@ -233,6 +233,12 @@ return [
             'tag' => '해시태그',
             'has_thumbnail' => '썸네일 여부',
             'per_page' => '페이지당 개수',
+            'birth_year' => '출생년도',
+            'marketing_info_agree' => '마케팅 정보 수신 동의',
+            'level' => '사용자 권한',
+            'sex' => '성별',
+            'name' => '이름',
+            'nick_name' => '닉네임',
         ],
     ],
 ];
