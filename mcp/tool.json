@@ -75,6 +75,23 @@
           }
         },
         "required": []
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array"
+          },
+          "pagination": {
+            "type": "object"
+          }
+        }
       }
     },
     {
@@ -143,6 +160,23 @@
         "required": [
           "group_code"
         ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array"
+          },
+          "pagination": {
+            "type": "object"
+          }
+        }
       }
     },
     {
@@ -211,6 +245,23 @@
           "group_code",
           "categories_code"
         ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array"
+          },
+          "pagination": {
+            "type": "object"
+          }
+        }
       }
     },
     {
@@ -297,6 +348,23 @@
           }
         },
         "required": []
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array"
+          },
+          "pagination": {
+            "type": "object"
+          }
+        }
       }
     },
     {
@@ -373,6 +441,23 @@
         "required": [
           "tag"
         ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array"
+          },
+          "pagination": {
+            "type": "object"
+          }
+        }
       }
     },
     {
@@ -466,6 +551,23 @@
           }
         },
         "required": []
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array"
+          },
+          "pagination": {
+            "type": "object"
+          }
+        }
       }
     }
   ]
