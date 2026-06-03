@@ -45,7 +45,6 @@ class NoteTagRequest extends FormRequest
                 'string', 
                 'max:30'
             ],
-            'has_thumbnail' => ['nullable', 'boolean'],
             'tag' => ['required', 'string', 'max:20'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],

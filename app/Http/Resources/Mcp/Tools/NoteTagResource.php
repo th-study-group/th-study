@@ -40,9 +40,6 @@ class NoteTagResource extends JsonResource
                     'topic_name' => $note->topic?->name,
                     'subject' => $note->subject,
                     'content' => $content,
-                    'thumbnail_url' => $note->thumbnail_path
-                        ? rtrim(config('app.url'), '/') . '/storage/' . ltrim($note->thumbnail_path, '/')
-                        : null,
                 ];
             }),
         ]; 

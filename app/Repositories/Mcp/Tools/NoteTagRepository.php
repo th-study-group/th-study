@@ -27,22 +27,13 @@ class NoteTagRepository
                 'create_user_idx'
             )
             ->with([
-                'notes:idx,group_idx,categories_idx,topic_idx,subject,content,thumbnail_path,create_datetime,create_user_idx',
+                'notes:idx,group_idx,categories_idx,topic_idx,subject,content,create_datetime,create_user_idx',
                 'notes.group:idx,code,name',
                 'notes.category:idx,group_idx,code,name,memo,use_flag',
                 'notes.topic:idx,categories_idx,name,memo,use_flag',
             ])
             ->when(!empty($data['tag']), function ($query) use ($data) {
                 $query->where('name', 'like', '%' . $data['tag'] . '%');
-            })
-            ->when(isset($data['has_thumbnail']), function ($query) use ($data) {
-                $query->whereHas('notes', function ($q) use ($data) {
-                    if ($data['has_thumbnail'] === true) {   
-                        $q->whereNotNull('thumbnail_path');
-                    } else {
-                        $q->whereNull('thumbnail_path');
-                    }
-                });
             })
             ->when(!empty($data['group_code']), function ($query) use ($data) {
                 $query->whereHas('notes.group', function ($q) use ($data) {
