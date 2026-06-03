@@ -21,7 +21,7 @@ class NoteRepository
 
         $notes = Note::query()
             ->select(
-                'idx', 'subject', 'content', 'create_datetime', 'create_user_idx',
+                'idx', 'subject', 'content', 'thumbnail_path', 'create_datetime', 'create_user_idx',
                 'group_idx', 'categories_idx', 'topic_idx',
                 'group_code', 'categories_code'
             )
@@ -33,6 +33,13 @@ class NoteRepository
             ->where('use_flag', 1)
             ->when(!empty($data['subject']), function ($query) use ($data) {
                 $query->where('subject', 'like', "%{$data['subject']}%");
+            })
+            ->when(isset($data['has_thumbnail']), function ($query) use ($data) {
+                if ($data['has_thumbnail'] === true) {   
+                    $query->whereNotNull('thumbnail_path');
+                } else {
+                    $query->whereNull('thumbnail_path');
+                }
             })
             ->when(!empty($data['group_code']), function ($query) use ($data) {
                 $query->whereHas('group', function ($q) use ($data) {

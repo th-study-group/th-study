@@ -32,7 +32,9 @@ class NoteResource extends JsonResource
             'categories_name' => $this->category?->name,
             'topic_name' => $this->topic?->name,
             'subject' => $this->subject,
-            'content' => $content,
+            'thumbnail_url' => $this->thumbnail_path
+                ? rtrim(config('app.url'), '/') . '/storage/' . ltrim($this->thumbnail_path, '/')
+                : null,
             'create_datetime' => $this->create_datetime?->format('Y-m-d H:i:s'),
             'create_user_idx' => $this->create_user_idx,
         ];

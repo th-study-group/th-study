@@ -29,7 +29,6 @@ class NoteRequest extends FormRequest
     {
         return [
             'subject' => ['nullable', 'string', 'max:100'],
-            'content' => ['nullable', 'string'],
             'group_code' => [
                 'nullable', 
                 'string', 
@@ -47,6 +46,7 @@ class NoteRequest extends FormRequest
                 'string', 
                 'max:30'
             ],
+            'has_thumbnail' => ['nullable', 'boolean'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
