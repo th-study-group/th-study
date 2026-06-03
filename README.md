@@ -171,7 +171,7 @@ TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP
 
 - 기존 웹 서비스 로그인 흐름과 분리된 MCP 전용 인증 경로 제공
 - OAuth authorization code + JWT access/refresh token 조합으로 보호 리소스 접근 구성
-- 블로그 데이터를 MCP tool 형태로 노출해 AI 클라이언트가 검색 가능하도록 준비
+- 노트/사용자 데이터를 MCP tool 형태로 노출해 AI 클라이언트가 구조적으로 조회 가능하도록 정리
 - 툴 정의 파일(`mcp/tool.json`) 기준으로 `tools/list`, `tools/call`을 처리하는 구조 확보
 
 핵심 구성:
@@ -182,7 +182,13 @@ TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP
 - 직접 JWT 로그인: `POST /api/mcp/login`
 - JWT refresh: `POST /api/mcp/refresh`
 - MCP API 엔드포인트: `GET|POST /api/mcp`
-- 개별 툴 엔드포인트: `POST /api/mcp/tools/blog-search`
+- 개별 툴 엔드포인트:
+  - `POST /api/mcp/tools/note-groups`
+  - `POST /api/mcp/tools/note-categories`
+  - `POST /api/mcp/tools/note-topics`
+  - `POST /api/mcp/tools/notes`
+  - `POST /api/mcp/tools/note-tags`
+  - `POST /api/mcp/tools/users`
 - Well-known 메타데이터:
   - `GET /.well-known/oauth-protected-resource`
   - `GET /.well-known/oauth-authorization-server`
@@ -206,19 +212,37 @@ TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP
 
 현재 연결된 MCP tool:
 
-- `blog_search`
+- `note_group_search`
+  - 허용 레벨: `normal`, `admin`
+  - 노트 그룹 코드/이름 기준 조회
+- `note_category_search`
+  - 허용 레벨: `normal`, `admin`
+  - 그룹 기준 카테고리 목록 조회
+- `note_topic_search`
+  - 허용 레벨: `normal`, `admin`
+  - 그룹 + 카테고리 기준 주제 조회
+- `note_search`
+  - 허용 레벨: `normal`, `admin`
+  - 노트 IDX, 제목, 그룹, 카테고리, 주제 기준 조회
+- `note_tag_search`
+  - 허용 레벨: `normal`, `admin`
+  - 해시태그와 노트 분류 조건 기준 조회
+- `user_search`
   - 허용 레벨: `admin`
-  - 블로그 게시글 제목, 상태, 작성일 기준 검색
-  - 지원 필드: `title`, `status`, `created_at`, `created_at_from`, `created_at_to`, `limit`
-  - 1년 초과 장기 조회는 월/분기 단위 분할을 권장하도록 응답
-  - 실제 검색 로직은 `app/Services/mcp/tools/BlogSearchToolService.php`에 분리
+  - 사용자 IDX, 이름, 닉네임, 성별, 등급 등 관리자 전용 조회
+
+공통 포인트:
+
+- 모든 tool 정의는 `mcp/tool.json`에서 관리하고 `url`, `method`, `levels`, `inputSchema`, `outputSchema`를 함께 선언
+- 노트 계열 tool은 공통 pagination 응답(`current_page`, `per_page`, `total`, `last_page`, `has_more`, `next_page`)을 사용
+- 실제 실행은 각 MCP 전용 컨트롤러와 `app/Services/Mcp/Tools/*Service.php` 계층으로 분리해 기존 Laravel 구조 안에서 재사용
 
 운영 포인트:
 
 - MCP 관련 로그는 별도 `mcp` 로그 채널로 분리
 - OAuth client 정보와 code TTL은 `config/mcp.php` + `.env`에서 관리
 - MCP 툴을 늘릴 때는 `mcp/tool.json` 정의에 `levels`까지 함께 선언하고, 개별 라우트, 서비스 로직을 같은 패턴으로 추가하면 됨
-- 현재는 블로그 검색 중심의 최소 기능부터 열어 두고, 이후 사내/개인 서비스 데이터 조회 도구로 확장 가능한 구조로 설계
+- 현재는 노트/사용자 조회 중심으로 MCP tool 세트를 확장해 두었고, 같은 방식으로 다른 내부 데이터 도구도 계속 추가할 수 있게 설계
 ## 3. 디렉터리 빠른 가이드
 
 ```text

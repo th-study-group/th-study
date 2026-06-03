@@ -937,7 +937,7 @@ sudo systemctl status th-study-queue</code></pre>
               <li><code>mcp_jwt</code> 가드와 전용 미들웨어로 MCP 보호 API 분리</li>
               <li><code>/.well-known/*</code> 메타데이터를 노출해 클라이언트가 인증 서버 정보를 찾도록 구성</li>
               <li><code>mcp/tool.json</code> 기반으로 <code>tools/list</code>, <code>tools/call</code>을 처리하고 tool별 <code>levels</code>로 허용 계정 레벨 관리</li>
-              <li>현재 <code>blog_search</code> tool은 <code>admin</code> 계정에만 허용되며 블로그 제목, 상태, 작성일 기준 검색 가능</li>
+              <li>현재는 <code>note_group_search</code>, <code>note_category_search</code>, <code>note_topic_search</code>, <code>note_search</code>, <code>note_tag_search</code>, <code>user_search</code>를 공개</li>
             </ul>
           </div>
         </div>
@@ -950,7 +950,12 @@ sudo systemctl status th-study-queue</code></pre>
   -> /api/mcp/oauth/token
   -> Bearer access token 발급
   -> /api/mcp (initialize, tools/list, tools/call)
-  -> /api/mcp/tools/blog-search</code></pre>
+  -> /api/mcp/tools/note-groups
+  -> /api/mcp/tools/note-categories
+  -> /api/mcp/tools/note-topics
+  -> /api/mcp/tools/notes
+  -> /api/mcp/tools/note-tags
+  -> /api/mcp/tools/users</code></pre>
           </div>
         </div>
       </div>
@@ -984,16 +989,16 @@ sudo systemctl status th-study-queue</code></pre>
               <td><code>ToolRunner</code>가 <code>mcp/tool.json</code> 정의를 읽고 로그인 계정의 <code>user.level</code>이 tool의 <code>levels</code>에 포함되는지 확인한 뒤, 허용된 경우에만 내부 서브 요청으로 개별 Laravel 컨트롤러/서비스에 연결합니다.</td>
             </tr>
             <tr>
-              <td class="fw-bold">첫 번째 tool</td>
-              <td><code>blog_search</code>는 현재 <code>admin</code> 계정 전용이며, 제목, 상태, 작성일 범위, limit 기준 검색을 지원하고 1년 초과 장기 조회는 분할 조회를 권장하도록 응답합니다.</td>
+              <td class="fw-bold">현재 tool 구성</td>
+              <td>노트 계열 5개 tool(<code>note_group_search</code>, <code>note_category_search</code>, <code>note_topic_search</code>, <code>note_search</code>, <code>note_tag_search</code>)은 <code>normal</code>, <code>admin</code> 계정에서 조회 가능하고, <code>user_search</code>는 개인정보가 포함될 수 있어 <code>admin</code> 전용으로 분리했습니다.</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="callout mt-4">
         <strong>정리 포인트</strong><br>
-        단순한 “AI 연결”이 아니라 인증 화면, 토큰 수명, 보호 리소스 메타데이터, 툴 정의 파일, 내부 서비스 재사용 구조까지
-        운영 가능한 형태로 묶어 둔 작업입니다.
+        단순한 “AI 연결”이 아니라 인증 화면, 토큰 수명, 보호 리소스 메타데이터, 툴 정의 파일, 권한 레벨 분기, 내부 서비스 재사용 구조까지
+        운영 가능한 형태로 묶고 실제 조회용 tool 세트까지 확장한 작업입니다.
       </div>
     </div>
   </div>
