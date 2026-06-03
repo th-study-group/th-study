@@ -31,6 +31,7 @@ class UserRequest extends FormRequest
         return [
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'idx' => ['nullable', 'integer', 'min:1'],
             'name' => ['nullable', 'string', 'max:30'],
             'nick_name' => ['nullable', 'string', 'max:30'],
             'birth_year' => ['nullable', 'integer', 'digits:4', 'min:1900', 'max:' . now()->year],
