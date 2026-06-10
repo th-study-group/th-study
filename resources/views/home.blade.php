@@ -10,6 +10,28 @@
 @endpush
 
 @section('content')
+@php
+    $projects = [
+        [
+            'title' => '재고관리 PDA',
+            'icon' => 'bi-box-seam',
+            'summary' => '발주입고, 보관입고, 출고, 사용, 재고이동, 재고실사를 지원하는 PDA 스타일 재고관리 서비스입니다.',
+            'description' => '재고관리 PDA는 복잡한 ERP나 MES 화면을 그대로 따라 하기보다, 실제 사용자가 모바일이나 PDA 화면에서 빠르게 물품을 처리할 수 있도록 단순화한 재고관리 서비스입니다. 발주로 들어온 물품을 입고 처리하고, 별도 보관 물품을 등록하며, 필요한 물품을 출고하거나 사용 처리할 수 있습니다. 또한 보관 위치가 바뀌는 경우 재고이동으로 기록하고, 실제 보유 수량과 시스템 수량이 맞는지 재고실사를 통해 확인할 수 있도록 구성했습니다. 가정용 생활용품, 사무실 비품, 공구, 전자기기, 소모품처럼 작지만 자주 잊어버리는 물품을 관리하는 데 사용할 수 있고, 소규모 사업장이나 개인 창고 관리에도 응용할 수 있는 구조입니다.',
+            'tags' => ['발주입고', '보관입고', '출고', '사용', '재고이동', '재고실사'],
+            'buttonText' => '서비스 체험하기',
+            'href' => 'https://pda.th-study.com',
+        ],
+        [
+            'title' => '티에이치스터디 MCP',
+            'icon' => 'bi-robot',
+            'summary' => 'ChatGPT가 티에이치스터디의 블로그, 카테고리, 주제, 노트 데이터를 조회할 수 있도록 연결하는 MCP 서버입니다.',
+            'description' => '티에이치스터디 MCP는 ChatGPT와 티에이치스터디의 콘텐츠 데이터를 연결하기 위해 만든 실험용 서버입니다. 티에이치스터디는 블로그 글, 개발 노트, 카테고리, 주제, 태그 같은 콘텐츠 데이터를 관리하는 사이트입니다. MCP 서버는 이 데이터를 외부 AI 도구가 정해진 API 규칙에 따라 조회할 수 있도록 연결하는 역할을 합니다. 예를 들어 ChatGPT가 티에이치스터디에 저장된 블로그 그룹, 카테고리, 주제, 노트, 해시태그 정보를 도구 호출 방식으로 조회할 수 있게 만드는 구조입니다. 단순히 웹 페이지를 보여주는 블로그에서 끝나는 것이 아니라, 사이트 내부 콘텐츠를 AI가 검색하고 활용할 수 있는 데이터 기반 블로그로 확장하는 실험입니다. 현재 MCP 도구는 노트 그룹 조회, 노트 카테고리 조회, 노트 주제 조회, 노트 목록 조회, 노트 해시태그 조회 같은 기능을 중심으로 구성되어 있습니다. 이를 통해 티에이치스터디의 콘텐츠를 사람이 보는 화면뿐 아니라 AI가 이해하고 검색할 수 있는 형태로 확장하는 것을 목표로 합니다.',
+            'tags' => ['ChatGPT 연동', 'MCP', '블로그 데이터', '노트 검색', '카테고리 조회', '태그 조회', 'API'],
+            'buttonText' => 'ChatGPT 열기',
+            'href' => 'https://chatgpt.com',
+        ],
+    ];
+@endphp
 <main class="col-12 p-0 home-page">
     <div class="home-landing">
         <header id="top" class="section-pad">
@@ -142,24 +164,106 @@
 
         <section id="about" class="section-pad anchor-offset">
             <div class="container reveal">
-                <div class="row g-4 align-items-center">
-                    <div class="col-lg-6">
-                        <span class="kicker mb-3">프로젝트 소개</span>
-                        <h2 class="fw-bold mb-3">기록이 쌓이고, 운영이 경험이 되고, 경험이 자산이 된다</h2>
-                        <p class="mb-3">
-                            {{ config('app.name') }}은 개발자로 살아온 시간과 앞으로의 성장을 담아내기 위해 시작된 개발자 성장 플랫폼이다.
-                            학습, 경험, 기록, 실험, 서비스 운영을 하나의 흐름으로 연결한다.
-                        </p>
-                        <p class="mb-0 muted">
-                            PHP 레거시부터 프레임워크까지의 경험을 기반으로, 기존 기술과 새로운 기술이 공존하는 환경을 직접 만들고 운영한다.
-                            작은 기록 습관에서 출발해, 하나의 서비스로 확장하며 “꾸준히 오래 가는 개발”을 목표로 한다.
-                        </p>
+                <div class="row g-4 g-xl-5 align-items-stretch">
+                    <div class="col-lg-5">
+                        <div class="project-intro">
+                            <span class="kicker mb-3">Real Projects</span>
+                            <h2 class="fw-bold mb-3">실제 프로젝트</h2>
+                            <p class="mb-3">
+                                티에이치스터디는 블로그 글만 쌓는 공간이 아니라, 직접 설계하고 개발하며 운영 경험까지 함께 축적하는 개발자 포트폴리오형 사이트를 지향합니다.
+                            </p>
+                            <p class="mb-3 muted">
+                                기존의 프로젝트 소개가 성장 과정과 운영 철학 중심이었다면, 이제는 “그래서 실제로 무엇을 만들고 있는가”를 메인 화면에서 바로 확인할 수 있도록 구성했습니다.
+                            </p>
+                            <p class="mb-0 muted">
+                                재고관리 PDA처럼 바로 체험 가능한 서비스와, MCP처럼 ChatGPT와 블로그 데이터를 연결하는 AI 실험을 함께 보여주며 기록, 운영, 프로젝트가 하나로 이어지는 흐름을 전달합니다.
+                            </p>
+                        </div>
                     </div>
 
-                    <div class="col-lg-6 d-flex justify-content-center align-items-center">
-                        <img src="{{ asset('images/intro_project_img.jpg') }}"
-                             class="img-fluid rounded-4 border"
-                             style="max-width: 520px; width: 100%; height: auto;">
+                    <div class="col-lg-7">
+                        <div id="projectCarousel" class="carousel slide project-carousel" data-bs-ride="false">
+                            <div class="carousel-indicators project-carousel-indicators">
+                                @foreach($projects as $index => $project)
+                                    <button type="button"
+                                            data-bs-target="#projectCarousel"
+                                            data-bs-slide-to="{{ $index }}"
+                                            class="{{ $index === 0 ? 'active' : '' }}"
+                                            aria-current="{{ $index === 0 ? 'true' : 'false' }}"
+                                            aria-label="{{ $project['title'] }}"></button>
+                                @endforeach
+                            </div>
+
+                            <div class="carousel-inner">
+                                @foreach($projects as $index => $project)
+                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                        <article class="project-card soft-card">
+                                            <div class="project-card-body">
+                                                <div class="project-icon-wrap">
+                                                    <i class="bi {{ $project['icon'] }} project-icon" aria-hidden="true"></i>
+                                                </div>
+
+                                                <div class="project-copy">
+                                                    <h3 class="project-title">{{ $project['title'] }}</h3>
+                                                    <p class="project-summary">{{ $project['summary'] }}</p>
+                                                    <p class="project-description muted">{{ $project['description'] }}</p>
+
+                                                    <div class="collapse project-detail" id="project-detail-{{ $index }}">
+                                                        <div class="project-detail-inner">
+                                                            {{ $project['description'] }}
+                                                        </div>
+                                                    </div>
+
+                                                    <button class="btn project-detail-toggle"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#project-detail-{{ $index }}"
+                                                            aria-expanded="false"
+                                                            aria-controls="project-detail-{{ $index }}"
+                                                            data-more-label="자세히 보기"
+                                                            data-less-label="접기">
+                                                        자세히 보기
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="project-card-footer">
+                                                <div class="project-tags">
+                                                    @foreach($project['tags'] as $tag)
+                                                        <span class="chip">{{ $tag }}</span>
+                                                    @endforeach
+                                                </div>
+
+                                                <a class="btn btn-accent project-cta"
+                                                   href="{{ $project['href'] }}"
+                                                   target="_blank"
+                                                   rel="noopener noreferrer">
+                                                    {{ $project['buttonText'] }}
+                                                </a>
+                                            </div>
+                                        </article>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="project-carousel-controls">
+                                <button class="carousel-control-prev project-carousel-control"
+                                        type="button"
+                                        data-bs-target="#projectCarousel"
+                                        data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">이전</span>
+                                </button>
+
+                                <button class="carousel-control-next project-carousel-control"
+                                        type="button"
+                                        data-bs-target="#projectCarousel"
+                                        data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">다음</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -646,7 +750,28 @@
             initHomeScroll();
             initHeroTyping();
             updateContactMethodVisibility();
+            bindProjectDetailToggles();
         });
+
+
+        function bindProjectDetailToggles() {
+            document.querySelectorAll('.project-detail-toggle').forEach(function(button) {
+                const targetSelector = button.getAttribute('data-bs-target');
+                const target = targetSelector ? document.querySelector(targetSelector) : null;
+                const moreLabel = button.getAttribute('data-more-label') || '자세히 보기';
+                const lessLabel = button.getAttribute('data-less-label') || '접기';
+
+                if (!target) return;
+
+                const updateLabel = function() {
+                    button.textContent = target.classList.contains('show') ? lessLabel : moreLabel;
+                };
+
+                target.addEventListener('shown.bs.collapse', updateLabel);
+                target.addEventListener('hidden.bs.collapse', updateLabel);
+                updateLabel();
+            });
+        }
 
         function initKakaoMap(){
             const mapContainer = document.getElementById('kakao-map');
