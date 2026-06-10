@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Mcp\Tools;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\Tools\NoteTagRequest;
 use App\Http\Resources\Mcp\Tools\NoteTagResource;
-use App\Services\Mcp\Tools\NoteTagService;
+use App\Services\Api\NoteTagService;
 use Illuminate\Http\JsonResponse;
 
 /**

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Mcp\Tools;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\Tools\UserRequest;
 use App\Http\Resources\Mcp\Tools\UserResource;
-use App\Services\Mcp\Tools\UserService;
+use App\Services\Api\UserService;
 use Illuminate\Http\JsonResponse;
 
 /**

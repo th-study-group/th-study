@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Mcp\Tools;
+namespace App\Services\Api;
 
-use App\Repositories\Mcp\Tools\NoteCategoriesRepository;
+use App\Repositories\Api\NoteCategoriesRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;

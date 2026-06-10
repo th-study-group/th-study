@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Mcp\Tools;
+namespace App\Services\Api;
 
-use App\Repositories\Mcp\Tools\NoteTagRepository;
+use App\Repositories\Api\NoteTagRepository;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;

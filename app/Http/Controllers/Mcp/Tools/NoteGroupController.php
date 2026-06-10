@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Mcp\Tools;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\Tools\NoteGroupRequest;
-use App\Services\Mcp\Tools\NoteGroupService;
+use App\Services\Api\NoteGroupService;
 use App\Http\Resources\Mcp\Tools\NoteGroupResource;
 use Illuminate\Http\JsonResponse;
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Mcp\Tools;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\Tools\NoteTopicRequest;
 use App\Http\Resources\Mcp\Tools\NoteTopicResource;
-use App\Services\Mcp\Tools\NoteTopicService;
+use App\Services\Api\NoteTopicService;
 use Illuminate\Http\JsonResponse;
 
 /**

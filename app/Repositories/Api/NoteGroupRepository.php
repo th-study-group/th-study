@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Mcp\Tools;
+namespace App\Repositories\Api;
 
 
 use App\Models\NoteGroup;
