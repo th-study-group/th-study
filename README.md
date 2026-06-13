@@ -47,6 +47,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Aggregate: `daily_page_stats`
 - Flow: `TrackAccessLog` -> `TrafficAnalyticsService` -> `TrafficLogRepository` / `TrafficStatRepository`
 - Rule: `admin` 계정은 유입/전환 수집 제외
+- Retention: 초기 운영 단계에서는 빠른 삭제보다 분석 데이터 확보를 우선해 `access_logs`/`bot_access_logs`는 365일, `conversion_logs`는 500일 기준으로 보관 후 정리
 
 ## 2.1 FastAPI 학습 메모
 
@@ -554,7 +555,8 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - `user.level = admin`은 공통 규칙(`TrafficTrackingGuard`)으로 유입/전환 모두 수집에서 제외합니다.
 - 전환 타입은 `config/traffic.php`의 `traffic.conversion_types`를 기준으로 FormRequest + Service 이중 검증으로 관리합니다.
 - 현재 일 단위 집계(`stats:aggregate-daily`)를 기준으로 두고, 월/연 집계는 같은 서비스/레퍼지토리 계층에 확장 가능한 형태로 설계했습니다.
-- 로그 정리(`logs:cleanup`)는 매일 실행되며 `access_logs` 60일, `bot_access_logs` 30일, `conversion_logs` 90일 기준으로 삭제합니다.
+- 로그 정리(`logs:cleanup`)는 매일 실행되며 `access_logs` 365일, `bot_access_logs` 365일, `conversion_logs` 500일 기준으로 삭제합니다.
+- 초기 운영 단계라 로그를 빠르게 비우기보다 유입/전환 데이터를 충분히 쌓아 분석하는 쪽을 우선했고, 트래픽 증가 시 보관 주기는 다시 조정할 수 있게 두었습니다.
 
 6. 운영 주의점
 - `APP_URL`이 비어 있거나 끝 슬래시가 잘못 들어가면 `Sitemap`/`robots.txt`의 절대 URL이 깨질 수 있습니다.

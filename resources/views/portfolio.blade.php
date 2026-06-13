@@ -421,7 +421,7 @@
           <li>검색 유입 관리는 Google 색인만 보지 않고 네이버 서치어드바이저 수집 상태도 함께 확인</li>
           <li>내부 유입 데이터는 <code>access_logs/bot_access_logs</code> raw, 전환 데이터는 <code>conversion_logs</code> raw로 분리하고, 집계는 <code>daily_page_stats(conversion_count 포함)</code>를 기준으로 조회/확장(월/연 단위)</li>
           <li><code>user.level=admin</code>은 <code>TrafficTrackingGuard</code> 기준으로 유입/전환 로그를 모두 스킵</li>
-          <li>로그 정리(<code>logs:cleanup</code>)는 매일 실행하며 <code>access_logs</code> 60일, <code>bot_access_logs</code> 30일, <code>conversion_logs</code> 90일 기준으로 삭제</li>
+          <li>로그 정리(<code>logs:cleanup</code>)는 매일 실행하며 초기 운영 단계 분석을 위해 <code>access_logs</code> 365일, <code>bot_access_logs</code> 365일, <code>conversion_logs</code> 500일 기준으로 보관 후 삭제</li>
           <li>전환 타입은 <code>traffic.conversion_types</code> 기준으로 FormRequest + Service 이중 검증으로 통일</li>
           <li>검색엔진 노출은 동적 페이지보다 공개 목록/브랜드 소개/포트폴리오 중심으로 우선 관리</li>
           <li>웹마스터 인증 메타 코드는 공통 레이아웃에 두고 버전 관리해, 페이지별 누락 없이 운영 변경 이력을 남김</li>
@@ -432,6 +432,8 @@
         사용자 유입은 <code>access_logs</code>, 봇 유입은 <code>bot_access_logs</code>, 전환 이벤트는 <code>conversion_logs</code>로 분리 저장합니다.
         <br>
         일별 집계는 <code>daily_page_stats</code>에 누적하며, 페이지/디바이스 기준으로 <code>total_access_count</code>, <code>real_access_count</code>, <code>conversion_count</code>를 함께 관리합니다.
+        <br>
+        초기에는 로그를 빨리 지우는 것보다 데이터 분석 기반을 만드는 쪽이 더 중요하다고 판단해 보존 주기를 늘렸고, 이후 트래픽 규모에 맞춰 다시 조정할 수 있게 설계했습니다.
       </div>
     </div>
   </div>
