@@ -48,6 +48,40 @@ body:has(.portfolio-page) > .container-fluid > .row > *{padding-left:0 !importan
 .readme ol{margin:10px 0 14px;padding-left:1.6rem;}
 .readme ol li{margin:.32rem 0;padding-left:.24rem;line-height:1.6;}
 .readme ol li::marker{font-size:.88em;font-weight:700;color:#64748b;}
+.readme pre{
+    margin:16px 0 20px;
+    padding:18px 20px;
+    border-radius:14px;
+    border:1px solid #11182722;
+    background:#0b1220;
+    color:#e5e7eb;
+    font-size:14px;
+    line-height:1.75;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    overflow:auto;
+    white-space:pre;
+    tab-size:2;
+    box-shadow:0 12px 28px rgba(2,6,23,.12);
+}
+.readme pre code{
+    display:block;
+    padding:0;
+    background:transparent;
+    color:inherit;
+    font-size:inherit;
+    line-height:inherit;
+    white-space:inherit;
+}
+.readme :not(pre) > code{
+    display:inline-block;
+    padding:.12rem .42rem;
+    border-radius:8px;
+    background:#e2e8f0;
+    color:#0f172a;
+    font-size:.95em;
+    line-height:1.45;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
 .readme-summary p{color:#334155;margin:0 0 10px;}
 .readme-summary ul{margin:0;padding-left:1.2rem;color:#334155;}
 .readme-summary li{margin:.35rem 0;line-height:1.55;}
