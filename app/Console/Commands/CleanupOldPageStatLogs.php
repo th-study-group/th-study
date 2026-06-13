@@ -16,18 +16,21 @@ class CleanupOldPageStatLogs extends Command
     public function handle()
     {
         // 60일
+        // 365일로 변경 (트래픽 증가 시 변경)
         DB::table('access_logs')
-            ->where('access_date', '<', now()->subDays(60)->toDateString())
+            ->where('access_date', '<', now()->subDays(365)->toDateString())
             ->delete();
 
         // 30일 
+        // 365일로 변경 (트래픽 증가 시 변경)
         DB::table('bot_access_logs')
-            ->where('access_date', '<', now()->subDays(30)->toDateString())
+            ->where('access_date', '<', now()->subDays(365)->toDateString())
             ->delete();
 
         // 90일
+        // 500일로 변경 (트래픽 증가 시 변경)
         DB::table('conversion_logs')
-            ->where('conversion_date', '<', now()->subDays(90)->toDateString())
+            ->where('conversion_date', '<', now()->subDays(500)->toDateString())
             ->delete();
 
         $this->info('오래된 로그 삭제 완료');
