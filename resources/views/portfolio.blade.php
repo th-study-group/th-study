@@ -35,6 +35,7 @@
             <li>백업: <code style="color:#fff;">/backup/mysql</code> + <code style="color:#fff;">/backup/laravel_files</code> 14일 보관</li>
             <li>학습 확장: Python 3 + FastAPI 로컬 API 기초 정리</li>
             <li>분석: 유입 로그, 전환 로그, 일별 통계 집계 구조 구현</li>
+            <li>MongoDB: 비정형 데이터 및 Raw 데이터 정리 방향 문서화</li>
           </ul>
           <div class="fw-bold text-white mb-2">Tech Stack</div>
           <div class="d-flex flex-wrap gap-3 align-items-center icons">
@@ -111,6 +112,7 @@
             <tr><td class='fw-bold'>Laravel</td><td>12</td></tr>
             <tr><td class='fw-bold'>PHP</td><td>8.2</td></tr>
             <tr><td class='fw-bold'>MySQL</td><td>8.0.45</td></tr>
+            <tr><td class='fw-bold'>MongoDB</td><td>8.3.3 / 로컬 Windows + 운영 Ubuntu 22.04 기준 문서화</td></tr>
             <tr><td class='fw-bold'>Ubuntu</td><td>Ubuntu 22.04</td></tr>
             <tr><td class='fw-bold'>Nginx</td><td>1.18.0</td></tr>
             <tr><td class='fw-bold'>Node.js</td><td>20.20.0</td></tr>
@@ -130,6 +132,12 @@
         <br><code>resources/views/layouts/app.blade.php</code>
         <br><code>resources/views/partials/head-styles.blade.php</code>
         <br><code>resources/views/partials/head-scripts.blade.php</code>
+      </div>
+      <div class="callout mt-4">
+        <strong>MongoDB 활용 방향</strong><br>
+        TH-STUDY에서는 핵심 서비스 데이터는 MySQL 중심으로 유지하고, MongoDB는 비정형 데이터와 Raw 데이터 정리 용도로 확장할 예정입니다.
+        <br>
+        우선 대상은 접근 로그, 봇 로그, AI 관련 데이터, 채팅형 데이터처럼 구조가 자주 바뀌거나 수집 중심인 영역입니다.
       </div>
     </div>
   </div>

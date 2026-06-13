@@ -32,7 +32,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 ## 2. 기술 스택
 
 - Backend: PHP 8.2, Laravel 12
-- DB: MySQL
+- DB: MySQL, MongoDB(비정형 데이터 학습/정리용)
 - Frontend: Blade, Bootstrap 5, jQuery
 - Date UI: Flatpickr
 - Queue: Database queue
@@ -40,6 +40,8 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Infra: Ubuntu(Nginx + PHP-FPM) self-hosted deploy
 - Domain/DNS: Gabia 등록 + Cloudflare 네임서버/DNS/Email Routing
 - Study: Python 3, venv, FastAPI, Uvicorn
+- MongoDB: 로컬 Windows + MongoDB Compass, 운영 Ubuntu 22.04 + MongoDB Community Server 8.3.3 기준으로 문서화
+- MongoDB Use: TH-STUDY에서는 접근 로그, 봇 로그, AI 관련 데이터, 채팅형 데이터처럼 비정형 데이터와 Raw 데이터 정리 용도로 확장 예정
 
 ### 유입/전환 분석 구성
 
