@@ -23,6 +23,7 @@ class Note extends Base
         'content',
         'thumbnail_path',
         'use_flag',
+        'access_page',
         //'create_user_idx',
         //'update_user_idx',
         //'delete_user_idx',

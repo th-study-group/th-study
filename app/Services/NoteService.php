@@ -143,6 +143,13 @@ class NoteService
                 'create_user_idx' => $userIdx,
             ]);
 
+            $note = $this->noteRepository->update($note, [
+                'access_page' => $this->makeBlogAccessPage(
+                    (string) $topic->category->code,
+                    (int) $note->idx
+                ),
+            ]);
+
             $tagNames = $this->parseTagNames((string) $request->input('tags', ''));
             $tagIdxList = [];
 
@@ -375,8 +382,12 @@ class NoteService
                 'group_idx' => $topic->category->group_idx,
                 'categories_idx' => $topic->categories_idx,
                 'topic_idx' => $topic->idx,
-                'group_code' => $resolvedGroupCode,
+                //'group_code' => $resolvedGroupCode,
                 'categories_code' => $topic->category->code,
+                'access_page' => $this->makeBlogAccessPage(
+                    (string) $topic->category->code,
+                    (int) $note->idx
+                ),
                 'subject' => $request->input('subject'),
                 'content' => $sanitizedContent,
                 'thumbnail_path' => $thumbnailPath,
@@ -743,10 +754,28 @@ class NoteService
         }
     }
 
+    /**
+     * 글 등록/수정/삭제 시 캐시 생성 
+     *
+     * @param string $groupCode
+     * @return void
+     */
     private function forgetHomeLatestBlogsCacheIfBlog(string $groupCode): void
     {
         if ($groupCode === 'blog') {
             Cache::forget(HomeService::LATEST_BLOGS_CACHE_KEY);
         }
+    }
+
+    /**
+     * th_notes.access_page 컬럼 값 생성
+     *
+     * @param string $categoryCode
+     * @param integer $noteIdx
+     * @return string
+     */
+    private function makeBlogAccessPage(string $categoryCode, int $noteIdx): string
+    {
+        return '/blogs/' . $categoryCode . '/' . $noteIdx . '/show';
     }
 }

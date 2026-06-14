@@ -226,7 +226,7 @@ class NoteController extends Controller
      * 등록 처리
      *
      * @param Request $request
-     * @param string $idx
+     * @param string $slug
      * @return void
      */
     public function store(StoreNoteRequest $request, string $slug)

@@ -31,7 +31,7 @@
 
         <div class="mb-3">
           <label for="category" class="form-label blog-create-label">카테고리</label>
-          <select id="category" name="category" class="form-select blog-create-select">
+          <select id="category" name="category" class="form-select blog-create-select" @if ($isEditMode) disabled @endif>
             <option value="">카테고리를 선택해 주세요.</option>
             @foreach (($categories ?? collect()) as $category)
               <option value="{{ $category->code }}" {{ old('category', $slug ?? '') == $category->code ? 'selected' : '' }}>
@@ -39,6 +39,9 @@
               </option>
             @endforeach
           </select>
+          @if ($isEditMode)
+            <input type="hidden" name="category" value="{{ old('category', $slug ?? '') }}">
+          @endif
           @error('category')
             <div class="invalid-feedback d-block">{{ $message }}</div>
           @enderror
