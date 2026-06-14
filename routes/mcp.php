@@ -62,3 +62,8 @@ Route::get('/.well-known/oauth-authorization-server', function () {
         'Pragma' => 'no-cache',
     ], JSON_UNESCAPED_SLASHES);
 });
+
+Route::get('/.well-known/openai-apps-challenge', function () {
+    return response('GvRAFJ71Z9aJCH3rV_6OPN2XUB7JgAvhkscbjDvbMWk', 200)
+        ->header('Content-Type', 'text/plain');
+});
