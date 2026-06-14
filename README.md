@@ -246,6 +246,14 @@ TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP
 - OAuth client 정보와 code TTL은 `config/mcp.php` + `.env`에서 관리
 - MCP 툴을 늘릴 때는 `mcp/tool.json` 정의에 `levels`까지 함께 선언하고, 개별 라우트, 서비스 로직을 같은 패턴으로 추가하면 됨
 - 현재는 노트/사용자 조회 중심으로 MCP tool 세트를 확장해 두었고, 같은 방식으로 다른 내부 데이터 도구도 계속 추가할 수 있게 설계
+
+OpenAI Apps 심사 반영 핵심:
+
+- 등록 방식은 OAuth `Pre-defined` 기준이며 client id는 `thstudy-chatgpt`
+- MCP 서버 URL은 `https://www.th-study.com/api/mcp`, OAuth authorize URL은 `https://www.th-study.com/mcp/oauth/authorize`, token URL은 `https://www.th-study.com/api/mcp/oauth/token`
+- 모든 MCP tool은 `readOnlyHint=true`, `openWorldHint=false`, `destructiveHint=false` 정책으로 내부 데이터 조회만 허용
+- `/.well-known/openai-apps-challenge` 경로로 도메인 인증을 마쳤고, 2026-06-14 기준 OpenAI Apps 심사 상태는 `Review`
+- 심사용 계정은 이메일 인증이 완료된 read-only `normal` 계정으로 분리했고, 날씨/계산/일반 대화처럼 무관한 요청에는 MCP tool을 호출하지 않는 네거티브 테스트도 정리
 ## 3. 디렉터리 빠른 가이드
 
 ```text
