@@ -449,6 +449,7 @@
   - `subject`: 제목, index
   - `thumbnail_path`: 썸네일 경로, null 가능
   - `use_flag`: 공개여부, 기본값 `0`
+  - `access_page`: 유입통계 매칭용 접근 경로, null 가능, index
 - 전체 컬럼
   - `idx`: `bigIncrements`, not null, default auto increment
   - `group_idx`: `unsignedBigInteger`, not null, index
@@ -460,6 +461,7 @@
   - `content`: `longText`, not null
   - `thumbnail_path`: `string(500)`, null, default `null`
   - `use_flag`: `tinyInteger`, not null, default `0`
+  - `access_page`: `string(255)`, null, default `null`, index
   - `create_user_idx`: `unsignedBigInteger`, not null, index
   - `update_user_idx`: `unsignedBigInteger`, null, default `null`
   - `delete_user_idx`: `unsignedBigInteger`, null, default `null`
