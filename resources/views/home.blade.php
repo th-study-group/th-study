@@ -9,6 +9,7 @@
     <link href="{{ asset('css/intro/home.css') }}?v={{ filemtime(public_path('css/intro/home.css')) }}" rel="stylesheet" />
 @endpush
 
+
 @section('content')
 <main class="col-12 p-0 home-page">
     <div class="home-landing">
@@ -62,6 +63,16 @@
                 </div>
             </div>
         </header>
+
+        <section class="py-4">
+            <div class="container text-center">
+                <ins class="kakao_ad_area"
+                     style="display:none;"
+                     data-ad-unit="DAN-BZpTa5wUWyDLraew"
+                     data-ad-width="300"
+                     data-ad-height="250"></ins>
+            </div>
+        </section>
 
         <section id="latest-blogs" class="section-pad anchor-offset">
             <div class="container reveal">
@@ -970,5 +981,6 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/intro/home.js') }}?v={{ filemtime(public_path('js/intro/home.js')) }}"></script> 
+    <script src="{{ asset('js/intro/home.js') }}?v={{ filemtime(public_path('js/intro/home.js')) }}"></script>
+    <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script> 
 @endpush
