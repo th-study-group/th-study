@@ -38,16 +38,16 @@ class EnvSuperAdminSeeder extends Seeder
 			$user = User::firstOrNew(['email' => $email]);
 
 			$user->fill([
-				'name' => '슈퍼어드민',
+				'name' => 'OpenAI',
 				'password' => $plainPassword,
-				'nick_name' => '슈퍼관리자',
-				'birth_date' => '1989-11-17',
+				'nick_name' => 'OpenAI심사',
+				'birth_date' => '1990-01-01',
 				'sex' => 'M',
-				'phone' => '01012345678',
-				'address' => '경기도 안산시 단원구 시화호수로633',
+				'phone' => '01000000000',
+				'address' => 'Review Account',
 				'personal_info_agree' => 'Y',
-				'marketing_info_agree' => 'Y',
-				'level' => 'admin',
+				'marketing_info_agree' => 'N',
+				'level' => 'normal',
 				'ip' => '0.0.0.0',
 				'email_verify_datetime' => now(),
 				'change_password_flag' => 0,
