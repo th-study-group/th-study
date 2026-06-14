@@ -64,6 +64,12 @@
             </div>
         </header>
 
+        {{-- 카카오 애드핏 광고(심사용 임시 배치)
+            TODO:
+            - 애드핏 심사 승인 후 광고 컴포넌트 분리
+            - resources/views/components/ads/ 로 이동
+            - 메인/게시글 상세 광고 정책 재정리
+        --}}
         <section class="py-4">
             <div class="container text-center">
                 <ins class="kakao_ad_area"
