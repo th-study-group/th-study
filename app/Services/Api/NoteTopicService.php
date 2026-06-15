@@ -22,7 +22,7 @@ class NoteTopicService
      * @param array $data
      * @return Collection
      */
-    public function getNoteTopics(array $data)
+    public function getNoteTopics(array $data) : LengthAwarePaginator
     {
         $noteTopics = $this->noteTopicRepository->paginateNoteTopics($data);
 
