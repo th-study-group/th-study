@@ -109,15 +109,17 @@ class NoteRepository
             ->paginate($perPage);
     }
 
+
     /**
      * 같은 그룹/카테고리 최신 노트 조회 (현재 노트 제외)
      *
      * @param string $groupCode
      * @param string $categoryCode
-     * @param int $excludeIdx
-     * @param bool $isAdmin
-     * @param int $limit
-     * @return Collection<int, Note>
+     * @param integer $noteIdx
+     * @param integer $topicIdx
+     * @param boolean $isAdmin
+     * @param integer $limit
+     * @return Collection
      */
     public function getLatestByCodesExcluding(
         string $groupCode,
