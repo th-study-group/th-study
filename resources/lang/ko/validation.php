@@ -239,6 +239,10 @@ return [
             'sex' => '성별',
             'name' => '이름',
             'nick_name' => '닉네임',
+            'access_date' => '유입/전환일자',
+            'start_date' => '시작일',
+            'end_date' => '종료일',
+            'device_type' => '접속기기'
         ],
     ],
 ];

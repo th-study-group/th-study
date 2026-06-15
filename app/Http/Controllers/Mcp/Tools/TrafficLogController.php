@@ -31,7 +31,7 @@ class TrafficLogController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => '사용자 목록 조회 성공',
+            'message' => '사람 유입 목록 조회 성공',
             'data' => AccessLogResource::collection(
                 $accessLogs->items()
             ),

@@ -17,6 +17,35 @@ class AccessLogResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        $content = str_replace(
+            ['<br>', '<br/>', '<br />', '</p>'],
+            "\n",
+            $this->note?->content
+        );
+
+        $content = strip_tags($content);
+        $content = preg_replace('/\n+/', "\n", $content);
+        $content = preg_replace('/[ \t]+/', ' ', $content);
+        $content = trim($content);
+
+        return [ 
+            'access_datetime' => $this->access_datetime?->format('Y-m-d H:i:s'),
+            'subject' => $this->note?->subject ?? '-',
+            'content' => $content ?? '-',
+            'group_name' => $this->note?->group?->name ?? '-',
+            'categories_name' => $this->note?->category?->name ?? '-',
+            'topic_name' => $this->note?->topic?->name ?? '-',
+            'access_page' => $this->access_page ?? '-',
+            'referer_host' => $this->referer_host ?? '-',
+            'device_type' => $this->device_type ?? '-',
+            'device_model' => $this->device_model ?? '-',
+            'device_brand' => $this->device_brand ?? '-',
+            'os' => $this->os ?? '-',
+            'browser' => $this->browser ?? '-',
+            'ip' => $this->ip ?? '-',
+            'referer_url' => $this->referer_url ?? '-',
+            'user_agent' => $this->user_agent ?? '-',
+            'user_idx' => $this->user_idx ?? '-'
+        ];
     }
 }
