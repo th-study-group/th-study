@@ -242,7 +242,8 @@ return [
             'access_date' => '유입/전환일자',
             'start_date' => '시작일',
             'end_date' => '종료일',
-            'device_type' => '접속기기'
+            'device_type' => '접속기기',
+            "user_idx" => "사용자정보"
         ],
     ],
 ];

@@ -45,6 +45,7 @@ class AccessLogRequest extends FormRequest
                 'string', 
                 'max:30'
             ],
+            'user_idx' => ['nullable', 'integer', 'min:1'],
             'device_types' => ['nullable', 'array'],
             'device_types.*' => ['in:desktop,mobile,tablet'],
             'access_date' => ['nullable', 'date'],

@@ -43,6 +43,9 @@ class TrafficLogRepository
                 'user_agent',
                 'user_idx'
             )
+            ->when(!empty($data['user_idx']), function ($query) use ($data) {
+                $query->where('user_idx', $data['user_idx']);
+            })
             ->when(!empty($data['device_types']), function ($query) use ($data) {
                 $query->whereIn('device_type', $data['device_types']);
             })
