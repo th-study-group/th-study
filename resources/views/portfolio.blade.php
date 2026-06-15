@@ -441,6 +441,8 @@
         <br>
         일별 집계는 <code>daily_page_stats</code>에 누적하며, 페이지/디바이스 기준으로 <code>total_access_count</code>, <code>real_access_count</code>, <code>conversion_count</code>를 함께 관리합니다.
         <br>
+        MCP에서는 관리자 전용 <code>access_log_search</code> tool로 사람 유입 로그를 날짜, 기기, 노트 분류, 로그인 사용자 기준으로 다시 조회할 수 있게 연결했습니다.
+        <br>
         초기에는 로그를 빨리 지우는 것보다 데이터 분석 기반을 만드는 쪽이 더 중요하다고 판단해 보존 주기를 늘렸고, 이후 트래픽 규모에 맞춰 다시 조정할 수 있게 설계했습니다.
       </div>
     </div>
@@ -948,7 +950,7 @@ sudo systemctl status th-study-queue</code></pre>
               <li><code>mcp_jwt</code> 가드와 전용 미들웨어로 MCP 보호 API 분리</li>
               <li><code>/.well-known/*</code> 메타데이터를 노출해 클라이언트가 인증 서버 정보를 찾도록 구성</li>
               <li><code>mcp/tool.json</code> 기반으로 <code>tools/list</code>, <code>tools/call</code>을 처리하고 tool별 <code>levels</code>로 허용 계정 레벨 관리</li>
-              <li>현재는 <code>note_group_search</code>, <code>note_category_search</code>, <code>note_topic_search</code>, <code>note_search</code>, <code>note_tag_search</code>, <code>user_search</code>를 공개</li>
+              <li>현재는 <code>note_group_search</code>, <code>note_category_search</code>, <code>note_topic_search</code>, <code>note_search</code>, <code>note_tag_search</code>, <code>user_search</code>, <code>access_log_search</code>를 공개</li>
             </ul>
           </div>
         </div>
@@ -966,7 +968,8 @@ sudo systemctl status th-study-queue</code></pre>
   -> /api/mcp/tools/note-topics
   -> /api/mcp/tools/notes
   -> /api/mcp/tools/note-tags
-  -> /api/mcp/tools/users</code></pre>
+  -> /api/mcp/tools/users
+  -> /api/mcp/tools/access-logs</code></pre>
           </div>
         </div>
       </div>
@@ -1001,7 +1004,7 @@ sudo systemctl status th-study-queue</code></pre>
             </tr>
             <tr>
               <td class="fw-bold">현재 tool 구성</td>
-              <td>노트 계열 5개 tool(<code>note_group_search</code>, <code>note_category_search</code>, <code>note_topic_search</code>, <code>note_search</code>, <code>note_tag_search</code>)은 <code>normal</code>, <code>admin</code> 계정에서 조회 가능하고, <code>user_search</code>는 개인정보가 포함될 수 있어 <code>admin</code> 전용으로 분리했습니다.</td>
+              <td>노트 계열 5개 tool(<code>note_group_search</code>, <code>note_category_search</code>, <code>note_topic_search</code>, <code>note_search</code>, <code>note_tag_search</code>)은 <code>normal</code>, <code>admin</code> 계정에서 조회 가능하고, <code>user_search</code>와 <code>access_log_search</code>는 개인정보 또는 식별 가능 정보가 포함될 수 있어 <code>admin</code> 전용으로 분리했습니다.</td>
             </tr>
             <tr>
               <td class="fw-bold">심사 대응 포인트</td>

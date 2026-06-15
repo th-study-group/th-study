@@ -233,11 +233,15 @@ TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP
 - `user_search`
   - 허용 레벨: `admin`
   - 사용자 IDX, 이름, 닉네임, 성별, 등급 등 관리자 전용 조회
+- `access_log_search`
+  - 허용 레벨: `admin`
+  - 사람 유입 로그를 접근일자/기간, 접속기기, 노트 분류, 로그인 사용자 기준으로 조회
 
 공통 포인트:
 
 - 모든 tool 정의는 `mcp/tool.json`에서 관리하고 `url`, `method`, `levels`, `inputSchema`, `outputSchema`를 함께 선언
 - 노트 계열 tool은 공통 pagination 응답(`current_page`, `per_page`, `total`, `last_page`, `has_more`, `next_page`)을 사용
+- `access_log_search`도 동일한 pagination 응답을 사용하며, `ip`, `user_agent`, `referer_url`, `user_idx`처럼 식별 가능성이 있는 필드를 포함할 수 있어 관리자 전용으로 분리
 - 실제 실행은 각 MCP 전용 컨트롤러와 `app/Services/Mcp/Tools/*Service.php` 계층으로 분리해 기존 Laravel 구조 안에서 재사용
 
 운영 포인트:
@@ -245,7 +249,7 @@ TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP
 - MCP 관련 로그는 별도 `mcp` 로그 채널로 분리
 - OAuth client 정보와 code TTL은 `config/mcp.php` + `.env`에서 관리
 - MCP 툴을 늘릴 때는 `mcp/tool.json` 정의에 `levels`까지 함께 선언하고, 개별 라우트, 서비스 로직을 같은 패턴으로 추가하면 됨
-- 현재는 노트/사용자 조회 중심으로 MCP tool 세트를 확장해 두었고, 같은 방식으로 다른 내부 데이터 도구도 계속 추가할 수 있게 설계
+- 현재는 노트/사용자 조회에 더해 관리자용 유입 로그 조회까지 MCP tool 세트를 확장해 두었고, 같은 방식으로 다른 내부 데이터 도구도 계속 추가할 수 있게 설계
 
 OpenAI Apps 심사 반영 핵심:
 
