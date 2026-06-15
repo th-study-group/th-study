@@ -21,7 +21,7 @@ class NoteTopicController extends Controller
      * 노트 주제 목록 반환
      *
      * @param NoteTopicRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(NoteTopicRequest $request) : JsonResponse
     {
