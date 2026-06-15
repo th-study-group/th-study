@@ -43,4 +43,9 @@ class AccessLog extends Model
     {
         return $this->belongsTo(User::class, 'user_idx', 'idx');
     }
+
+    public function note(): BelongsTo
+    {
+        return $this->belongsTo(Note::class, 'access_page', 'access_page');
+    }
 }

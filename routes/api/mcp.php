@@ -9,6 +9,7 @@ use App\Http\Controllers\Mcp\Tools\NoteController;
 use App\Http\Controllers\Mcp\Tools\NoteGroupController;
 use App\Http\Controllers\Mcp\Tools\NoteTagController;
 use App\Http\Controllers\Mcp\Tools\NoteTopicController;
+use App\Http\Controllers\Mcp\Tools\TrafficLogController;
 use App\Http\Controllers\Mcp\Tools\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,4 +46,7 @@ Route::middleware(['auth.mcp.jwt'])->group(function () {
 
     Route::post('/tools/users', [UserController::class, 'index'])
         ->name('mcp.tools.user.index');
+
+    Route::post('/tools/access-logs', [TrafficLogController::class, 'getAccessLogs'])
+        ->name('mcp.tools.traffic.access-log');
 });

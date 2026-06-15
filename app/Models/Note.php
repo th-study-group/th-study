@@ -82,6 +82,11 @@ class Note extends Base
         return $this->hasMany(NoteTagMap::class, 'note_idx', 'idx');
     }
 
+    public function accessLogs() : HasMany
+    {
+        return $this->hasMany(AccessLog::class, 'access_page', 'access_page');
+    }
+
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(
