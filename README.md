@@ -192,6 +192,7 @@ TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP
   - `POST /api/mcp/tools/notes`
   - `POST /api/mcp/tools/note-tags`
   - `POST /api/mcp/tools/users`
+  - `POST /api/mcp/tools/access-logs`
 - Well-known 메타데이터:
   - `GET /.well-known/oauth-protected-resource`
   - `GET /.well-known/oauth-authorization-server`
