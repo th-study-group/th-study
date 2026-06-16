@@ -749,6 +749,134 @@
           }
         }
       }
+    },
+    {
+      "name": "bot_access_log_search",
+      "description": "봇 유입 목록 조회. Googlebot, Bingbot 등 검색엔진/AI/크롤러 봇의 유입 로그를 조회합니다. 사람 유입 로그에도 봇성 접근이 일부 혼합될 수 있으므로 access_log_search와 함께 분석하는 것을 권장합니다. 관리자 권한(admin) 사용자만 사용할 수 있습니다.",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "url": "/api/mcp/tools/bot-access-logs",
+      "method": "POST",
+      "levels": [
+        "admin"
+      ],
+      "x-meta": {
+        "domain": "traffic",
+        "uses_common": [
+          "pagination"
+        ],
+        "sensitive": true,
+        "keywords": [
+          "봇유입",
+          "봇로그",
+          "크롤러",
+          "크롤링",
+          "검색봇",
+          "Googlebot",
+          "Bingbot",
+          "ChatGPT",
+          "AI봇",
+          "접속로그",
+          "접근로그",
+          "트래픽",
+          "노트유입",
+          "게시글유입"
+        ],
+        "comment": "티에이치스터디의 봇 유입 로그를 조회합니다.\n\n관리자 권한(admin) 사용자만 사용할 수 있습니다.\n\n이 API는 사람 유입이 아니라 Googlebot, Bingbot 등 봇의 유입을 확인하기 위한 API입니다.\n\n단, 100% 모든 봇 유입이 이 API에만 분리되는 것은 아니며 access_log_search에도 봇성 접근이 혼합될 수 있으므로 함께 분석하는 것을 권장합니다.\n\naccess_date는 단일 일자 조회 조건입니다.\n\nstart_date와 end_date는 기간 조회 조건입니다.\n\naccess_date 또는 start_date/end_date 중 하나는 반드시 필요합니다.\n\n사용자가 날짜 조건을 요청하지 않은 경우 서버에서 오늘 날짜를 access_date 기본값으로 적용할 수 있습니다.\n\n기간 조회는 성능을 위해 최대 1개월까지만 허용합니다.\n\n1개월 이상 조회가 필요한 경우 1개월 단위로 나누어 조회해야 합니다.\n\n1년 이상 또는 긴 기간 조회 요청은 사용자에게 기간이 길어질 수 있음을 안내하고 월 단위 조회 또는 통계 테이블 사용을 권장해야 합니다.\n\n데이터가 많은 경우 1개월~3개월 범위까지만 나누어 분석하는 것을 권장합니다.\n\nbot_name은 봇 이름 정확히 일치 검색입니다. 예: Googlebot, Bingbot\n\ngroup_code, categories_code, topic_code는 노트에 등록된 콘텐츠 기준으로 조회합니다.\n\ncategories_code 검색 시 group_code와 함께 사용해야 합니다.\n\ntopic_code 검색 시 group_code와 categories_code를 함께 사용해야 합니다.\n\n각 분류 코드는 그룹, 카테고리, 주제 조회 API에서 확인할 수 있습니다.\n\nhas_note가 true이면 노트에 연결된 봇 유입 로그만 조회합니다. false이면 홈, 소개, 포트폴리오 등 노트에 연결되지 않은 페이지를 조회합니다.\n\nreferer_url, user_agent 등 식별 가능 정보가 포함될 수 있으므로 외부 노출에 주의해야 합니다.",
+        "fieldLabels": {
+          "access_datetime": "접근시각",
+          "subject": "게시글 제목",
+          "group_name": "그룹명",
+          "categories_name": "카테고리명",
+          "topic_name": "주제명",
+          "access_page": "접근페이지",
+          "referer_host": "접속도메인",
+          "bot_name": "봇 이름",
+          "referer_url": "접속 referer 원문 URL",
+          "user_agent": "User Agent"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bot_name": {
+            "type": "string",
+            "description": "봇 이름 정확히 일치 검색(=). 예: Googlebot, Bingbot"
+          },
+          "access_date": {
+            "type": "string",
+            "format": "date",
+            "description": "단일 접근일자 검색. 형식은 Y-m-d입니다. 예: 2026-06-01"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "조회 시작일. 형식은 Y-m-d입니다. end_date와 함께 사용합니다. 예: 2026-06-01"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "조회 종료일. 형식은 Y-m-d입니다. start_date보다 같거나 뒤 날짜여야 하며, 조회 기간은 최대 1개월입니다. 예: 2026-06-30"
+          },
+          "has_note": {
+            "type": "boolean",
+            "description": "노트 연결 여부 검색. true이면 노트에 등록된 콘텐츠 유입만 조회하고, false이면 홈/소개/포트폴리오 등 노트에 연결되지 않은 페이지를 조회합니다."
+          },
+          "group_code": {
+            "type": "string",
+            "description": "그룹 코드 정확히 일치 검색(=). 예: blog"
+          },
+          "categories_code": {
+            "type": "string",
+            "description": "카테고리 코드 정확히 일치 검색(=). group_code와 함께 사용해야 합니다. 예: develop"
+          },
+          "topic_code": {
+            "type": "string",
+            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code를 함께 사용해야 합니다. 예: laravel"
+          },
+          "page": {
+            "type": "integer",
+            "description": "조회 페이지 번호. 기본값 1"
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "페이지당 조회 개수. 기본값 20, 최대 100"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "access_date"
+            ]
+          },
+          {
+            "required": [
+              "start_date",
+              "end_date"
+            ]
+          }
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array"
+          },
+          "pagination": {
+            "type": "object"
+          }
+        }
+      }
     }
   ]
 }
