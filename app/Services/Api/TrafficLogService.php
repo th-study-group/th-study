@@ -40,4 +40,29 @@ class TrafficLogService
 
         return $accessLogs;
     }
+
+    /**
+     * 봇 유입 목록 반환
+     *
+     * @param array $data
+     * @return LengthAwarePaginator
+     */
+    public function getBotAccessLogs(array $data) : LengthAwarePaginator
+    {
+        $botAccessLogs = $this->trafficLogRepository->paginateBotAccessLogs($data);
+
+        Log::info('[BotAccessLogs][MCP] Service 조회 완료', [
+            'user_idx' => Auth::id(),
+            'parameters' => $data,
+            'pagination' => [
+                'current_page' => $botAccessLogs->currentPage(),
+                'per_page' => $botAccessLogs->perPage(),
+                'total' => $botAccessLogs->total(),
+                'last_page' => $botAccessLogs->lastPage(),
+            ],
+            'count' => $botAccessLogs->count(),
+        ]);
+
+        return $botAccessLogs;
+    }
 }

@@ -243,7 +243,8 @@ return [
             'start_date' => '시작일',
             'end_date' => '종료일',
             'device_type' => '접속기기',
-            "user_idx" => "사용자정보"
+            'user_idx' => '사용자정보',
+            'bot_name' => '봇 명칭',
         ],
     ],
 ];

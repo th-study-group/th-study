@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BotAccessLog extends Model
 {
@@ -26,4 +27,9 @@ class BotAccessLog extends Model
         'access_date' => 'date',
         'access_datetime' => 'datetime',
     ];
+
+    public function note(): BelongsTo
+    {
+        return $this->belongsTo(Note::class, 'access_page', 'access_page');
+    }
 }

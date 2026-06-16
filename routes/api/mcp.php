@@ -49,4 +49,7 @@ Route::middleware(['auth.mcp.jwt'])->group(function () {
 
     Route::post('/tools/access-logs', [TrafficLogController::class, 'getAccessLogs'])
         ->name('mcp.tools.traffic.access-log');
+
+    Route::post('/tools/bot-access-logs', [TrafficLogController::class, 'getBotAccessLogs'])
+        ->name('mcp.tools.traffic.bot-access-log');
 });

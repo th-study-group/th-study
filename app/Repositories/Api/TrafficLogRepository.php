@@ -3,6 +3,7 @@
 namespace App\Repositories\Api;
 
 use App\Models\AccessLog;
+use App\Models\BotAccessLog;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -89,5 +90,77 @@ class TrafficLogRepository
             ->paginate($perPage);
 
         return $accessLogs;
+    }
+
+    /**
+     * 봇 유입 목록 반환
+     *
+     * @param array $data
+     * @return LengthAwarePaginator
+     */
+    public function paginateBotAccessLogs(array $data) : LengthAwarePaginator
+    {
+        $perPage = $data['per_page'] ?? 20;
+
+        $botAccessLogs = BotAccessLog::query()
+            ->with([
+                'note:idx,access_page,group_idx,categories_idx,topic_idx,subject,content,thumbnail_path,use_flag',
+                'note.group:idx,code,name',
+                'note.category:idx,group_idx,code,name,use_flag',
+                'note.topic:idx,categories_idx,name,memo,use_flag'
+            ])
+            ->select(
+                'idx',
+                'access_date',
+                'access_datetime',
+                'access_page',
+                'referer_host',
+                'bot_name',
+                'referer_url',
+                'user_agent'
+            )
+            ->when(!empty($data['bot_name']), function ($query) use ($data) {
+                $query->where('bot_name', $data['bot_name']);
+            })
+            ->when(!empty($data['access_date']), function($query) use ($data) {
+                $query->where('access_date', $data['access_date']);
+            })
+            ->when(!empty($data['start_date']), function($query) use ($data) {
+                $query->whereDate('access_date', '>=', $data['start_date']);
+            })
+            ->when(!empty($data['end_date']), function($query) use ($data) {
+                $query->whereDate('access_date', '<=', $data['end_date']);
+            })
+            ->when(isset($data['has_note']), function ($query) use ($data) {
+                if ($data['has_note'] === true) {
+                    $query->whereHas('note', function($q) use ($data) {
+                        $q->whereNotNull('idx')
+                            ->where('use_flag', 1);
+                    });
+                } else {
+                    $query->whereDoesntHave('note');
+                }
+            })
+             ->when(!empty($data['group_code']), function($query) use ($data) {
+                $query->whereHas('note.group', function($q) use ($data) {
+                    $q->where('code', $data['group_code']);
+                });
+            })
+            ->when(!empty($data['categories_code']), function($query) use ($data) {
+                $query->whereHas('note.category', function($q) use ($data) {
+                    $q->where('code', $data['categories_code'])
+                      ->where('use_flag', 1);
+                });
+            })
+            ->when(!empty($data['topic_code']), function($query) use ($data) {
+                $query->whereHas('note.topic', function($q) use ($data) {
+                   $q->where('name', $data['topic_code'])
+                     ->where('use_flag', 1); 
+                });
+            })
+            ->orderBy('access_datetime', 'desc')
+            ->paginate($perPage);
+
+        return $botAccessLogs;
     }
 }
