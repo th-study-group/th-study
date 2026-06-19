@@ -584,7 +584,7 @@
   - `idx`: `bigIncrements`, not null, default auto increment
   - `access_date`: `date`, not null, composite index
   - `access_datetime`: `dateTime`, not null
-  - `access_page`: `string(255)`, not null, composite index
+  - `access_page`: `string(255)`, not null, composite index, index
   - `referer_host`: `string(255)`, not null, index
   - `device_type`: `string(20)`, not null, composite index, index
   - `device_brand`: `string(50)`, null, default `null`
@@ -611,7 +611,7 @@
   - `idx`: `bigIncrements`, not null, default auto increment
   - `access_date`: `date`, not null, composite index
   - `access_datetime`: `dateTime`, not null
-  - `access_page`: `string(255)`, not null, composite index
+  - `access_page`: `string(255)`, not null, composite index, index
   - `referer_host`: `string(255)`, not null, index
   - `bot_name`: `string(100)`, null, default `null`, composite index
   - `referer_url`: `string(2048)`, null, default `null`
