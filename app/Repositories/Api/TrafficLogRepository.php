@@ -50,6 +50,9 @@ class TrafficLogRepository
             ->when(!empty($data['device_types']), function ($query) use ($data) {
                 $query->whereIn('device_type', $data['device_types']);
             })
+            ->when(!empty($data['ip']), function ($query) use ($data) {
+                $query->where('ip', $data['ip']);
+            })
             ->when(!empty($data['access_date']), function($query) use ($data) {
                 $query->where('access_date', $data['access_date']);
             })

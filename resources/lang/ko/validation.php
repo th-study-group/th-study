@@ -245,6 +245,7 @@ return [
             'device_type' => '접속기기',
             'user_idx' => '사용자정보',
             'bot_name' => '봇 명칭',
+            'ip' => 'IP주소'
         ],
     ],
 ];
