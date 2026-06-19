@@ -5,6 +5,7 @@ namespace App\Repositories\Api;
 use App\Models\AccessLog;
 use App\Models\BotAccessLog;
 use App\Models\ConversionLog;
+use App\Models\DailyPageStat;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -255,5 +256,30 @@ class TrafficLogRepository
             ->paginate($perPage);
 
         return $conversionLogs;
+    }
+
+    /**
+     * 일별 유입/전환 통계 로그 목록 반환
+     *
+     * @param array $data
+     * @return LengthAwarePaginator
+     */
+    public function paginateDailyPageStatLogs(array $data) : LengthAwarePaginator 
+    {
+        $perPage = $data['per_page'] ?? 20;
+
+        $dailyPageStats = DailyPageStat::query()
+                ->select(
+                    'stat_date',
+                    'access_page',
+                    'device_type',
+                    'total_access_count',
+                    'real_access_count',
+                    'conversion_count'
+                )
+                ->orderby('create_datetime', 'desc')
+                ->paginate($perPage);
+            
+        return $dailyPageStats;
     }
 }

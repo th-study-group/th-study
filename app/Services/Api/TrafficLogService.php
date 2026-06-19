@@ -90,4 +90,29 @@ class TrafficLogService
 
         return $conversionLogs;
     }
+
+    /**
+     * 일별 유입/전환 통계 목록 반환
+     *
+     * @param array $data
+     * @return LengthAwarePaginator
+     */
+    public function getDailyPageStatLogs(array $data) : LengthAwarePaginator
+    {
+        $dailyPageLogs = $this->trafficLogRepository->paginateDailyPageStatLogs($data);
+
+        Log::info('[DailyPageStats][MCP] Service 조회 완료', [
+            'user_idx' => Auth::id(),
+            'parameters' => $data,
+            'pagination' => [
+                'current_page' => $dailyPageLogs->currentPage(),
+                'per_page' => $dailyPageLogs->perPage(),
+                'total' => $dailyPageLogs->total(),
+                'last_page' => $dailyPageLogs->lastPage(),
+            ],
+            'count' => $dailyPageLogs->count(),
+        ]);
+
+        return $dailyPageLogs;
+    }
 }

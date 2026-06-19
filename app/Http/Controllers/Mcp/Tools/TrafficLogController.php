@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\Tools\AccessLogRequest;
 use App\Http\Requests\Mcp\Tools\BotAccessLogRequest;
 use App\Http\Requests\Mcp\Tools\ConversionLogRequest;
+use App\Http\Requests\Mcp\Tools\DailyPageStatRequest;
 use App\Http\Resources\Mcp\Tools\AccessLogResource;
 use App\Http\Resources\Mcp\Tools\BotAccessLogResource;
 use App\Http\Resources\Mcp\Tools\ConversionLogResource;
+use App\Http\Resources\Mcp\Tools\DailyPageStatResource;
 use App\Services\Api\TrafficLogService;
 use Illuminate\Http\JsonResponse;
 
@@ -107,6 +109,36 @@ class TrafficLogController extends Controller
                 'has_more' => $conversionLogs->hasMorePages(),
                 'next_page' => $conversionLogs->hasMorePages()
                     ? $conversionLogs->currentPage() + 1 : null,
+            ],
+        ]);
+    }
+
+    /**
+     * 유입/전환 통계 목록 반환
+     *
+     * @param DailyPageStatRequest $request
+     * @return JsonResponse
+     */
+    public function getDailyPageStatLogs(DailyPageStatRequest $request) : JsonResponse
+    {
+        $data = $request->validated();
+
+        $dailyPageStatLogs = $this->trafficLogService->getDailyPageStatLogs($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => '유입/전환 통계 목록 조회 성공',
+            'data' => DailyPageStatResource::collection(
+                $dailyPageStatLogs->items()
+            ),
+            'pagination' => [
+                'current_page' => $dailyPageStatLogs->currentPage(),
+                'per_page' => $dailyPageStatLogs->perPage(),
+                'total' => $dailyPageStatLogs->total(),
+                'last_page' => $dailyPageStatLogs->lastPage(),
+                'has_more' => $dailyPageStatLogs->hasMorePages(),
+                'next_page' => $dailyPageStatLogs->hasMorePages()
+                    ? $dailyPageStatLogs->currentPage() + 1 : null,
             ],
         ]);
     }

@@ -55,4 +55,7 @@ Route::middleware(['auth.mcp.jwt'])->group(function () {
 
     Route::post('tools/conversion-logs', [TrafficLogController::class, 'getConversionLogs'])
         ->name('mcp.tools.traffic.conversion-log');
+
+    Route::post('tools/daily-page-stat-logs', [TrafficLogController::class, 'getDailyPageStatLogs'])
+        ->name('mcp.tools.traffic.daily-page-stat-log');
 });

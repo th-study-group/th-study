@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 일별 페이지 통계
@@ -42,5 +43,10 @@ class DailyPageStat extends Model
         static::updating(function ($model) {
             $model->update_datetime = now();
         });
+    }
+
+    public function note(): BelongsTo
+    {
+        return $this->belongsTo(Note::class, 'access_page', 'access_page');
     }
 }
