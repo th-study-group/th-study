@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Mcp\Tools;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\Tools\AccessLogRequest;
 use App\Http\Requests\Mcp\Tools\BotAccessLogRequest;
+use App\Http\Requests\Mcp\Tools\ConversionLogRequest;
 use App\Http\Resources\Mcp\Tools\AccessLogResource;
 use App\Http\Resources\Mcp\Tools\BotAccessLogResource;
+use App\Http\Resources\Mcp\Tools\ConversionLogResource;
 use App\Services\Api\TrafficLogService;
 use Illuminate\Http\JsonResponse;
 
@@ -75,6 +77,36 @@ class TrafficLogController extends Controller
                 'has_more' => $botAccessLogs->hasMorePages(),
                 'next_page' => $botAccessLogs->hasMorePages()
                     ? $botAccessLogs->currentPage() + 1 : null,
+            ],
+        ]);
+    }
+
+    /**
+     * 유입 후 전환 목록 반환
+     *
+     * @param ConversionLogRequest $request
+     * @return JsonResponse
+     */
+    public function getConversionLogs(ConversionLogRequest $request) : JsonResponse
+    {
+        $data = $request->validated();
+
+        $conversionLogs = $this->trafficLogService->getConversionLogs($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => '유입 후 전환 목록 조회 성공',
+            'data' => ConversionLogResource::collection(
+                $conversionLogs->items()
+            ),
+            'pagination' => [
+                'current_page' => $conversionLogs->currentPage(),
+                'per_page' => $conversionLogs->perPage(),
+                'total' => $conversionLogs->total(),
+                'last_page' => $conversionLogs->lastPage(),
+                'has_more' => $conversionLogs->hasMorePages(),
+                'next_page' => $conversionLogs->hasMorePages()
+                    ? $conversionLogs->currentPage() + 1 : null,
             ],
         ]);
     }

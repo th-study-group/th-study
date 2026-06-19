@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 사이트 전환
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class ConversionLog extends Model
 {
     protected $table = 'conversion_logs';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idx';
     public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = false;
@@ -39,4 +40,14 @@ class ConversionLog extends Model
         'conversion_datetime' => 'datetime',
         'user_idx' => 'integer',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_idx', 'idx');
+    }
+
+    public function note(): BelongsTo
+    {
+        return $this->belongsTo(Note::class, 'access_page', 'access_page');
+    }
 }

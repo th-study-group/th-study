@@ -881,6 +881,170 @@
           }
         }
       }
+    },
+    {
+      "name": "conversion_log_search",
+      "description": "유입 후 전환 목록 조회. 사용자가 유입된 이후 클릭, 이동 등 실제 행동 로그를 조회합니다. 전환일자, 전환 조회 기간, 접속기기, 노트 분류 조건, 노트 IDX, 로그인 사용자 IDX, IP, 전환유형을 기준으로 조회할 수 있습니다. 개인정보가 포함될 수 있으므로 관리자 권한(admin) 사용자만 사용할 수 있습니다.",
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "url": "/api/mcp/tools/conversion-logs",
+      "method": "POST",
+      "levels": [
+        "admin"
+      ],
+      "x-meta": {
+        "domain": "traffic",
+        "uses_common": [
+          "pagination"
+        ],
+        "sensitive": true,
+        "keywords": [
+          "전환로그",
+          "유입후전환",
+          "전환",
+          "사용자행동",
+          "클릭로그",
+          "이동로그",
+          "아웃바운드",
+          "outbound",
+          "방문후행동",
+          "트래픽",
+          "아이피",
+          "노트전환",
+          "게시글전환",
+          "내부링크",
+          "외부링크",
+          "타겟페이지",
+          "전환대상"
+        ],
+        "comment": "티에이치스터디의 유입 후 전환 로그를 조회합니다.\n\n관리자 권한(admin) 사용자만 사용할 수 있습니다.\n\nconversion_date는 단일 전환일자 조회 조건입니다.\n\nstart_date와 end_date는 전환 조회 기간 조건입니다.\n\nconversion_date 또는 start_date/end_date 중 하나는 반드시 필요합니다.\n\n사용자가 날짜 조건을 요청하지 않은 경우 서버에서 오늘 날짜를 conversion_date 기본값으로 적용할 수 있습니다.\n\n전환 조회 기간은 최대 1개월까지만 허용합니다.\n\n가급적 1일 단위 조회를 권장합니다.\n\n장기간 분석이 필요한 경우 1개월 단위로 나누어 조회하며, 최대 1년 범위까지만 조회하는 것을 원칙으로 합니다.\n\n1개월 데이터가 너무 많은 경우 사용자에게 기간을 줄이도록 안내하고 조회를 거부할 수 있습니다.\n\nconversion_type은 전환유형입니다.\n\n현재 conversion_type은 outbound만 사용합니다.\n\n티에이치스터디에서는 내부 링크 이동과 외부 링크 이동을 모두 outbound로 기록합니다.\n\n따라서 outbound는 외부 사이트 이탈만 의미하지 않고, 사용자가 링크를 클릭하여 페이지를 이동한 행동 전체를 의미합니다.\n\n향후 다른 전환유형이 추가될 경우 상황에 맞게 해석해야 합니다.\n\n예를 들어 https://www.th-study.com/blogs/develop/1 같은 내부 링크 이동도 outbound로 기록될 수 있습니다.\n\n예를 들어 https://th-study.tistory.com/1 같은 외부 링크 이동도 outbound로 기록될 수 있습니다.\n\nconversion_datetime은 전환 시각입니다. 예: 2026-02-01 11:00:00\n\ntarget_page는 유입 후 실제 이루어진 행동 정보입니다. 내부 링크, 티스토리, 외부 사이트 등 사용자가 이동한 URL 정보를 담습니다.\n\nsource_page는 전환이 발생하기 전 사용자가 머물렀거나 유입된 페이지입니다.\n\nnote_idx는 노트의 고유 IDX 값입니다.\n\n특정 노트 게시글에 대한 전환 로그만 조회하려는 경우 note_idx 조건을 사용할 수 있습니다.\n\n노트 제목, 내용, 분류, 썸네일 등 노트 상세 정보가 필요한 경우 note_search API에서 note_idx 조건으로 조회할 수 있습니다.\n\nuser_idx는 로그인을 통해 접속한 회원의 IDX 값입니다.\n\n특정 회원의 전환 로그만 조회하려는 경우 user_idx 조건을 사용할 수 있습니다.\n\n회원의 이름, 이메일, 닉네임, 등급 등 사용자 상세 정보가 필요한 경우 user_search API에서 idx 조건으로 조회할 수 있습니다.\n\nip, user_agent, referer_url, user_idx 등 개인정보 또는 식별 가능 정보가 포함될 수 있으므로 외부 노출에 주의해야 합니다.\n\ndevice_types는 접속기기 검색 조건이며 tablet, desktop, mobile 값을 사용할 수 있습니다.\n\ngroup_code, categories_code, topic_code는 노트에 등록된 콘텐츠 기준으로 조회합니다.\n\ncategories_code 검색 시 group_code와 함께 사용해야 합니다.\n\ntopic_code 검색 시 group_code와 categories_code를 함께 사용해야 합니다.\n\n각 분류 코드는 note_group_search, note_category_search, note_topic_search API에서 확인할 수 있습니다.\n\nhas_note가 true이면 노트에 연결된 전환 로그만 조회합니다. 홈, 소개, 포트폴리오 등 노트에 연결되지 않은 페이지는 제외됩니다.",
+        "fieldLabels": {
+          "conversion_datetime": "전환시각",
+          "conversion_type": "전환유형",
+          "subject": "게시글 제목",
+          "group_name": "그룹명",
+          "categories_name": "카테고리명",
+          "topic_name": "주제명",
+          "source_page": "전환 발생 페이지",
+          "target_page": "전환 대상 URL",
+          "referer_host": "접속도메인",
+          "device_type": "접속 디바이스",
+          "device_model": "접속 기기 모델명",
+          "device_brand": "접속 디바이스 제조사",
+          "os": "OS 정보",
+          "browser": "브라우저 정보",
+          "ip": "접속 IP",
+          "referer_url": "접속 referer 원문 URL",
+          "user_agent": "User Agent",
+          "note_idx": "노트 IDX",
+          "user_idx": "로그인 사용자 IDX"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "conversion_date": {
+            "type": "string",
+            "format": "date",
+            "description": "단일 전환일자 검색. 형식은 Y-m-d입니다. 예: 2026-02-02"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "전환 조회 시작일. 형식은 Y-m-d입니다. end_date와 함께 사용합니다. 예: 2026-02-01"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "전환 조회 종료일. 형식은 Y-m-d입니다. start_date보다 같거나 뒤 날짜여야 하며, 전환 조회 기간은 최대 1개월입니다. 예: 2026-02-28"
+          },
+          "device_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "tablet",
+                "desktop",
+                "mobile"
+              ]
+            },
+            "description": "접속기기 검색. tablet, desktop, mobile 중 하나 이상을 배열로 전달합니다. 예: [\"desktop\", \"mobile\"]"
+          },
+          "group_code": {
+            "type": "string",
+            "description": "그룹 코드 정확히 일치 검색(=). 노트에 등록된 콘텐츠 기준으로 전환 로그를 조회할 때 사용합니다. 예: blog"
+          },
+          "categories_code": {
+            "type": "string",
+            "description": "카테고리 코드 정확히 일치 검색(=). group_code와 함께 사용해야 합니다. 노트 카테고리 기준으로 전환 로그를 조회할 때 사용합니다. 예: develop"
+          },
+          "topic_code": {
+            "type": "string",
+            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code를 함께 사용해야 합니다. 노트 주제 기준으로 전환 로그를 조회할 때 사용합니다. 예: laravel"
+          },
+          "note_idx": {
+            "type": "integer",
+            "description": "노트의 고유 IDX 값 정확히 일치 검색(=). 특정 노트 게시글에서 발생한 전환 로그만 조회할 때 사용합니다. 노트 제목, 내용, 분류, 썸네일 등 상세 정보는 note_search API에서 note_idx 조건으로 조회할 수 있습니다. 예: 1"
+          },
+          "has_note": {
+            "type": "boolean",
+            "description": "노트 연결 여부 검색. true이면 노트에 등록된 콘텐츠 전환만 조회하고, 홈/소개/포트폴리오 등 노트에 연결되지 않은 페이지는 제외합니다."
+          },
+          "user_idx": {
+            "type": "integer",
+            "description": "로그인을 통해 접속한 회원의 IDX 값 정확히 일치 검색(=). 특정 회원의 전환 로그만 조회할 때 사용합니다. 회원 이름, 이메일, 닉네임, 등급 등 사용자 상세 정보는 user_search API에서 idx 조건으로 조회할 수 있습니다. 예: 1"
+          },
+          "ip": {
+            "type": "string",
+            "description": "접속 IP 검색. 완전 일치 검색입니다. 예: 192.168.0.1"
+          },
+          "conversion_type": {
+            "type": "string",
+            "description": "전환유형 검색. 현재는 outbound만 사용합니다. 티에이치스터디에서는 내부 링크 이동과 외부 링크 이동을 모두 outbound로 기록합니다. outbound는 외부 사이트 이탈만 의미하지 않고 링크 클릭 후 페이지 이동 행동 전체를 의미합니다. 예: outbound"
+          },
+          "page": {
+            "type": "integer",
+            "description": "조회 페이지 번호. 기본값 1"
+          },
+          "per_page": {
+            "type": "integer",
+            "description": "페이지당 조회 개수. 기본값 20, 최대 100"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "conversion_date"
+            ]
+          },
+          {
+            "required": [
+              "start_date",
+              "end_date"
+            ]
+          }
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array"
+          },
+          "pagination": {
+            "type": "object"
+          }
+        }
+      }
     }
   ]
 }

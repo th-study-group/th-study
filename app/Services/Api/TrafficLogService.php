@@ -65,4 +65,29 @@ class TrafficLogService
 
         return $botAccessLogs;
     }
+
+    /**
+     * 유입 후 전환 목록 반환
+     *
+     * @param array $data
+     * @return LengthAwarePaginator
+     */
+    public function getConversionLogs(array $data) : LengthAwarePaginator
+    {
+        $conversionLogs = $this->trafficLogRepository->paginateConversionLogs($data);
+
+        Log::info('[ConversionLogs][MCP] Service 조회 완료', [
+            'user_idx' => Auth::id(),
+            'parameters' => $data,
+            'pagination' => [
+                'current_page' => $conversionLogs->currentPage(),
+                'per_page' => $conversionLogs->perPage(),
+                'total' => $conversionLogs->total(),
+                'last_page' => $conversionLogs->lastPage(),
+            ],
+            'count' => $conversionLogs->count(),
+        ]);
+
+        return $conversionLogs;
+    }
 }

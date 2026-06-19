@@ -92,6 +92,11 @@ class Note extends Base
         return $this->hasMany(BotAccessLog::class, 'access_page', 'access_page');
     }
 
+    public function conversionLogs() : HasMany
+    {
+        return $this->hasMany(ConversionLog::class, 'access_page', 'access_page');
+    }
+
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(
