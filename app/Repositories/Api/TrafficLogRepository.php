@@ -269,16 +269,61 @@ class TrafficLogRepository
         $perPage = $data['per_page'] ?? 20;
 
         $dailyPageStats = DailyPageStat::query()
-                ->select(
-                    'stat_date',
-                    'access_page',
-                    'device_type',
-                    'total_access_count',
-                    'real_access_count',
-                    'conversion_count'
-                )
-                ->orderby('create_datetime', 'desc')
-                ->paginate($perPage);
+            ->with([
+                'note:idx,access_page,group_idx,categories_idx,topic_idx,subject,content,thumbnail_path,use_flag',
+                'note.group:idx,code,name',
+                'note.category:idx,group_idx,code,name,use_flag',
+                'note.topic:idx,categories_idx,name,memo,use_flag'
+            ])
+            ->select(
+                'stat_date',
+                'access_page',
+                'device_type',
+                'total_access_count',
+                'real_access_count',
+                'conversion_count'
+            )
+            ->when(!empty($data['device_types']), function ($query) use ($data) {
+                $query->whereIn('device_type', $data['device_types']);
+            })
+            ->when(!empty($data['stat_date']), function($query) use ($data) {
+                $query->where('stat_date', $data['stat_date']);
+            })
+            ->when(!empty($data['start_date']), function($query) use ($data) {
+                $query->whereDate('stat_date', '>=', $data['start_date']);
+            })
+            ->when(!empty($data['end_date']), function($query) use ($data) {
+                $query->whereDate('stat_date', '<=', $data['end_date']);
+            })
+            ->when(isset($data['has_note']), function ($query) use ($data) {
+                if ($data['has_note'] === true) {
+                    $query->whereHas('note', function($q) use ($data) {
+                        $q->whereNotNull('idx')
+                            ->where('use_flag', 1);
+                    });
+                } else {
+                    $query->whereDoesntHave('note');
+                }
+            })
+            ->when(!empty($data['group_code']), function($query) use ($data) {
+                $query->whereHas('note.group', function($q) use ($data) {
+                    $q->where('code', $data['group_code']);
+                });
+            })
+            ->when(!empty($data['categories_code']), function($query) use ($data) {
+                $query->whereHas('note.category', function($q) use ($data) {
+                    $q->where('code', $data['categories_code'])
+                    ->where('use_flag', 1);
+                });
+            })
+            ->when(!empty($data['topic_code']), function($query) use ($data) {
+                $query->whereHas('note.topic', function($q) use ($data) {
+                $q->where('name', $data['topic_code'])
+                    ->where('use_flag', 1); 
+                });
+            })
+            ->orderby('create_datetime', 'desc')
+            ->paginate($perPage);
             
         return $dailyPageStats;
     }

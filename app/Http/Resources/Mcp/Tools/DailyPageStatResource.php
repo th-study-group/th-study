@@ -17,6 +17,16 @@ class DailyPageStatResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'stat_date' => $this->stat_date,
+            'subject' => $this->note?->subject ?? '-',
+            'group_name' => $this->note?->group?->name ?? '-',
+            'categories_name' => $this->note?->category?->name ?? '-',
+            'topic_name' => $this->note?->topic?->name ?? '-',
+            'device_type' => $this->device_type,
+            'total_access_count' => $this->total_access_count,
+            'total_real_count' => $this->real_access_count,
+            'total_conversion_count' => $this->conversion_count,
+        ];
     }
 }
