@@ -18,7 +18,7 @@ class DailyPageStatResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'stat_date' => $this->stat_date,
+            'stat_date' => $this->stat_date?->format('Y-m-d'),
             'subject' => $this->note?->subject ?? '-',
             'group_name' => $this->note?->group?->name ?? '-',
             'categories_name' => $this->note?->category?->name ?? '-',
