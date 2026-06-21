@@ -2,6 +2,17 @@
 
 @section('title', '블로그 목록')
 
+@section('style')
+  <style>
+    .blog-detail-adfit {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+  </style>
+@endsection
+
 @push('styles')
   <link href="{{ asset('css/blog.css') }}?v={{ filemtime(public_path('css/blog.css')) }}" rel="stylesheet" />
 @endpush
@@ -177,6 +188,14 @@
         <div class="blog-detail-visibility">
           <span id="blogDetailVisibility" class="blog-detail-visibility-badge"></span>
         </div>
+
+        <div class="blog-detail-adfit text-center my-3">
+          <x-adfit
+            :unit="config('adfit.common.square.unit')"
+            :width="config('adfit.common.square.width')"
+            :height="config('adfit.common.square.height')" />
+        </div>
+
         <div id="blogDetailContent" class="blog-detail-content"></div>
         <section id="blogDetailRelatedWrap" class="blog-detail-related" aria-label="관련 글 목록">
           <h3 id="blogDetailRelatedTitle" class="blog-detail-related-title"></h3>

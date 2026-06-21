@@ -830,9 +830,26 @@ function fetchBlogDetail(state, detailUrl) {
     onSuccess: function (res) {
       applyBlogDetailState(state, res || {});
       openBlogDetailModal(state);
+      setTimeout(function() {
+        reloadAdfit();
+    }, 100);
     },
     onError: function () {
       alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
     },
   });
+}
+
+function reloadAdfit() {
+  document
+    .querySelectorAll('script[src*="kakaocdn.net/kas/static/ba.min.js"]')
+    .forEach(function(el) {
+      el.remove();
+    });
+
+  var script = document.createElement('script');
+  script.src = '//t1.kakaocdn.net/kas/static/ba.min.js';
+  script.async = true;
+
+  document.body.appendChild(script);
 }

@@ -46,7 +46,6 @@
           :height="config('adfit.mobile.rectangle.height')" />
       </div>
 
-
       <article class="blog-show-content">{!! $contentHtml !!}</article>
 
       <section class="blog-show-related" aria-label="관련 글 목록">
