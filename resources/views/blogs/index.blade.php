@@ -105,7 +105,6 @@
           </div>
         </form>
 
-
         <div class="blog-refresh-guide" aria-live="polite">
           <div class="blog-refresh-guide-main">
             <button type="button" id="btn_refresh_top" class="blog-refresh-btn" title="새로고침" aria-label="새로고침">
@@ -120,6 +119,20 @@
             마지막 갱신
             <time id="blogRefreshTime" datetime="">방금 전</time>
           </p>
+        </div>
+
+        <div class="text-center my-3 d-none d-md-block">
+          <x-adfit
+            :unit="config('adfit.pc.rectangle.unit')"
+            :width="config('adfit.pc.rectangle.width')"
+            :height="config('adfit.pc.rectangle.height')" />
+        </div>
+
+        <div class="text-center my-3 d-block d-md-none">
+          <x-adfit
+            :unit="config('adfit.mobile.rectangle.unit')"
+            :width="config('adfit.mobile.rectangle.width')"
+            :height="config('adfit.mobile.rectangle.height')" />
         </div>
 
         <p class="blog-list-total" id="blog_list_total">총 0건</p>
@@ -226,7 +239,9 @@
 
 @push('scripts')
   <script src="{{ asset('js/blog.js') }}?v={{ filemtime(public_path('js/blog.js')) }}" defer></script>  
+  <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script> 
 @endpush
+
 
 @section('script')
   <script>
