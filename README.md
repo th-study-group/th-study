@@ -14,6 +14,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - 문의 게시판(사용자 등록/조회, 관리자 상태 관리)
 - 비로그인 게스트 문의 접수 및 관리자 처리
 - 댓글(일반 게시글 및 운영 답변 흐름)
+- 카카오 애드핏 광고 컴포넌트 운영(PC/모바일/슬림/정사각형 분리)
 - 메일 발송/수신 로그, 로그인 로그, 게시글 히스토리 로그
 - 내부 유입 로그, 전환 로그, 일별 페이지 통계 집계
 
@@ -165,6 +166,15 @@ uvicorn main:app --reload
 외부 에셋/아이콘 출처:
 - Unsplash: `https://unsplash.com/ko`
 - Devicon: `https://devicon.dev/`
+
+### 카카오 애드핏 운영 메모
+
+- 광고 단위 설정은 `config/adfit.php`에서 관리하며, 현재 `pc.rectangle`, `pc.slim`, `mobile.rectangle`, `mobile.slim`, `common.square`를 분리해 사용합니다.
+- 공통 광고 마크업은 `resources/views/components/adfit.blade.php`의 `<x-adfit>` 컴포넌트로 통일했습니다.
+- 카카오 스크립트는 페이지별 중복 삽입 대신 `resources/views/partials/head-scripts.blade.php`에서 전역 로드합니다.
+- 적용 위치는 블로그 목록/상세, 메인, 소개, 공지 목록/상세, 포트폴리오입니다.
+- 블로그 목록 모달처럼 동적으로 열리는 화면은 `reloadAdfit()`으로 스크립트를 재호출해 광고를 다시 그립니다.
+- 구현/운영 문서는 `document/카카왜드핏 적용방법.md`에 정리했습니다.
 
 ## 2.2 MCP 연동 메모
 

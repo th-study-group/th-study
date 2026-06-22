@@ -33,6 +33,7 @@
             <li>도메인: 가비아 등록 후 Cloudflare 네임서버/DNS/Email Routing 운영</li>
             <li>검증: 로컬 환경 및 Docker Compose 이용하여 테스트</li>
             <li>백업: <code style="color:#fff;">/backup/mysql</code> + <code style="color:#fff;">/backup/laravel_files</code> 14일 보관</li>
+            <li>수익화: 카카오 애드핏 광고 단위를 PC/모바일/슬림/정사각형으로 분리 운영</li>
             <li>학습 확장: Python 3 + FastAPI 로컬 API 기초 정리</li>
             <li>분석: 유입 로그, 전환 로그, 일별 통계 집계 구조 구현</li>
             <li>MongoDB: 비정형 데이터 및 Raw 데이터 정리 방향 문서화</li>
@@ -429,6 +430,11 @@
               <td><code>public/ads.txt</code></td>
             </tr>
             <tr>
+              <td class="fw-bold">카카오 애드핏 운영</td>
+              <td><code>config/adfit.php</code>에서 광고 단위를 분리하고 <code>&lt;x-adfit&gt;</code> 공통 컴포넌트로 블로그, 메인, 소개, 공지, 포트폴리오에 같은 기준으로 적용. 동적 화면은 광고 스크립트를 재호출해 노출 안정성을 맞춤</td>
+              <td><code>config/adfit.php</code>, <code>resources/views/components/adfit.blade.php</code>, <code>resources/views/partials/head-scripts.blade.php</code></td>
+            </tr>
+            <tr>
               <td class="fw-bold">내부 유입 구조</td>
               <td>외부 유입 점검(네이버/구글)과 별도로 내부 유입 원천은 사용자/봇 raw 로그로 분리 저장하고, 전환 raw 로그는 <code>conversion_logs</code>로 별도 저장. 블로그 외부 링크는 <code>/outbound</code> 경유로 전환을 기록하며, 일 집계는 페이지/디바이스 기준으로 <code>conversion_count</code>까지 누적. <code>admin</code> 계정은 공통 가드로 유입/전환 수집에서 제외</td>
               <td><code>app/Http/Middleware/TrackAccessLog.php</code>, <code>app/Services/TrafficAnalyticsService.php</code>, <code>app/Support/TrafficTrackingGuard.php</code>, <code>app/Repositories/TrafficLogRepository.php</code>, <code>app/Repositories/TrafficStatRepository.php</code></td>
@@ -442,6 +448,7 @@
           <li><code>APP_URL</code>이 sitemap/robots 절대 URL의 기준이므로 운영 도메인 값이 정확해야 함</li>
           <li>새 공개 페이지를 만들면 라우트 추가만으로 끝내지 않고 <code>config/sitemap.php</code>와 robots 정책도 함께 검토</li>
           <li>검색 유입 관리는 Google 색인만 보지 않고 네이버 서치어드바이저 수집 상태도 함께 확인</li>
+          <li>광고 운영은 <code>config/adfit.php</code> 단위 구성과 <code>&lt;x-adfit&gt;</code> 컴포넌트 기준으로 통일하고, 공통 스크립트는 head에서 한 번만 로드</li>
           <li>내부 유입 데이터는 <code>access_logs/bot_access_logs</code> raw, 전환 데이터는 <code>conversion_logs</code> raw로 분리하고, 집계는 <code>daily_page_stats(conversion_count 포함)</code>를 기준으로 조회/확장(월/연 단위)</li>
           <li><code>user.level=admin</code>은 <code>TrafficTrackingGuard</code> 기준으로 유입/전환 로그를 모두 스킵</li>
           <li>로그 정리(<code>logs:cleanup</code>)는 매일 실행하며 초기 운영 단계 분석을 위해 <code>access_logs</code> 365일, <code>bot_access_logs</code> 365일, <code>conversion_logs</code> 500일 기준으로 보관 후 삭제</li>
