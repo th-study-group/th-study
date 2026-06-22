@@ -625,6 +625,21 @@
                     <div class="map-placeholder">Map Area</div>
                 </div>
             </div>
+
+            <div class="text-center my-3 d-block d-md-none">
+                <x-adfit
+                    :unit="config('adfit.mobile.rectangle.unit')"
+                    :width="config('adfit.mobile.rectangle.width')"
+                    :height="config('adfit.mobile.rectangle.height')" />
+            </div>
+
+            <div class="text-center my-3 d-none d-md-block">
+                <x-adfit
+                    :unit="config('adfit.pc.rectangle.unit')"
+                    :width="config('adfit.pc.rectangle.width')"
+                    :height="config('adfit.pc.rectangle.height')" />
+            </div>
+
         </section>
 
           <div class="modal fade" id="contactConfirmModal" tabindex="-1" aria-hidden="true">
@@ -983,5 +998,4 @@
 
 @push('scripts')
     <script src="{{ asset('js/intro/home.js') }}?v={{ filemtime(public_path('js/intro/home.js')) }}"></script>
-    <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script> 
 @endpush

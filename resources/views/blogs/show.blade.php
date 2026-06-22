@@ -96,7 +96,6 @@
 
 @push('scripts')
   <script src="{{ asset('js/blog.js') }}?v={{ filemtime(public_path('js/blog.js')) }}" defer></script>  
-  <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
 @endpush
 
 @section('script')

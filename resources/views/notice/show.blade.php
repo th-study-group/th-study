@@ -21,6 +21,23 @@
                     <span class="form-label small text-secondary d-block mb-1">작성자</span>
                     <div class="board-field bg-light rounded-3 px-3 py-2">{{ $post->user?->nick_name ?? $post->user?->name ?? '-' }}</div>
                 </div>
+
+                {{-- 카카오 애드핏 --}}
+                <div class="text-center my-3 d-block d-md-none">
+                    <x-adfit
+                        :unit="config('adfit.mobile.slim.unit')"
+                        :width="config('adfit.mobile.slim.width')"
+                        :height="config('adfit.mobile.slim.height')" />
+                </div>
+
+                <div class="text-center my-3 d-none d-md-block">
+                    <x-adfit
+                        :unit="config('adfit.pc.slim.unit')"
+                        :width="config('adfit.pc.slim.width')"
+                        :height="config('adfit.pc.slim.height')" />
+                </div>
+                {{-- 카카오 애드핏 --}}
+
                 <div class="mb-3">
                     <span class="form-label small text-secondary d-block mb-1">내용</span>
                     <div class="board-field board-content bg-light rounded-3 px-3 py-2" style="min-height: 240px; max-height: 420px; overflow: auto; scrollbar-width: none; -ms-overflow-style: none;">

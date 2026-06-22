@@ -9,3 +9,5 @@
 <script src="https://uicdn.toast.com/editor/3.2.2/i18n/ko-kr.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>

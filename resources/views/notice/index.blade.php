@@ -12,7 +12,20 @@
                         <p class="text-secondary small mb-0 board-ellipsis-mobile">{{ config('app.name') }} 공지사항 전달해드려요</p>
                     </div>
                 </div>
+            </div>
 
+            <div class="text-center my-3 d-block d-md-none">
+                <x-adfit
+                    :unit="config('adfit.mobile.rectangle.unit')"
+                    :width="config('adfit.mobile.rectangle.width')"
+                    :height="config('adfit.mobile.rectangle.height')" />
+            </div>
+
+            <div class="text-center my-3 d-none d-md-block">
+                <x-adfit
+                    :unit="config('adfit.pc.rectangle.unit')"
+                    :width="config('adfit.pc.rectangle.width')"
+                    :height="config('adfit.pc.rectangle.height')" />
             </div>
 
             <div class="board-table-wrap mt-3">

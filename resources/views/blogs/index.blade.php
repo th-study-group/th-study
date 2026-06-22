@@ -258,7 +258,6 @@
 
 @push('scripts')
   <script src="{{ asset('js/blog.js') }}?v={{ filemtime(public_path('js/blog.js')) }}" defer></script>  
-  <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script> 
 @endpush
 
 
@@ -688,10 +687,15 @@
 
       $("#btn_search_reset").on("click", function() {
         syncSearchTypeUi('title');
+        state.selectedCategoryCode = '';
         state.selectedTopicValue = '';
+        state.pendingCategoryCode = '';
+        state.pendingTopicValue = '';
+        state.searchKeyword = '';
         $("#topic_filter").val("");
         $("#search_keyword").val("");
         updateFilterSummary();
+        window.location.href = buildCategoryUrl('', '');
       });
 
       $("#search_keyword").on("keydown", function(e) {

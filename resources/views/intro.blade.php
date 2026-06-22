@@ -62,6 +62,21 @@
         <div class="note reveal delay-3">
           스크롤 또는 우측 점 메뉴로 섹션을 이동할 수 있습니다.
         </div>
+
+        <div class="text-center my-3 d-block d-md-none">
+          <x-adfit
+            :unit="config('adfit.mobile.slim.unit')"
+            :width="config('adfit.mobile.slim.width')"
+            :height="config('adfit.mobile.slim.height')" />
+        </div>
+
+        <div class="text-center my-3 d-none d-md-block">
+          <x-adfit
+            :unit="config('adfit.pc.slim.unit')"
+            :width="config('adfit.pc.slim.width')"
+            :height="config('adfit.pc.slim.height')" />
+        </div>
+
       </div>
     </section>
 
