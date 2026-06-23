@@ -49,21 +49,6 @@
   </div>
 </header>
 
-<div class="text-center my-3 d-block d-md-none">
-  <x-adfit
-      :unit="config('adfit.mobile.slim.unit')"
-      :width="config('adfit.mobile.slim.width')"
-      :height="config('adfit.mobile.slim.height')" />
-</div>
-
-<div class="text-center my-3 d-none d-md-block">
-  <x-adfit
-    :unit="config('adfit.pc.slim.unit')"
-    :width="config('adfit.pc.slim.width')"
-    :height="config('adfit.pc.slim.height')" />
-</div>
-
-
 <section class="section">
   <div class="container">
     <div class="row g-4">
@@ -98,6 +83,13 @@
 </section>
 
 <section id="overview" class="section bg-light">
+  <div class="container text-center">
+      <x-adfit
+          :unit="config('adfit.common.square.unit')"
+          :width="config('adfit.common.square.width')"
+          :height="config('adfit.common.square.height')" 
+      />
+  </div>
   <div class="container">
     <h2 class="h2x mb-3">1. 개요</h2>
     <div class="box pad">
@@ -122,6 +114,20 @@
     <h2 class="h2x mb-3">2. 버전</h2>
     <div class="box pad">
       <div class="table-responsive">
+        <div class="text-center my-3 d-block d-md-none">
+          <x-adfit
+              :unit="config('adfit.mobile.slim.unit')"
+              :width="config('adfit.mobile.slim.width')"
+              :height="config('adfit.mobile.slim.height')" />
+        </div>
+
+        <div class="text-center my-3 d-none d-md-block">
+          <x-adfit
+            :unit="config('adfit.pc.slim.unit')"
+            :width="config('adfit.pc.slim.width')"
+            :height="config('adfit.pc.slim.height')" />
+        </div>
+
         <table class="table table-bordered align-middle mb-0">
           <thead><tr><th style="width:28%">항목</th><th>버전</th></tr></thead>
           <tbody>
