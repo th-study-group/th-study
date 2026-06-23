@@ -53,6 +53,13 @@
   <div class="container">
     <div class="row g-4">
       <div class="col-lg-4">
+        <div class="container text-center">
+          <x-adfit
+              :unit="config('adfit.common.square.unit')"
+              :width="config('adfit.common.square.width')"
+              :height="config('adfit.common.square.height')" 
+          />
+        </div>
         <h2 class="h2x mb-3">목차</h2>
         <p class="leadx mb-0">표, 흐름도, 운영 문서, README 원문까지 포함</p>
       </div>
@@ -83,13 +90,6 @@
 </section>
 
 <section id="overview" class="section bg-light">
-  <div class="container text-center">
-      <x-adfit
-          :unit="config('adfit.common.square.unit')"
-          :width="config('adfit.common.square.width')"
-          :height="config('adfit.common.square.height')" 
-      />
-  </div>
   <div class="container">
     <h2 class="h2x mb-3">1. 개요</h2>
     <div class="box pad">
