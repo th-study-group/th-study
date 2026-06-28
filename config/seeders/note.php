@@ -24,9 +24,7 @@ return [
     ],
 
     'topics' => [
-        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '라라벨 기초', 'memo' => '라라벨 기초 정보 정리해요'],
-        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '라라벨 개발환경 구성', 'memo' => '실전에 필요한 라라벨 웹 환경 설치방법 정리해요'],
-        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '라라벨 데이터베이스', 'memo' => '실전에 필요한 라벨 ORM, 쿼리빌더, 디비조작 방법 정리해요.'],
+        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '라라벨', 'memo' => '라라벨 정보 정리해요'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'AI MCP', 'memo' => 'AI MCP 개발'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '바이브코딩', 'memo' => 'AI 바이브코딩 정보 정리해요.'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'PHP', 'memo' => 'PHP 개발'],
