@@ -132,11 +132,13 @@
 
             initBirthDatePicker('#search_start_date', {
                 defaultDate: oneYearAgo,
-                maxDate: today
+                maxDate: today,
+                mobileSelectHeader: true
             });
             initBirthDatePicker('#search_end_date', {
                 defaultDate: today,
-                maxDate: today
+                maxDate: today,
+                mobileSelectHeader: true
             });
 
             $('.inquiry-row').on('click', function(e){

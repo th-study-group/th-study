@@ -38,11 +38,11 @@
                             <div class="row g-2 g-md-3">
                                 <div class="col-12 col-md-4">
                                     <label for="search_date" class="form-label small text-secondary mb-1">날짜</label>
-                                    <input type="date"
+                                    <input type="text"
                                            id="search_date"
                                            name="search_date"
                                            required
-                                           max="{{ now()->toDateString() }}"
+                                           placeholder="1990-01-01"
                                            class="form-control form-control-sm"
                                            value="{{ old('search_date', $filters['search_date'] ?? now()->toDateString()) }}">
                                 </div>
@@ -192,6 +192,12 @@
 @section('script')
     <script>
         $(function(){
+            initBirthDatePicker('#search_date', {
+                defaultDate: new Date(),
+                maxDate: new Date(),
+                mobileSelectHeader: true
+            });
+
             $(window).on('resize', function(){
                 updateEmptyRowColspan('#traffic_table', '#empty_row_cell');
             });

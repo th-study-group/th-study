@@ -214,7 +214,9 @@
 @section('script')
     <script>
         $(function() {
-            initBirthDatePicker('#birth_date');
+            initBirthDatePicker('#birth_date', {
+                mobileSelectHeader: true
+            });
 
             $("#btn_account_edit").on("click", function() {
                 if ($.trim($('#name').val()) === '') {

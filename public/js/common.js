@@ -368,6 +368,77 @@ function updateEmptyRowColspan(tableSelector, cellSelector)
     }
 }
 
+function isBirthDatePickerMobileView()
+{
+    return window.matchMedia('(max-width: 767.98px)').matches;
+}
+
+function syncBirthDatePickerSelects(instance)
+{
+    if (!instance || !instance.birthDatePickerMonthSelect || !instance.birthDatePickerYearSelect) {
+        return;
+    }
+
+    instance.birthDatePickerYearSelect.value = String(instance.currentYear);
+    instance.birthDatePickerMonthSelect.value = String(instance.currentMonth);
+}
+
+function mountBirthDatePickerMobileHeader(instance, minYear, maxYear)
+{
+    if (!instance || !instance.calendarContainer || instance.birthDatePickerMobileHeaderMounted) {
+        return;
+    }
+
+    const currentMonthWrap = instance.calendarContainer.querySelector('.flatpickr-current-month');
+    if (!currentMonthWrap) {
+        return;
+    }
+
+    const yearSelect = document.createElement('select');
+    yearSelect.className = 'form-select form-select-sm birth-date-picker-select';
+    yearSelect.setAttribute('aria-label', 'birth year');
+
+    for (let year = maxYear; year >= minYear; year -= 1) {
+        const option = document.createElement('option');
+        option.value = String(year);
+        option.textContent = `${year}\uB144`;
+        yearSelect.appendChild(option);
+    }
+
+    const monthSelect = document.createElement('select');
+    monthSelect.className = 'form-select form-select-sm birth-date-picker-select';
+    monthSelect.setAttribute('aria-label', 'birth month');
+
+    for (let month = 0; month < 12; month += 1) {
+        const option = document.createElement('option');
+        option.value = String(month);
+        option.textContent = `${month + 1}\uC6D4`;
+        monthSelect.appendChild(option);
+    }
+
+    yearSelect.addEventListener('change', function () {
+        instance.changeYear(Number(yearSelect.value));
+    });
+
+    monthSelect.addEventListener('change', function () {
+        instance.changeMonth(Number(monthSelect.value) - instance.currentMonth);
+    });
+
+    const mobileHeader = document.createElement('div');
+    mobileHeader.className = 'birth-date-picker-mobile-header';
+    mobileHeader.appendChild(yearSelect);
+    mobileHeader.appendChild(monthSelect);
+
+    instance.calendarContainer.classList.add('birth-date-picker-mobile');
+    currentMonthWrap.insertAdjacentElement('afterend', mobileHeader);
+
+    instance.birthDatePickerYearSelect = yearSelect;
+    instance.birthDatePickerMonthSelect = monthSelect;
+    instance.birthDatePickerMobileHeaderMounted = true;
+
+    syncBirthDatePickerSelects(instance);
+}
+
 function initBirthDatePicker(selector, options = {}) 
 {
     const input = document.querySelector(selector);
@@ -378,14 +449,20 @@ function initBirthDatePicker(selector, options = {})
       return `${year}-${month}-${day}`;
     };
 
+    const enableMobileSelectHeader = options.mobileSelectHeader === true;
+    const isMobileView = enableMobileSelectHeader && isBirthDatePickerMobileView();
+    const optionOverrides = { ...options };
+    delete optionOverrides.mobileSelectHeader;
+
     const baseOptions = {
       dateFormat: 'Y-m-d',
       minDate: '1950-01-01',
       maxDate: 'today',
       defaultDate: '1990-01-01',
-      showMonths: 3,
+      showMonths: isMobileView ? 1 : 3,
       disableMobile: true,
-      ...options
+      position: 'below',
+      ...optionOverrides
     };
 
     if (baseOptions.minDate instanceof Date) {
@@ -402,6 +479,51 @@ function initBirthDatePicker(selector, options = {})
 
     if (input && input.value) {
       baseOptions.defaultDate = input.value;
+    }
+
+    const minYear = Number(String(baseOptions.minDate).slice(0, 4)) || 1950;
+    const maxYear = baseOptions.maxDate === 'today'
+        ? new Date().getFullYear()
+        : Number(String(baseOptions.maxDate).slice(0, 4)) || new Date().getFullYear();
+
+    if (isMobileView) {
+        const originalOnReady = baseOptions.onReady;
+        const originalOnMonthChange = baseOptions.onMonthChange;
+        const originalOnYearChange = baseOptions.onYearChange;
+        const originalOnOpen = baseOptions.onOpen;
+
+        baseOptions.onReady = function (selectedDates, dateStr, instance) {
+            mountBirthDatePickerMobileHeader(instance, minYear, maxYear);
+            syncBirthDatePickerSelects(instance);
+
+            if (typeof originalOnReady === 'function') {
+                originalOnReady(selectedDates, dateStr, instance);
+            }
+        };
+
+        baseOptions.onMonthChange = function (selectedDates, dateStr, instance) {
+            syncBirthDatePickerSelects(instance);
+
+            if (typeof originalOnMonthChange === 'function') {
+                originalOnMonthChange(selectedDates, dateStr, instance);
+            }
+        };
+
+        baseOptions.onYearChange = function (selectedDates, dateStr, instance) {
+            syncBirthDatePickerSelects(instance);
+
+            if (typeof originalOnYearChange === 'function') {
+                originalOnYearChange(selectedDates, dateStr, instance);
+            }
+        };
+
+        baseOptions.onOpen = function (selectedDates, dateStr, instance) {
+            syncBirthDatePickerSelects(instance);
+
+            if (typeof originalOnOpen === 'function') {
+                originalOnOpen(selectedDates, dateStr, instance);
+            }
+        };
     }
 
     return flatpickr(selector, baseOptions);

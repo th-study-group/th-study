@@ -187,3 +187,48 @@ a[href^="x-apple-data-detectors://"] {
     color: inherit !important;
     text-decoration: none !important;
 }
+
+@media (max-width: 767.98px) {
+    .flatpickr-calendar.birth-date-picker-mobile {
+        width: min(320px, calc(100vw - 24px));
+    }
+
+    .flatpickr-calendar.birth-date-picker-mobile .flatpickr-months .flatpickr-month {
+        height: auto;
+    }
+
+    .flatpickr-calendar.birth-date-picker-mobile .flatpickr-current-month {
+        display: none;
+    }
+
+    .birth-date-picker-mobile-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 2rem 0.25rem;
+    }
+
+    .birth-date-picker-mobile-header .birth-date-picker-select {
+        min-width: 0;
+        height: 2rem;
+        padding-top: 0.125rem;
+        padding-bottom: 0.125rem;
+        font-size: 0.875rem;
+    }
+
+    .birth-date-picker-mobile-header .birth-date-picker-select:first-child {
+        flex: 1 1 55%;
+    }
+
+    .birth-date-picker-mobile-header .birth-date-picker-select:last-child {
+        flex: 1 1 45%;
+    }
+
+    .flatpickr-calendar.birth-date-picker-mobile .dayContainer,
+    .flatpickr-calendar.birth-date-picker-mobile .flatpickr-days,
+    .flatpickr-calendar.birth-date-picker-mobile .daysContainer {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+}

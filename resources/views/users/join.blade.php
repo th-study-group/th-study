@@ -227,7 +227,9 @@
 @section('script')
     <script>
         $(function() {
-            initBirthDatePicker('#birth_date');
+            initBirthDatePicker('#birth_date', {
+                mobileSelectHeader: true
+            });
 
             $("#btn_join_completed").on("click", function() {
                 if ($.trim($('#email').val()) === '') {
