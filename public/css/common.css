@@ -190,7 +190,7 @@ a[href^="x-apple-data-detectors://"] {
 
 @media (max-width: 767.98px) {
     .flatpickr-calendar.birth-date-picker-mobile {
-        width: min(320px, calc(100vw - 24px));
+        width: min(340px, calc(100vw - 24px));
     }
 
     .flatpickr-calendar.birth-date-picker-mobile .flatpickr-months .flatpickr-month {
@@ -225,10 +225,19 @@ a[href^="x-apple-data-detectors://"] {
     }
 
     .flatpickr-calendar.birth-date-picker-mobile .dayContainer,
+    .flatpickr-calendar.birth-date-picker-mobile .flatpickr-rContainer,
+    .flatpickr-calendar.birth-date-picker-mobile .flatpickr-weekdays,
     .flatpickr-calendar.birth-date-picker-mobile .flatpickr-days,
     .flatpickr-calendar.birth-date-picker-mobile .daysContainer {
         width: 100%;
         min-width: 100%;
         max-width: 100%;
+    }
+
+    .flatpickr-calendar.birth-date-picker-mobile .flatpickr-weekday,
+    .flatpickr-calendar.birth-date-picker-mobile .flatpickr-day {
+        width: calc(100% / 7);
+        max-width: calc(100% / 7);
+        flex-basis: calc(100% / 7);
     }
 }
