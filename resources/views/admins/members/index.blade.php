@@ -134,7 +134,7 @@
                                 <td class="text-nowrap">{{ $member->name }}</td>
                                 <td class="text-nowrap">{{ $member->nick_name }}</td>
                                 <td class="text-nowrap text-start">{{ $member->email }}</td>
-                                <td class="text-nowrap">{{ $member->birth_date ?? '-' }}</td>
+                                <td class="text-nowrap">{{ $member->birth_date?->format('Y-m-d') ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $sexList[$member->sex ?? ''] ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $terms[(int) $member->getRawOriginal('marketing_info_agree')] ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $gradeList[$member->level ?? ''] ?? '-' }}</td>
