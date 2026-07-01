@@ -276,7 +276,7 @@
           },
           "topic_code": {
             "type": "string",
-            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code와 함께 사용해야 합니다. 예: react"
+            "description": "실제로는 topic_name(주제명)을 입력합니다. group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: 라라벨"
           },
           "create_user_idx": {
             "type": "integer",
@@ -378,7 +378,7 @@
           },
           "topic_code": {
             "type": "string",
-            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: react"
+            "description": "실제로는 topic_name(주제명)을 입력합니다. group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: 라라벨"
           },
           "subject": {
             "type": "string",
@@ -478,7 +478,7 @@
           },
           "topic_code": {
             "type": "string",
-            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code와 함께 사용해야 합니다. 예: react"
+            "description": "실제로는 topic_name(주제명)을 입력합니다. group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: 라라벨"
           },
           "tag": {
             "type": "string",
@@ -748,7 +748,7 @@
           },
           "topic_code": {
             "type": "string",
-            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code를 함께 사용해야 합니다. 예: laravel topic_code는 note_topic_search API를 통해 확인할 수 있습니다."
+            "description": "실제로는 topic_name(주제명)을 입력합니다. group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: 라라벨"
           },
           "note_idx": {
             "type": "integer",
@@ -910,7 +910,7 @@
           },
           "topic_code": {
             "type": "string",
-            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code를 함께 사용해야 합니다. 예: laravel topic_code는 note_topic_search API를 통해 확인할 수 있습니다."
+            "description": "실제로는 topic_name(주제명)을 입력합니다. group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: 라라벨"
           },
           "page": {
             "type": "integer",
@@ -1072,7 +1072,7 @@
           },
           "topic_code": {
             "type": "string",
-            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code를 함께 사용해야 합니다. 노트 주제 기준으로 전환 로그를 조회할 때 사용합니다. 예: laravel topic_code는 note_topic_search API를 통해 확인할 수 있습니다."
+            "description": "실제로는 topic_name(주제명)을 입력합니다. group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: 라라벨"
           },
           "note_idx": {
             "type": "integer",
@@ -1235,7 +1235,7 @@
           },
           "topic_code": {
             "type": "string",
-            "description": "주제 코드 정확히 일치 검색(=). group_code와 categories_code를 함께 사용해야 합니다. topic_code는 note_topic_search API를 통해 확인할 수 있습니다. 예: laravel"
+            "description": "실제로는 topic_name(주제명)을 입력합니다. group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: 라라벨"
           },
           "has_note": {
             "type": "boolean",
