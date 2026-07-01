@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mcp;
 use App\Http\Controllers\Controller;
 use App\Services\Mcp\ToolRunner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -31,7 +32,7 @@ class McpApiController extends Controller
         Log::channel('mcp')->info('MCP API request entered', [
             'method' => $method,
             'jsonrpc_id' => $id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
         ]);
 
         switch ($method) {
@@ -47,10 +48,31 @@ class McpApiController extends Controller
                         ],
                         'capabilities' => [
                             'tools' => new \stdClass(),
+                            'resources' => new \stdClass(),
+                            'prompts' => new \stdClass(),
                         ],
                     ],
                 ]);
+            case 'notifications/initialized':
+                return response()->json(null, 204);
 
+            case 'resources/list':
+                return response()->json([
+                    'jsonrpc' => '2.0',
+                    'id' => $id,
+                    'result' => [
+                        'resources' => [],
+                    ],
+                ]);
+
+            case 'prompts/list':
+                return response()->json([
+                    'jsonrpc' => '2.0',
+                    'id' => $id,
+                    'result' => [
+                        'prompts' => [],
+                    ],
+                ]);
             case 'tools/list':
                 $toolPath = config('mcp.tool_path');
 
