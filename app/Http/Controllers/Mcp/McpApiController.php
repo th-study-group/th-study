@@ -53,26 +53,6 @@ class McpApiController extends Controller
                         ],
                     ],
                 ]);
-            case 'notifications/initialized':
-                return response()->json(null, 204);
-
-            case 'resources/list':
-                return response()->json([
-                    'jsonrpc' => '2.0',
-                    'id' => $id,
-                    'result' => [
-                        'resources' => [],
-                    ],
-                ]);
-
-            case 'prompts/list':
-                return response()->json([
-                    'jsonrpc' => '2.0',
-                    'id' => $id,
-                    'result' => [
-                        'prompts' => [],
-                    ],
-                ]);
             case 'tools/list':
                 $toolPath = config('mcp.tool_path');
 
