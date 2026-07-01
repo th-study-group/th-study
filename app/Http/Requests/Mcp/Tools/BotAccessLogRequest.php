@@ -49,6 +49,7 @@ class BotAccessLogRequest extends FormRequest
             'access_date' => ['nullable', 'date'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+            'referer_host' => ['nullable', 'string', 'max:255'],
             'has_note' => ['nullable', 'boolean'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],

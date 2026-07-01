@@ -55,6 +55,9 @@ class TrafficLogRepository
             ->when(!empty($data['ip']), function ($query) use ($data) {
                 $query->where('ip', $data['ip']);
             })
+            ->when(!empty($data['referer_host']), function ($query) use ($data) {
+                $query->where('referer_host', 'like', "%{$data['referer_host']}%");
+            })
             ->when(!empty($data['access_date']), function($query) use ($data) {
                 $query->where('access_date', $data['access_date']);
             })
@@ -126,6 +129,9 @@ class TrafficLogRepository
             )
             ->when(!empty($data['bot_name']), function ($query) use ($data) {
                 $query->where('bot_name', $data['bot_name']);
+            })
+            ->when(!empty($data['referer_host']), function ($query) use ($data) {
+                $query->where('referer_host', 'like', "%{$data['referer_host']}%");
             })
             ->when(!empty($data['access_date']), function($query) use ($data) {
                 $query->where('access_date', $data['access_date']);
@@ -212,6 +218,9 @@ class TrafficLogRepository
             })
             ->when(!empty($data['ip']), function ($query) use ($data) {
                 $query->where('ip', $data['ip']);
+            })
+            ->when(!empty($data['referer_host']), function ($query) use ($data) {
+                $query->where('referer_host', 'like', "%{$data['referer_host']}%");
             })
             ->when(!empty($data['conversion_type']), function($query) use ($data) {
                 $query->where('conversion_type', $data['conversion_type']);

@@ -50,6 +50,7 @@ class ConversionLogRequest extends FormRequest
             'device_types' => ['nullable', 'array'],
             'device_types.*' => ['in:desktop,mobile,tablet'],
             'ip' => ['nullable', 'ip'],
+            'referer_host' => ['nullable', 'string', 'max:255'],
             'conversion_type' => ['nullable', 'string'],
             'conversion_date' => ['nullable', 'date'],
             'start_date' => ['nullable', 'date'],

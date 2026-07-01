@@ -49,6 +49,7 @@ class AccessLogRequest extends FormRequest
             'device_types' => ['nullable', 'array'],
             'device_types.*' => ['in:desktop,mobile,tablet'],
             'ip' => ['nullable', 'ip'],
+            'referer_host' => ['nullable', 'string', 'max:255'],
             'access_date' => ['nullable', 'date'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],

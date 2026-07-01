@@ -248,6 +248,7 @@ return [
             'user_idx' => '사용자정보',
             'bot_name' => '봇 명칭',
             'ip' => 'IP주소',
+            'referer_host' => '유입 도메인',
             'stat_date' => '집계일자(유입/전환통계)',
             'device_types' => '접속기기(데이터유형)',
             'device_types.*' => '접속기기(검색유형)'

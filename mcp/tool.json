@@ -734,6 +734,10 @@
             },
             "description": "접속기기 검색. tablet, desktop, mobile 중 하나 이상을 배열로 전달합니다. 예: [\"desktop\", \"mobile\"]"
           },
+          "referer_host": {
+            "type": "string",
+            "description": "유입 도메인 검색. 부분 검색(LIKE)을 지원합니다. 필수값은 아닙니다. 예: www.google.com, google.com, www.naver.com, search.naver.com, direct, www.th-study.com"
+          },
           "group_code": {
             "type": "string",
             "description": "그룹 코드 정확히 일치 검색(=). 예: blog group_code는 note_group_search API를 통해 확인할 수 있습니다."
@@ -887,6 +891,10 @@
             "type": "string",
             "format": "date",
             "description": "조회 종료일. 형식은 Y-m-d입니다. start_date보다 같거나 뒤 날짜여야 하며, 조회 기간은 최대 1개월입니다. 예: 2026-06-30"
+          },
+          "referer_host": {
+            "type": "string",
+            "description": "유입 도메인 검색. 부분 검색(LIKE)을 지원합니다. 필수값은 아닙니다. 예: www.google.com, google.com, www.naver.com, search.naver.com, direct, www.th-study.com"
           },
           "has_note": {
             "type": "boolean",
@@ -1049,6 +1057,10 @@
               ]
             },
             "description": "접속기기 검색. tablet, desktop, mobile 중 하나 이상을 배열로 전달합니다. 예: [\"desktop\", \"mobile\"]"
+          },
+          "referer_host": {
+            "type": "string",
+            "description": "유입 도메인 검색. 부분 검색(LIKE)을 지원합니다. 필수값은 아닙니다. 예: www.google.com, google.com, www.naver.com, search.naver.com, direct, www.th-study.com"
           },
           "group_code": {
             "type": "string",
