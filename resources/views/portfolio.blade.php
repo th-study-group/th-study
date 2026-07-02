@@ -975,6 +975,7 @@ sudo systemctl status th-study-queue</code></pre>
               <li><code>/mcp/oauth/authorize</code> 에서 MCP 로그인 화면 제공</li>
               <li><code>/api/mcp/oauth/token</code> 에서 authorization code / refresh token 교환 처리</li>
               <li>OpenAI Apps 심사 기준에 맞춰 OAuth pre-defined 등록과 <code>thstudy-chatgpt</code> client_id 구성</li>
+              <li>ChatGPT 반영 버전 <code>v1.0.0</code> 기준으로 MCP 심사 통과</li>
               <li><code>mcp_jwt</code> 가드와 전용 미들웨어로 MCP 보호 API 분리</li>
               <li><code>/.well-known/*</code> 메타데이터를 노출해 클라이언트가 인증 서버 정보를 찾도록 구성</li>
               <li><code>mcp/tool.json</code> 기반으로 <code>tools/list</code>, <code>tools/call</code>을 처리하고 tool별 <code>levels</code>로 허용 계정 레벨 관리</li>
@@ -1045,9 +1046,10 @@ sudo systemctl status th-study-queue</code></pre>
         </table>
       </div>
       <div class="p-3 border rounded-4 mt-4">
-        <div class="fw-bold mb-2">OpenAI Apps 심사 기준 핵심</div>
+        <div class="fw-bold mb-2">OpenAI Apps 심사 반영 핵심</div>
         <ul class="mb-0" style="margin-left:18px;">
-          <li>2026-06-14 기준 OpenAI Apps 심사 제출을 마쳤고 현재 상태는 <code>Review</code></li>
+          <li>OpenAI Apps MCP 심사를 통과했고 ChatGPT에 반영 완료되었습니다.</li>
+          <li>현재 공개 버전은 <code>v1.0.0</code> 입니다.</li>
           <li><code>/.well-known/openai-apps-challenge</code> 경로로 도메인 인증을 통과</li>
           <li>MCP는 TH-Study 내부 데이터만 조회하며 생성, 수정, 삭제, 결제, 외부 인터넷 호출을 하지 않음</li>
           <li>심사용 계정은 이메일 인증이 완료된 <code>normal</code> 권한 read-only 계정으로 분리</li>

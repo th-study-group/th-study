@@ -279,7 +279,8 @@ OpenAI Apps 심사 반영 핵심:
 - 등록 방식은 OAuth `Pre-defined` 기준이며 client id는 `thstudy-chatgpt`
 - MCP 서버 URL은 `https://www.th-study.com/api/mcp`, OAuth authorize URL은 `https://www.th-study.com/mcp/oauth/authorize`, token URL은 `https://www.th-study.com/api/mcp/oauth/token`
 - 모든 MCP tool은 `readOnlyHint=true`, `openWorldHint=false`, `destructiveHint=false` 정책으로 내부 데이터 조회만 허용
-- `/.well-known/openai-apps-challenge` 경로로 도메인 인증을 마쳤고, 2026-06-14 기준 OpenAI Apps 심사 상태는 `Review`
+- `/.well-known/openai-apps-challenge` 경로로 도메인 인증을 마쳤고, OpenAI Apps MCP 심사를 통과해 ChatGPT 쪽에 반영 완료
+- 현재 반영 버전은 `v1.0.0`
 - 심사용 계정은 이메일 인증이 완료된 read-only `normal` 계정으로 분리했고, 날씨/계산/일반 대화처럼 무관한 요청에는 MCP tool을 호출하지 않는 네거티브 테스트도 정리
 ## 3. 디렉터리 빠른 가이드
 
