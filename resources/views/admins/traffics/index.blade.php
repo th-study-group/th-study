@@ -101,36 +101,30 @@
                 <table id="traffic_table" class="table table-bordered table-hover align-middle mb-0 board-table board-table-break">
                     <colgroup>
                         <col style="width: 60px;">
-                        <col style="width: 180px;">
+                        <col style="width: 290px;">
                         <col style="width: 260px;">
-                        <col style="width: 233px;">
-                        <col style="width: 100px;">
-                        <col style="width: 120px;">
-                        <col style="width: 160px;">
-                        <col style="width: 120px;">
-                        <col style="width: 166px;">
-                        <col style="width: 199px;">
-                        <col style="width: 280px;">
-                        <col style="width: 380px;">
-                        <col style="width: 220px;">
-                        <col style="width: 220px;">
+                        <col class="board-col-hidden" style="width: 100px;">
+                        <col class="board-col-hidden" style="width: 120px;">
+                        <col class="board-col-hidden" style="width: 160px;">
+                        <col class="board-col-hidden" style="width: 120px;">
+                        <col class="board-col-hidden" style="width: 166px;">
+                        <col class="board-col-hidden" style="width: 380px;">
+                        <col class="board-col-hidden" style="width: 220px;">
+                        <col class="board-col-hidden" style="width: 220px;">
                     </colgroup>
                     <thead class="table-light">
                         <tr class="text-center">
                             <th scope="col" class="text-nowrap">No</th>
-                            <th scope="col" class="text-nowrap">접근시각</th>
+                            <th scope="col" class="text-nowrap">접근정보</th>
                             <th scope="col" class="text-nowrap">접근페이지</th>
-                            <th scope="col" class="text-nowrap">분류</th>
-                            <th scope="col" class="text-nowrap">디바이스</th>
-                            <th scope="col" class="text-nowrap">기기 제조사</th>
-                            <th scope="col" class="text-nowrap">기기 모델명</th>
-                            <th scope="col" class="text-nowrap">OS정보</th>
-                            <th scope="col" class="text-nowrap">접속브라우저</th>
-                            <th scope="col" class="text-nowrap">아이피</th>
-                            <th scope="col" class="text-nowrap">유입경로</th>
-                            <th scope="col" class="text-nowrap">User Agent</th>
-                            <th scope="col" class="text-nowrap">세션ID</th>
-                            <th scope="col" class="text-nowrap">회원아이디</th>
+                            <th scope="col" class="board-col-hidden text-nowrap">디바이스</th>
+                            <th scope="col" class="board-col-hidden text-nowrap">기기 제조사</th>
+                            <th scope="col" class="board-col-hidden text-nowrap">기기 모델명</th>
+                            <th scope="col" class="board-col-hidden text-nowrap">OS정보</th>
+                            <th scope="col" class="board-col-hidden text-nowrap">접속브라우저</th>
+                            <th scope="col" class="board-col-hidden text-nowrap">User Agent</th>
+                            <th scope="col" class="board-col-hidden text-nowrap">세션ID</th>
+                            <th scope="col" class="board-col-hidden text-nowrap">회원이메일</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,14 +134,21 @@
                             @endphp
                             <tr class="text-center">
                                 <td class="text-nowrap">{{ $number }}</td>
-                                <td class="text-nowrap">{{ $log->access_datetime?->format('Y-m-d H:i:s') ?? '-' }}</td>
+                                <td class="text-start">
+                                    <div class="traffic-access-info">
+                                        <div><span class="traffic-access-info-label">분류:</span> {{ $log->category_path ?? '-' }}</div>
+                                        <div><span class="traffic-access-info-label">접근시각:</span> {{ $log->access_datetime?->format('Y-m-d H:i:s') ?? '-' }}</div>
+                                        <div><span class="traffic-access-info-label">아이피:</span> {{ $log->ip ?? '-' }}</div>
+                                        <div><span class="traffic-access-info-label">유입경로:</span> {{ $log->referer_display ?? '-' }}</div>
+                                    </div>
+                                </td>
                                 <td class="text-start">
                                     @if (!empty($log->access_page_href))
                                         <a href="{{ $log->access_page_href }}"
                                            target="_blank"
                                            rel="noopener noreferrer"
                                            class="text-decoration-none text-dark">
-                                           {{ $log->note_subject }}
+                                            {{ $log->note_subject }}
                                             <span class="ms-1 text-secondary" aria-hidden="true">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
                                                     <path d="M10 2H14V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -160,21 +161,18 @@
                                         {{ $log->access_page ?? '-' }}
                                     @endif
                                 </td>
-                                <td class="text-start">{{ $log->category_path }}</td>
-                                <td class="text-nowrap">{{ $log->deivce_label ?? '-' }}</td>
-                                <td class="text-nowrap">{{ $log->device_brand ?? '-' }}</td>
-                                <td class="text-nowrap">{{ $log->device_model ?? '-' }}</td>
-                                <td class="text-nowrap">{{ $log->os ?? '-' }}</td>
-                                <td class="text-nowrap">{{ $log->browser ?? '-' }}</td>
-                                <td class="text-start">{{ $log->ip ?? '-' }}</td>
-                                <td class="text-start">{{ $log->referer_display ?? '-' }}</td>
-                                <td class="text-start">{{ $log->user_agent ?? '-' }}</td>
-                                <td class="text-start">{{ $log->session_id ?? '-' }}</td>
-                                <td class="text-start">{{ $log->user?->email ?? '-' }}</td>
+                                <td class="board-col-hidden text-nowrap">{{ $log->deivce_label ?? '-' }}</td>
+                                <td class="board-col-hidden text-nowrap">{{ $log->device_brand ?? '-' }}</td>
+                                <td class="board-col-hidden text-nowrap">{{ $log->device_model ?? '-' }}</td>
+                                <td class="board-col-hidden text-nowrap">{{ $log->os ?? '-' }}</td>
+                                <td class="board-col-hidden text-nowrap">{{ $log->browser ?? '-' }}</td>
+                                <td class="board-col-hidden text-start">{{ $log->user_agent ?? '-' }}</td>
+                                <td class="board-col-hidden text-start">{{ $log->session_id ?? '-' }}</td>
+                                <td class="board-col-hidden text-start">{{ $log->user?->email ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="14">검색된 내역이 없습니다.</td>
+                                <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="11">검색된 내역이 없습니다.</td>
                             </tr>
                         @endforelse
                     </tbody>

@@ -2320,3 +2320,17 @@
   }
   /* 블로그 목록 -e */
 
+
+.traffic-access-info {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #495057;
+  word-break: break-word;
+}
+
+.traffic-access-info-label {
+  display: inline-block;
+  min-width: 56px;
+  font-weight: 600;
+  color: #212529;
+}
