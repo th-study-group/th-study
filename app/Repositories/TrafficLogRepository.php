@@ -52,7 +52,51 @@ class TrafficLogRepository
         ];
 
         $query = AccessLog::query()
-            ->with(['user:idx,email'])
+            ->with([
+                'user:idx,email',
+                'note' => function ($q) {
+                    $q->select([
+                        'access_page',
+                        'group_idx',
+                        'categories_idx',
+                        'topic_idx',
+                        'subject',
+                        'content',
+                        'thumbnail_path',
+                        'use_flag',
+                    ])->where('use_flag', 1);
+                },
+
+                'note.group' => function ($q) {
+                    $q->select('idx', 'code', 'name');
+                },
+
+                'note.category' => function ($q) {
+                    $q->select('idx', 'group_idx', 'code', 'name', 'use_flag')
+                    ->where('use_flag', 1);
+                },
+
+                'note.topic' => function ($q) {
+                    $q->select('idx', 'categories_idx', 'name', 'memo', 'use_flag')
+                    ->where('use_flag', 1);
+                },
+            ])
+            ->select([
+                'idx',
+                'user_idx',
+                'access_page',
+                'access_datetime',
+                'device_type',
+                'device_brand',
+                'device_model',
+                'os',
+                'browser',
+                'ip',
+                'referer_url',
+                'referer_host',
+                'user_agent',
+                'session_id',
+            ])
             ->whereDate('access_datetime', $searchDate);
 
         $query

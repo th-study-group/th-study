@@ -45,6 +45,18 @@ class TrafficController extends Controller
                     ? $baseUrl . '/' . ltrim($accessPage, '/')
                     : null;
 
+                $log->category_path = collect([
+                    $log->note?->group?->name,
+                    $log->note?->category?->name,
+                    $log->note?->topic?->name,
+                ])->filter()->implode(' > ');
+
+                $log->category_path = $log->category_path !== ''
+                    ? $log->category_path
+                    : '-';
+
+                $log->note_subject = $log->note?->subject ?? $log->access_page ?? '-';
+
                 if ($refererUrl !== '') {
                     $log->referer_display = urldecode($refererUrl);
                 } else {

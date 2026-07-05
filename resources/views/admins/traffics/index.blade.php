@@ -103,6 +103,7 @@
                         <col style="width: 60px;">
                         <col style="width: 180px;">
                         <col style="width: 260px;">
+                        <col style="width: 233px;">
                         <col style="width: 100px;">
                         <col style="width: 120px;">
                         <col style="width: 160px;">
@@ -119,6 +120,7 @@
                             <th scope="col" class="text-nowrap">No</th>
                             <th scope="col" class="text-nowrap">접근시각</th>
                             <th scope="col" class="text-nowrap">접근페이지</th>
+                            <th scope="col" class="text-nowrap">분류</th>
                             <th scope="col" class="text-nowrap">디바이스</th>
                             <th scope="col" class="text-nowrap">기기 제조사</th>
                             <th scope="col" class="text-nowrap">기기 모델명</th>
@@ -145,7 +147,7 @@
                                            target="_blank"
                                            rel="noopener noreferrer"
                                            class="text-decoration-none text-dark">
-                                            {{ $log->access_page ?? '-' }}
+                                           {{ $log->note_subject }}
                                             <span class="ms-1 text-secondary" aria-hidden="true">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
                                                     <path d="M10 2H14V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -158,7 +160,8 @@
                                         {{ $log->access_page ?? '-' }}
                                     @endif
                                 </td>
-                                <td class="text-nowrap">{{ $log->device_label ?? '-' }}</td>
+                                <td class="text-start">{{ $log->category_path }}</td>
+                                <td class="text-nowrap">{{ $log->deivce_label ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->device_brand ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->device_model ?? '-' }}</td>
                                 <td class="text-nowrap">{{ $log->os ?? '-' }}</td>
@@ -171,7 +174,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="13">검색된 내역이 없습니다.</td>
+                                <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="14">검색된 내역이 없습니다.</td>
                             </tr>
                         @endforelse
                     </tbody>
