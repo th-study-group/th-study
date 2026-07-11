@@ -9,7 +9,7 @@ use App\Models\DailyPageStat;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * 유입 전환 로그 MCP API 레포지토리
+ * 유입 전환 로그 API 레포지토리
  */
 class TrafficLogRepository
 {

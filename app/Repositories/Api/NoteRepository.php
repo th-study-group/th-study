@@ -6,7 +6,7 @@ use App\Models\Note;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * 블로그 MCP API 레포지토리
+ * 노트 API 레포지토리
  */
 class NoteRepository
 {

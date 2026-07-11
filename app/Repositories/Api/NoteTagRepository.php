@@ -6,7 +6,7 @@ use App\Models\NoteTag;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * 노트 태그 MCP API 레포지토리
+ * 노트 태그 API 레포지토리
  */
 class NoteTagRepository
 {

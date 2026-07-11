@@ -9,7 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * 블로그 MCP API 서비스
+ * 블로그 MCP 서비스
  */
 class NoteService
 {

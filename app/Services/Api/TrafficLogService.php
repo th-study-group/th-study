@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * 유입 전환 로그 MCP API 서비스
+ * 유입 전환 로그 API 서비스
  */
 class TrafficLogService
 {
