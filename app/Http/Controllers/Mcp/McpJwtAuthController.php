@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\McpJwtLoginRequest;
 use App\Http\Requests\Mcp\McpJwtRefreshRequest;
 use App\Models\User;
+use App\Services\Api\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,10 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
  */
 class McpJwtAuthController extends Controller
 {
+    public function __construct(
+        private readonly UserService $userService
+    ) {}
+
     /**
      * 로그인
      *
@@ -30,12 +35,20 @@ class McpJwtAuthController extends Controller
             'email' => $validated['email'],
         ]);
 
-        $candidateUser = User::query()
-            ->where('email', $validated['email'])
-            ->whereNotNull('email_verify_datetime')
-            ->first();
+        $candidateUser = $this->userService->findVerifiedByEmail(
+            $validated['email']
+        );
 
         if (!$candidateUser) {
+            $this->userService->recordLoginAttempt(
+                email: $validated['email'],
+                ip: $request->ip(),
+                userAgent: $request->userAgent() ?? '',
+                success: false,
+                provider: 'local',
+                reason: 'email_not_verified'
+            );
+
             return response()->json([
                 'message' => '이메일 인증이 완료된 계정만 로그인할 수 있습니다.',
             ], 403);
@@ -55,6 +68,15 @@ class McpJwtAuthController extends Controller
             ->attempt($credentials);
 
         if (!$accessToken) {
+            $this->userService->recordLoginAttempt(
+                email: $validated['email'],
+                ip: $request->ip(),
+                userAgent: $request->userAgent() ?? '',
+                success: false,
+                provider: 'local',
+                reason: 'invalid_credentials'
+            );
+
             Log::channel('mcp')->warning('MCP direct JWT login failed', [
                 'email' => $validated['email'],
             ]);
@@ -68,6 +90,15 @@ class McpJwtAuthController extends Controller
         $user = Auth::guard('mcp_jwt')->user();
 
         if (!$user || !$user->canAccessMcp()) {
+            $this->userService->recordLoginAttempt(
+                email: $validated['email'],
+                ip: $request->ip(),
+                userAgent: $request->userAgent() ?? '',
+                success: false,
+                provider: 'local',
+                reason: 'mcp_access_denied'
+            );
+
             Log::channel('mcp')->warning('MCP direct JWT login blocked', [
                 'user_id' => $user ? $user->getAuthIdentifier() : null,
                 'reason' => $user ? $user->mcpBlockedReason() : 'User not found.',
@@ -85,6 +116,14 @@ class McpJwtAuthController extends Controller
         ])->fromUser($user);
 
         JWTAuth::factory()->setTTL((int) config('jwt.ttl', 30));
+
+        $this->userService->recordLoginAttempt(
+            email: $user->email,
+            ip: $request->ip(),
+            userAgent: $request->userAgent() ?? '',
+            success: true,
+            provider: 'local'
+        );
 
         Log::channel('mcp')->info('MCP direct JWT login issued', [
             'user_id' => $user->getAuthIdentifier(),

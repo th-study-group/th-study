@@ -44,6 +44,17 @@ class UserService
     }
 
     /**
+     * 이메일로 계정 확인
+     *
+     * @param string $email
+     * @return User|null
+     */
+    public function findVerifiedByEmail(string $email): ?User
+    {
+        return $this->userRepository->findVerifiedByEmail($email);
+    }
+
+    /**
      * 로그인 시도 기록
      *
      * @param string $email
@@ -62,8 +73,9 @@ class UserService
         string $provider = 'local',
         ?string $reason = null
     ): ?User {
-        $user = $this->userRepository->findVerifiedByEmail($email);
 
+        $user = $this->findVerifiedByEmail($email);
+        
         event(new UserLoginAttemptedEvent(
             email: $email,
             accessUserIdx: $user?->idx,
