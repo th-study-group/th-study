@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mcp;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mcp\McpLoginRequest;
 use App\Models\User;
+use App\Services\Api\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,9 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class McpOAuthController extends Controller
 {
+    public function __construct(
+        private readonly UserService $userService
+    ) {}
     public function auth(Request $request)
     {
         Log::channel('mcp')->info('MCP OAuth authorize entered', [
@@ -79,17 +83,12 @@ class McpOAuthController extends Controller
     {
         $validated = $request->validated();
         $mcpGuard = Auth::guard('mcp_jwt');
-        $candidateUser = User::query()
-            ->where('email', $validated['email'])
-            ->whereNotNull('email_verify_datetime')
-            ->first();
 
         Log::info('MCP OAuth login entered', [
             'email' => $validated['email'],
             'client_id' => $validated['client_id'],
             'redirect_uri' => $validated['redirect_uri'],
             'guard' => 'mcp_jwt',
-            'candidate_user_idx' => $candidateUser?->idx,
             'password_length' => mb_strlen((string) $validated['password']),
             'state_exists' => !empty($validated['state']),
             'code_challenge_exists' => !empty($validated['code_challenge']),
@@ -117,6 +116,15 @@ class McpOAuthController extends Controller
         ]);
 
         if (!$mcpToken) {
+            $this->userService->recordLoginAttempt(
+                email: $validated['email'],
+                ip: $request->ip(),
+                userAgent: $request->userAgent() ?? '',
+                success: false,
+                provider: 'local',
+                reason: 'invalid_credentials'
+            );
+            
             Log::channel('mcp')->warning('MCP OAuth login failed', [
                 'email' => $validated['email'],
                 'guard' => 'mcp_jwt',
@@ -132,9 +140,17 @@ class McpOAuthController extends Controller
         $user = $mcpGuard->user();
 
         if (!$user instanceof User) {
+            $this->userService->recordLoginAttempt(
+                email: $validated['email'],
+                ip: $request->ip(),
+                userAgent: $request->userAgent() ?? '',
+                success: false,
+                provider: 'local',
+                reason: 'user_not_found'
+            );
+
             Log::channel('mcp')->warning('MCP OAuth user type invalid', [
                 'guard' => 'mcp_jwt',
-                'candidate_user_idx' => $candidateUser?->idx,
                 'token_generated' => true,
             ]);
 
@@ -146,6 +162,15 @@ class McpOAuthController extends Controller
         }
 
         if (!$user->canAccessMcp()) {
+            $this->userService->recordLoginAttempt(
+                email: $user->email,
+                ip: $request->ip(),
+                userAgent: $request->userAgent() ?? '',
+                success: false,
+                provider: 'local',
+                reason: 'mcp_access_denied'
+            );
+
             Log::channel('mcp')->warning('MCP OAuth login blocked', [
                 'user_idx' => $user->getAuthIdentifier(),
                 'guard' => 'mcp_jwt',
@@ -158,6 +183,15 @@ class McpOAuthController extends Controller
                     'email' => $user->mcpBlockedReason(),
                 ]);
         }
+
+        $this->userService->recordLoginAttempt(
+            email: $user->email,
+            ip: $request->ip(),
+            userAgent: $request->userAgent() ?? '',
+            success: true,
+            provider: 'local'
+        );
+
 
         $code = Str::random(80);
 

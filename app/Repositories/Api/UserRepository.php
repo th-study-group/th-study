@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * 사용자 MCP API 레포지토리
+ * 사용자 API 레포지토리
  */
 class UserRepository
 {
@@ -66,5 +66,16 @@ class UserRepository
             ->paginate($perPage);
 
         return $users;
+    }
+
+    /**
+     * 이메일로 인증된 사용자 조회
+     */
+    public function findVerifiedByEmail(string $email): ?User
+    {
+        return User::query()
+            ->where('email', $email)
+            ->whereNotNull('email_verify_datetime')
+            ->first();
     }
 }
