@@ -655,6 +655,7 @@ npm run build
 - `queue` (queue worker)
 - `nginx`
 - `mysql`
+- `mongodb`
 - `node` (vite dev server)
 
 ## 12. 인프라 구축 핵심 (개발환경 중심)
@@ -663,7 +664,7 @@ npm run build
 
 ### 12.1 로컬 Docker 개발환경
 
-목표: 로컬에서 `app + nginx + mysql + node + queue`를 분리 실행
+목표: 로컬에서 `app + nginx + mysql + mongodb + node + queue`를 분리 실행
 
 1. 준비
 - Docker Desktop 실행
@@ -720,6 +721,22 @@ docker compose ps
 - Web: `http://localhost:8080`
 - Vite: `http://localhost:5173`
 - MySQL: `127.0.0.1:3307`
+- MongoDB: `127.0.0.1:27018`
+- MongoDB 컨테이너 내부 포트: `27017`
+
+9. MongoDB 버전 / 로그인 기준
+- Docker 이미지 버전: `mongo:8.3.3`
+- 루트 계정: `root`
+- 인증 데이터베이스: `admin`
+- 호스트 접속 포트: `127.0.0.1:27018`
+
+```bash
+# 컨테이너 안으로 들어가서 접속
+docker exec -it th-mongodb mongosh -u [사용자명] -p '[비밀번호]' --authenticationDatabase admin
+
+# 호스트에서 바로 접속
+mongosh "mongodb://[사용자명]:[비밀번호]@127.0.0.1:27018/admin?authSource=admin"
+```
 
 ### 12.2 서버 기본 구성(운영/스테이징 공통 뼈대)
 

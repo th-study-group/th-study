@@ -792,6 +792,14 @@ ls -lh /backup/laravel_files</code></pre>
     <h2 class="h2x mb-3">11. 개발 검증 Docker</h2>
     <div class="box pad">
       <p class="leadx mb-2">배포 전 동일한 Ubuntu 기반 환경을 검증하기 위해 Docker Compose를 사용합니다.</p>
+      <div class="callout mt-3">
+        <strong>Docker 접속 포트</strong><br>
+        Web은 <code>localhost:8080</code>, Vite는 <code>localhost:5173</code>, MySQL은 <code>127.0.0.1:3307</code>으로 접속합니다.
+        <br>
+        MongoDB는 Docker 호스트 기준 <code>127.0.0.1:27018</code>로 접속하고, 컨테이너 내부 포트는 <code>27017</code>입니다.
+        <br>
+        MongoDB Docker 이미지는 <code>mongo:8.3.3</code>이며, 루트 계정은 <code>root</code>, 인증 데이터베이스는 <code>admin</code>입니다.
+      </div>
       
     <div class="codeblock">
       <div class="codehdr"><span>bash · Docker Compose on/off</span><button class="copybtn no-print" onclick="copyFrom('#dcOnOff', this)">복사</button></div>
@@ -828,6 +836,16 @@ docker exec -it th-app php artisan db:seed --class=NoteMasterSeeder --force</cod
 
 USE [DB이름];
 SHOW TABLES;</code></pre>
+    </div>
+    </div>
+      <div class="mt-4">
+    <div class="codeblock">
+      <div class="codehdr"><span>bash · 도커 MongoDB 접속(예시)</span><button class="copybtn no-print" onclick="copyFrom('#dcMongo', this)">복사</button></div>
+      <pre id="dcMongo"><code># 컨테이너 내부 접속
+docker exec -it th-mongodb mongosh -u [사용자명] -p '[비밀번호]' --authenticationDatabase admin
+
+# 호스트에서 접속
+mongosh "mongodb://[사용자명]:[비밀번호]@127.0.0.1:27018/admin?authSource=admin"</code></pre>
     </div>
     </div>
     </div>
