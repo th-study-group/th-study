@@ -57,7 +57,18 @@ services:
       - "3307:3306"
     volumes:
       - th_mysql_data:/var/lib/mysql
-
+  mongodb:
+    image: mongo:8.3.3
+    container_name: th-mongodb
+    restart: unless-stopped
+    env_file:
+      - .env_docker
+    environment:
+      TZ: Asia/Seoul
+    ports:
+      - "27018:27017"
+    volumes:
+      - th_mongodb_data:/data/db
   node:
     image: node:20-alpine
     container_name: th-node
@@ -72,3 +83,4 @@ services:
 
 volumes:
   th_mysql_data:
+  th_mongodb_data:
