@@ -41,7 +41,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Infra: Ubuntu(Nginx + PHP-FPM) self-hosted deploy
 - Domain/DNS: Gabia 등록 + Cloudflare 네임서버/DNS/Email Routing
 - Study: Python 3, venv, FastAPI, Uvicorn
-- MongoDB: 로컬 Windows + MongoDB Compass, 운영 Ubuntu 22.04 + MongoDB Community Server 8.3.3 기준으로 문서화
+- MongoDB: 로컬 Windows/macOS + 운영 Ubuntu 22.04 기준으로 문서화하며, macOS는 Homebrew 기반 설치/서비스 관리와 8.3.x 패치 버전 차이를 함께 정리
 - MongoDB Use: TH-STUDY에서는 접근 로그, 봇 로그, AI 관련 데이터, 채팅형 데이터처럼 비정형 데이터와 Raw 데이터 정리 용도로 확장 예정
 
 ### 유입/전환 분석 구성
