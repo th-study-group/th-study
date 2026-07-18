@@ -13,14 +13,19 @@
         @endif
 
         {{-- 구글 애널리틱스 ga4 --}}
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.ga4.measurement_id') }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
+        @if($analyticsEnabled ?? false)
+            <script
+                async
+                src="https://www.googletagmanager.com/gtag/js?id={{ config('analytics.measurement_id') }}">
+            </script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
 
-            gtag('config', '{{ config('services.ga4.measurement_id') }}');
+                gtag('config', '{{ config('analytics.measurement_id') }}');
         </script>
+        @endif
 
         {{-- 아이폰 주소, 날짜, 이메일 등 밑줄 방지 --}}
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no">

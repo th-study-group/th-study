@@ -38,6 +38,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\ForcePasswordChange::class,
             \App\Http\Middleware\CheckSessionVersion::class,
             \App\Http\Middleware\TrackAccessLog::class,
+            \App\Http\Middleware\ShareGoogleAnalytics::class,
         ],
 
         'api' => [
