@@ -35,7 +35,7 @@
             <li>백업: <code style="color:#fff;">/backup/mysql</code> + <code style="color:#fff;">/backup/laravel_files</code> 14일 보관</li>
             <li>수익화: 카카오 애드핏 광고 단위를 PC/모바일/슬림/정사각형으로 분리 운영</li>
             <li>학습 확장: Python 3 + FastAPI 로컬 API 기초 정리</li>
-            <li>분석: 유입 로그, 전환 로그, 일별 통계 집계 구조 구현</li>
+            <li>분석: 유입 로그, 전환 로그, 일별 통계 집계 구조와 구글애널리틱스4 허용 경로/IP 제한 적용</li>
             <li>MongoDB: 비정형 데이터 및 Raw 데이터 정리 방향과 Windows/macOS/Ubuntu 설치 기준 문서화</li>
           </ul>
           <div class="fw-bold text-white mb-2">Tech Stack</div>
@@ -1165,6 +1165,7 @@ uvicorn main:app --reload</code></pre>
         <li>메일/큐/로그/백업 포함 운영 흐름을 실서비스 수준으로 문서화</li>
         <li>도메인은 가비아에서 등록하고 Cloudflare 네임서버/DNS/Email Routing으로 외부 노출 주소를 운영</li>
         <li>Cloudflare 프록시 환경에서도 로그인/게시판/히스토리에 실클라이언트 IP가 저장되도록 추출 정책을 표준화</li>
+        <li>구글애널리틱스4는 전체 페이지 공통 삽입이 아니라 공개 페이지 허용 경로와 제외 IP 기준으로만 제한 적용</li>
         <li>sitemap, robots.txt, 공개 URL 정책까지 코드 중심으로 관리</li>
         <li>배포는 SSH + git pull + migrate + systemd queue 재시작 기준으로 표준화</li>
       </ul>

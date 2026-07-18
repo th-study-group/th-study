@@ -50,7 +50,10 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Aggregate: `daily_page_stats`
 - Flow: `TrackAccessLog` -> `TrafficAnalyticsService` -> `TrafficLogRepository` / `TrafficStatRepository`
 - Rule: `admin` 계정은 유입/전환 수집 제외
+- 구글애널리틱스4 Rule: 구글애널리틱스4는 `ShareGoogleAnalytics` 미들웨어에서 제어하며, `GET` 요청 + 허용 경로(`config/analytics.php`) + 제외 대상이 아닌 접근에만 스크립트를 삽입
+- 구글애널리틱스4 Skip: `TrafficTrackingGuard` 기준으로 `admin` 계정과 `config('traffic.access_log_excluded_ips')`에 등록된 IP는 구글애널리틱스4/트래픽 수집에서 제외
 - Retention: 초기 운영 단계에서는 빠른 삭제보다 분석 데이터 확보를 우선해 `access_logs`/`bot_access_logs`는 365일, `conversion_logs`는 500일 기준으로 보관 후 정리
+- Config: `.env`에서 `GA4_ENABLED`, `GA4_MEASUREMENT_ID`를 사용하고, 허용 페이지 목록은 `config/analytics.php`의 `allowed_paths`로 관리
 
 ## 2.1 FastAPI 학습 메모
 
