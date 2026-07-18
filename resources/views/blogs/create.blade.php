@@ -117,8 +117,20 @@
           <div id="blogThumbnailFileInfo" class="blog-create-thumbnail-fileinfo" @if (! $hasSavedThumbnail) style="display:none" @endif>
             <span id="blogThumbnailFileName" class="blog-create-thumbnail-filename">{{ $savedThumbnailName }}</span>
             <div class="blog-create-thumbnail-actions">
-              <a id="blogThumbnailViewBtn" class="blog-create-thumbnail-action-btn is-view" href="{{ $savedThumbnailUrl ?? '#' }}" target="_blank" rel="noopener noreferrer" @if (! $hasSavedThumbnail) style="display:none" @endif>보기</a>
-              <button type="button" id="blogThumbnailRemoveBtn" class="blog-create-thumbnail-action-btn is-remove" aria-label="첨부 파일 삭제">삭제</button>
+              <a id="blogThumbnailViewBtn" 
+                 class="blog-create-thumbnail-action-btn is-view" 
+                 href="{{ $savedThumbnailUrl ?? '#' }}" 
+                 target="_blank" rel="noopener noreferrer" 
+                 @if (! $hasSavedThumbnail) style="display:none" @endif>
+                 보기
+              </a>
+              <button 
+                  type="button" 
+                  id="blogThumbnailRemoveBtn" 
+                  class="blog-create-thumbnail-action-btn is-remove" 
+                  aria-label="첨부 파일 삭제">
+                  삭제
+                </button>
             </div>
           </div>
         </div>
@@ -362,7 +374,9 @@
 
     function rewriteEditorLinksForOutbound(contentHtml) {
       if (typeof rewriteHtmlAnchorHrefsToOutbound === 'function') {
-        return rewriteHtmlAnchorHrefsToOutbound(contentHtml);
+        return rewriteHtmlAnchorHrefsToOutbound(contentHtml, {
+          skipSourcePage: true,
+        });
       }
 
       return String(contentHtml || '');

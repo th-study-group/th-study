@@ -312,18 +312,22 @@ function resolveOutboundSourcePage() {
   return String(location.pathname + location.search || '/').trim();
 }
 
-function buildOutboundTrackingHref(targetUrl, conversionType) {
-  var sourcePage = resolveOutboundSourcePage();
-  if (!sourcePage.startsWith('/')) {
-    sourcePage = '/' + sourcePage.replace(/^\/+/, '');
-  }
-  sourcePage = sourcePage.slice(0, 255);
-
+function buildOutboundTrackingHref(targetUrl, conversionType, options) {
   var params = new URLSearchParams({
     url: String(targetUrl || ''),
     conversion_type: String(conversionType || 'outbound'),
-    source_page: sourcePage || '/',
   });
+
+  var skipSourcePage = !!(options && options.skipSourcePage === true);
+
+  if (!skipSourcePage) {
+    var sourcePage = resolveOutboundSourcePage();
+    if (!sourcePage.startsWith('/')) {
+      sourcePage = '/' + sourcePage.replace(/^\/+/, '');
+    }
+    sourcePage = sourcePage.slice(0, 255);
+    params.set('source_page', sourcePage || '/');
+  }
 
   return '/outbound?' + params.toString();
 }
@@ -356,6 +360,7 @@ function isOutboundTrackingHref(href) {
 function normalizeOutboundLinkHref(href, options) {
   var resolved = normalizeQueryAmp(String(href || '').trim());
   var trackInternal = !!(options && options.trackInternal === true);
+  var skipSourcePage = !!(options && options.skipSourcePage === true);
 
   if (isSkippableOutboundHref(resolved)) {
     return resolved;
@@ -374,20 +379,26 @@ function normalizeOutboundLinkHref(href, options) {
         return resolved;
       }
 
-      return buildOutboundTrackingHref(targetUrl, conversionType);
+      return buildOutboundTrackingHref(targetUrl, conversionType, {
+        skipSourcePage: skipSourcePage,
+      });
     } catch (e) {
       return resolved;
     }
   }
 
   if (!isInternalHrefForOutbound(resolved)) {
-    return buildOutboundTrackingHref(resolved, 'outbound');
+    return buildOutboundTrackingHref(resolved, 'outbound', {
+      skipSourcePage: skipSourcePage,
+    });
   }
 
   if (trackInternal) {
     try {
       var internalTarget = new URL(resolved, location.origin).toString();
-      return buildOutboundTrackingHref(internalTarget, 'outbound');
+      return buildOutboundTrackingHref(internalTarget, 'outbound', {
+        skipSourcePage: skipSourcePage,
+      });
     } catch (e) {
       return resolved;
     }
