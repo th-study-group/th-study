@@ -8,6 +8,10 @@
 @section('og_title', $metaTitle ?? '')
 @section('og_description', $metaDescription ?? '')
 @section('og_image', $metaImage ?? asset('images/og/001.png'))
+@section('og_image_width', $metaImageWidth ?? 1200)
+@section('og_image_height', $metaImageHeight ?? 630)
+@section('og_url', $metaUrl ?? url()->current())
+@section('og_type', $metaType ?? 'article')
 
 @push('styles')
   <link href="{{ asset('css/blog.css') }}?v={{ filemtime(public_path('css/blog.css')) }}" rel="stylesheet" />

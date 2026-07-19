@@ -14,6 +14,7 @@ use App\Services\NoteService;
 use Illuminate\Support\Str;
 use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -158,7 +159,7 @@ class NoteController extends Controller
         $plainContent = trim(preg_replace('/\s+/u', ' ', strip_tags($contentHtml)));
         $metaDescription = $plainContent !== '' ? Str::limit($plainContent, 160) : '상세내역';
         $metaImage = ! empty($note->thumbnail_path)
-            ? url(Storage::url((string) $note->thumbnail_path))
+            ? route('og.note', ['group' => $noteGroup, 'slug' => $slug, 'idx' => $note->idx])
             : asset('images/og/001.png');
 
         $relatedNoteItems = $this->buildRelatedNoteItems($noteGroup, $slug, $relatedNotes);
@@ -186,6 +187,10 @@ class NoteController extends Controller
             'metaTitle' => $metaTitle,
             'metaDescription' => $metaDescription,
             'metaImage' => $metaImage,
+            'metaImageWidth' => 1200,
+            'metaImageHeight' => 630,
+            'metaUrl' => url()->current(),
+            'metaType' => 'article',
         ]);
     }
 
@@ -312,7 +317,7 @@ class NoteController extends Controller
         $note = $this->noteService->getNote($noteGroup, $slug, (int) $idx);
         $this->noteService->deleteNote(
             $note,
-            (int) (auth()->id() ?? 0),
+            (int) (Auth::id() ?? 0),
             (string) $request->ip(),
             (string) ($request->userAgent() ?? '')
         );
@@ -335,7 +340,7 @@ class NoteController extends Controller
         $note = $this->noteService->getNote($noteGroup, $slug, (int) $idx);
         $this->noteService->destroyNoteThumbnail(
             $note,
-            (int) (auth()->id() ?? 0),
+            (int) (Auth::id() ?? 0),
             (string) $request->ip(),
             (string) ($request->userAgent() ?? '')
         );
@@ -361,7 +366,7 @@ class NoteController extends Controller
         $deletedCount = $this->noteService->destroyNoteTag(
             $note,
             (string) $request->input('tag'),
-            (int) (auth()->id() ?? 0),
+            (int) (Auth::id() ?? 0),
             (string) $request->ip(),
             (string) ($request->userAgent() ?? '')
         );
@@ -386,7 +391,7 @@ class NoteController extends Controller
         $note = $this->noteService->getNote($noteGroup, $slug, (int) $idx);
         $updatedNote = $this->noteService->updateNoteUseFlag(
             $note,
-            (int) (auth()->id() ?? 0),
+            (int) (Auth::id() ?? 0),
             (string) $request->ip(),
             (string) ($request->userAgent() ?? '')
         );

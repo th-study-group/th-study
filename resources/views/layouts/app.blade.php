@@ -37,10 +37,14 @@
         {{-- og image --}}
         <meta name="description" content="@yield('meta_description', config('app.name') . '은 성장하는 개발자가 기록과 실험을 통해 실력을 확장하고, 서비스 운영과 수익화를 경험하는 개발자 성장 플랫폼입니다.')">
         <meta name="keywords" content="@yield('meta_keywords', '티에이치스터디,성장플랫폼,개인성장플랫폼,개발자료,개발블로그,개발공부,국내여행추천,여행추천,맛집추천,카페추천,국내여행블로그,숙소추천,혼자여행,여행정보')">
-        <meta property="og:title" content="@yield('og_title', config('app.name') . ' 개발자 성장 플랫폼')">
-        <meta property="og:description" content="@yield('og_description', '개발자의 기록, 실험, 운영, 수익화를 기반으로 성장하는 플랫폼')">
+        
+        <meta property="og:title" content="@yield('og_title', config('app.name') . ' 개발자 성장 블로그')">
+        <meta property="og:description" content="@yield('og_description', '개발자의 기록, 학습, 운영, 수익화를 기반으로 성장하는 블로그')">
         <meta property="og:image" content="@yield('og_image', asset('images/og/001.png'))">
-        <meta property="og:type" content="@yield('og_type', config('app.name'))">
+        <meta property="og:image:width" content="@yield('og_image_width', '1200')">
+        <meta property="og:image:height" content="@yield('og_image_height', '630')">
+        <meta property="og:url" content="@yield('og_url', url()->current())">
+        <meta property="og:type" content="@yield('og_type', 'article')">
 
         {{-- Favicon :: WEB --}}
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon/th_favicon_16.png') }}">
