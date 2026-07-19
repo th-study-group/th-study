@@ -159,9 +159,8 @@ class ProcessNoteImageProcessingJob implements ShouldQueue
     /**
      * 모든 재시도가 실패했을 때 실행된다.
      */
-    public function failed(
-        Throwable $exception
-    ): void {
+    public function failed(Throwable $exception): void 
+    {
         Log::error('Note image variant failed', [
             'action' => 'failed',
             'model' => 'Note',
@@ -176,12 +175,8 @@ class ProcessNoteImageProcessingJob implements ShouldQueue
     /**
      * 새로운 이미지 생성이 성공한 뒤 이전 이미지를 삭제한다.
      */
-    private function deletePreviousImage(
-        string $newImagePath
-    ): void {
-        $previousImagePath = $this->normalizePublicPath(
-            (string) $this->previousImagePath
-        );
+    private function deletePreviousImage(string $newImagePath): void {
+        $previousImagePath = $this->normalizePublicPath((string) $this->previousImagePath);
 
         if ($previousImagePath === '') {
             return;
@@ -191,17 +186,13 @@ class ProcessNoteImageProcessingJob implements ShouldQueue
             return;
         }
 
-        Storage::disk('public')->delete(
-            $previousImagePath
-        );
+        Storage::disk('public')->delete($previousImagePath);
     }
 
     /**
      * /storage/가 포함된 경로를 public 디스크 상대 경로로 변경한다.
      */
-    private function normalizePublicPath(
-        string $path
-    ): string {
+    private function normalizePublicPath(string $path): string {
         $path = trim($path);
 
         if ($path === '') {
