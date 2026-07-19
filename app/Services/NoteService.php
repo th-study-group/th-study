@@ -25,6 +25,7 @@ use Intervention\Image\Encoders\JpegEncoder;
 use Intervention\Image\Encoders\PngEncoder;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Auth;
+use App\Jobs\NoteImageProcessingJob;
 
 /**
  * 노트 서비스
@@ -125,7 +126,6 @@ class NoteService
 
             if ($request->hasFile('thumbnail_path')) {
                 $thumbnailPath = $this->storeThumbnail($request->file('thumbnail_path'));
-                $ogImagePath = $this->storeOgImage($request->file('thumbnail_path'));
             }
 
             $sanitizedContent = $this->editorContentProcessor->sanitizeForStorage(
@@ -141,7 +141,7 @@ class NoteService
                 'subject' => $request->input('subject'),
                 'content' => $sanitizedContent,
                 'thumbnail_path' => $thumbnailPath,
-                'og_image_path' => $ogImagePath,
+                'og_image_path' => null,
                 'use_flag' => 0,
                 'create_user_idx' => $userIdx,
             ]);
@@ -171,6 +171,18 @@ class NoteService
                 ip: $request->ip(),
                 userAgent: $request->userAgent() ?? '',
             ));
+
+            /*
+             * DB 트랜잭션이 커밋된 후 Job을 Queue에 등록한다.
+             */
+            if ($thumbnailPath !== null) {
+                NoteImageProcessingJob::dispatch(
+                    noteIdx: (int) $note->idx,
+                    sourceThumbnailPath: $thumbnailPath,
+                    imageType: 'og_image',
+                    previousImagePath: null
+                )->afterCommit();
+            }
 
             Log::info('[Note][Create] 등록 완료', [
                 'user_idx' => Auth::id(),
@@ -281,9 +293,10 @@ class NoteService
      *
      * @param string $groupCode
      * @param string $categoryCode
-     * @param int $excludeIdx
-     * @param int $limit
-     * @return Collection<int, Note>
+     * @param integer $noteIdx
+     * @param integer $topicIdx
+     * @param integer $limit
+     * @return Collection
      */
     public function getLatestRelatedNotes(
         string $groupCode,
@@ -371,14 +384,19 @@ class NoteService
 
         return DB::transaction(function () use ($request, $note, $topic, $resolvedGroupCode, $userIdx): Note {
             $beforeTagIdxList = $this->noteTagMapRepository->getTagIdxListByNote((int) $note->idx);
-            $thumbnailPath = $note->thumbnail_path;
-            $ogImagePath = $note->og_image_path;
+            
+            $previousThumbnailPath = $note->thumbnail_path;
+            $previousOgImagePath = $note->og_image_path;
 
-            if ($request->hasFile('thumbnail_path')) {
-                $this->deletePublicThumbnail($thumbnailPath);
-                $this->deletePublicThumbnail($ogImagePath);
+            $thumbnailPath = $previousThumbnailPath;
+            $ogImagePath = $previousOgImagePath;
+
+            $hasNewThumbnail = $request->hasFile('thumbnail_path');
+
+            // 새 일반 썸네일만 먼저 저장한다.
+            // 기존 썸네일과 기존 OG 이미지는 아직 삭제하지 않는다.
+            if ($hasNewThumbnail) {
                 $thumbnailPath = $this->storeThumbnail($request->file('thumbnail_path'));
-                $ogImagePath = $this->storeOgImage($request->file('thumbnail_path'));
             }
 
             $sanitizedContent = $this->editorContentProcessor->sanitizeForStorage(
@@ -423,6 +441,24 @@ class NoteService
                 ip: (string) $request->ip(),
                 userAgent: (string) ($request->userAgent() ?? ''),
             ));
+
+            if ($hasNewThumbnail && !empty($thumbnailPath)) {
+                // DB 커밋 후 새로운 OG 이미지 생성 Job 실행
+                NoteImageProcessingJob::dispatch(
+                    noteIdx: (int) $note->idx,
+                    sourceThumbnailPath: (string) $thumbnailPath,
+                    imageType: 'og_image',
+                    previousImagePath: $previousOgImagePath
+                )->afterCommit();
+
+                // 기존 일반 썸네일은 DB 커밋이 성공한 뒤 삭제한다.
+                // 기존 OG 이미지는 Job 성공 후 Job 내부에서 삭제한다.
+                DB::afterCommit(function () use ($previousThumbnailPath, $thumbnailPath): void {
+                    if (!empty($previousThumbnailPath) && $previousThumbnailPath !== $thumbnailPath) {
+                        $this->deletePublicThumbnail((string) $previousThumbnailPath);
+                    }
+                });
+            }
 
             Log::info('[Note][Update] 수정 완료', [
                 'user_idx' => $userIdx,
@@ -663,31 +699,6 @@ class NoteService
         $dir = now()->format('Ym');
         $filename = $this->generateTimestampThumbnailName($dir, $extension);
         $path = $dir . '/' . $filename;
-
-        Storage::disk('public')->put($path, (string) $encoded);
-
-        return $path;
-    }
-
-    private function storeOgImage(UploadedFile $file): string
-    {
-        $manager = ImageManager::gd();
-
-        $background = $manager->read($file->getPathname())
-            ->orient()
-            ->cover(1200, 630)
-            ->blur(35);
-
-        $foreground = $manager->read($file->getPathname())
-            ->orient()
-            ->contain(1200, 630, 'ffffff');
-
-        $background->place($foreground, 'center');
-
-        $dir = 'og_image/' . now()->format('Ym');
-        $filename = $this->generateTimestampThumbnailName($dir, 'jpg');
-        $path = $dir . '/' . $filename;
-        $encoded = $background->encode(new JpegEncoder(quality: 85));
 
         Storage::disk('public')->put($path, (string) $encoded);
 

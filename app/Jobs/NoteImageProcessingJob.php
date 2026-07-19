@@ -17,7 +17,7 @@ use Throwable;
 /**
  * Undocumented class
  */
-class ProcessNoteImageProcessingJob implements ShouldQueue
+class NoteImageProcessingJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -43,9 +43,7 @@ class ProcessNoteImageProcessingJob implements ShouldQueue
         public string $sourceThumbnailPath,
         public string $imageType,
         public ?string $previousImagePath = null,
-    ) {
-        $this->onQueue('media');
-    }
+    ) { }
 
     /**
      * 큐 작업 처리
