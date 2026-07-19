@@ -93,7 +93,7 @@ class PostRepository
      * @param integer $perPage
      * @return LengthAwarePaginator
      */
-    public function paginateByType(string $postType, array $filters, int $perPage = 20): LengthAwarePaginator
+    public function paginateByType(string $postType, array $filters): LengthAwarePaginator
     {
         $startDate = $filters['search_start_date'] ?? null;
         $endDate = $filters['search_end_date'] ?? null;
@@ -103,6 +103,7 @@ class PostRepository
         $useFlag = array_key_exists('use_flag', $filters) ? $filters['use_flag'] : null;
         $start = $startDate ? Carbon::parse($startDate)->startOfDay() : null;
         $end = $endDate ? Carbon::parse($endDate)->endOfDay() : null;
+        $perPage = $filters['per_page'] ?? 20;
 
         return Post::with('user')
             ->where('post_type', $postType)

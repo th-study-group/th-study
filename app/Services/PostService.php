@@ -120,8 +120,7 @@ class PostService
 
         $posts = $this->postRepository->paginateByType(
             $postType,
-            $filters,
-            $page
+            $filters
         );
 
         Log::info('[Admin][Post][List] 조회 완료', [
@@ -148,7 +147,7 @@ class PostService
 
         $posts = $this->postRepository->paginateByType(
             $postType,
-            $filters,
+            $filters
         );
 
         Log::info('[Post][List] 조회 완료', [
