@@ -211,7 +211,7 @@ class TrafficAnalyticsService
             return '/';
         }
 
-        return $requestPath;
+        return '/';
     }
 
     /**
