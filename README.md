@@ -52,7 +52,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 - Rule: `admin` 계정은 유입/전환 수집 제외
 - 구글애널리틱스4 Rule: 구글애널리틱스4는 `ShareGoogleAnalytics` 미들웨어에서 제어하며, `GET` 요청 + 허용 경로(`config/analytics.php`) + 제외 대상이 아닌 접근에만 스크립트를 삽입
 - 구글애널리틱스4 Skip: `TrafficTrackingGuard` 기준으로 `admin` 계정과 `config('traffic.access_log_excluded_ips')`에 등록된 IP는 구글애널리틱스4/트래픽 수집에서 제외
-- Retention: 초기 운영 단계에서는 빠른 삭제보다 분석 데이터 확보를 우선해 `access_logs`/`bot_access_logs`는 365일, `conversion_logs`는 500일 기준으로 보관 후 정리
+- Retention: 기본 보존 정책은 `access_logs` 30일, `bot_access_logs` 60일, `conversion_logs` 90일입니다. 다만 본격적인 트래픽이 쌓이기 전까지는 분석 데이터 확보를 우선해 `access_logs`, `bot_access_logs`, `conversion_logs` 모두 1000일 기준으로 길게 보관하고, 상황에 따라서는 삭제 주기를 더 늦추거나 아예 삭제하지 않을 수도 있습니다.
 - Config: `.env`에서 `GA4_ENABLED`, `GA4_MEASUREMENT_ID`를 사용하고, 허용 페이지 목록은 `config/analytics.php`의 `allowed_paths`로 관리
 
 ## 2.1 FastAPI 학습 메모
@@ -596,7 +596,7 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - `user.level = admin`은 공통 규칙(`TrafficTrackingGuard`)으로 유입/전환 모두 수집에서 제외합니다.
 - 전환 타입은 `config/traffic.php`의 `traffic.conversion_types`를 기준으로 FormRequest + Service 이중 검증으로 관리합니다.
 - 현재 일 단위 집계(`stats:aggregate-daily`)를 기준으로 두고, 월/연 집계는 같은 서비스/레퍼지토리 계층에 확장 가능한 형태로 설계했습니다.
-- 로그 정리(`logs:cleanup`)는 매일 실행되며 `access_logs` 365일, `bot_access_logs` 365일, `conversion_logs` 500일 기준으로 삭제합니다.
+- 로그 정리(`logs:cleanup`)는 매일 실행됩니다. 기본 정책은 `access_logs` 30일, `bot_access_logs` 60일, `conversion_logs` 90일 정리이며, 현재 운영 기준은 트래픽 데이터 축적을 위해 `access_logs` 1000일, `bot_access_logs` 1000일, `conversion_logs` 1000일입니다. 추후 트래픽 규모와 분석 필요도에 따라 로그 전체의 삭제 주기를 더 늦추거나 미삭제로 전환할 수 있습니다.
 - 초기 운영 단계라 로그를 빠르게 비우기보다 유입/전환 데이터를 충분히 쌓아 분석하는 쪽을 우선했고, 트래픽 증가 시 보관 주기는 다시 조정할 수 있게 두었습니다.
 
 6. 운영 주의점

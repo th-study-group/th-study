@@ -5,35 +5,29 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-/**
- * 페이지별 일 통계 자동 삭제 스크립트
- */
 class CleanupOldPageStatLogs extends Command
 {
     protected $signature = 'logs:cleanup';
-    protected $description = '오래된 로그 삭제';
+    protected $description = '오래된 로그 정리';
 
     public function handle()
     {
-        // 60일
-        // 365일로 변경 (트래픽 증가 시 변경)
+        // 기본 정책은 30일이지만, 초기 트래픽 데이터 축적 단계라 1000일 기준으로 정리합니다.
         DB::table('access_logs')
-            ->where('access_date', '<', now()->subDays(365)->toDateString())
+            ->where('access_date', '<', now()->subDays(1000)->toDateString())
             ->delete();
 
-        // 30일 
-        // 365일로 변경 (트래픽 증가 시 변경)
+        // 기본 정책은 60일이지만, 초기 트래픽 데이터 축적 단계라 1000일 기준으로 정리합니다.
         DB::table('bot_access_logs')
-            ->where('access_date', '<', now()->subDays(365)->toDateString())
+            ->where('access_date', '<', now()->subDays(1000)->toDateString())
             ->delete();
 
-        // 90일
-        // 500일로 변경 (트래픽 증가 시 변경)
+        // 기본 정책은 90일이지만, 초기 트래픽 데이터 축적 단계라 1000일 기준으로 정리합니다.
         DB::table('conversion_logs')
-            ->where('conversion_date', '<', now()->subDays(500)->toDateString())
+            ->where('conversion_date', '<', now()->subDays(1000)->toDateString())
             ->delete();
 
-        $this->info('오래된 로그 삭제 완료');
+        $this->info('오래된 로그 정리 완료');
 
         return self::SUCCESS;
     }
