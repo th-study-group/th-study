@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Intervention\Image\Encoders\JpegEncoder;
+use Intervention\Image\ImageManager;
 
 /**
  * 노트(블로그) 컨트롤러
@@ -159,7 +161,7 @@ class NoteController extends Controller
         $plainContent = trim(preg_replace('/\s+/u', ' ', strip_tags($contentHtml)));
         $metaDescription = $plainContent !== '' ? Str::limit($plainContent, 160) : '상세내역';
         $metaImage = ! empty($note->thumbnail_path)
-            ? url(Storage::url((string) $note->thumbnail_path))
+            ? route('og.note', ['group' => $noteGroup, 'slug' => $slug, 'idx' => $note->idx])
             : asset('images/og/001.png');
         $relatedNoteItems = $this->buildRelatedNoteItems($noteGroup, $slug, $relatedNotes);
 
@@ -186,6 +188,10 @@ class NoteController extends Controller
             'metaTitle' => $metaTitle,
             'metaDescription' => $metaDescription,
             'metaImage' => $metaImage,
+            'metaImageWidth' => 1200,
+            'metaImageHeight' => 630,
+            'metaUrl' => url()->current(),
+            'metaType' => 'article',
         ]);
     }
 
@@ -557,5 +563,57 @@ class NoteController extends Controller
 
         $diffYear = intdiv($diffMonth, 12);
         return $diffYear . '년 전';
+    }
+
+    /**
+     * 공유용 OG 이미지를 생성해 반환한다.
+     *
+     * @param string $group
+     * @param string $slug
+     * @param string $idx
+     * @return \Illuminate\Http\Response
+     */
+    public function ogImage(string $group, string $slug, string $idx)
+    {
+        $note = $this->noteService->getNoteDetail($group, $slug, $idx);
+        $sourcePath = $this->resolveOgImageSourcePath($note);
+
+        $manager = ImageManager::gd();
+        $background = $manager->read($sourcePath)
+            ->cover(1200, 630)
+            ->blur(35);
+
+        $foreground = $manager->read($sourcePath)
+            ->contain(1200, 630, 'ffffff');
+
+        $background->place($foreground, 'center');
+        $encoded = $background->encode(new JpegEncoder(quality: 85));
+
+        return response((string) $encoded, 200, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'public, max-age=3600',
+        ]);
+    }
+
+    /**
+     * OG 이미지에 사용할 원본 파일 경로를 반환한다.
+     *
+     * @param \App\Models\Note $note
+     * @return string
+     */
+    private function resolveOgImageSourcePath(Note $note): string
+    {
+        $thumbnailPath = trim((string) ($note->thumbnail_path ?? ''));
+
+        if ($thumbnailPath !== '') {
+            $normalizedPath = preg_replace('#^/?storage/#', '', $thumbnailPath) ?? $thumbnailPath;
+            $normalizedPath = ltrim($normalizedPath, '/');
+
+            if (Storage::disk('public')->exists($normalizedPath)) {
+                return Storage::disk('public')->path($normalizedPath);
+            }
+        }
+
+        return public_path('images/og/001.png');
     }
 }

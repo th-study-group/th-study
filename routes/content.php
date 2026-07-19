@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Route;
 
 $noteGroups = config('note.group', []);
 
+Route::get('/og/{group}/{slug}/{idx}.jpg', [NoteController::class, 'ogImage'])
+    ->name('og.note')
+    ->whereNumber('idx');
+
 foreach (array_keys($noteGroups) as $group) {
     Route::prefix($group)->name($group . '.')->group(function () use ($group) {
         if ($group === 'blogs') {
