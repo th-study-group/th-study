@@ -812,6 +812,10 @@ function fetchBlogListPage(state, page, shouldAppend) {
           minute: '2-digit',
           hour12: true,
         }).format(now));
+
+      if (!isAppendLoad) {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
     },
     onError: function () {
       alert('목록을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');

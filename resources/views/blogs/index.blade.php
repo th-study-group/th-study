@@ -715,7 +715,7 @@
         });
       }
       $('#btn_refresh_top, #btn_refresh_fab').on('click', function() {
-        location.reload();
+        fetchBlogListPage(state, 1, false);
       });
 
       if (window.matchMedia) {
