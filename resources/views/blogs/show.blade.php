@@ -95,6 +95,29 @@
         <button type="button" class="btn_note_list btn btn-dark">목록</button>
       </div>
     </div>
+    <button
+      type="button"
+      id="btn_share_copy"
+      class="blog-show-share-fab"
+      aria-label="현재 주소 복사">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M10.6 13.4l2.8-2.8"
+              stroke="currentColor"
+              stroke-width="2.1"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+        <path d="M8.1 14.2l-1.4 1.4a3 3 0 1 1-4.2-4.2l3-3a3 3 0 0 1 4.2 0"
+              stroke="currentColor"
+              stroke-width="2.1"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+        <path d="M15.9 9.8l1.4-1.4a3 3 0 1 1 4.2 4.2l-3 3a3 3 0 0 1-4.2 0"
+              stroke="currentColor"
+              stroke-width="2.1"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+      </svg>
+    </button>
   </section>
 @endsection
 
@@ -113,6 +136,8 @@
       const useFlag = "{{ $note->use_flag ?? 'N' }}";
 
       initBlogDetailContentEnhancements();
+
+      initShareCopyButtons();
 
       $(".btn_note_list").on("click", function() {
         location.href = listUrl;

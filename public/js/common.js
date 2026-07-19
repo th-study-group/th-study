@@ -625,3 +625,64 @@ function initDragHorizontalScroll()
         }, true);
     });
 }
+
+function trackShareConversion(sharedUrl, sourcePage)
+{
+    requestAjax({
+        method: 'POST',
+        url: '/share',
+        dataType: 'json',
+        headers: {
+            'X-CSRF-TOKEN': window.CSRF_TOKEN || '',
+        },
+        data: {
+            url: String(sharedUrl || ''),
+            conversion_type: 'share',
+            source_page: String(sourcePage || (window.location.pathname + window.location.search) || '/'),
+        },
+        onSuccess: function () {
+            alert('주소가 복사되었습니다.');
+        },
+        onError: function () {
+            alert('주소 복사 후 전환 저장에 실패했습니다.');
+        },
+    });
+}
+
+function fallbackCopyText(text)
+{
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.top = '-9999px';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const copied = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return copied;
+}
+
+function initShareCopyButtons()
+{
+    $('#btn_share_copy').off('click.shareCopy').on('click.shareCopy', async function () {
+        const currentUrl = window.location.href;
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(currentUrl);
+            } else {
+                const copied = fallbackCopyText(currentUrl);
+                if (!copied) {
+                    throw new Error('copy failed');
+                }
+            }
+
+            trackShareConversion(currentUrl, window.location.pathname + window.location.search);
+        } catch (e) {
+            alert('주소 복사에 실패했습니다.');
+        }
+    });
+}

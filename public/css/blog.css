@@ -2334,3 +2334,32 @@
   font-weight: 600;
   color: #212529;
 }
+
+.blog-show-share-fab {
+  position: fixed;
+  right: var(--global-floating-right);
+  bottom: calc(var(--global-floating-bottom) + var(--global-floating-size) + var(--global-floating-gap));
+  width: var(--global-floating-size);
+  height: var(--global-floating-size);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1060;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: linear-gradient(135deg, #2563eb 0%, #0f172a 100%);
+  color: #ffffff;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.blog-show-share-fab svg {
+  width: 22px;
+  height: 22px;
+  opacity: 0.98;
+}
+
+.blog-show-share-fab:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #111827 100%);
+}

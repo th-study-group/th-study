@@ -58,4 +58,7 @@ Route::get('/robots.txt', function () {
 
 // 아웃바운드 전환 추적 후 외부 이동
 Route::get('/outbound', [TrafficController::class, 'outbound'])
-    ->name('conversion.outbound');    
+    ->name('conversion.outbound');
+
+Route::post('/share', [TrafficController::class, 'share'])
+    ->name('conversion.share');
