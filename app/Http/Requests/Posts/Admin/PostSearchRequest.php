@@ -23,7 +23,16 @@ class PostSearchRequest extends FormRequest
             'search_name' => ['nullable', 'string', 'max:50'],
             'search_title' => ['nullable', 'string', 'max:100'],
             'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'page' => $this->page ?? 1,
+            'per_page' => $this->per_page ?? 10,
+        ]);
     }
 
     public function withValidator(Validator $validator): void

@@ -63,13 +63,13 @@ class PostRepository
      * @param integer $userIdx
      * @param string $postType
      * @param array $filters
-     * @param integer $perPage
      * @return LengthAwarePaginator
      */
-    public function paginateByUserAndType(int $userIdx, string $postType, array $filters, int $perPage = 20): LengthAwarePaginator
+    public function paginateByUserAndType(int $userIdx, string $postType, array $filters): LengthAwarePaginator
     {
         $startDate = $filters['search_start_date'] ?? null;
         $endDate = $filters['search_end_date'] ?? null;
+        $perPage = $filters['per_page'] ?? 20;
         $start = $startDate ? Carbon::parse($startDate)->startOfDay() : null;
         $end = $endDate ? Carbon::parse($endDate)->endOfDay() : null;
 
