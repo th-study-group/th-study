@@ -159,9 +159,8 @@ class NoteController extends Controller
         $plainContent = trim(preg_replace('/\s+/u', ' ', strip_tags($contentHtml)));
         $metaDescription = $plainContent !== '' ? Str::limit($plainContent, 160) : '상세내역';
         $metaImage = ! empty($note->thumbnail_path)
-            ? route('og.note', ['group' => $noteGroup, 'slug' => $slug, 'idx' => $note->idx])
+            ? url(Storage::url((string) $note->thumbnail_path))
             : asset('images/og/001.png');
-
         $relatedNoteItems = $this->buildRelatedNoteItems($noteGroup, $slug, $relatedNotes);
 
         if ($request->ajax()) {
@@ -187,10 +186,6 @@ class NoteController extends Controller
             'metaTitle' => $metaTitle,
             'metaDescription' => $metaDescription,
             'metaImage' => $metaImage,
-            'metaImageWidth' => 1200,
-            'metaImageHeight' => 630,
-            'metaUrl' => url()->current(),
-            'metaType' => 'article',
         ]);
     }
 
