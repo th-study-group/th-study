@@ -22,6 +22,7 @@ class Note extends Base
         'subject',
         'content',
         'thumbnail_path',
+        'og_image_path',
         'use_flag',
         'access_page',
         //'create_user_idx',

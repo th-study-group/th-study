@@ -17,8 +17,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Intervention\Image\Encoders\JpegEncoder;
-use Intervention\Image\ImageManager;
 
 /**
  * 노트(블로그) 컨트롤러
@@ -160,9 +158,11 @@ class NoteController extends Controller
         $metaTitle = $note->subject ?? '상세내역';
         $plainContent = trim(preg_replace('/\s+/u', ' ', strip_tags($contentHtml)));
         $metaDescription = $plainContent !== '' ? Str::limit($plainContent, 160) : '상세내역';
-        $metaImage = ! empty($note->thumbnail_path)
-            ? route('og.note', ['group' => $noteGroup, 'slug' => $slug, 'idx' => $note->idx])
-            : asset('images/og/001.png');
+        $metaImage = ! empty($note->og_image_path)
+            ? url(Storage::url((string) $note->og_image_path))
+            : (! empty($note->thumbnail_path)
+                ? url(Storage::url((string) $note->thumbnail_path))
+                : asset('images/og/001.png'));
         $relatedNoteItems = $this->buildRelatedNoteItems($noteGroup, $slug, $relatedNotes);
 
         if ($request->ajax()) {

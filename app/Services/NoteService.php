@@ -121,9 +121,11 @@ class NoteService
         return DB::transaction(function () use ($request, $topic, $resolvedGroupCode, $topicIdx): Note {
             $userIdx = (int) (Auth::id() ?? 0);
             $thumbnailPath = null;
+            $ogImagePath = null;
 
             if ($request->hasFile('thumbnail_path')) {
                 $thumbnailPath = $this->storeThumbnail($request->file('thumbnail_path'));
+                $ogImagePath = $this->storeOgImage($request->file('thumbnail_path'));
             }
 
             $sanitizedContent = $this->editorContentProcessor->sanitizeForStorage(
@@ -139,6 +141,7 @@ class NoteService
                 'subject' => $request->input('subject'),
                 'content' => $sanitizedContent,
                 'thumbnail_path' => $thumbnailPath,
+                'og_image_path' => $ogImagePath,
                 'use_flag' => 0,
                 'create_user_idx' => $userIdx,
             ]);
@@ -176,6 +179,7 @@ class NoteService
                 'category_code' => $topic->category->code,
                 'topic_idx' => $topicIdx,
                 'thumbnail_path' => $thumbnailPath,
+                'og_image_path' => $ogImagePath,
                 'tag_count' => count($tagIdxList),
                 'ip' => request()->ip(),
             ]);
@@ -368,10 +372,13 @@ class NoteService
         return DB::transaction(function () use ($request, $note, $topic, $resolvedGroupCode, $userIdx): Note {
             $beforeTagIdxList = $this->noteTagMapRepository->getTagIdxListByNote((int) $note->idx);
             $thumbnailPath = $note->thumbnail_path;
+            $ogImagePath = $note->og_image_path;
 
             if ($request->hasFile('thumbnail_path')) {
                 $this->deletePublicThumbnail($thumbnailPath);
+                $this->deletePublicThumbnail($ogImagePath);
                 $thumbnailPath = $this->storeThumbnail($request->file('thumbnail_path'));
+                $ogImagePath = $this->storeOgImage($request->file('thumbnail_path'));
             }
 
             $sanitizedContent = $this->editorContentProcessor->sanitizeForStorage(
@@ -391,6 +398,7 @@ class NoteService
                 'subject' => $request->input('subject'),
                 'content' => $sanitizedContent,
                 'thumbnail_path' => $thumbnailPath,
+                'og_image_path' => $ogImagePath,
                 'use_flag' => $request->input('usg_flag', $note->use_flag ?? 'N'),
                 'update_user_idx' => $userIdx,
             ]);
@@ -423,6 +431,7 @@ class NoteService
                 'category_code' => $topic->category->code,
                 'topic_idx' => $topic->idx,
                 'thumbnail_path' => $thumbnailPath,
+                'og_image_path' => $ogImagePath,
                 'tag_count' => count($tagIdxList),
                 'ip' => request()->ip(),
             ]);
@@ -449,6 +458,10 @@ class NoteService
 
             if (! empty($note->thumbnail_path)) {
                 $this->deletePublicThumbnail((string) $note->thumbnail_path);
+            }
+
+            if (! empty($note->og_image_path)) {
+                $this->deletePublicThumbnail((string) $note->og_image_path);
             }
 
             $this->noteTagMapRepository->deleteMappingsByNote((int) $note->idx);
@@ -536,8 +549,13 @@ class NoteService
                 $this->deletePublicThumbnail((string) $note->thumbnail_path);
             }
 
+            if (! empty($note->og_image_path)) {
+                $this->deletePublicThumbnail((string) $note->og_image_path);
+            }
+
             $note = $this->noteRepository->update($note, [
                 'thumbnail_path' => null,
+                'og_image_path' => null,
                 'update_user_idx' => $userIdx,
             ]);
 
@@ -645,6 +663,31 @@ class NoteService
         $dir = now()->format('Ym');
         $filename = $this->generateTimestampThumbnailName($dir, $extension);
         $path = $dir . '/' . $filename;
+
+        Storage::disk('public')->put($path, (string) $encoded);
+
+        return $path;
+    }
+
+    private function storeOgImage(UploadedFile $file): string
+    {
+        $manager = ImageManager::gd();
+
+        $background = $manager->read($file->getPathname())
+            ->orient()
+            ->cover(1200, 630)
+            ->blur(35);
+
+        $foreground = $manager->read($file->getPathname())
+            ->orient()
+            ->contain(1200, 630, 'ffffff');
+
+        $background->place($foreground, 'center');
+
+        $dir = 'og_image/' . now()->format('Ym');
+        $filename = $this->generateTimestampThumbnailName($dir, 'jpg');
+        $path = $dir . '/' . $filename;
+        $encoded = $background->encode(new JpegEncoder(quality: 85));
 
         Storage::disk('public')->put($path, (string) $encoded);
 
