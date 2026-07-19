@@ -217,6 +217,10 @@
             <i class="bi bi-eye" aria-hidden="true"></i>
             <span class="visually-hidden">공개설정</span>
           </button>
+          <button type="button" id="blogDetailShareBtn" class="blog-detail-action-btn blog-action-icon-btn is-public btn" aria-label="공유하기" title="공유하기">
+            <i class="bi bi-link-45deg" aria-hidden="true"></i>
+            <span class="visually-hidden">공유하기</span>
+          </button>
           <button type="button" id="blogDetailBottomCloseBtn" class="blog-detail-action-btn blog-action-icon-btn is-close btn" aria-label="닫기" title="닫기">
             <i class="bi bi-x-lg" aria-hidden="true"></i>
             <span class="visually-hidden">닫기</span>
@@ -351,6 +355,12 @@
         isLoadingList: false,
         listUrl: listUrl,
       };
+
+      initShareCopyButtons('#blogDetailShareBtn', {
+        getUrl: function () {
+          return String(state.currentDetail?.actions?.show_url || '').trim();
+        }
+      });
 
       const $items = $("#blogItems");
       const $moreWrap = $(".blog-more-wrap");

@@ -649,6 +649,21 @@ function trackShareConversion(sharedUrl, sourcePage)
     });
 }
 
+function resolveShareSourcePath(sharedUrl)
+{
+    const normalizedUrl = String(sharedUrl || '').trim();
+    if (normalizedUrl === '') {
+        return '';
+    }
+
+    try {
+        const resolved = new URL(normalizedUrl, window.location.origin);
+        return String(resolved.pathname || '/') + String(resolved.search || '');
+    } catch (e) {
+        return normalizedUrl.startsWith('/') ? normalizedUrl : '';
+    }
+}
+
 function fallbackCopyText(text)
 {
     const textarea = document.createElement('textarea');
@@ -665,22 +680,52 @@ function fallbackCopyText(text)
     return copied;
 }
 
-function initShareCopyButtons()
+function initShareCopyButtons(selector, options)
 {
-    $('#btn_share_copy').off('click.shareCopy').on('click.shareCopy', async function () {
-        const currentUrl = window.location.href;
+    const resolvedSelector = String(selector || '').trim();
+    const resolvedOptions = options || {};
+
+    if (!resolvedSelector) {
+        alert('공유하기 오류가 발생했습니다. 관리자에게 문의해주세요.');
+        return;
+    }
+
+    const $button = $(resolvedSelector);
+    if ($button.length === 0) {
+        alert('공유하기 오류가 발생했습니다. 관리자에게 문의해주세요.');
+        return;
+    }
+
+    $button.off('click.shareCopy').on('click.shareCopy', async function () {
+        const sharedUrl = typeof resolvedOptions.getUrl === 'function'
+            ? String(resolvedOptions.getUrl() || '').trim()
+            : String(window.location.href).trim();
+
+        if (!sharedUrl) {
+            alert('공유할 주소를 찾을 수 없습니다. 관리자에게 문의해주세요.');
+            return;
+        }
+
+        const sourcePage = typeof resolvedOptions.getSourcePage === 'function'
+            ? String(resolvedOptions.getSourcePage() || '').trim()
+            : resolveShareSourcePath(sharedUrl);
+
+        if (!sourcePage) {
+            alert('공유할 주소를 확인하는 중 문제가 발생했습니다. 관리자에게 문의해주세요.');
+            return;
+        }
 
         try {
             if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(currentUrl);
+                await navigator.clipboard.writeText(sharedUrl);
             } else {
-                const copied = fallbackCopyText(currentUrl);
+                const copied = fallbackCopyText(sharedUrl);
                 if (!copied) {
                     throw new Error('copy failed');
                 }
             }
 
-            trackShareConversion(currentUrl, window.location.pathname + window.location.search);
+            trackShareConversion(sharedUrl, sourcePage);
         } catch (e) {
             alert('주소 복사에 실패했습니다.');
         }

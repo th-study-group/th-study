@@ -137,7 +137,11 @@
 
       initBlogDetailContentEnhancements();
 
-      initShareCopyButtons();
+      initShareCopyButtons('#btn_share_copy', {
+        getUrl: function () {
+          return window.location.href;
+        }
+      });
 
       $(".btn_note_list").on("click", function() {
         location.href = listUrl;
