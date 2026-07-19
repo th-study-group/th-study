@@ -1571,8 +1571,8 @@ tail -f /var/www/th-study/storage/logs/schedule-logs-cleanup-$(date +%F).log
 - `logs:cleanup` 출력: `storage/logs/schedule-logs-cleanup-YYYY-MM-DD.log`
 - 앱 로그 파일은 서버 설정에 따라 `app.log` 또는 `laravel.log`를 사용합니다.
 - 날짜 인자는 `YYYY-MM-DD` 형식을 권장합니다. (예: `2026-03-01`)
-## OG ?대?吏 ?쎌옣 硫붾え
+## OG 이미지 확장 메모
 
-- ?명듃 ?몃꽕???낅줈?쒖? 怨듭쑀??OG ?대?吏 ?앹꽦??`Intervention Image` + `ImageManager::gd()`瑜??ъ슜?⑸땲??
-- `gd` ?쎌옣??怨듭쑀/썸?ㅻ꽕???앹꽦???꾩닔媛깝怨? `php.ini`?먯꽌 ?쒖꽦 ?щ?瑜??뺤씤?댁빞 ?⑸땲??
-- `orient()`濡? ?ъ쭊 諛⑺뼢 蹂댁젙???섎?濡? `exif` ?쎌옣??媛숈씠 ?쒖꽦?섏떎硫? ?꾪룿/?뚰드 ?ъ쭊 ?곸긽 諛⑺뼢 ???덉젙?깃쾶 ?곸슜???덉뒿?덈떎
+- 노트 썸네일 업로드 시 공유용 OG 이미지 생성은 `Intervention Image` + `ImageManager::gd()`를 사용합니다.
+- `gd` 확장은 공유용/썸네일 생성에 필요하므로 `php.ini`에서 활성화 여부를 확인해야 합니다.
+- `orient()`로 사진 방향 보정을 하므로 `exif` 확장도 같이 활성화해 두면 모바일/휴대폰 사진 업로드 시 원본 방향을 더 안정적으로 적용할 수 있습니다.

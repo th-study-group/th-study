@@ -144,8 +144,8 @@
             <tr><td class='fw-bold'>Python</td><td>3.x</td></tr>
             <tr><td class='fw-bold'>FastAPI</td><td>학습용 로컬 API 구성</td></tr>
             <tr>
-              <td class="fw-bold">OG ?대?吏 ?쎌옣</td>
-              <td>怨듭쑀??OG ?대?吏 ?앹꽦怨? ?ъ쭊 諛⑺뼢 蹂댁젙 愿??PHP <code>gd</code>, <code>exif</code> ?쎌옣 ?뚯븙</td>
+              <td class="fw-bold">OG 이미지 확장</td>
+              <td>공유용 OG 이미지 생성과 사진 방향 보정 관련 PHP <code>gd</code>, <code>exif</code> 확장 확인</td>
             </tr>
           </tbody>
         </table>
