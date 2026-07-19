@@ -143,6 +143,10 @@
             <tr><td class='fw-bold'>Docker</td><td>27.5.1</td></tr>
             <tr><td class='fw-bold'>Python</td><td>3.x</td></tr>
             <tr><td class='fw-bold'>FastAPI</td><td>학습용 로컬 API 구성</td></tr>
+            <tr>
+              <td class="fw-bold">OG ?대?吏 ?쎌옣</td>
+              <td>怨듭쑀??OG ?대?吏 ?앹꽦怨? ?ъ쭊 諛⑺뼢 蹂댁젙 愿??PHP <code>gd</code>, <code>exif</code> ?쎌옣 ?뚯븙</td>
+            </tr>
           </tbody>
         </table>
       </div>
