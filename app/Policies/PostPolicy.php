@@ -64,6 +64,26 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
+         if ($post->post_type === 'inquiries') {
+            return false;
+        }
+
+        if ($user->level !== 'admin') {
+            return false;
+        }
+
+        return $post->user_idx === $user->idx;
+    }
+
+    /**
+     * 게시글 삭제 권한
+     *
+     * @param User $user
+     * @param Post $post
+     * @return boolean
+     */
+    public function delete(User $user, Post $post): bool
+    {
         if ($post->post_type === 'inquiries') {
             return false;
         }
@@ -80,18 +100,6 @@ class PostPolicy
         }
 
         return $post->user_idx === $user->idx;
-    }
-
-    /**
-     * 게시글 삭제 권한
-     *
-     * @param User $user
-     * @param Post $post
-     * @return boolean
-     */
-    public function delete(User $user, Post $post): bool
-    {
-        return $this->update($user, $post);
     }
 
     /**
