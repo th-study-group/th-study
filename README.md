@@ -1360,7 +1360,7 @@ sudo systemctl status th-study-queue
 - 레이아웃 메타 태그를 `@yield(..., 기본값)` 구조로 변경해 페이지별 override 지원
 - 적용 파일: `resources/views/layouts/app.blade.php`
 - 상세 페이지(`resources/views/blogs/show.blade.php`)는 제목/설명/이미지를 게시글 기준으로 override
-- `og:image`는 썸네일 존재 시 썸네일 URL, 없으면 기본 OG 이미지(`images/og/001.png`)
+- `og:image`는 `og_image_path`가 있으면 해당 URL을 사용하고, 없으면 썸네일 URL, 둘 다 없으면 기본 OG 이미지(`images/og/001.png`)를 사용
 
 ### 18.9 운영 로그 보강
 
@@ -1573,6 +1573,9 @@ tail -f /var/www/th-study/storage/logs/schedule-logs-cleanup-$(date +%F).log
 - 날짜 인자는 `YYYY-MM-DD` 형식을 권장합니다. (예: `2026-03-01`)
 ## OG 이미지 확장 메모
 
-- 노트 썸네일 업로드 시 공유용 OG 이미지 생성은 `Intervention Image` + `ImageManager::gd()`를 사용합니다.
+- 노트 생성/수정 시에는 일반 썸네일만 먼저 저장하고, 공유용 OG 이미지는 `NoteImageProcessingJob`으로 큐에 분리합니다.
+- OG 이미지 Job은 DB 트랜잭션 커밋 후 `afterCommit()`으로 등록되어, 롤백된 데이터 기준으로 이미지가 생성되지 않도록 처리합니다.
+- Job 내부에서는 현재 `thumbnail_path`와 Job의 원본 경로를 비교해 오래된 Job이 최신 이미지를 덮어쓰지 않도록 막습니다.
+- OG 이미지 생성은 `Intervention Image` + `ImageManager::gd()`를 사용하며, 성공 후에만 `og_image_path`를 갱신하고 이전 OG 파일을 정리합니다.
 - `gd` 확장은 공유용/썸네일 생성에 필요하므로 `php.ini`에서 활성화 여부를 확인해야 합니다.
 - `orient()`로 사진 방향 보정을 하므로 `exif` 확장도 같이 활성화해 두면 모바일/휴대폰 사진 업로드 시 원본 방향을 더 안정적으로 적용할 수 있습니다.

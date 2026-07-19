@@ -145,7 +145,7 @@
             <tr><td class='fw-bold'>FastAPI</td><td>학습용 로컬 API 구성</td></tr>
             <tr>
               <td class="fw-bold">OG 이미지 확장</td>
-              <td>공유용 OG 이미지 생성과 사진 방향 보정 관련 PHP <code>gd</code>, <code>exif</code> 확장 확인</td>
+              <td>공유용 OG 이미지를 큐 작업으로 분리하고, 사진 방향 보정 관련 PHP <code>gd</code>, <code>exif</code> 확장 확인</td>
             </tr>
           </tbody>
         </table>
@@ -194,8 +194,8 @@
               <td>그룹-카테고리-토픽 관계를 with 조회로 연결하고 <code>use_flag=1</code> 토픽만 노출</td>
             </tr>
             <tr>
-              <td class="fw-bold">썸네일 처리</td>
-              <td>Intervention Image 적용, EXIF 회전 보정, 1600px 축소, PNG 유지/JPG 압축, <code>storage/app/public/YYYYMM/YmdHis.ext</code> 저장(동초 충돌 시 접미사 부여)</td>
+              <td class="fw-bold">썸네일/OG 처리</td>
+              <td>일반 썸네일은 즉시 저장하고, 공유용 OG 이미지는 <code>NoteImageProcessingJob</code>으로 분리해 <code>afterCommit()</code> 후 비동기 생성. Job 내부에서 썸네일 원본 경로를 재검사해 stale 작업을 차단하고 성공 시에만 기존 OG 파일 정리</td>
             </tr>
             <tr>
               <td class="fw-bold">해시태그</td>
@@ -241,6 +241,7 @@
           <li>라우트 그룹명 `blogs`와 DB 그룹 코드 `blog`는 `config/note.php` 매핑으로 연결</li>
           <li>`/blogs`는 전체 카테고리, `/blogs/{slug}`는 단일 카테고리 조회로 분기하며 잘못된 slug는 404 처리</li>
           <li>상세 공유 대응을 위해 메타/OG를 페이지 상속 구조로 정리</li>
+          <li>OG 이미지는 트랜잭션 커밋 후 큐에서 생성하도록 분리해 등록/수정 응답과 이미지 가공을 분리</li>
         </ul>
       </div>
       <div class="callout mt-4">
