@@ -158,11 +158,8 @@ class NoteController extends Controller
         $metaTitle = $note->subject ?? '상세내역';
         $plainContent = trim(preg_replace('/\s+/u', ' ', strip_tags($contentHtml)));
         $metaDescription = $plainContent !== '' ? Str::limit($plainContent, 160) : '상세내역';
-        $metaImage = ! empty($note->og_image_path)
-            ? url(Storage::url((string) $note->og_image_path))
-            : (! empty($note->thumbnail_path)
-                ? url(Storage::url((string) $note->thumbnail_path))
-                : asset('images/og/001.png'));
+        // OG 이미지 URL은 서비스에서 생성하고, 캐시 우회를 위한 v 파라미터까지 포함해서 받습니다.
+        $metaImage = $this->noteService->buildMetaImageUrl($note);
         $relatedNoteItems = $this->buildRelatedNoteItems($noteGroup, $slug, $relatedNotes);
 
         if ($request->ajax()) {

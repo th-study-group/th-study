@@ -665,6 +665,44 @@ class NoteService
     }
 
     /**
+     * OG 이미지 URL에 버전 파라미터를 붙여 캐시를 우회합니다.
+     * 수정 이력이 있으면 update_datetime, 아니면 create_datetime 기준으로 v 값을 생성합니다.
+     *
+     * @param Note $note
+     * @return string
+     */
+    public function buildMetaImageUrl(Note $note): string
+    {
+        // OG 전용 이미지가 있으면 우선 사용하고, 없으면 썸네일, 그것도 없으면 기본 OG 이미지를 사용합니다.
+        $imageUrl = ! empty($note->og_image_path)
+            ? url(Storage::url((string) $note->og_image_path))
+            : (! empty($note->thumbnail_path)
+                ? url(Storage::url((string) $note->thumbnail_path))
+                : asset('images/og/001.png'));
+
+        // update/create 시각을 비교해서 캐시 버전 기준 시각을 결정합니다.
+        $versionAt = null;
+
+        if ($note->update_datetime && $note->create_datetime) {
+            $versionAt = $note->update_datetime->ne($note->create_datetime)
+                ? $note->update_datetime
+                : $note->create_datetime;
+        } else {
+            $versionAt = $note->update_datetime ?? $note->create_datetime;
+        }
+
+        // 기준 시각이 없으면 원본 URL 그대로 반환합니다.
+        if (! $versionAt) {
+            return $imageUrl;
+        }
+
+        // 기존 쿼리스트링이 있으면 &, 없으면 ? 로 v 파라미터를 붙입니다.
+        $separator = str_contains($imageUrl, '?') ? '&' : '?';
+
+        return $imageUrl . $separator . 'v=' . $versionAt->format('YmdHis');
+    }
+
+    /**
      * 노트 썸네일 저장
      *
      * @param UploadedFile $file
