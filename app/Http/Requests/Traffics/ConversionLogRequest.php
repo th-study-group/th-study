@@ -23,7 +23,23 @@ class ConversionLogRequest extends FormRequest
                 'string',
                 Rule::in(config('traffic.conversion_types', [])),
             ],
-            'source_page' => ['nullable', 'string', 'max:255', 'regex:/^\//'],
+            'source_page' => [
+                'nullable', 
+                'string', 
+                'max:255', 
+                'regex:/^\//',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    $sourcePage = trim((string) $value);
+
+                    if ($sourcePage === '') {
+                        return;
+                    }
+
+                    if (preg_match('#/(create|edit)(?:\?.*)?$#', $sourcePage)) {
+                        $fail('create/edit 페이지 전환은 허용되지 않습니다.');
+                    }
+                },
+            ],
         ];
     }
 

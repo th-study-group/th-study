@@ -184,6 +184,10 @@ class TrafficAnalyticsService
         }
 
         $refererPath = $this->resolveInternalRefererPath($request, $refererUrl);
+        if ($this->isBlockedConversionSourcePath($refererPath)) {
+            return '/';
+        }
+
         if ($refererPath !== null) {
             return $refererPath;
         }
@@ -194,11 +198,20 @@ class TrafficAnalyticsService
         }
 
         $normalizedSourcePage = trim((string) $sourcePage);
-        if ($normalizedSourcePage !== '' && str_starts_with($normalizedSourcePage, '/')) {
+        if (
+            $normalizedSourcePage !== ''
+            && str_starts_with($normalizedSourcePage, '/')
+            && ! $this->isBlockedConversionSourcePath($normalizedSourcePage)
+        ) {
             return mb_substr($normalizedSourcePage, 0, 255);
         }
 
-        return $this->getPagePath($request);
+        $requestPath = $this->getPagePath($request);
+        if ($this->isBlockedConversionSourcePath($requestPath)) {
+            return '/';
+        }
+
+        return $requestPath;
     }
 
     /**
@@ -352,5 +365,19 @@ class TrafficAnalyticsService
         if (!in_array($conversionType, $types, true)) {
             throw new InvalidArgumentException("Invalid conversion type: {$conversionType}");
         }
+    }
+
+    /**
+     * 차단된 전환 소스 경로인지 확인한다.
+     */
+    private function isBlockedConversionSourcePath(?string $path): bool
+    {
+        $normalizedPath = trim((string) $path);
+
+        if ($normalizedPath === '') {
+            return false;
+        }
+
+        return preg_match('#/(create|edit)(?:\?.*)?$#', $normalizedPath) === 1;
     }
 }
