@@ -460,6 +460,7 @@
   - `subject`: `string(100)`, not null, index
   - `content`: `longText`, not null
   - `thumbnail_path`: `string(500)`, null, default `null`
+  - `og_image_path` : `string(500)`, null, default `null`
   - `use_flag`: `tinyInteger`, not null, default `0`
   - `access_page`: `string(255)`, null, default `null`, index
   - `create_user_idx`: `unsignedBigInteger`, not null, index
