@@ -33,6 +33,7 @@ Laravel 기반 개인 개발 플랫폼입니다.
 ## 2. 기술 스택
 
 - Backend: PHP 8.2, Laravel 12
+- API 문서: L5-Swagger 11 + swagger-php(OpenAPI 3.0 속성 기반)
 - DB: MySQL, MongoDB(비정형 데이터 학습/정리용)
 - Frontend: Blade, Bootstrap 5, jQuery
 - Date UI: Flatpickr
@@ -151,6 +152,27 @@ uvicorn main:app --reload
 
 - 설치와 실행은 로컬 기준으로만 정리합니다.
 - 운영 배포, 시스템 서비스 등록, DNS, 프록시 같은 민감한 운영 정보는 이 FastAPI 학습 메모 범위에 포함하지 않습니다.
+
+## 2.2 라라벨 스웨거(OpenAPI) API 문서
+
+Laravel API도 OpenAPI 3.0 속성 기반으로 문서화했습니다. `darkaonline/l5-swagger`를 사용하며, 컨트롤러와 전역 명세 클래스에 작성한 속성으로 Swagger UI와 JSON 명세를 생성합니다.
+
+- Swagger UI: `http://127.0.0.1:8000/api/documentation`
+- OpenAPI JSON: `http://127.0.0.1:8000/docs`
+- 테스트 API: `GET http://127.0.0.1:8000/api/swagger-test`
+- 전역 명세: `app/OpenApi/OpenApiSpec.php`
+- 엔드포인트 명세 예시: `app/Http/Controllers/Api/SwaggerTestController.php`
+
+### 사용 방법
+
+1. `.env`에서 `L5_SWAGGER_ENABLED=true`로 문서 화면을 활성화합니다.
+2. API 속성을 추가하거나 수정한 뒤 아래 명령으로 명세를 다시 생성합니다.
+
+```bash
+php artisan l5-swagger:generate
+```
+
+생성된 명세는 `storage/api-docs/api-docs.json`에 저장됩니다. 현재는 Swagger 연동 구조와 응답 형식을 확인할 수 있도록 `swagger-test` 엔드포인트를 예시로 제공합니다.
 
 ### 프론트 라이브러리 구성(`app.blade.php` 기준)
 

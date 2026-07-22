@@ -35,6 +35,7 @@
             <li>백업: <code style="color:#fff;">/backup/mysql</code> + <code style="color:#fff;">/backup/laravel_files</code> 14일 보관</li>
             <li>수익화: 카카오 애드핏 광고 단위를 PC/모바일/슬림/정사각형으로 분리 운영</li>
             <li>학습 확장: Python 3 + FastAPI 로컬 API 기초 정리</li>
+            <li>API 문서화: Laravel OpenAPI 속성 기반 Swagger UI 및 테스트 API 구성</li>
             <li>분석: 유입 로그, 전환 로그, 일별 통계 집계 구조와 구글애널리틱스4 허용 경로/IP 제한 적용</li>
             <li>MongoDB: 비정형 데이터 및 Raw 데이터 정리 방향과 Windows/macOS/Ubuntu 설치 기준 문서화</li>
           </ul>
@@ -81,7 +82,8 @@
             <li><a href="#codex-skill">13. Codex 스킬</a><span class="toc-dots"></span><span class="toc-desc">SKILL.md 작성법과 파일 종류</span></li>
             <li><a href="#mcp-oauth">14. MCP OAuth/JWT 연동</a><span class="toc-dots"></span><span class="toc-desc">ChatGPT tool 연결 구조</span></li>
             <li><a href="#fastapi-study">15. FastAPI 학습</a><span class="toc-dots"></span><span class="toc-desc">로컬 설치와 기본 API</span></li>
-            <li><a href="#appendix">16. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
+            <li><a href="#laravel-swagger">16. 라라벨 스웨거 API 문서</a><span class="toc-dots"></span><span class="toc-desc">OpenAPI 자동 문서화</span></li>
+            <li><a href="#appendix">17. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
           </ul>
         </div>
       </div>
@@ -1158,9 +1160,45 @@ uvicorn main:app --reload</code></pre>
   </div>
 </section>
 
+<section id="laravel-swagger" class="section bg-light">
+  <div class="container">
+    <h2 class="h2x mb-3">16. 라라벨 스웨거 API 문서</h2>
+    <div class="box pad">
+      <p class="leadx mb-3">Laravel API에는 <code>L5-Swagger 11</code>과 PHP OpenAPI 속성을 적용해, 구현 코드와 API 문서를 함께 관리할 수 있게 구성했습니다.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="p-3 border rounded-4 h-100">
+            <div class="fw-bold mb-2">문서와 테스트 경로</div>
+            <ul class="mb-0" style="margin-left:18px;">
+              <li><code>/api/documentation</code>: Swagger UI</li>
+              <li><code>/docs</code>: 생성된 OpenAPI JSON</li>
+              <li><code>/api/swagger-test</code>: JSON 응답 예시 API</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="codeblock h-100">
+            <div class="codehdr"><span>bash · OpenAPI 명세 생성</span></div>
+            <pre><code># .env
+L5_SWAGGER_ENABLED=true
+
+php artisan l5-swagger:generate</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="callout mt-4">
+        <strong>코드 기반 문서화</strong><br>
+        <code>app/OpenApi/OpenApiSpec.php</code>에서 API 정보·서버·보안 스키마를 정의하고,
+        각 컨트롤러의 OpenAPI 속성에서 경로와 응답 형식을 선언합니다. 생성 결과는
+        <code>storage/api-docs/api-docs.json</code>에 저장되어 Swagger UI에서 확인하고 요청을 테스트할 수 있습니다.
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="appendix" class="section bg-light">
   <div class="container">
-    <h2 class="h2x mb-3">16. README 원문</h2>
+    <h2 class="h2x mb-3">17. README 원문</h2>
     <div class="box pad readme-summary">
       <p class="fw-bold mb-2">포트폴리오 관점 요약</p>
       <ul>
