@@ -1,0 +1,74 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "티에이치스터디 API",
+        "description": "티에이치스터디 API 문서",
+        "contact": {
+            "name": "티에이치스터디",
+            "email": "admin@th-study.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "현재 서버"
+        },
+        {
+            "url": "http://localhost:8000",
+            "description": "로컬 서버"
+        },
+        {
+            "url": "https://www.th-study.com",
+            "description": "운영 서버"
+        }
+    ],
+    "paths": {
+        "/api/swagger-test": {
+            "get": {
+                "tags": [
+                    "테스트"
+                ],
+                "summary": "Swagger 테스트",
+                "operationId": "98b4d044495b00e561e1f9922dc4e2e2",
+                "responses": {
+                    "200": {
+                        "description": "정상 응답",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Swagger test success"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "테스트",
+            "description": "테스트"
+        }
+    ]
+}
