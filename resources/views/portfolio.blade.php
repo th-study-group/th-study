@@ -1004,6 +1004,8 @@ sudo systemctl status th-study-queue</code></pre>
               <li>OpenAI Apps 심사 기준에 맞춰 OAuth pre-defined 등록과 <code>thstudy-chatgpt</code> client_id 구성</li>
               <li>ChatGPT 반영 버전 <code>v1.0.0</code> 기준으로 MCP 심사 통과</li>
               <li><code>mcp_jwt</code> 가드와 전용 미들웨어로 MCP 보호 API 분리</li>
+              <li>이메일 인증을 완료하고 <code>api_access_status=approved</code>로 승인된 사용자만 API를 통해 데이터를 조회하도록 이중 접근 제어</li>
+              <li>API 승인 시각은 <code>api_access_approved_datetime</code>에 기록해 승인 이력을 관리</li>
               <li><code>/.well-known/*</code> 메타데이터를 노출해 클라이언트가 인증 서버 정보를 찾도록 구성</li>
               <li><code>mcp/tool.json</code> 기반으로 <code>tools/list</code>, <code>tools/call</code>을 처리하고 tool별 <code>levels</code>로 허용 계정 레벨 관리</li>
               <li>현재는 <code>note_group_search</code>, <code>note_category_search</code>, <code>note_topic_search</code>, <code>note_search</code>, <code>note_tag_search</code>, <code>user_search</code>, <code>access_log_search</code>, <code>bot_access_log_search</code>, <code>conversion_log_search</code>, <code>daily_page_stat_search</code>를 공개</li>
@@ -1051,7 +1053,7 @@ sudo systemctl status th-study-queue</code></pre>
             </tr>
             <tr>
               <td class="fw-bold">보호 API</td>
-              <td><code>McpJwtAuthenticate</code>에서 Bearer 토큰 존재 여부, <code>token_type=access</code>, MCP 접근 가능 사용자인지 검증합니다.</td>
+              <td><code>McpJwtAuthenticate</code>에서 Bearer 토큰 존재 여부, <code>token_type=access</code>, 이메일 인증 완료 여부와 <code>api_access_status=approved</code> 상태를 검증합니다. 승인 시각은 <code>api_access_approved_datetime</code>에 기록합니다.</td>
             </tr>
             <tr>
               <td class="fw-bold">MCP 메서드</td>

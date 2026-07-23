@@ -241,8 +241,9 @@ TH-Study 안에 ChatGPT/Codex 같은 클라이언트가 붙을 수 있도록 MCP
 - `McpOAuthController`에서 `client_id`, `redirect_uri`, PKCE 파라미터를 검증한 뒤 로그인 화면 제공
 - 로그인 성공 시 authorization code를 캐시에 짧은 TTL로 저장하고 redirect URI로 반환
 - 토큰 교환 시 `authorization_code` 또는 `refresh_token` grant를 처리해 JWT access token / refresh token 발급
-- `McpJwtAuthenticate` 미들웨어에서 Bearer 토큰 존재 여부, `token_type=access`, MCP 접근 가능 사용자 여부를 먼저 검증
-- MCP 로그인 자체는 `canAccessMcp()` 기준으로 통과시키고, 실제 조회/실행 가능한 tool 범위는 로그인 계정의 `user.level`과 tool 정의의 `levels` 값으로 한 번 더 구분
+- `McpJwtAuthenticate` 미들웨어에서 Bearer 토큰 존재 여부, `token_type=access`, 이메일 인증 완료 여부와 API 접근 승인 상태를 먼저 검증
+- 사용자별 API 접근은 `users.api_access_status`가 `approved`인 경우에만 허용하며, 승인 시각은 `api_access_approved_datetime`에 기록
+- MCP 로그인 및 데이터 조회는 `canAccessMcp()` 기준으로 통과시키며, 이메일 인증을 완료하고 API 접근 승인을 받은 사용자만 진행 가능. 실제 조회/실행 가능한 tool 범위는 로그인 계정의 `user.level`과 tool 정의의 `levels` 값으로 한 번 더 구분
 - 인증 실패 시 `WWW-Authenticate` 헤더에 protected resource metadata 경로를 포함해 MCP 클라이언트가 재인증 흐름을 찾을 수 있도록 처리
 
 툴 처리 방식:
