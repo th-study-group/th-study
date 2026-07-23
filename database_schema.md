@@ -176,6 +176,15 @@
   - `memo`: `text`, null, default `null`
   - `level`: `string(20)`, null, default `nomal`
   - `ip`: `ipAddress`, null, default `null`
+  - `api_access_status`: `string(20)`, not null, default `pending`, index
+    - API 데이터 조회 접근 상태
+      - `pending`: 대기
+      - `approved`: 승인
+      - `rejected`: 거절
+      - `suspended`: 일시 정지
+    - 이메일 인증 완료 및 `approved` 상태인 사용자만 API/MCP 조회 허용
+  - `api_access_approved_datetime`: `dateTime`, null, default `null`
+    - API 접근 승인 시각
   - `last_access_datetime`: `dateTime`, null, default `null`
   - `email_verify_token`: `string(6)`, null, default `null`
   - `email_verify_datetime`: `dateTime`, null, default `null`
