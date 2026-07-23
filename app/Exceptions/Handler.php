@@ -3,8 +3,6 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -58,44 +56,22 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            Log::info('Exception occurred', [
+            $context = [
                 'type' => get_class($e),
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'ip' => request()->ip(),
-                'url' => request()->fullUrl(),
-            ]);
+            ];
+
+            if (! app()->runningInConsole() && app()->bound('request')) {
+                $request = app('request');
+                $context['ip'] = $request->ip();
+                $context['url'] = $request->fullUrl();
+            }
+
+            if (app()->bound('log')) {
+                app('log')->info('Exception occurred', $context);
+            }
         });
-    }
-
-    /**
-     * 웹 요청 전용 공통 에러 페이지 렌더링
-     */
-    public function render($request, Throwable $e)
-    {
-        if ($request->expectsJson()) {
-            return parent::render($request, $e);
-        }
-
-        $status = $e instanceof HttpExceptionInterface
-            ? (int) $e->getStatusCode()
-            : 500;
-
-        $page = $this->friendlyErrorPages[$status] ?? null;
-
-        if ($page === null) {
-            return parent::render($request, $e);
-        }
-
-        if ($status === 500 && config('app.debug')) {
-            return parent::render($request, $e);
-        }
-
-        return response()->view('errors.minimal', [
-            'code' => $status,
-            'title' => $page['title'],
-            'message' => $page['message'],
-        ], $status);
     }
 }
