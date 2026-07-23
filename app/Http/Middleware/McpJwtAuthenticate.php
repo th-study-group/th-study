@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -62,7 +63,7 @@ class McpJwtAuthenticate
                 ], 403);
             }
 
-            auth()->setUser($user);
+            Auth::setUser($user);
 
             Log::channel('mcp')->info('MCP JWT authenticated', [
                 'user_id' => $user->idx,

@@ -22,7 +22,10 @@ Route::post('/login', [McpJwtAuthController::class, 'login'])
 Route::post('/refresh', [McpJwtAuthController::class, 'refresh'])
      ->name('mcp.jwt.refresh');
 
-Route::middleware(['auth.mcp.jwt'])->group(function () {
+Route::middleware([
+    'auth.mcp.jwt',
+    'api.access.approved',
+])->group(function () {
     Route::match(['GET', 'POST'], '/', [McpApiController::class, 'handle'])
         ->name('mcp.handle');
 

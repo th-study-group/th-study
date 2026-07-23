@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'level' => \App\Http\Middleware\EnsureUserHasLevel::class,
         'local.only' => \App\Http\Middleware\LocalOnly::class,
         'auth.mcp.jwt' => \App\Http\Middleware\McpJwtAuthenticate::class,
+        'api.access.approved' => \App\Http\Middleware\EnsureApiAccessApproved::class,
     ];
 }

@@ -42,6 +42,8 @@ class User extends Authenticatable implements JWTSubject
         //'level',
         //'ip',  
         'last_access_datetime',
+        'api_access_status',
+        'api_access_approved_datetime',
         //'email_verify_token',
         //'email_verified_datetime',
         //'email_verify_exp_at',
@@ -59,6 +61,7 @@ class User extends Authenticatable implements JWTSubject
         'create_datetime' => 'datetime',
         'birth_date' => 'date', 
         'last_access_datetime' => 'datetime',
+        'api_access_approved_datetime' => 'datetime',
     ];
 
     protected $hidden = [
@@ -190,8 +193,8 @@ class User extends Authenticatable implements JWTSubject
 
     public function canAccessMcp(): bool
     {
-        //return blank($this->retirementDate);
-        return true;
+        return $this->email_verify_datetime !== null
+               && $this->api_access_status === 'approved';
     }
 
     public function mcpBlockedReason(): string
