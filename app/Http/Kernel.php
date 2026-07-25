@@ -73,5 +73,6 @@ class Kernel extends HttpKernel
         'local.only' => \App\Http\Middleware\LocalOnly::class,
         'auth.mcp.jwt' => \App\Http\Middleware\McpJwtAuthenticate::class,
         'api.access.approved' => \App\Http\Middleware\EnsureApiAccessApproved::class,
+        'swagger.enabled' => \App\Http\Middleware\SwaggerEnabled::class,
     ];
 }
