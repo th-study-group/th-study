@@ -35,7 +35,7 @@
             <li>백업: <code style="color:#fff;">/backup/mysql</code> + <code style="color:#fff;">/backup/laravel_files</code> 14일 보관</li>
             <li>수익화: 카카오 애드핏 광고 단위를 PC/모바일/슬림/정사각형으로 분리 운영</li>
             <li>학습 확장: Python 3 + FastAPI 로컬 API 기초 정리</li>
-            <li>API 문서화: Laravel OpenAPI 속성 기반 Swagger UI 및 테스트 API 구성</li>
+            <li>API 문서화: OpenAPI 속성 기반 Swagger UI, JWT Bearer 테스트, 관리자 다중 접근 제어 구성</li>
             <li>분석: 유입 로그, 전환 로그, 일별 통계 집계 구조와 구글애널리틱스4 허용 경로/IP 제한 적용</li>
             <li>MongoDB: 비정형 데이터 및 Raw 데이터 정리 방향과 Windows/macOS/Ubuntu 설치 기준 문서화</li>
           </ul>
@@ -1166,7 +1166,7 @@ uvicorn main:app --reload</code></pre>
   <div class="container">
     <h2 class="h2x mb-3">16. 라라벨 스웨거 API 문서</h2>
     <div class="box pad">
-      <p class="leadx mb-3">Laravel API에는 <code>L5-Swagger 11</code>과 PHP OpenAPI 속성을 적용해, 구현 코드와 API 문서를 함께 관리할 수 있게 구성했습니다.</p>
+      <p class="leadx mb-3">Laravel API에는 <code>L5-Swagger 11</code>과 PHP OpenAPI 속성을 적용해, 구현 코드와 API 문서를 함께 관리하고 관리자만 안전하게 확인할 수 있도록 구성했습니다.</p>
       <div class="row g-3">
         <div class="col-lg-6">
           <div class="p-3 border rounded-4 h-100">
@@ -1181,9 +1181,11 @@ uvicorn main:app --reload</code></pre>
         <div class="col-lg-6">
           <div class="codeblock h-100">
             <div class="codehdr"><span>bash · OpenAPI 명세 생성</span></div>
-            <pre><code># .env
+            <pre><code># local .env
 L5_SWAGGER_ENABLED=true
+L5_SWAGGER_GENERATE_ALWAYS=true
 
+php artisan optimize:clear
 php artisan l5-swagger:generate</code></pre>
           </div>
         </div>
@@ -1193,6 +1195,31 @@ php artisan l5-swagger:generate</code></pre>
         <code>app/OpenApi/OpenApiSpec.php</code>에서 API 정보·서버·보안 스키마를 정의하고,
         각 컨트롤러의 OpenAPI 속성에서 경로와 응답 형식을 선언합니다. 생성 결과는
         <code>storage/api-docs/api-docs.json</code>에 저장되어 Swagger UI에서 확인하고 요청을 테스트할 수 있습니다.
+        <code>swagger-test</code>에는 <code>bearerAuth</code>를 연결해 자물쇠·Authorize 버튼과 Bearer Token 전달도 확인합니다.
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-lg-6">
+          <div class="p-3 border rounded-4 h-100">
+            <div class="fw-bold mb-2">문서 접근 제어</div>
+            <ul class="mb-0" style="margin-left:18px;">
+              <li><code>L5_SWAGGER_ENABLED=false</code>이면 문서 경로를 404로 숨김</li>
+              <li>비로그인 접근은 401, 일반회원 접근은 403으로 차단</li>
+              <li><code>SwaggerEnabled</code> 미들웨어를 UI·JSON·에셋 경로에 공통 적용</li>
+              <li>관리자만 Laravel 단계의 문서 화면에 접근</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="p-3 border rounded-4 h-100">
+            <div class="fw-bold mb-2">운영 보호 및 배포</div>
+            <ul class="mb-0" style="margin-left:18px;">
+              <li>Nginx Basic Auth를 <code>/api/documentation</code>, <code>/docs</code>에 추가 적용</li>
+              <li>운영 기본값은 <code>ENABLED=false</code>, <code>GENERATE_ALWAYS=false</code></li>
+              <li>명세 갱신 후 <code>config:cache</code>, <code>route:cache</code> 재생성</li>
+              <li>태그 설명 중복은 <code>augmentTags.withDescription=false</code>로 방지</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>

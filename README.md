@@ -163,16 +163,50 @@ Laravel API도 OpenAPI 3.0 속성 기반으로 문서화했습니다. `darkaonli
 - 전역 명세: `app/OpenApi/OpenApiSpec.php`
 - 엔드포인트 명세 예시: `app/Http/Controllers/Api/SwaggerTestController.php`
 
-### 사용 방법
+### 설정 및 접근 정책
 
-1. `.env`에서 `L5_SWAGGER_ENABLED=true`로 문서 화면을 활성화합니다.
-2. API 속성을 추가하거나 수정한 뒤 아래 명령으로 명세를 다시 생성합니다.
+로컬에서는 문서 확인 편의를 위해 자동 생성을 켜고, 운영에서는 기본적으로 Swagger를 비활성화합니다.
+
+```env
+# local
+L5_SWAGGER_ENABLED=true
+L5_SWAGGER_GENERATE_ALWAYS=true
+
+# production
+L5_SWAGGER_ENABLED=false
+L5_SWAGGER_GENERATE_ALWAYS=false
+```
+
+Swagger 관련 경로는 `web` 미들웨어와 `swagger.enabled` 별칭을 공통 적용합니다. 이 별칭은 `app/Http/Middleware/SwaggerEnabled.php`에서 다음 순서로 접근을 제한합니다.
+
+1. `L5_SWAGGER_ENABLED=false`이면 404
+2. 비로그인 사용자는 401
+3. `users.level`이 `admin`이 아니면 403
+4. 활성화된 관리자만 Swagger UI, JSON 명세, 에셋에 접근
+
+운영 환경에서는 Nginx Basic Auth를 추가로 적용해 `/api/documentation`, `/docs` 경로를 웹 서버 단계에서도 보호합니다. 즉, **Basic Auth → Laravel Swagger 권한 검사 → Swagger UI** 순서로 접근을 통제합니다.
+
+### 명세 생성 및 JWT 확인
+
+API 속성을 추가하거나 수정한 뒤 캐시를 비우고 명세를 다시 생성합니다.
 
 ```bash
+php artisan optimize:clear
 php artisan l5-swagger:generate
 ```
 
-생성된 명세는 `storage/api-docs/api-docs.json`에 저장됩니다. 현재는 Swagger 연동 구조와 응답 형식을 확인할 수 있도록 `swagger-test` 엔드포인트를 예시로 제공합니다.
+생성된 명세는 `storage/api-docs/api-docs.json`에 저장됩니다. `swagger-test`에는 `bearerAuth` 보안 정의를 연결해 Swagger UI의 자물쇠·Authorize 버튼·Bearer Token 전달을 확인할 수 있으며, 실제 API 인증은 JWT 미들웨어가 수행합니다.
+
+운영에서 명세를 갱신할 때는 생성 후 설정과 라우트 캐시를 다시 만듭니다.
+
+```bash
+php artisan optimize:clear
+php artisan l5-swagger:generate
+php artisan config:cache
+php artisan route:cache
+```
+
+태그 설명 중복은 `config/l5-swagger.php`의 `default_processors_configuration.augmentTags.withDescription=false` 설정으로 방지합니다. 다음 문서화 대상은 로그인·토큰 갱신·로그아웃·회원·게시판·문의·관리자·MCP API와 공통 Request/Response·오류·페이지네이션 스키마입니다.
 
 ### 프론트 라이브러리 구성(`app.blade.php` 기준)
 
