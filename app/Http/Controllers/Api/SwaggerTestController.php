@@ -15,6 +15,9 @@ class SwaggerTestController extends Controller
         path: '/api/swagger-test',
         summary: 'Swagger 테스트',
         tags: ['테스트'],
+        security: [
+            ['bearerAuth' => []],
+        ],
         responses: [
             new OA\Response(
                 response: 200,
