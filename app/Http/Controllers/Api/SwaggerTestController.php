@@ -14,7 +14,11 @@ class SwaggerTestController extends Controller
     #[OA\Get(
         path: '/api/swagger-test',
         summary: 'Swagger 테스트',
+        description: 'Swagger가 정상적으로 동작하는지 확인하는 테스트 API',
         tags: ['테스트'],
+        security: [
+            ['bearerAuth' => []],
+        ],
         responses: [
             new OA\Response(
                 response: 200,
