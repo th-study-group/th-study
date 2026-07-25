@@ -22,6 +22,10 @@ use OpenApi\Attributes as OA;
     description: '로컬 서버'
 )]
 #[OA\Server(
+    url: 'http://localhost:8080',
+    description: '도커 서버'
+)]
+#[OA\Server(
     url: 'https://www.th-study.com',
     description: '운영 서버'
 )]
