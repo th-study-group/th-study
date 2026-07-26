@@ -101,10 +101,6 @@
             "type": "string",
             "description": "그룹명 포함 검색(LIKE '%키워드%'). 예: 블로그"
           },
-          "create_user_idx": {
-            "type": "integer",
-            "description": "그룹을 등록한 사용자의 IDX 값 정확히 일치 검색(=). 등록자 정보가 필요한 경우 사용자 API에서 idx로 조회할 수 있습니다. 예: 1"
-          },
           "page": {
             "type": "integer",
             "description": "조회 페이지 번호. 기본값 1"
@@ -188,10 +184,6 @@
           "categories_name": {
             "type": "string",
             "description": "카테고리명 포함 검색(LIKE '%키워드%'). 예: 개발"
-          },
-          "create_user_idx": {
-            "type": "integer",
-            "description": "카테고리를 등록한 사용자의 IDX 값 정확히 일치 검색(=). 등록자 정보가 필요한 경우 사용자 API에서 idx로 조회할 수 있습니다. 예: 1"
           },
           "page": {
             "type": "integer",
@@ -277,10 +269,6 @@
           "topic_code": {
             "type": "string",
             "description": "실제로는 topic_name(주제명)을 입력합니다. group_code와 categories_code와 함께 사용해야 합니다. 검색 조건 중 하나로 사용할 수 있습니다. 예: 라라벨"
-          },
-          "create_user_idx": {
-            "type": "integer",
-            "description": "주제를 등록한 사용자의 IDX 값 정확히 일치 검색(=). 등록자 정보가 필요한 경우 사용자 API에서 idx로 조회할 수 있습니다. 예: 1"
           },
           "page": {
             "type": "integer",
