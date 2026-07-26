@@ -3,7 +3,6 @@
 use App\Http\Controllers\Mcp\McpApiController;
 use App\Http\Controllers\Mcp\McpJwtAuthController;
 use App\Http\Controllers\Mcp\McpOAuthController;
-use App\Http\Controllers\Mcp\Tools\BlogSearchToolController;
 use App\Http\Controllers\Mcp\Tools\NoteCategoriesController;
 use App\Http\Controllers\Mcp\Tools\NoteController;
 use App\Http\Controllers\Mcp\Tools\NoteGroupController;
@@ -28,9 +27,6 @@ Route::middleware([
 ])->group(function () {
     Route::match(['GET', 'POST'], '/', [McpApiController::class, 'handle'])
         ->name('mcp.handle');
-
-    Route::post('/tools/blog-search', [BlogSearchToolController::class, 'handle'])
-        ->name('mcp.tools.blog-search'); 
     
     Route::post('/tools/notes', [NoteController::class, 'index'])
         ->name('mcp.tools.note.index');
