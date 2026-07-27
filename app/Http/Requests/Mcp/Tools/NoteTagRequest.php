@@ -61,7 +61,7 @@ class NoteTagRequest extends FormRequest
 
     protected function failedValidation(Validator $validator): void
     {
-        Log::info('Mcp Blog index validation failed', [
+        Log::info('Mcp NoteTag index validation failed', [
             'action' => 'validate',
             'model' => 'Post',
             'ip' => $this->ip(),

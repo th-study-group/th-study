@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Validation\Validator;
 
 /**
- * 블로그 MCP API 요청 검증 클래스
+ * 노트 MCP API 요청 검증 클래스
  */
 class NoteRequest extends FormRequest
 {
@@ -63,7 +63,7 @@ class NoteRequest extends FormRequest
 
     protected function failedValidation(Validator $validator): void
     {
-        Log::info('Mcp Blog index validation failed', [
+        Log::info('Mcp Note index validation failed', [
             'action' => 'validate',
             'model' => 'Post',
             'ip' => $this->ip(),

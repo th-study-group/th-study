@@ -65,6 +65,300 @@
                 ]
             }
         },
+        "/api/mcp/tools/note-categories": {
+            "post": {
+                "tags": [
+                    "MCP"
+                ],
+                "summary": "카테고리 조회",
+                "description": "그룹 하위의 노트 카테고리 목록을 조회합니다.",
+                "operationId": "f92d0f2e39e500585510794f064993ae",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "group_code"
+                                ],
+                                "properties": {
+                                    "group_code": {
+                                        "type": "string",
+                                        "example": "blog"
+                                    },
+                                    "categories_code": {
+                                        "type": "string",
+                                        "example": "develop"
+                                    },
+                                    "categories_name": {
+                                        "type": "string",
+                                        "example": "개발"
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "카테고리 조회 성공",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "노트 카테고리 목록 조회 성공"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "group_code": {
+                                                        "type": "string",
+                                                        "example": "blog"
+                                                    },
+                                                    "categories_code": {
+                                                        "type": "string",
+                                                        "example": "develop"
+                                                    },
+                                                    "categories_name": {
+                                                        "type": "string",
+                                                        "example": "개발"
+                                                    },
+                                                    "categories_memo": {
+                                                        "type": "string",
+                                                        "example": "개발 관련 콘텐츠"
+                                                    },
+                                                    "create_datetime": {
+                                                        "type": "string",
+                                                        "example": "2026-07-27 12:00:00"
+                                                    },
+                                                    "create_user_idx": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "has_more": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "next_page": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "인증 실패"
+                    },
+                    "422": {
+                        "description": "유효성 검사 실패"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/mcp/tools/notes": {
+            "post": {
+                "tags": [
+                    "MCP"
+                ],
+                "summary": "노트 조회",
+                "description": "검색 조건에 맞는 노트 목록을 조회합니다.",
+                "operationId": "97f1474e4ed4d976531019d368d11fa7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "subject": {
+                                        "type": "string",
+                                        "example": "라라벨"
+                                    },
+                                    "group_code": {
+                                        "type": "string",
+                                        "example": "blog"
+                                    },
+                                    "categories_code": {
+                                        "type": "string",
+                                        "example": "develop"
+                                    },
+                                    "topic_code": {
+                                        "type": "string",
+                                        "example": "laravel"
+                                    },
+                                    "note_idx": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "has_thumbnail": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "노트 조회 성공",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "노트 목록 조회 성공"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "note_idx": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "subject": {
+                                                        "type": "string",
+                                                        "example": "Laravel 12 Swagger 적용"
+                                                    },
+                                                    "group_name": {
+                                                        "type": "string",
+                                                        "example": "블로그"
+                                                    },
+                                                    "categories_name": {
+                                                        "type": "string",
+                                                        "example": "개발"
+                                                    },
+                                                    "topic_name": {
+                                                        "type": "string",
+                                                        "example": "Laravel"
+                                                    },
+                                                    "thumbnail": {
+                                                        "type": "string",
+                                                        "example": "https://example.com/thumbnail.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "create_datetime": {
+                                                        "type": "string",
+                                                        "example": "2026-07-27 12:00:00"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "has_more": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "next_page": {
+                                                    "type": "integer",
+                                                    "example": 2,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "인증 실패"
+                    },
+                    "422": {
+                        "description": "유효성 검사 실패"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/mcp/tools/note-groups": {
             "post": {
                 "tags": [
@@ -241,6 +535,774 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/mcp/tools/note-tags": {
+            "post": {
+                "tags": [
+                    "MCP"
+                ],
+                "summary": "태그 조회",
+                "description": "태그명과 노트 분류 조건으로 노트 태그 목록을 조회합니다.",
+                "operationId": "b4dcc6d9d5ce6874a1d0bd203cf71a7f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tag"
+                                ],
+                                "properties": {
+                                    "group_code": {
+                                        "type": "string",
+                                        "example": "blog"
+                                    },
+                                    "categories_code": {
+                                        "type": "string",
+                                        "example": "develop"
+                                    },
+                                    "topic_code": {
+                                        "type": "string",
+                                        "example": "라라벨"
+                                    },
+                                    "tag": {
+                                        "type": "string",
+                                        "example": "Swagger"
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "태그 조회 성공",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "노트 태그 목록 조회 성공"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "tag_name": {
+                                                        "type": "string",
+                                                        "example": "Swagger"
+                                                    },
+                                                    "create_datetime": {
+                                                        "type": "string",
+                                                        "example": "2026-07-27 12:00:00"
+                                                    },
+                                                    "create_user_idx": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "note": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "group_name": {
+                                                                    "type": "string",
+                                                                    "example": "블로그"
+                                                                },
+                                                                "categories_name": {
+                                                                    "type": "string",
+                                                                    "example": "개발"
+                                                                },
+                                                                "topic_name": {
+                                                                    "type": "string",
+                                                                    "example": "라라벨"
+                                                                },
+                                                                "note_idx": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "subject": {
+                                                                    "type": "string",
+                                                                    "example": "Laravel Swagger 적용 방법"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "has_more": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "next_page": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "인증 실패"
+                    },
+                    "422": {
+                        "description": "유효성 검사 실패"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/mcp/tools/note-topics": {
+            "post": {
+                "tags": [
+                    "MCP"
+                ],
+                "summary": "주제 조회",
+                "description": "그룹과 카테고리 하위의 노트 주제 목록을 조회합니다.",
+                "operationId": "06bacfc54e0ac539eb48ba681e7eb8fa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "group_code": {
+                                        "type": "string",
+                                        "example": "blog"
+                                    },
+                                    "categories_code": {
+                                        "type": "string",
+                                        "example": "develop"
+                                    },
+                                    "topic_code": {
+                                        "type": "string",
+                                        "example": "라라벨"
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "주제 조회 성공",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "노트 주제 목록 조회 성공"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "group_name": {
+                                                        "type": "string",
+                                                        "example": "블로그"
+                                                    },
+                                                    "categories_name": {
+                                                        "type": "string",
+                                                        "example": "개발"
+                                                    },
+                                                    "topic_name": {
+                                                        "type": "string",
+                                                        "example": "라라벨"
+                                                    },
+                                                    "create_datetime": {
+                                                        "type": "string",
+                                                        "example": "2026-07-27 12:00:00"
+                                                    },
+                                                    "create_user_idx": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "has_more": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "next_page": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "인증 실패"
+                    },
+                    "422": {
+                        "description": "유효성 검사 실패"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/mcp/tools/access-logs": {
+            "post": {
+                "tags": [
+                    "MCP"
+                ],
+                "summary": "사람 유입 조회",
+                "description": "실제 방문자의 유입 로그를 조건에 따라 조회합니다.",
+                "operationId": "4083d871fe4e20ea5126a93ee3df5c48",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "group_code": {
+                                        "type": "string",
+                                        "example": "blog"
+                                    },
+                                    "categories_code": {
+                                        "type": "string",
+                                        "example": "develop"
+                                    },
+                                    "topic_code": {
+                                        "type": "string",
+                                        "example": "라라벨"
+                                    },
+                                    "user_idx": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "device_types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "desktop",
+                                                "mobile",
+                                                "tablet"
+                                            ]
+                                        },
+                                        "example": [
+                                            "desktop",
+                                            "mobile"
+                                        ]
+                                    },
+                                    "ip": {
+                                        "type": "string",
+                                        "example": "192.168.0.1"
+                                    },
+                                    "referer_host": {
+                                        "type": "string",
+                                        "example": "www.google.com"
+                                    },
+                                    "access_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-27"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-01"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-27"
+                                    },
+                                    "has_note": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "사람 유입 조회 성공"
+                    },
+                    "401": {
+                        "description": "인증 실패"
+                    },
+                    "422": {
+                        "description": "유효성 검사 실패"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/mcp/tools/bot-access-logs": {
+            "post": {
+                "tags": [
+                    "MCP"
+                ],
+                "summary": "봇 유입 조회",
+                "description": "검색엔진 및 AI 크롤러의 유입 로그를 조건에 따라 조회합니다.",
+                "operationId": "e92d8af27868cb0e21b2324df679183b",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "group_code": {
+                                        "type": "string",
+                                        "example": "blog"
+                                    },
+                                    "categories_code": {
+                                        "type": "string",
+                                        "example": "develop"
+                                    },
+                                    "topic_code": {
+                                        "type": "string",
+                                        "example": "라라벨"
+                                    },
+                                    "bot_name": {
+                                        "type": "string",
+                                        "example": "Googlebot"
+                                    },
+                                    "access_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-27"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-01"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-27"
+                                    },
+                                    "referer_host": {
+                                        "type": "string",
+                                        "example": "www.google.com"
+                                    },
+                                    "has_note": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "봇 유입 조회 성공"
+                    },
+                    "401": {
+                        "description": "인증 실패"
+                    },
+                    "422": {
+                        "description": "유효성 검사 실패"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/mcp/tools/conversion-logs": {
+            "post": {
+                "tags": [
+                    "MCP"
+                ],
+                "summary": "유입 후 전환 조회",
+                "description": "사용자가 유입된 이후 발생한 클릭 및 페이지 이동 등의 전환 로그를 조회합니다.",
+                "operationId": "316c6ba76d2bfcfde16a4501ad939aee",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "group_code": {
+                                        "type": "string",
+                                        "example": "blog"
+                                    },
+                                    "categories_code": {
+                                        "type": "string",
+                                        "example": "develop"
+                                    },
+                                    "topic_code": {
+                                        "type": "string",
+                                        "example": "라라벨"
+                                    },
+                                    "user_idx": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "device_types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "desktop",
+                                                "mobile",
+                                                "tablet"
+                                            ]
+                                        },
+                                        "example": [
+                                            "desktop",
+                                            "mobile"
+                                        ]
+                                    },
+                                    "ip": {
+                                        "type": "string",
+                                        "example": "192.168.0.1"
+                                    },
+                                    "referer_host": {
+                                        "type": "string",
+                                        "example": "www.google.com"
+                                    },
+                                    "conversion_type": {
+                                        "type": "string",
+                                        "example": "outbound"
+                                    },
+                                    "conversion_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-27"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-01"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-27"
+                                    },
+                                    "has_note": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "유입 후 전환 조회 성공"
+                    },
+                    "401": {
+                        "description": "인증 실패"
+                    },
+                    "422": {
+                        "description": "유효성 검사 실패"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/mcp/tools/daily-page-stat-logs": {
+            "post": {
+                "tags": [
+                    "MCP"
+                ],
+                "summary": "유입/전환 통계 조회",
+                "description": "사람 유입 로그와 전환 로그를 기준으로 집계된 일별 통계를 조회합니다.",
+                "operationId": "5b8af6f836e0b53a6a0d7b6dae97ce18",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "group_code": {
+                                        "type": "string",
+                                        "example": "blog"
+                                    },
+                                    "categories_code": {
+                                        "type": "string",
+                                        "example": "develop"
+                                    },
+                                    "topic_code": {
+                                        "type": "string",
+                                        "example": "라라벨"
+                                    },
+                                    "device_types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "desktop",
+                                                "mobile",
+                                                "tablet"
+                                            ]
+                                        },
+                                        "example": [
+                                            "desktop",
+                                            "mobile"
+                                        ]
+                                    },
+                                    "stat_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-27"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-01"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-27"
+                                    },
+                                    "has_note": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "유입/전환 통계 조회 성공"
+                    },
+                    "401": {
+                        "description": "인증 실패"
+                    },
+                    "422": {
+                        "description": "유효성 검사 실패"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/mcp/tools/users": {
+            "post": {
+                "tags": [
+                    "MCP"
+                ],
+                "summary": "사용자 조회",
+                "description": "조건에 맞는 사용자 목록을 조회합니다.",
+                "operationId": "2043e241c82c451b556b695da6733cf4",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "page": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "idx": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "이태희"
+                                    },
+                                    "nick_name": {
+                                        "type": "string",
+                                        "example": "광개토태왕"
+                                    },
+                                    "birth_year": {
+                                        "type": "integer",
+                                        "example": 1989
+                                    },
+                                    "sex": {
+                                        "type": "string",
+                                        "example": "M",
+                                        "enum": [
+                                            "M",
+                                            "W"
+                                        ]
+                                    },
+                                    "marketing_info_agree": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
+                                    },
+                                    "level": {
+                                        "type": "string",
+                                        "example": "admin",
+                                        "enum": [
+                                            "normal",
+                                            "admin"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "사용자 조회 성공"
+                    },
+                    "401": {
+                        "description": "인증 실패"
+                    },
+                    "422": {
+                        "description": "유효성 검사 실패"
                     }
                 },
                 "security": [

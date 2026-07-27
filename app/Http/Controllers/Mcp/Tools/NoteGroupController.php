@@ -18,6 +18,12 @@ class NoteGroupController extends Controller
         private readonly NoteGroupService $noteGroupService
     ) {}
 
+    /**
+     * 노트 그룹 반환 목록
+     * 
+     * @param NoteGroupRequest $request
+     * @return JsonResponse
+     */
     #[OA\Post(
         path: '/api/mcp/tools/note-groups',
         summary: '그룹 조회',
