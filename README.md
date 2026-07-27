@@ -206,7 +206,18 @@ php artisan config:cache
 php artisan route:cache
 ```
 
-태그 설명 중복은 `config/l5-swagger.php`의 `default_processors_configuration.augmentTags.withDescription=false` 설정으로 방지합니다. 다음 문서화 대상은 로그인·토큰 갱신·로그아웃·회원·게시판·문의·관리자·MCP API와 공통 Request/Response·오류·페이지네이션 스키마입니다.
+태그 설명 중복은 `config/l5-swagger.php`의 `default_processors_configuration.augmentTags.withDescription=false` 설정으로 방지합니다.
+
+#### MCP API Swagger 적용 완료
+
+MCP의 개별 조회 도구 10종은 컨트롤러 OpenAPI 속성으로 문서화해 Swagger UI에서 요청·응답 예시와 JWT Bearer 인증을 함께 확인할 수 있습니다.
+
+- 노트 조회: `note-groups`, `note-categories`, `note-topics`, `notes`, `note-tags`
+- 관리자 조회: `users`, `access-logs`, `bot-access-logs`, `conversion-logs`, `daily-page-stat-logs`
+- 모든 개별 도구는 `POST /api/mcp/tools/*` 경로와 `bearerAuth` 보안 정의를 사용
+- 검색 조건, 페이지네이션, 성공 응답 및 `401`·`422` 응답을 명세에 포함
+
+명세 변경 후 `php artisan l5-swagger:generate`로 `storage/api-docs/api-docs.json`을 다시 생성합니다. 로그인·토큰 갱신·로그아웃 등 MCP 인증 API와 일반 서비스 API는 이후 문서화 범위로 관리합니다.
 
 ### 프론트 라이브러리 구성(`app.blade.php` 기준)
 
