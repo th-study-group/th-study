@@ -33,7 +33,7 @@
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">생년월일</span>
-                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $member->birth_date ?? '-' }}</div>
+                        <div class="board-field bg-light rounded-3 px-3 py-2">{{ $member->birth_date?->format('Y-m-d') ?? '-' }}</div>
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">성별</span>
