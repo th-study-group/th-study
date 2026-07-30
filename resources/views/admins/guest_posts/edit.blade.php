@@ -37,7 +37,7 @@
                     </div>
                     <div class="mb-3">
                         <span class="form-label small text-secondary d-block mb-1">내용</span>
-                        <div class="board-field board-content bg-light rounded-3 px-3 py-2" style="min-height: 240px;">
+                        <div class="board-field board-content bg-light rounded-3 px-3 py-2">
                             <div class="board-content-text">{{ $post->content }}</div>
                         </div>
                     </div>

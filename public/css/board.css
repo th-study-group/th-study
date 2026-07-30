@@ -66,8 +66,11 @@
 }
 
 .board-content {
-    min-height: 180px;
+    min-height: 240px;
+    max-height: 420px;
     display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .board-content-text {

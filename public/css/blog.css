@@ -770,19 +770,6 @@
     overscroll-behavior: none;
   }
 
-  html,
-  body {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    display: none;
-  }
-
   .blog-search-wrap {
     margin: 22px 0 12px;
   }
@@ -1565,8 +1552,6 @@
     min-height: 0;
     flex: 1 1 auto;
     background: #fff;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
     overscroll-behavior: contain;
   }
 
@@ -1575,12 +1560,6 @@
     align-items: flex-start;
     justify-content: flex-start;
     margin-bottom: 14px;
-  }
-
-  .blog-detail-body::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    display: none;
   }
 
   .blog-detail-footer {
