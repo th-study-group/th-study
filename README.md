@@ -1317,7 +1317,14 @@ sudo systemctl status th-study-queue
   - `public/css/blog.css`
 - 언어 메시지: `resources/lang/ko/validation.php`
 
-### 17.10 content 저장/출력 전환 (Markdown -> HTML)
+### 17.10 홈 최신 블로그 캐시
+
+- 홈의 최신 블로그 5건은 `home:latest_blogs:5` 키로 60분 캐시합니다.
+- 대상은 공개된(`use_flag = 1`) 블로그 그룹 글이며, 최신 등록일·IDX 순으로 조회합니다.
+- 블로그 글 등록·수정·삭제·공개 여부 변경 시 캐시를 비워 다음 홈 요청에서 최신 데이터로 다시 생성합니다.
+- 노트 목록·상세 조회는 별도 서버 캐시 없이 DB에서 조회하며, OG 이미지는 수정 시각 기반 `v` 파라미터로 브라우저 캐시를 갱신합니다.
+
+### 17.11 content 저장/출력 전환 (Markdown -> HTML)
 
 - 에디터 동기화 전환
   - `public/js/toast_ui_editor.js`
@@ -1335,7 +1342,7 @@ sudo systemctl status th-study-queue
   - HTML 태그 제거 후 순수 텍스트 길이 기준 10자 이상 검증
   - `<p><br></p>` 같은 의미 없는 입력 통과 방지
 
-### 17.11 Toast UI Editor 링크 삽입 및 상세 반영 기준
+### 17.12 Toast UI Editor 링크 삽입 및 상세 반영 기준
 
 - 적용 파일
   - `public/css/toast-editor-helper.css`
