@@ -329,6 +329,62 @@ body:has(.home-page) > .container-fluid {
     color: #ffffff;
 }
 
+.home-landing .latest-blogs-carousel {
+    padding-bottom: 4.4rem;
+}
+
+.home-landing .latest-blogs-indicators {
+    position: static;
+    justify-content: center;
+    gap: 0.45rem;
+    margin: 0 0 1rem;
+}
+
+.home-landing .latest-blogs-indicators [data-bs-target] {
+    width: 7px;
+    height: 7px;
+    margin: 0;
+    border: 0;
+    border-radius: 999px;
+    background-color: rgba(138, 163, 208, 0.34);
+    opacity: 1;
+}
+
+.home-landing .latest-blogs-indicators .active {
+    width: 24px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+.home-landing .latest-blogs-carousel-controls {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.home-landing .latest-blogs-carousel-control {
+    position: static;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(138, 163, 208, 0.36);
+    border-radius: 50%;
+    background: rgba(17, 28, 52, 0.88);
+    opacity: 1;
+}
+
+.home-landing .latest-blogs-carousel-control:hover,
+.home-landing .latest-blogs-carousel-control:focus-visible {
+    border-color: rgba(91, 140, 255, 0.68);
+    background: rgba(24, 39, 71, 0.96);
+}
+
+.home-landing .latest-blogs-carousel-control .carousel-control-prev-icon,
+.home-landing .latest-blogs-carousel-control .carousel-control-next-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
 .home-landing .stat {
     padding: 22px;
     border-radius: var(--radius);
@@ -630,6 +686,11 @@ body:has(.home-page) > .container-fluid {
 
     .home-landing .video-ratio {
         padding-top: 66%;
+    }
+
+    .home-landing .latest-blog-card {
+        min-height: 278px;
+        padding: 22px;
     }
 }
 

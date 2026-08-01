@@ -87,25 +87,76 @@
                     <a class="btn btn-outline-dark" href="{{ route('blogs.index') }}">전체 글 보기</a>
                 </div>
 
-                <div class="row g-3">
-                    @forelse($latestBlogs ?? [] as $blog)
-                        <div class="col-md-6 col-xl">
-                            <article class="latest-blog-card soft-card h-100">
-                                <div class="latest-blog-meta">{{ $blog['category'] }} · {{ $blog['date'] }}</div>
-                                <h5 class="latest-blog-title">{{ $blog['title'] }}</h5>
-                                <p class="latest-blog-desc muted">{{ $blog['description'] }}</p>
-                                <a class="latest-blog-link" href="{{ $blog['show_url'] }}">자세히보기</a>
-                            </article>
+                @if(!empty($latestBlogs))
+                    {{-- PC / 태블릿: 현재처럼 최신글을 한눈에 표시합니다. --}}
+                    <div class="row g-3 d-none d-md-flex">
+                        @foreach($latestBlogs as $blog)
+                            <div class="col-md-6 col-xl">
+                                <article class="latest-blog-card soft-card h-100">
+                                    <div class="latest-blog-meta">{{ $blog['category'] }} · {{ $blog['date'] }}</div>
+                                    <h5 class="latest-blog-title">{{ $blog['title'] }}</h5>
+                                    <p class="latest-blog-desc muted">{{ $blog['description'] }}</p>
+                                    <a class="latest-blog-link" href="{{ $blog['show_url'] }}">자세히보기</a>
+                                </article>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- 모바일: Bootstrap Carousel은 터치 스와이프와 순환 이동을 기본 지원합니다. --}}
+                    <div id="latestBlogsCarousel"
+                         class="carousel slide latest-blogs-carousel d-md-none"
+                         data-bs-ride="false"
+                         data-bs-touch="true"
+                         data-bs-wrap="true"
+                         data-bs-interval="false"
+                         aria-label="최신 블로그 글">
+                        <div class="carousel-indicators latest-blogs-indicators">
+                            @foreach($latestBlogs as $index => $blog)
+                                <button type="button"
+                                        data-bs-target="#latestBlogsCarousel"
+                                        data-bs-slide-to="{{ $index }}"
+                                        class="{{ $index === 0 ? 'active' : '' }}"
+                                        aria-current="{{ $index === 0 ? 'true' : 'false' }}"
+                                        aria-label="{{ $index + 1 }}번째 최신 글"></button>
+                            @endforeach
                         </div>
-                    @empty
-                        <div class="col-12">
-                            <article class="latest-blog-card latest-blog-empty soft-card">
-                                <h5 class="latest-blog-title mb-2">아직 등록된 블로그 글이 없습니다.</h5>
-                                <p class="latest-blog-desc muted mb-0">공개된 글이 등록되면 이 영역에 최신글 5개가 표시됩니다.</p>
-                            </article>
+
+                        <div class="carousel-inner">
+                            @foreach($latestBlogs as $index => $blog)
+                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                    <article class="latest-blog-card soft-card">
+                                        <div class="latest-blog-meta">{{ $blog['category'] }} · {{ $blog['date'] }}</div>
+                                        <h5 class="latest-blog-title">{{ $blog['title'] }}</h5>
+                                        <p class="latest-blog-desc muted">{{ $blog['description'] }}</p>
+                                        <a class="latest-blog-link" href="{{ $blog['show_url'] }}">자세히보기</a>
+                                    </article>
+                                </div>
+                            @endforeach
                         </div>
-                    @endforelse
-                </div>
+
+                        <div class="latest-blogs-carousel-controls">
+                            <button class="carousel-control-prev latest-blogs-carousel-control"
+                                    type="button"
+                                    data-bs-target="#latestBlogsCarousel"
+                                    data-bs-slide="prev"
+                                    aria-label="이전 최신 글">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            </button>
+                            <button class="carousel-control-next latest-blogs-carousel-control"
+                                    type="button"
+                                    data-bs-target="#latestBlogsCarousel"
+                                    data-bs-slide="next"
+                                    aria-label="다음 최신 글">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                @else
+                    <article class="latest-blog-card latest-blog-empty soft-card">
+                        <h5 class="latest-blog-title mb-2">아직 등록된 블로그 글이 없습니다.</h5>
+                        <p class="latest-blog-desc muted mb-0">공개된 글이 등록되면 이 영역에 최신글 5개가 표시됩니다.</p>
+                    </article>
+                @endif
             </div>
         </section>
 
