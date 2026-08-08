@@ -55,7 +55,7 @@
     <div class="row g-4">
       <div class="col-lg-4">
         <h2 class="h2x mb-3">목차</h2>
-        <p class="leadx mb-0">표, 흐름도, 운영 문서, README 원문까지 포함</p>
+        <p class="leadx mb-0">표, 흐름도, 운영 문서를 포함</p>
         <div class="container text-center mt-5">
           <x-adfit
               :unit="config('adfit.common.square.unit')"
@@ -79,11 +79,10 @@
             <li><a href="#backup">10. DB / 파일 백업</a><span class="toc-dots"></span><span class="toc-desc">14일 정책</span></li>
             <li><a href="#docker">11. 개발 검증 Docker</a><span class="toc-dots"></span><span class="toc-desc">compose on/off</span></li>
             <li><a href="#queue-service">12. Queue 영구 실행 systemd</a><span class="toc-dots"></span><span class="toc-desc">서비스 등록</span></li>
-            <li><a href="#codex-skill">13. Codex 스킬</a><span class="toc-dots"></span><span class="toc-desc">SKILL.md 작성법과 파일 종류</span></li>
+            <li><a href="#agent-rules">13. 에이전트 작업 규칙</a><span class="toc-dots"></span><span class="toc-desc">AGENTS.md와 영역별 규칙</span></li>
             <li><a href="#mcp-oauth">14. MCP OAuth/JWT 연동</a><span class="toc-dots"></span><span class="toc-desc">ChatGPT tool 연결 구조</span></li>
             <li><a href="#fastapi-study">15. FastAPI 학습</a><span class="toc-dots"></span><span class="toc-desc">로컬 설치와 기본 API</span></li>
             <li><a href="#laravel-swagger">16. 라라벨 스웨거 API 문서</a><span class="toc-dots"></span><span class="toc-desc">OpenAPI 자동 문서화</span></li>
-            <li><a href="#appendix">17. README 원문</a><span class="toc-dots"></span><span class="toc-desc">전체 포함</span></li>
           </ul>
         </div>
       </div>
@@ -905,83 +904,74 @@ sudo systemctl status th-study-queue</code></pre>
   </div>
 </section>
 
-<section id="codex-skill" class="section">
+<section id="agent-rules" class="section">
   <div class="container">
-    <h2 class="h2x mb-3">13. Codex 스킬 문서 가이드</h2>
+    <h2 class="h2x mb-3">13. 에이전트 작업 규칙</h2>
     <div class="box pad">
       <p class="leadx mb-3">
-        티에이치스터디는 Codex 스킬을 작업 지침서처럼 사용합니다.
-        아래에는 `SKILL.md` 작성 방법, 파일 종류, 현재 저장소에서 운영 중인 스킬 문서를 함께 정리했습니다.
+        프로젝트 루트의 <code>AGENTS.md</code>는 에이전트가 작업 전에 확인하는 공통 안내 문서입니다.
+        요청에 맞는 <code>agent_rules/</code> 규칙을 함께 확인해 일관된 방식으로 작업합니다.
       </p>
 
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-0">
           <thead>
             <tr>
-              <th style="width:24%">파일 종류</th>
+              <th style="width:24%">파일</th>
               <th>역할</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="fw-bold"><code>SKILL.md</code></td>
-              <td>필수 파일. 스킬 이름, 설명, 사용 조건, 작업 절차를 담는 본문</td>
-            </tr>
-            <tr>
-              <td class="fw-bold"><code>agents/openai.yaml</code></td>
-              <td>권장 파일. <code>display_name</code>, <code>short_description</code>, <code>default_prompt</code> 같은 UI 메타데이터 관리</td>
-            </tr>
-            <tr>
-              <td class="fw-bold"><code>scripts/*</code></td>
-              <td>선택 파일. 반복되는 처리 로직이나 변환 작업을 실행 스크립트로 고정</td>
-            </tr>
-            <tr>
-              <td class="fw-bold"><code>references/*</code></td>
-              <td>선택 파일. 긴 정책 문서, API 문서, 스키마를 필요할 때만 읽도록 분리</td>
-            </tr>
-            <tr>
-              <td class="fw-bold"><code>assets/*</code></td>
-              <td>선택 파일. 템플릿, 샘플 결과물, 이미지 같은 출력 리소스 저장</td>
+              <td class="fw-bold"><code>AGENTS.md</code></td>
+              <td>공통 작업 절차, 규칙 파일 선택 기준, 사용자 확인 및 작업 완료 보고 기준을 안내</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div class="callout mt-4">
-        <strong><code>SKILL.md</code> 작성 방법</strong>
+        <strong>작업 규칙 적용 순서</strong>
         <ul class="mb-0 mt-2">
-          <li>목적을 한 줄로 먼저 정리합니다.</li>
-          <li>frontmatter에 <code>name</code>, <code>description</code>를 작성합니다.</li>
-          <li>본문에는 사용 시점, 작업 절차, 참고 자료, 스크립트 사용 위치를 적습니다.</li>
-          <li>긴 설명은 <code>references/</code>로, 반복 작업은 <code>scripts/</code>로 분리합니다.</li>
-          <li>스킬 폴더 안에는 별도 README를 만들지 않는 것을 기준으로 합니다.</li>
+          <li>루트 <code>AGENTS.md</code>를 먼저 확인합니다.</li>
+          <li>요청 범위에 맞는 <code>agent_rules/*.md</code> 파일을 읽습니다.</li>
+          <li>여러 영역에 걸친 작업은 관련 규칙을 모두 적용합니다.</li>
+          <li>기능별 규칙과 공통 규칙이 함께 있으면 기능별 규칙을 우선합니다.</li>
+          <li>공통 규칙은 실제 Migration, 코드, Blade/CSS/JS에서 확인한 패턴을 기준으로 관리하며, 혼재된 구현을 임의로 통일하지 않습니다.</li>
         </ul>
+      </div>
+
+      <div class="callout mt-4">
+        <strong>공통 규칙 범위</strong><br>
+        <code>backend.md</code>에는 Route/Middleware, 계층 분리, 검증·권한, DB/Model, 트랜잭션·이력·Queue 흐름을 정리하고,
+        <code>frontend.md</code>에는 Blade/Layout, Bootstrap 5, 공통 CSS/JS, 목록·폼·반응형 UI, jQuery/AJAX 패턴을 정리합니다.
+        기능 전용 정책은 <code>board.md</code>, <code>note.md</code>에 유지합니다.
       </div>
 
       <div class="table-responsive mt-4">
         <table class="table table-bordered align-middle mb-0">
           <thead>
             <tr>
-              <th style="width:24%">현재 스킬 파일</th>
+              <th style="width:24%">현재 규칙 파일</th>
               <th>종류 / 역할</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="fw-bold"><code>skill/게시판.md</code></td>
-              <td>도메인 규격형 스킬. 게시판 CRUD, 권한, 히스토리, 로그, 페이징, 메일 규칙 정의</td>
+              <td class="fw-bold"><code>agent_rules/board.md</code></td>
+              <td>게시판 CRUD, 권한, 히스토리, 로그, 페이징, 메일 규칙 정의</td>
             </tr>
             <tr>
-              <td class="fw-bold"><code>skill/노트.md</code></td>
-              <td>기능 명세형 스킬. 노트 메뉴 구조, 라우팅, 권한, 썸네일, 해시태그, 히스토리 규칙 정의</td>
+              <td class="fw-bold"><code>agent_rules/note.md</code></td>
+              <td>노트 메뉴 구조, 라우팅, 권한, 썸네일, 해시태그, 히스토리 규칙 정의</td>
             </tr>
             <tr>
-              <td class="fw-bold"><code>skill/백엔드 기초.md</code></td>
-              <td>공통 개발 기준 스킬. PHP/Laravel 환경과 컨트롤러-서비스-레포지토리 계층 규칙 안내</td>
+              <td class="fw-bold"><code>agent_rules/backend.md</code></td>
+              <td>Route/Middleware, Controller-Service-Repository, FormRequest/Policy, DB·Model, 트랜잭션·이력·Queue 공통 규칙</td>
             </tr>
             <tr>
-              <td class="fw-bold"><code>skill/프론트엔드 기초.md</code></td>
-              <td>퍼블리싱 기준 스킬. Bootstrap 5 중심의 프론트 작업 원칙 안내</td>
+              <td class="fw-bold"><code>agent_rules/frontend.md</code></td>
+              <td>Blade/Layout, Bootstrap 5, 공통 CSS/JS, 목록·폼·반응형 UI, jQuery/AJAX 공통 규칙</td>
             </tr>
           </tbody>
         </table>
@@ -1234,37 +1224,6 @@ php artisan l5-swagger:generate</code></pre>
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<section id="appendix" class="section bg-light">
-  <div class="container">
-    <h2 class="h2x mb-3">17. README 원문</h2>
-    <div class="box pad readme-summary">
-      <p class="fw-bold mb-2">포트폴리오 관점 요약</p>
-      <ul>
-        <li>Laravel 10 기반 개발자 성장 플랫폼을 기획부터 운영까지 직접 구축</li>
-        <li>핵심 아키텍처는 Controller-Service-Repository 분리와 정책 기반 접근 제어</li>
-        <li>MCP 구간은 OAuth/JWT 인증, well-known 메타데이터, JSON-RPC tool 호출 구조까지 직접 구성</li>
-        <li>메일/큐/로그/백업 포함 운영 흐름을 실서비스 수준으로 문서화</li>
-        <li>도메인은 가비아에서 등록하고 Cloudflare 네임서버/DNS/Email Routing으로 외부 노출 주소를 운영</li>
-        <li>Cloudflare 프록시 환경에서도 로그인/게시판/히스토리에 실클라이언트 IP가 저장되도록 추출 정책을 표준화</li>
-        <li>구글애널리틱스4는 전체 페이지 공통 삽입이 아니라 공개 페이지 허용 경로와 제외 IP 기준으로만 제한 적용</li>
-        <li>sitemap, robots.txt, 공개 URL 정책까지 코드 중심으로 관리</li>
-        <li>배포는 SSH + git pull + migrate + systemd queue 재시작 기준으로 표준화</li>
-      </ul>
-    </div>
-    @php
-        $readmePath = base_path('README.md');
-        $readmeMarkdown = file_exists($readmePath) ? file_get_contents($readmePath) : '# README.md not found';
-        $readmeHtml = \Illuminate\Support\Str::markdown($readmeMarkdown);
-    @endphp
-    <details class="readme-toggle mt-3">
-      <summary>README 원문 펼쳐보기</summary>
-      <div class="box pad readme mt-3">
-        {!! $readmeHtml !!}
-      </div>
-    </details>
   </div>
 </section>
 

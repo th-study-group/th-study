@@ -414,7 +414,8 @@ database/
 
 config/                       # 인증, 게시판, 노트, MCP, 트래픽, 푸시 등 설정
 mcp/tool.json                 # MCP tool 정의
-skill/                        # 프로젝트 작업 규칙 문서
+AGENTS.md                     # 에이전트 공통 작업 절차 및 적용 규칙 안내
+agent_rules/                  # 작업 영역별 프로젝트 규칙 문서
 document/                     # 운영/업그레이드 메모
 tests/                        # Feature / Unit 테스트
 docker/                       # PHP, Nginx 개발용 Docker 설정
@@ -1474,113 +1475,31 @@ sudo systemctl status th-study-queue
 - 스크립트: `public/js/blog.js`
 - 스타일: `public/css/blog.css`
 
-## 19. Codex 스킬 문서 가이드
+## 19. 에이전트 작업 규칙
 
-이 프로젝트의 스킬 문서는
-"어떻게 구현할지"를 빠르게 전달하는 작업 지침서 역할을 합니다.
+프로젝트 루트의 `AGENTS.md`는 모든 에이전트가 작업 전에 확인하는 공통 안내 문서입니다.
+요청 내용을 분석한 뒤 해당하는 `agent_rules/` 규칙 문서를 읽고, 작업 계획과 영향 범위를 확인한 후 구현합니다.
 
-### 19.1 스킬 폴더 구조
+### 19.1 적용 순서
 
-Codex 기준 스킬은 보통 아래 구조를 가집니다.
+1. 루트 `AGENTS.md`에서 공통 작업 절차와 적용 기준을 확인합니다.
+2. 작업 영역에 맞는 `agent_rules/*.md` 문서를 확인합니다.
+3. 여러 영역에 걸친 작업은 관련 규칙을 모두 적용하며, 기능별 규칙이 공통 규칙보다 우선합니다.
+4. 공통 규칙은 현재 Migration, 코드, Blade/CSS/JS에서 확인한 패턴을 기준으로 적용하며, 혼재된 구현을 임의로 하나의 방식으로 통일하지 않습니다.
 
-```text
-skill-name/
-  SKILL.md            # 필수, 스킬 본문
-  agents/openai.yaml  # 권장, UI 메타데이터
-  scripts/*           # 선택, 반복 작업용 실행 스크립트
-  references/*        # 선택, 필요할 때만 읽는 참고 문서
-  assets/*            # 선택, 템플릿/이미지/출력 리소스
-```
+### 19.2 현재 규칙 파일
 
-### 19.2 파일 종류와 역할
+- `agent_rules/backend.md`
+  - PHP/Laravel 환경, Route/Middleware, Controller-Service-Repository, FormRequest/Policy, DB·Model, 트랜잭션·이력·Queue 규칙
 
-- `SKILL.md`
-  - 필수 파일
-  - 스킬 이름, 설명, 작업 절차, 사용 조건을 적는 본문
+- `agent_rules/frontend.md`
+  - Blade/Layout, Bootstrap 5, 공통 CSS/JS, 목록·폼·반응형 UI, jQuery/AJAX 규칙
 
-- `agents/openai.yaml`
-  - 권장 파일
-  - `display_name`, `short_description`, `default_prompt` 같은 UI 메타데이터
+- `agent_rules/board.md`
+  - 게시판 CRUD, 권한, 히스토리, 로그, 페이징, 메일 규칙
 
-- `scripts/*`
-  - 선택 파일
-  - 반복 작성되는 처리 로직이나 변환 작업을 스크립트로 고정
-
-- `references/*`
-  - 선택 파일
-  - 길거나 상세한 정책, 스키마, API 문서를 분리 저장
-
-- `assets/*`
-  - 선택 파일
-  - 템플릿, 샘플 결과물, 이미지 같은 출력 리소스 저장
-
-### 19.3 `SKILL.md` 작성 방법
-
-1. 스킬 목적을 한 줄로 먼저 정합니다.
-2. YAML frontmatter에 최소 `name`, `description`를 적습니다.
-3. 본문에는 아래 내용을 중심으로 적습니다.
-   - 언제 사용하는지
-   - 어떤 순서로 처리하는지
-   - 무엇을 참고하는지
-4. 긴 설명은 `references/`로 분리합니다.
-5. 반복 작업은 `scripts/`로 분리합니다.
-6. 문체는 소개문보다 규칙문, 절차문, 체크리스트 형태를 우선합니다.
-7. 스킬 폴더 안에는 불필요한 보조 문서(`README.md`, `CHANGELOG.md`)를 따로 만들지 않습니다.
-
-### 19.4 `SKILL.md` 기본 형식
-
-```md
----
-name: skill-name
-description: 언제 이 스킬을 사용해야 하는지 설명
----
-
-# Skill Name
-
-## 목적
-- 이 스킬이 해결하는 작업
-
-## 사용할 때
-- 어떤 요청에서 이 스킬을 적용하는지
-
-## 작업 절차
-1. 무엇을 확인하는지
-2. 어떤 파일을 읽는지
-3. 어떤 순서로 처리하는지
-
-## 참고 자료
-- 필요 시 `references/...` 확인
-
-## 스크립트
-- 필요 시 `scripts/...` 사용
-```
-
-### 19.5 현재 저장소의 스킬 파일 종류와 역할
-
-- `skill/게시판.md`
-  - 종류: 도메인 규격형 스킬
-  - 역할: 게시판 CRUD, 권한, 히스토리, 로그, 페이징, 메일 규칙 정의
-
-- `skill/노트.md`
-  - 종류: 기능 명세형 스킬
-  - 역할: 노트 메뉴 구조, 라우팅, 권한, 썸네일, 해시태그, 히스토리 규칙 정의
-
-- `skill/백엔드 기초.md`
-  - 종류: 공통 개발 기준 스킬
-  - 역할: PHP/Laravel 환경과 백엔드 구현 계층 규칙 안내
-
-- `skill/프론트엔드 기초.md`
-  - 종류: 퍼블리싱 기준 스킬
-  - 역할: Bootstrap 5 중심의 프론트 작업 원칙 안내
-
-### 19.6 현재 저장소 기준 참고사항
-
-- 현재 저장소의 스킬은 폴더형 Codex Skill 전체 구조가 아니라
-  `skill/*.md` 문서형으로 운영 중입니다.
-
-- 즉, 실사용 중인 파일은 Markdown 스킬 문서이며,
-  `SKILL.md`, `agents/openai.yaml`, `scripts/`, `references/`, `assets/` 구조는
-  향후 확장 시 적용 가능한 표준 형태입니다.
+- `agent_rules/note.md`
+  - 노트 메뉴 구조, 라우팅, 권한, 썸네일, 해시태그, 히스토리 규칙
 
 ## 라라벨 크론탭 등록(통계 집계)
 
