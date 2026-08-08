@@ -1495,6 +1495,9 @@ sudo systemctl status th-study-queue
 - `agent_rules/frontend.md`
   - Blade/Layout, Bootstrap 5, 공통 CSS/JS, 목록·폼·반응형 UI, jQuery/AJAX 규칙
 
+- `agent_rules/mcp.md`
+  - MCP Tool/API, OAuth/JWT 인증, Tool 정의, 권한, Validation, Logging, Pagination 규칙
+
 - `agent_rules/board.md`
   - 게시판 CRUD, 권한, 히스토리, 로그, 페이징, 메일 규칙
 

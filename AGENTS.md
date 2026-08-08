@@ -121,6 +121,7 @@
 - `agent_rules/frontend.md`
 - `agent_rules/board.md`
 - `agent_rules/note.md`
+- `agent_rules/mcp.md`
 - `agent_rules/database_schema.md`
 
 작업을 시작하기 전에 요청과 관련된 규칙 문서를 반드시 확인한다.
@@ -205,33 +206,68 @@
 `agent_rules/backend.md`
 `agent_rules/frontend.md`
 
+## MCP 작업
+
+MCP Tool, MCP API 및 MCP 연동과 관련된 작업이면 반드시 아래 문서를 확인한다.
+
+`agent_rules/mcp.md`
+
+MCP Backend 변경이 포함되면 다음 문서를 함께 확인한다.
+
+`agent_rules/backend.md`
+
+Database 조회 또는 변경이 포함되면 다음 문서를 함께 확인한다.
+
+`agent_rules/database_schema.md`
+
+화면 변경이 포함되면 다음 문서를 함께 확인한다.
+
+`agent_rules/frontend.md`
+
+게시판 또는 노트 등 특정 기능의 MCP 작업이면 해당 기능 규칙도 함께 확인한다.
+
+예:
+
+게시판 MCP Tool:
+
+- `agent_rules/mcp.md`
+- `agent_rules/backend.md`
+- `agent_rules/board.md`
+- `agent_rules/database_schema.md`
+
+노트 MCP Tool:
+
+- `agent_rules/mcp.md`
+- `agent_rules/backend.md`
+- `agent_rules/note.md`
+- `agent_rules/database_schema.md`
+
 ---
 
 # 6. 데이터베이스 규칙
 
-데이터베이스 관련 작업 또는 데이터 구조를 사용하는 기능을 설계할 때는 반드시 아래 문서를 확인한다.
+데이터베이스 관련 작업에서는
+`agent_rules/database_schema.md`를 참조한다.
 
-`agent_rules/database_schema.md`
+단, 작업과 관련 없는 전체 스키마를 불필요하게 모두 읽지 않는다.
 
-다음 작업에서는 반드시 확인한다.
+먼저 테이블 요약 및 관계 정보를 확인하고,
+현재 작업과 관련된 테이블만 검색하여 상세 컬럼을 확인한다.
 
-- 신규 기능
-- 신규 테이블
-- 신규 컬럼
-- Model 생성/수정
-- Repository 생성/수정
-- Migration 생성/수정
-- 테이블 관계 변경
-- 기존 데이터 조회
-- 사용자 데이터 참조
-- 게시판 데이터 참조
-- 노트 데이터 참조
-- 통계 데이터 참조
-- Queue 관련 데이터 참조
+예:
+- 회원 기능 → users 및 관련 인증 테이블
+- 게시판 기능 → posts, comments, post_histories
+- 노트 기능 → note_* 관련 테이블
+- 유입 통계 → access_logs, bot_access_logs, daily_page_stats, conversion_logs
 
-신규 기능이라고 해서 바로 새로운 테이블을 설계하지 않는다.
+신규 테이블 또는 컬럼이 필요한 경우에는
+관련 기존 테이블과 관계를 먼저 확인한 뒤 설계한다.
 
-먼저 기존 스키마를 확인하고 재사용 가능한 테이블과 컬럼이 있는지 확인한다.
+스키마 문서와 실제 구현이 충돌하면 다음 순위를 따른다.
+
+1. 실제 Migration
+2. 현재 프로젝트 코드
+3. `agent_rules/database_schema.md`
 
 ---
 
@@ -303,18 +339,19 @@
 
 1. `AGENTS.md` 확인
 2. 관련 `agent_rules/*.md` 확인
-3. 기존 유사 기능 검색
-4. Route 확인
-5. Controller 구조 확인
-6. Service / Repository 구조 확인
-7. Model 확인
-8. 관련 Blade 및 프론트 구조 확인
-9. `agent_rules/database_schema.md` 확인
-10. 관련 Migration 확인
-11. 재사용 가능한 기존 구조 확인
-12. 신규 구현이 필요한 부분 정의
-13. 작업 계획 작성
-14. 사용자 승인 대기
+3. MCP 관련 작업이면 `agent_rules/mcp.md` 및 기존 유사 MCP Tool 확인
+4. 기존 유사 기능 검색
+5. Route 확인
+6. Controller 구조 확인
+7. Service / Repository 구조 확인
+8. Model 확인
+9. 관련 Blade 및 프론트 구조 확인
+10. `agent_rules/database_schema.md` 확인
+11. 관련 Migration 확인
+12. 재사용 가능한 기존 구조 확인
+13. 신규 구현이 필요한 부분 정의
+14. 작업 계획 작성
+15. 사용자 승인 대기
 
 이 단계에서는 실제 코드를 수정하지 않는다.
 
