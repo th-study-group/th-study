@@ -2148,25 +2148,22 @@
     }
 
     .blog-detail-modal {
-      align-items: stretch;
-      justify-content: stretch;
+      align-items: center;
+      justify-content: center;
       padding:
-        env(safe-area-inset-top, 0px)
-        env(safe-area-inset-right, 0px)
-        env(safe-area-inset-bottom, 0px)
-        env(safe-area-inset-left, 0px);
-    }
-
-    body.is-standalone-pwa .blog-detail-modal {
-      padding: 0;
+        max(10px, calc(env(safe-area-inset-top, 0px) + 6px))
+        max(10px, calc(env(safe-area-inset-right, 0px) + 6px))
+        max(10px, calc(env(safe-area-inset-bottom, 0px) + 6px))
+        max(10px, calc(env(safe-area-inset-left, 0px) + 6px));
     }
 
     .blog-detail-dialog {
       width: 100%;
-      max-height: none;
-      min-height: 100%;
-      height: 100%;
-      border-radius: 0;
+      max-height: calc(100dvh - 20px);
+      max-height: calc(100svh - 20px);
+      min-height: 0;
+      height: auto;
+      border-radius: 14px;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -2175,12 +2172,8 @@
     .blog-detail-head {
       position: relative;
       z-index: 1;
-      min-height: calc(env(safe-area-inset-top, 0px) + 68px);
-      padding:
-        calc(env(safe-area-inset-top, 0px) + 8px)
-        max(12px, calc(env(safe-area-inset-right, 0px) + 12px))
-        12px
-        max(12px, calc(env(safe-area-inset-left, 0px) + 12px));
+      min-height: 68px;
+      padding: 8px 12px 12px;
       border-bottom: 1px solid #e2e6eb;
       background: #fff;
       pointer-events: auto;
@@ -2196,11 +2189,7 @@
     }
 
     .blog-detail-body {
-      padding:
-        16px
-        max(14px, calc(env(safe-area-inset-right, 0px) + 14px))
-        max(28px, calc(env(safe-area-inset-bottom, 0px) + 28px))
-        max(14px, calc(env(safe-area-inset-left, 0px) + 14px));
+      padding: 16px 14px 28px;
       min-height: 0;
       flex: 1 1 auto;
       background: #fff;
@@ -2214,7 +2203,7 @@
 
     body.is-standalone-pwa .blog-detail-body {
       padding-top: 16px;
-      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+      padding-bottom: 28px;
     }
 
     .blog-detail-title-row {
