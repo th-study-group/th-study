@@ -36,23 +36,9 @@ return [
             'priority'   => 1.0,
             'lastmod'    => '2026-03-01',
         ],
-        // 블로그 목록 (여행)
+        // 블로그 목록 (일상)
         [
-            'loc'        => config('app.url') . '/blogs/tour',
-            'changefreq' => 'weekly',
-            'priority'   => 1.0,
-            'lastmod'    => '2026-03-01',
-        ],
-        // 블로그 목록 (맛집)
-        [
-            'loc'        => config('app.url') . '/blogs/food',
-            'changefreq' => 'weekly',
-            'priority'   => 1.0,
-            'lastmod'    => '2026-03-01',
-        ],
-        // 블로그 목록 (카페)
-        [
-            'loc'        => config('app.url') . '/blogs/cafe',
+            'loc'        => config('app.url') . '/blogs/life',
             'changefreq' => 'weekly',
             'priority'   => 1.0,
             'lastmod'    => '2026-03-01',
