@@ -131,7 +131,9 @@
                             @endphp
                             <tr class="text-center inquiry-row" data-href="{{ route('admins.members.edit', ['idx' => $member->idx]) }}" style="cursor: pointer;">
                                 <td class="text-nowrap">{{ $number }}</td>
-                                <td class="text-nowrap">{{ $member->name }}</td>
+                                <td class="text-nowrap">
+                                    <span class="board-ellipsis" title="{{ $member->name }}">{{ $member->name }}</span>
+                                </td>
                                 <td class="text-nowrap">{{ $member->nick_name }}</td>
                                 <td class="text-nowrap text-start">{{ $member->email }}</td>
                                 <td class="text-nowrap">{{ $member->birth_date?->format('Y-m-d') ?? '-' }}</td>
