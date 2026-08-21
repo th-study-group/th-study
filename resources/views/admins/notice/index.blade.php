@@ -102,12 +102,12 @@
                             @php
                                 $number = $posts->total() - (($posts->currentPage() - 1) * $posts->perPage()) - $loop->index;
                             @endphp
-                            <tr class="text-center notice-row" data-href="{{ route('admins.posts.show', ['post_type' => 'notice', 'idx' => $post->idx]) }}" style="cursor: pointer;">
+                            <tr class="text-center notice-row" data-href="{{ route('admins.posts.show', ['post_type' => 'notice', 'idx' => $post->idx]) }}" role="link" tabindex="0" style="cursor: pointer;">
                                 <td class="text-nowrap">{{ $number }}</td>
                                 <td class="text-start">
-                                    <span class="text-decoration-none board-ellipsis d-block">
+                                    <a href="{{ route('admins.posts.show', ['post_type' => 'notice', 'idx' => $post->idx]) }}" class="text-dark text-decoration-none board-ellipsis d-block notice-link">
                                         {{ $post->title }}
-                                    </span>
+                                    </a>
                                 </td>
                                 <td class="text-nowrap">
                                     <span class="badge use-flag use-flag-{{ $post->use_flag ?? 0 }}">
@@ -167,14 +167,46 @@
                 $("#form_search").submit();
             });
 
+            let noticeNavigationStarted = false;
+
+            function navigateToNotice(href) {
+                if (!href || noticeNavigationStarted) {
+                    return;
+                }
+
+                noticeNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
+                }
+
+                window.location.assign(href);
+            }
+
             $('.notice-row').on('click', function(e){
                 if ($(e.target).closest('a, button, input, select, textarea').length) {
                     return;
                 }
 
-                const href = $(this).data('href');
-                if (href) {
-                    location.href = href;
+                navigateToNotice($(this).data('href'));
+            }).on('keydown', function(e){
+                if (e.key !== 'Enter' && e.key !== ' ') {
+                    return;
+                }
+
+                e.preventDefault();
+                navigateToNotice($(this).data('href'));
+            });
+
+            $('.notice-link').on('click', function(){
+                if (noticeNavigationStarted) {
+                    return false;
+                }
+
+                noticeNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
                 }
             });
         });

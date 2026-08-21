@@ -129,10 +129,10 @@
                                 $number = $members->total() - (($members->currentPage() - 1) * $members->perPage()) - $loop->index;
                                 $isVerified = !empty($member->email_verify_datetime);
                             @endphp
-                            <tr class="text-center inquiry-row" data-href="{{ route('admins.members.edit', ['idx' => $member->idx]) }}" style="cursor: pointer;">
+                            <tr class="text-center inquiry-row" data-href="{{ route('admins.members.edit', ['idx' => $member->idx]) }}" role="link" tabindex="0" style="cursor: pointer;">
                                 <td class="text-nowrap">{{ $number }}</td>
                                 <td class="text-nowrap">
-                                    <span class="board-ellipsis" title="{{ $member->name }}">{{ $member->name }}</span>
+                                    <a href="{{ route('admins.members.edit', ['idx' => $member->idx]) }}" class="text-dark text-decoration-none board-ellipsis" title="{{ $member->name }}">{{ $member->name }}</a>
                                 </td>
                                 <td class="text-nowrap">{{ $member->nick_name }}</td>
                                 <td class="text-nowrap text-start">{{ $member->email }}</td>
@@ -165,14 +165,46 @@
 @section('script')
     <script>
         $(function(){
+            let memberNavigationStarted = false;
+
+            function navigateToMember(href) {
+                if (!href || memberNavigationStarted) {
+                    return;
+                }
+
+                memberNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
+                }
+
+                window.location.assign(href);
+            }
+
             $('.inquiry-row').on('click', function(e){
                 if ($(e.target).closest('a, button, input, select, textarea').length) {
                     return;
                 }
 
-                const href = $(this).data('href');
-                if (href) {
-                    location.href = href;
+                navigateToMember($(this).data('href'));
+            }).on('keydown', function(e){
+                if (e.key !== 'Enter' && e.key !== ' ') {
+                    return;
+                }
+
+                e.preventDefault();
+                navigateToMember($(this).data('href'));
+            });
+
+            $('.inquiry-row a').on('click', function(){
+                if (memberNavigationStarted) {
+                    return false;
+                }
+
+                memberNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
                 }
             });
 

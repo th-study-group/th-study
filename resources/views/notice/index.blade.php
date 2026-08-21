@@ -44,12 +44,12 @@
                     </thead>
                     <tbody>
                         @forelse ($posts as $post)
-                            <tr class="text-center notice-row" data-href="{{ route('posts.show', ['post_type' => 'notice', 'idx' => $post->idx]) }}" style="cursor: pointer;">
+                            <tr class="text-center notice-row" data-href="{{ route('posts.show', ['post_type' => 'notice', 'idx' => $post->idx]) }}" role="link" tabindex="0" style="cursor: pointer;">
                                 <td class="text-nowrap">{{ $posts->total() - (($posts->currentPage() - 1) * $posts->perPage()) - $loop->index }}</td>
                                 <td class="text-start">
-                                    <span class="text-decoration-none board-ellipsis d-block">
+                                    <a href="{{ route('posts.show', ['post_type' => 'notice', 'idx' => $post->idx]) }}" class="text-dark text-decoration-none board-ellipsis d-block notice-link">
                                         {{ $post->title }}
-                                    </span>
+                                    </a>
                                 </td>
                                 <td class="text-nowrap board-col-hidden">{{ $post->create_datetime?->diffForHumans() ?? '-' }}</td>
                             </tr>
@@ -72,14 +72,47 @@
 @section('script')
     <script>
         $(function(){
+            let noticeNavigationStarted = false;
+
+            function navigateToNotice(href) {
+                if (!href || noticeNavigationStarted) {
+                    return;
+                }
+
+                noticeNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
+                }
+
+                window.location.assign(href);
+            }
+
             $('.notice-row').on('click', function(e){
                 if ($(e.target).closest('a, button, input, select, textarea').length) {
                     return;
                 }
 
                 const href = $(this).data('href');
-                if (href) {
-                    location.href = href;
+                navigateToNotice(href);
+            }).on('keydown', function(e){
+                if (e.key !== 'Enter' && e.key !== ' ') {
+                    return;
+                }
+
+                e.preventDefault();
+                navigateToNotice($(this).data('href'));
+            });
+
+            $('.notice-link').on('click', function(){
+                if (noticeNavigationStarted) {
+                    return false;
+                }
+
+                noticeNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
                 }
             });
 

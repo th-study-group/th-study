@@ -106,15 +106,15 @@
                                 $statusLabel = $statusList[$statusKey] ?? $statusKey;
                                 $number = $posts->total() - (($posts->currentPage() - 1) * $posts->perPage()) - $loop->index;
                             @endphp
-                            <tr class="text-center inquiry-row" data-href="{{ route('admins.guest_posts.edit', ['post_type' => $postType, 'idx' => $post->idx]) }}" style="cursor: pointer;">
+                            <tr class="text-center inquiry-row" data-href="{{ route('admins.guest_posts.edit', ['post_type' => $postType, 'idx' => $post->idx]) }}" role="link" tabindex="0" style="cursor: pointer;">
                                 <td class="text-nowrap">{{ $number }}</td>
                                 <td class="text-nowrap">
                                     <span class="badge text-bg-{{ $badgeClass }}">{{ $statusLabel }}</span>
                                 </td>
                                 <td class="text-start">
-                                    <span class="text-decoration-none board-ellipsis d-block">
+                                    <a href="{{ route('admins.guest_posts.edit', ['post_type' => $postType, 'idx' => $post->idx]) }}" class="text-dark text-decoration-none board-ellipsis d-block inquiry-link">
                                         {{ $post->title }}
-                                    </span>
+                                    </a>
                                 </td>
                                 <td class="board-col-hidden">
                                     {{ $post->writer ?? '-' }}
@@ -157,14 +157,46 @@
                 maxDate: today
             });
 
+            let guestPostNavigationStarted = false;
+
+            function navigateToGuestPost(href) {
+                if (!href || guestPostNavigationStarted) {
+                    return;
+                }
+
+                guestPostNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
+                }
+
+                window.location.assign(href);
+            }
+
             $('.inquiry-row').on('click', function(e){
                 if ($(e.target).closest('a, button, input, select, textarea').length) {
                     return;
                 }
 
-                const href = $(this).data('href');
-                if (href) {
-                    location.href = href;
+                navigateToGuestPost($(this).data('href'));
+            }).on('keydown', function(e){
+                if (e.key !== 'Enter' && e.key !== ' ') {
+                    return;
+                }
+
+                e.preventDefault();
+                navigateToGuestPost($(this).data('href'));
+            });
+
+            $('.inquiry-link').on('click', function(){
+                if (guestPostNavigationStarted) {
+                    return false;
+                }
+
+                guestPostNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
                 }
             });
 

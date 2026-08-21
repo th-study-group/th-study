@@ -248,6 +248,17 @@ function runInitialEntryLoading(loadingModal)
         ? performance.getEntriesByType('navigation')[0]
         : null;
 
+    // Standalone PWA는 splash.js가 초기 진입 화면을 담당하므로
+    // 공통 로딩 모달과 겹쳐 터치 입력을 막지 않도록 한다.
+    const isStandalonePwa = (typeof window.navigator.standalone !== 'undefined'
+        && window.navigator.standalone === true)
+        || !!(window.matchMedia
+            && window.matchMedia('(display-mode: standalone)').matches);
+
+    if (isStandalonePwa) {
+        return;
+    }
+
     // 뒤로가기/앞으로가기 복원 시에는 불필요한 점멸 방지
     if (navEntry && navEntry.type === 'back_forward') {
         return;

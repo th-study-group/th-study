@@ -86,15 +86,15 @@
                                 $statusLabel = $statusList[$statusKey] ?? $statusKey;
                                 $number = $posts->total() - (($posts->currentPage() - 1) * $posts->perPage()) - $loop->index;
                             @endphp
-                            <tr class="text-center inquiry-row" data-href="{{ route('inquiries.show', ['idx' => $post->idx]) }}" style="cursor: pointer;">
+                            <tr class="text-center inquiry-row" data-href="{{ route('inquiries.show', ['idx' => $post->idx]) }}" role="link" tabindex="0" style="cursor: pointer;">
                                 <td class="text-nowrap">{{ $number }}</td>
                                 <td class="text-nowrap">
                                     <span class="badge text-bg-{{ $badgeClass }}">{{ $statusLabel }}</span>
                                 </td>
                                 <td class="text-start">
-                                    <span class="text-decoration-none board-ellipsis d-block">
+                                    <a href="{{ route('inquiries.show', ['idx' => $post->idx]) }}" class="text-dark text-decoration-none board-ellipsis d-block inquiry-link">
                                         {{ $post->title }}
-                                    </span>
+                                    </a>
                                 </td>
                                 <td class="text-nowrap board-col-hidden">{{ $post->create_datetime?->diffForHumans() ?? '-' }}</td>
                             </tr>
@@ -141,14 +141,46 @@
                 mobileSelectHeader: true
             });
 
+            let inquiryNavigationStarted = false;
+
+            function navigateToInquiry(href) {
+                if (!href || inquiryNavigationStarted) {
+                    return;
+                }
+
+                inquiryNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
+                }
+
+                window.location.assign(href);
+            }
+
             $('.inquiry-row').on('click', function(e){
                 if ($(e.target).closest('a, button, input, select, textarea').length) {
                     return;
                 }
                 
-                const href = $(this).data('href');
-                if (href) {
-                    location.href = href;
+                navigateToInquiry($(this).data('href'));
+            }).on('keydown', function(e){
+                if (e.key !== 'Enter' && e.key !== ' ') {
+                    return;
+                }
+
+                e.preventDefault();
+                navigateToInquiry($(this).data('href'));
+            });
+
+            $('.inquiry-link').on('click', function(){
+                if (inquiryNavigationStarted) {
+                    return false;
+                }
+
+                inquiryNavigationStarted = true;
+
+                if (typeof window.hideLoading === 'function') {
+                    window.hideLoading({ force: true });
                 }
             });
 
