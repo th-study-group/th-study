@@ -159,6 +159,10 @@
 
             let guestPostNavigationStarted = false;
 
+            window.addEventListener('pageshow', function(){
+                guestPostNavigationStarted = false;
+            });
+
             function navigateToGuestPost(href) {
                 if (!href || guestPostNavigationStarted) {
                     return;

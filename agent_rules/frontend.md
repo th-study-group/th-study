@@ -65,3 +65,9 @@
 - 공통 화면에는 `aria-label`, `aria-expanded`, `aria-controls`, `role="alert"`, table `scope="col"`, modal의 `aria-*` 속성이 사용된다.
 - 새 버튼, collapse, modal, table을 추가할 때는 같은 Bootstrap 접근성 속성과 label 패턴을 적용할 수 있는지 확인한다.
 - 현재 전 화면에 동일한 접근성 구현이 적용된 것은 아니므로, 확인되지 않은 별도 표준을 강제 규칙으로 추가하지 않는다.
+
+## 10. PWA / BFCache 페이지 복원 상태
+
+- PWA에서 스와이프로 이전 페이지로 돌아갈 때 페이지가 새로 로드되지 않고 BFCache에서 복원될 수 있으므로, 목록 화면의 이동 상태를 확인한다.
+- 목록에서 중복 이동 방지를 위해 `*NavigationStarted` 플래그를 사용하는 경우 `pageshow` 이벤트에서 해당 플래그를 `false`로 초기화한다.
+- 목록 → 상세/수정 → PWA 스와이프 뒤로가기 → 다른 행 클릭 흐름을 반드시 테스트한다.

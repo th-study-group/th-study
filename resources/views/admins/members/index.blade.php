@@ -167,6 +167,10 @@
         $(function(){
             let memberNavigationStarted = false;
 
+            window.addEventListener('pageshow', function(){
+                memberNavigationStarted = false;
+            });
+
             function navigateToMember(href) {
                 if (!href || memberNavigationStarted) {
                     return;

@@ -143,6 +143,10 @@
 
             let inquiryNavigationStarted = false;
 
+            window.addEventListener('pageshow', function(){
+                inquiryNavigationStarted = false;
+            });
+
             function navigateToInquiry(href) {
                 if (!href || inquiryNavigationStarted) {
                     return;
