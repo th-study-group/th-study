@@ -74,6 +74,10 @@
         $(function(){
             let noticeNavigationStarted = false;
 
+            window.addEventListener('pageshow', function(){
+                noticeNavigationStarted = false;
+            });
+
             function navigateToNotice(href) {
                 if (!href || noticeNavigationStarted) {
                     return;
