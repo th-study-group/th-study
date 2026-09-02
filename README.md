@@ -945,6 +945,33 @@ php artisan db:seed --class=NoteMasterSeeder --force
 - 업로드 파일 백업: `/backup/laravel_files`
 - 프로젝트 루트: `/var/www/th-study`
 
+#### FileZilla 다운로드용 백업 사본
+
+`/backup` 하위 백업은 root 권한으로 생성될 수 있어, `ubuntu` 계정으로 SFTP(FileZilla) 접속할 때 바로 접근하지 못할 수 있습니다.
+다운로드가 필요하면 원본 백업은 유지한 채 `/home/ubuntu`에 사본을 만들고 소유자를 `ubuntu`로 변경합니다.
+
+```bash
+# MySQL 풀백업 사본 생성 및 FileZilla 접근 권한 부여
+sudo cp -a /backup/mysql/full /home/ubuntu/
+sudo chown -R ubuntu:ubuntu /home/ubuntu/full
+
+# Laravel 파일 백업 사본 생성 및 FileZilla 접근 권한 부여
+sudo cp -a /backup/laravel_files /home/ubuntu/
+sudo chown -R ubuntu:ubuntu /home/ubuntu/laravel_files
+```
+
+FileZilla에서는 `ubuntu` 계정으로 접속한 뒤 `/home/ubuntu/full`, `/home/ubuntu/laravel_files` 경로에서 백업 사본을 내려받습니다.
+
+백업 용량 확인:
+
+```bash
+sudo du -sh /backup
+
+sudo du -sh /backup/mysql/full
+sudo du -sh /backup/mysql/binlog
+sudo du -sh /backup/laravel_files
+```
+
 파일 백업 스크립트:
 - `/usr/local/bin/laravel_file_backup.sh`
 - `/usr/local/bin/laravel_file_backup_cleanup.sh`

@@ -739,6 +739,7 @@ sudo systemctl status th-study-queue</code></pre>
           <li>대상: <code>/var/www/th-study/storage/app/public</code> 전체</li>
           <li>백업 스크립트: <code>/usr/local/bin/laravel_file_backup.sh</code></li>
           <li>정리 스크립트: <code>/usr/local/bin/laravel_file_backup_cleanup.sh</code></li>
+          <li>root 소유 백업은 필요 시 <code>/home/ubuntu</code>에 <code>ubuntu</code> 소유 사본을 만들어 FileZilla(SFTP)로 내려받음</li>
         </ul>
       </div>
       <div class="mt-4">
