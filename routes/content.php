@@ -23,10 +23,10 @@ foreach (array_keys($noteGroups) as $group) {
                 ->where('rest', '.*');
         }
 
-        Route::get('/create', [NoteController::class, 'create'])->name('create.blank')->defaults('group', $group);
-        Route::post('/create', [NoteController::class, 'store'])->name('store.blank')->defaults('group', $group);
-        Route::get('/{slug}/create', [NoteController::class, 'create'])->name('create')->defaults('group', $group);
-        Route::post("/{slug}", [NoteController::class, 'store'])->name('store')->defaults('group', $group);
+        Route::get('/create', [NoteController::class, 'create'])->middleware('auth')->name('create.blank')->defaults('group', $group);
+        Route::post('/create', [NoteController::class, 'store'])->middleware('auth')->name('store.blank')->defaults('group', $group);
+        Route::get('/{slug}/create', [NoteController::class, 'create'])->middleware('auth')->name('create')->defaults('group', $group);
+        Route::post("/{slug}", [NoteController::class, 'store'])->middleware('auth')->name('store')->defaults('group', $group);
         Route::get('/{slug}/{idx}/show', [NoteController::class, 'show'])->name('show')->defaults('group', $group);
         Route::get('/{slug}/{idx}/edit', [NoteController::class, 'edit'])->name('edit')->defaults('group', $group);
         Route::put("/{slug}/{idx}", [NoteController::class, 'update'])->name('update')->defaults('group', $group);

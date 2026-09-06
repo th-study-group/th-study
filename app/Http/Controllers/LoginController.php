@@ -41,11 +41,15 @@ class LoginController extends Controller
         $payload['remember'] = $request->boolean('remember');
         $clientIp = RequestIp::resolve($request);
 
-        $ok = $this->userService->authenticate($payload, $clientIp);
+        $result = $this->userService->authenticate($payload, $clientIp);
 
-        if (!$ok) {
-            return back()
-                ->with('status', '이메일 또는 비밀번호가 올바르지 않습니다.')
+        if ($result !== 'success') {
+            $message = $result === 'email_not_verified'
+                ? '이메일 인증 후 로그인할 수 있습니다.'
+                : '이메일 또는 비밀번호가 올바르지 않습니다.';
+
+            return to_route('login')
+                ->withErrors(['email' => $message])
                 ->withInput();
         }
 

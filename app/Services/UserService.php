@@ -64,9 +64,9 @@ class UserService
      *
      * @param array $payload
      * @param string $ip
-     * @return bool
+     * @return string
      */
-    public function authenticate(array $payload, string $ip): bool
+    public function authenticate(array $payload, string $ip): string
     {
         $user = $this->userRepository->findByEmail($payload['email']);
         $userAgent = request()->userAgent() ?? '';
@@ -81,7 +81,21 @@ class UserService
                 provider: 'local',
                 reason: 'invalid_credentials'
             ));
-            return false;
+            return 'invalid_credentials';
+        }
+
+        if (is_null($user->email_verify_datetime)) {
+            event(new UserLoginAttemptedEvent(
+                email: $user->email,
+                accessUserIdx: $user->idx,
+                ip: $ip,
+                userAgent: $userAgent,
+                success: false,
+                provider: 'local',
+                reason: 'email_not_verified'
+            ));
+
+            return 'email_not_verified';
         }
 
         $remember = $payload['remember'] ?? false;
@@ -112,7 +126,7 @@ class UserService
             provider: 'local'
         ));
 
-        return true;
+        return 'success';
     }
 
     /**

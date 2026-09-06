@@ -268,7 +268,6 @@
 @section('script')
   <script>
     $(function() {
-      const userLevel = "{{ auth()->user()?->level }}";
       const listUrl = "{{ route("{$group}.index", ['slug' => $slug]) }}";
       const writeUrl = "{{ $writeUrl ?? '' }}";
       const filterBaseUrl = "{{ url($group) }}";
@@ -716,11 +715,6 @@
 
       if (writeUrl) {
         $("#btn_write_top, #btn_write_fab").on("click", function() {
-          if (userLevel !== 'admin') {
-            alert('글 작성 권한이 없습니다.');
-            return;
-          }
-          
           location.href = writeUrl;
         });
       }
