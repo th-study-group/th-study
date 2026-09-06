@@ -2,42 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use DateTime;
-use Illuminate\Support\Facades\Config;
-use Spatie\Sitemap\Sitemap;
-use Spatie\Sitemap\Tags\Url;
+use App\Services\SitemapService;
 
 /**
  * 사이트맵 컨트롤러
  */
 class SitemapController extends Controller
 {
+    public function __construct(
+        private SitemapService $sitemapService
+    ) {}
+
     /**
-     * 사이트맵 등록
-     *
-     * @return void
+     * 사이트맵 조회
      */
     public function index()
     {
-        $items = Config::get('sitemap.urls', []);
-        $sitemap = Sitemap::create();
+        $xml = $this->sitemapService->getSitemapXml();
 
-        foreach ($items as $item) {
-            $url = Url::create($item['loc']);
-
-            if (!empty($item['changefreq'])) {
-                $url->setChangeFrequency($item['changefreq']);
-            }
-            if (!empty($item['priority'])) {
-                $url->setPriority($item['priority']);
-            }
-            if (!empty($item['lastmod'])) {
-                $url->setLastModificationDate(new DateTime($item['lastmod']));
-            }
-
-            $sitemap->add($url);
-        }
-
-        return $sitemap->toResponse(request());
+        return response(
+            $xml,
+            200,
+            [
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            ]
+        );
     }
 }

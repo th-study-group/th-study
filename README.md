@@ -636,8 +636,10 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 
 1. Sitemap 동적 생성
 - `spatie/laravel-sitemap` 패키지를 도입해 `/sitemap.xml` 요청 시 동적으로 XML을 생성합니다.
-- `app/Http/Controllers/SitemapController.php`가 `config/sitemap.php`를 읽어 URL, `changefreq`, `priority`, `lastmod`를 조립합니다.
-- 현재 등록 대상은 메인, 소개, 공지 목록, 블로그 전체/카테고리, 포트폴리오입니다.
+- `SitemapController`는 `SitemapService`에 XML 생성을 위임합니다. 정적 URL은 `config/sitemap.php`에서, 공개 블로그 상세 URL은 `NoteRepository::getSitemapBlogs()`에서 조회해 조립합니다.
+- 상세 URL은 `/blogs/{categories_code}/{idx}/show` 형식이며, 공개 글(`use_flag = 1`)만 포함합니다. `lastmod`는 `update_datetime`을 우선하고 없으면 `create_datetime`을 사용합니다.
+- sitemap XML은 `ContentCacheService`로 24시간 캐시합니다. 블로그 등록·수정·삭제·공개 전환이 커밋되면 `blog` 캐시 버전을 증가시켜 다음 요청에서 홈 최신글과 sitemap을 함께 새로 생성합니다.
+- 현재 등록 대상은 메인, 소개, 공지 목록, 블로그 전체/활성 카테고리, 공개 블로그 상세, 포트폴리오입니다.
 
 2. robots.txt 동적 응답
 - 정적 `public/robots.txt`를 제거하고 `routes/web.php`에서 `/robots.txt`를 동적으로 응답합니다.
@@ -645,7 +647,7 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - 크롤링 허용 경로는 열고, 관리자/대시보드/회원/문의/푸시/비밀번호 재설정 관련 경로는 차단합니다.
 
 3. URL/카테고리 정합성
-- 블로그 URL은 `config/note.php` 기준으로 `/blogs/develop`, `/blogs/tour`, `/blogs/food`, `/blogs/cafe`, `/blogs/economy`를 사용합니다.
+- 블로그 URL은 `config/note.php` 기준으로 `/blogs/develop`, `/blogs/life`, `/blogs/economy`를 사용합니다.
 - 노출 라벨도 기존 `음식`에서 `맛집`으로 정리해 메뉴명과 SEO 표현을 맞췄습니다.
 
 4. 네이버 서치어드바이저 등록
@@ -671,6 +673,7 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 6. 운영 주의점
 - `APP_URL`이 비어 있거나 끝 슬래시가 잘못 들어가면 `Sitemap`/`robots.txt`의 절대 URL이 깨질 수 있습니다.
 - 새 공개 페이지를 추가하면 `config/sitemap.php` 등록과 `robots.txt` 허용 정책을 함께 검토해야 합니다.
+- `config/sitemap.php`처럼 정적 sitemap 설정만 바꾸는 배포는 기존 sitemap 캐시가 최대 24시간 남을 수 있으므로, 배포 절차에서 관련 캐시를 비우거나 다음 캐시 재생성 시점을 고려합니다.
 - 웹마스터 인증 코드는 레이아웃 공통 `<head>`에 둘 때 누락 가능성이 줄어들고, 단일 페이지 하드코딩보다 운영 안정성이 높습니다.
 
 ## 9. 데이터 모델 핵심
@@ -1352,6 +1355,7 @@ sudo systemctl status th-study-queue
 - 대상은 공개된(`use_flag = 1`) 블로그 그룹 글이며, 최신 등록일·IDX 순으로 조회합니다.
 - 블로그 글 등록·수정·삭제·공개 여부 변경이 트랜잭션에 정상 반영된 뒤 캐시 버전을 증가시킵니다. 다음 홈 요청은 새 버전 키로 최신 데이터를 생성하며, 이전 버전 캐시는 TTL 만료 후 정리됩니다.
 - 노트 목록·상세 조회는 별도 서버 캐시 없이 DB에서 조회하며, OG 이미지는 수정 시각 기반 `v` 파라미터로 브라우저 캐시를 갱신합니다.
+- sitemap XML도 같은 `blog` 공개 캐시 버전을 사용하되, `context=sitemap`, `limit=all`, TTL 24시간으로 별도 저장합니다. 따라서 블로그 변경 후 다음 sitemap 요청은 최신 공개 상세 URL과 `lastmod`를 포함해 다시 생성됩니다.
 
 ### 17.11 content 저장/출력 전환 (Markdown -> HTML)
 

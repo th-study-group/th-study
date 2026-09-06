@@ -17,7 +17,7 @@ class ContentCacheService
      * @param string $resource
      * @param string $context
      * @param string $scope
-     * @param int $limit
+     * @param int|null $limit
      * @param int $ttlMinutes
      * @param Closure $callback
      * @param int|null $userIdx
@@ -27,7 +27,7 @@ class ContentCacheService
         string $resource,
         string $context,
         string $scope,
-        int $limit,
+       ?int $limit,
         int $ttlMinutes,
         Closure $callback,
         ?int $userIdx = null
@@ -99,7 +99,7 @@ class ContentCacheService
         string $resource,
         string $context,
         string $scope,
-        int $limit,
+        ?int $limit,
         ?int $userIdx
     ): string {
         $version = $this->getVersion(
@@ -108,13 +108,17 @@ class ContentCacheService
             $userIdx
         );
 
+        $limitKey = $limit === null
+            ? 'all'
+            : (string) $limit;
+
         $key = sprintf(
-            'content:%s:%s:%s:v%d:limit:%d',
+            'content:%s:%s:%s:v%d:limit:%s',
             $resource,
             $context,
             $scope,
             $version,
-            $limit
+            $limitKey
         );
 
         if ($scope === 'user') {
@@ -149,6 +153,9 @@ class ContentCacheService
         return (int) Cache::get($versionKey, 1);
     }
 
+    /**
+     * 캐시 버전 키 생성
+     */
     private function makeVersionKey(
         string $resource,
         string $scope,
@@ -172,13 +179,13 @@ class ContentCacheService
      */
     private function validate(
         string $scope,
-        int $limit,
+        ?int $limit,
         int $ttlMinutes,
         ?int $userIdx
     ): void {
         $this->validateScope($scope, $userIdx);
 
-        if ($limit < 1) {
+        if ($limit !== null && $limit < 1) {
             throw new InvalidArgumentException(
                 '캐시 조회 개수는 1 이상이어야 합니다.'
             );

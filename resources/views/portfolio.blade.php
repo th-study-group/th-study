@@ -409,8 +409,8 @@
           <tbody>
             <tr>
               <td class="fw-bold">Sitemap 생성</td>
-              <td><code>spatie/laravel-sitemap</code> 기반으로 `/sitemap.xml` 요청 시 동적 XML 생성. URL별 <code>changefreq</code>, <code>priority</code>, <code>lastmod</code>를 코드에서 제어</td>
-              <td><code>app/Http/Controllers/SitemapController.php</code>, <code>config/sitemap.php</code></td>
+              <td><code>spatie/laravel-sitemap</code> 기반으로 `/sitemap.xml` 요청 시 XML 생성. 정적 URL은 설정에서, 공개 블로그 상세 URL은 DB에서 조립하며 <code>lastmod</code>는 수정일 또는 등록일을 사용</td>
+              <td><code>app/Http/Controllers/SitemapController.php</code>, <code>app/Services/SitemapService.php</code>, <code>app/Repositories/NoteRepository.php</code>, <code>config/sitemap.php</code></td>
             </tr>
             <tr>
               <td class="fw-bold">robots.txt 운영</td>
@@ -419,8 +419,13 @@
             </tr>
             <tr>
               <td class="fw-bold">공개 URL 범위</td>
-              <td>메인, 소개, 공지 목록, 블로그 전체/카테고리, 포트폴리오를 sitemap 대상에 포함</td>
-              <td><code>config/sitemap.php</code></td>
+              <td>메인, 소개, 공지 목록, 블로그 전체/활성 카테고리, 포트폴리오와 공개 블로그 상세 URL을 sitemap 대상에 포함</td>
+              <td><code>config/sitemap.php</code>, <code>NoteRepository::getSitemapBlogs()</code></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Sitemap 캐시</td>
+              <td>sitemap XML은 공개 <code>blog</code> 캐시 버전을 사용해 24시간 저장. 블로그 등록·수정·삭제·공개 전환이 커밋되면 버전을 올려 다음 요청에서 최신 URL과 수정일 기준으로 다시 생성</td>
+              <td><code>app/Services/SitemapService.php</code>, <code>app/Services/ContentCacheService.php</code>, <code>app/Services/NoteService.php</code></td>
             </tr>
             <tr>
               <td class="fw-bold">차단 정책</td>
@@ -465,6 +470,7 @@
         <ul class="mb-0 mt-2">
           <li><code>APP_URL</code>이 sitemap/robots 절대 URL의 기준이므로 운영 도메인 값이 정확해야 함</li>
           <li>새 공개 페이지를 만들면 라우트 추가만으로 끝내지 않고 <code>config/sitemap.php</code>와 robots 정책도 함께 검토</li>
+          <li>정적 sitemap 설정만 변경하는 배포는 sitemap 캐시가 최대 24시간 남을 수 있으므로, 관련 캐시 무효화 또는 재생성 시점을 함께 확인</li>
           <li>검색 유입 관리는 Google 색인만 보지 않고 네이버 서치어드바이저 수집 상태도 함께 확인</li>
           <li>광고 운영은 <code>config/adfit.php</code> 단위 구성과 <code>&lt;x-adfit&gt;</code> 컴포넌트 기준으로 통일하고, 공통 스크립트는 head에서 한 번만 로드</li>
           <li>내부 유입 데이터는 <code>access_logs/bot_access_logs</code> raw, 전환 데이터는 <code>conversion_logs</code> raw로 분리하고, 집계는 <code>daily_page_stats(conversion_count 포함)</code>를 기준으로 조회/확장(월/연 단위)</li>

@@ -141,4 +141,24 @@ class NoteRepository
             ->limit($limit)
             ->get();
     }
+
+    /**
+     * 사이트맵 공개 블로그 전체 조회
+     *
+     * @return Collection
+     */
+    public function getSitemapBlogs(): Collection
+    {
+        return Note::query()
+            ->select([
+                'idx',
+                'categories_code',
+                'create_datetime',
+                'update_datetime',
+            ])
+            ->where('group_code', 'blog')
+            ->where('use_flag', 1)
+            ->orderBy('idx')
+            ->get();
+    }
 }
