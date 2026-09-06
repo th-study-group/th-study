@@ -17,7 +17,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -37,7 +36,8 @@ class NoteService
         private NoteRepository $noteRepository,
         private NoteTagRepository $noteTagRepository,
         private NoteTagMapRepository $noteTagMapRepository,
-        private EditorContentProcessor $editorContentProcessor
+        private EditorContentProcessor $editorContentProcessor,
+        private ContentCacheService $contentCacheService
     ) {}
 
     /**
@@ -196,7 +196,7 @@ class NoteService
                 'ip' => request()->ip(),
             ]);
 
-            $this->forgetHomeLatestBlogsCacheIfBlog($resolvedGroupCode);
+            $this->forgetContentCache($resolvedGroupCode);
 
             return $note;
         });
@@ -472,7 +472,7 @@ class NoteService
                 'ip' => request()->ip(),
             ]);
 
-            $this->forgetHomeLatestBlogsCacheIfBlog($resolvedGroupCode);
+            $this->forgetContentCache($resolvedGroupCode);
 
             return $note;
         });
@@ -525,7 +525,9 @@ class NoteService
                 'ip' => $ip,
             ]);
 
-            $this->forgetHomeLatestBlogsCacheIfBlog((string) ($note->group_code ?? ''));
+            $this->forgetContentCache(
+                (string) ($note->group_code ?? '')
+            );
         });
     }
 
@@ -563,7 +565,9 @@ class NoteService
                 'ip' => $ip,
             ]);
 
-            $this->forgetHomeLatestBlogsCacheIfBlog((string) ($note->group_code ?? ''));
+            $this->forgetContentCache(
+                (string) ($note->group_code ?? '')
+            );
 
             return $note;
         });
@@ -847,16 +851,23 @@ class NoteService
     }
 
     /**
-     * 글 등록/수정/삭제 시 캐시 생성 
+     * 블로그 변경 시 관련 공용 캐시 무효화
      *
      * @param string $groupCode
      * @return void
      */
-    private function forgetHomeLatestBlogsCacheIfBlog(string $groupCode): void
+    private function forgetContentCache(string $groupCode): void
     {
-        if ($groupCode === 'blog') {
-            Cache::forget(HomeService::LATEST_BLOGS_CACHE_KEY);
+        if ($groupCode !== 'blog') {
+            return;
         }
+
+        DB::afterCommit(function () {
+            $this->contentCacheService->forgetResource(
+                'blog',
+                'public'
+            );
+        });
     }
 
     /**

@@ -208,7 +208,7 @@
             </tr>
             <tr>
               <td class="fw-bold">홈 최신글 캐시</td>
-              <td>공개 블로그 최신 5건을 60분 캐시하고, 글 등록·수정·삭제·공개 전환 시 캐시를 비워 다음 홈 요청에서 다시 생성</td>
+              <td><code>ContentCacheService</code>로 공개 블로그 최신 5건을 60분 캐시. <code>content:blog:home:public:v{version}:limit:5</code> 버전형 키를 사용하며, 글 등록·수정·삭제·공개 전환이 커밋된 뒤 버전을 올려 다음 홈 요청에서 최신 데이터를 생성</td>
             </tr>
             <tr>
               <td class="fw-bold">편집 UX</td>
