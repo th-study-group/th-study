@@ -172,7 +172,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="11">검색된 내역이 없습니다.</td>
+                                <td id="empty_row_cell" class="text-center text-secondary py-4" colspan="11">등록된 유입 내역이 없습니다.</td>
                             </tr>
                         @endforelse
                     </tbody>

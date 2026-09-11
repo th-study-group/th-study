@@ -32,7 +32,7 @@
 ## 5. 목록 / 상세 / 폼 UI
 
 - board 계열 목록은 대체로 `board-card` → 제목/검색 영역 → `board-table-wrap` + Bootstrap table → `board-pagination` 순서다.
-- 목록은 `@forelse`/`@empty`로 빈 상태를 출력하고, `{{ $items->links() }}`를 pagination nav 안에 렌더링한다.
+- 목록은 `@forelse`/`@empty`로 빈 상태를 출력하고, `{{ $items->links() }}`를 pagination nav 안에 렌더링한다. 빈 상태에서는 빈 행만 남기지 말고, 목록 도메인에 맞는 안내 문구(예: `등록된 공지 내역이 없습니다.`)를 테이블의 모든 표시 열에 걸쳐 중앙에 표시한다. 반응형으로 열을 숨기는 테이블은 기존 `updateEmptyRowColspan()`을 사용해 안내 문구의 `colspan`을 표시 열 수와 맞춘다.
 - 상세 화면은 Bootstrap spacing, `form-label`, `bg-light`, `rounded-3` 등을 조합해 읽기 전용 필드를 구성한다.
 - 등록/수정은 공용 Blade를 쓰는 기능이 있다. 유사 기능이 이미 공용 Blade라면 mode 변수와 action/method 분기로 같은 구조를 유지한다.
 - 버튼은 Bootstrap `btn` 계열을 사용하고, 상태는 `badge`와 기존 도메인 class(`use-flag` 등)를 함께 사용한다.
