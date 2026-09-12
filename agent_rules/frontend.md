@@ -82,3 +82,11 @@
 - 이동 직전에 `window.hideLoading({ force: true })`를 호출할 때는 함수 존재 여부를 확인한다. 로딩 모달이나 블로커가 페이지 이동을 가리지 않도록 한다.
 - standalone PWA에서는 PWA splash와 공통 초기 loading modal을 중복 표시하지 않는다. 초기 화면을 담당하는 UI가 터치 입력을 불필요하게 차단하지 않는지 확인한다.
 - 목록 화면의 이동은 일반 웹 브라우저와 standalone PWA에서 각각 첫 클릭, 빠른 연속 클릭, 링크 직접 클릭, row 빈 영역 클릭, 뒤로가기 복원 후 재클릭을 테스트한다.
+
+## 11. SEO Canonical 출력
+
+- 공통 `layouts.app`은 자식 화면이 `canonical_url` section을 제공할 때 canonical 태그를 출력한다. 현재 실제 적용 화면은 블로그 목록과 블로그 상세다.
+- Blade에서 도메인, path, query를 조합하거나 canonical 정책을 판단하지 않는다. Controller 또는 관련 백엔드 계층에서 완성한 URL을 section에 값으로 전달한다.
+- canonical과 `og:url`은 서로 다른 대표 URL을 가리키지 않도록 함께 확인한다. 목록 페이지의 `og:type`과 상세 페이지의 메타 정책도 기존 화면 기준을 유지한다.
+- 블로그 외 새 메뉴에 canonical을 추가하는 요청은 해당 화면만 임의로 수정하지 않는다. 백엔드 canonical 정책과 sitemap·robots 범위를 먼저 분석하고 사용자에게 계획을 보고한 뒤 `진행` 승인을 받아 작업한다.
+- 향후 적용 메뉴가 많아지면 공통 레이아웃에 URL 생성 로직을 넣는 방식이 아니라, 백엔드 공통 Service/View Composer가 완성한 값을 레이아웃에서 출력하는 구조를 검토한다.

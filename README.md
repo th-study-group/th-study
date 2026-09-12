@@ -650,7 +650,26 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - 블로그 URL은 `config/note.php` 기준으로 `/blogs/develop`, `/blogs/life`, `/blogs/economy`를 사용합니다.
 - 노출 라벨도 기존 `음식`에서 `맛집`으로 정리해 메뉴명과 SEO 표현을 맞췄습니다.
 
-4. 네이버 서치어드바이저 등록
+4. Canonical과 대표 도메인 정책
+- 기준 도메인은 `https://www.th-study.com`입니다. 운영 `.env`의 `APP_URL`도 같은 값으로 유지하고, Nginx에서 apex 도메인을 동일한 path/query의 www 주소로 301 이동합니다.
+- 공통 레이아웃 `resources/views/layouts/app.blade.php`는 자식 화면이 `canonical_url` section을 정의한 경우에만 `<link rel="canonical">`을 출력합니다.
+- 현재 canonical 적용 범위는 `resources/views/blogs/index.blade.php`와 `resources/views/blogs/show.blade.php`, 즉 블로그 전체·카테고리 목록과 블로그 상세 페이지입니다. 다른 메뉴에는 아직 전역 canonical을 적용하지 않았습니다.
+- `NoteController`에서 canonical URL을 완성해 Blade로 전달합니다. Blade에서는 URL을 조립하거나 query 정책을 판단하지 않고 전달받은 값만 출력합니다.
+- 블로그 목록의 검색어·주제 필터 query는 대표 URL에서 제거합니다. 검색·필터가 없는 2페이지 이상은 `page` query를 유지하고, 상세 페이지에 붙은 추적용 query는 제거합니다.
+- 블로그 목록은 `og:type=website`, 상세는 `og:type=article`을 유지하며 `og:url`과 canonical이 같은 대표 URL을 가리키게 합니다.
+
+블로그 외 공개 메뉴에 canonical이 필요할 때는 다음 순서로 확장합니다.
+
+1. 공개 색인 대상인지 확인합니다.
+2. 검색·정렬·필터·페이지네이션 query 중 어떤 값을 대표 URL에 유지할지 결정합니다.
+3. 중복 경로와 과거 URL의 301 정책을 확인합니다.
+4. sitemap 등록과 robots 차단 여부, `og:url` 정책을 함께 확인합니다.
+5. 적용 메뉴가 적으면 기존 Controller 방식의 명시적 canonical을 우선 검토하고, 적용 메뉴가 많아지면 공통 Canonical Service와 View Composer 방식의 중앙화를 검토합니다.
+6. 분석 내용과 수정 범위를 먼저 사용자에게 보고하고, 명시적인 `진행` 승인 후 구현합니다.
+
+검증할 때는 JavaScript 실행 여부와 관계없이 응답 HTML에 canonical 태그가 정확히 하나만 있는지 확인합니다. 또한 기준 도메인, path/query, `og:url`, apex → www 301, sitemap 및 robots 영향을 함께 점검합니다.
+
+5. 네이버 서치어드바이저 등록
 - 네이버 서치어드바이저에 사이트를 등록해 국내 검색엔진 수집 채널도 별도로 확보했습니다.
 - 소유권 확인용 웹마스터 메타 코드는 `resources/views/layouts/app.blade.php`의 `<head>`에 넣어 전체 페이지 공통으로 반영하고, Git으로 함께 버전 관리합니다.
 - 애드센스 크롤러 인증용 `ads.txt`는 `public/ads.txt`에 두고 공개 루트(`/ads.txt`)로 제공해 검증 상태를 유지합니다.
@@ -658,7 +677,7 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - 운영 기준은 `/robots.txt`, `/sitemap.xml` 같은 공개 크롤링 기준 URL을 함께 유지하는 것입니다.
 - 검색 유입 점검 시에는 Google 계열 색인과 별개로 네이버 수집 상태도 같이 확인합니다.
 
-5. 내부 유입 수집/집계 구조
+6. 내부 유입 수집/집계 구조
 - 외부 유입 점검(네이버/구글)과 별개로, 내부에서는 방문 raw 로그를 `access_logs`(사용자), `bot_access_logs`(봇)로 분리 저장합니다.
 - 전환 raw 로그는 `conversion_logs`에 저장하며, 블로그 외부 링크는 `/outbound?url=...&conversion_type=outbound` 경유로 기록합니다.
 - 유입 집계는 `daily_page_stats`에 일자/페이지/디바이스 단위로 누적합니다.
@@ -670,9 +689,10 @@ Cloudflare/Nginx 같은 프록시 환경에서도 DB에 실제 사용자 IP가 �
 - 로그 정리(`logs:cleanup`)는 매일 실행됩니다. 기본 정책은 `access_logs` 30일, `bot_access_logs` 60일, `conversion_logs` 90일 정리이며, 현재 운영 기준은 트래픽 데이터 축적을 위해 `access_logs` 1000일, `bot_access_logs` 1000일, `conversion_logs` 1000일입니다. 추후 트래픽 규모와 분석 필요도에 따라 로그 전체의 삭제 주기를 더 늦추거나 미삭제로 전환할 수 있습니다.
 - 초기 운영 단계라 로그를 빠르게 비우기보다 유입/전환 데이터를 충분히 쌓아 분석하는 쪽을 우선했고, 트래픽 증가 시 보관 주기는 다시 조정할 수 있게 두었습니다.
 
-6. 운영 주의점
+7. 운영 주의점
 - `APP_URL`이 비어 있거나 끝 슬래시가 잘못 들어가면 `Sitemap`/`robots.txt`의 절대 URL이 깨질 수 있습니다.
 - 새 공개 페이지를 추가하면 `config/sitemap.php` 등록과 `robots.txt` 허용 정책을 함께 검토해야 합니다.
+- 블로그 외 공개 페이지에 canonical이 필요하면 현재 블로그 범위를 바로 전역으로 확대하지 말고, 페이지별 query와 중복 URL 정책을 검토한 뒤 승인된 범위에서 적용합니다.
 - `config/sitemap.php`처럼 정적 sitemap 설정만 바꾸는 배포는 기존 sitemap 캐시가 최대 24시간 남을 수 있으므로, 배포 절차에서 관련 캐시를 비우거나 다음 캐시 재생성 시점을 고려합니다.
 - 웹마스터 인증 코드는 레이아웃 공통 `<head>`에 둘 때 누락 가능성이 줄어들고, 단일 페이지 하드코딩보다 운영 안정성이 높습니다.
 

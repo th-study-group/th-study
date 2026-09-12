@@ -418,6 +418,11 @@
               <td><code>routes/web.php</code>, <code>resources/views/robots.blade.php</code></td>
             </tr>
             <tr>
+              <td class="fw-bold">대표 URL 통합</td>
+              <td>블로그 목록·상세의 canonical을 HTTPS www 주소로 통일하고, 검색·필터로 생기는 중복 URL 신호를 정리. apex 도메인은 동일 경로의 www 주소로 301 연결</td>
+              <td><code>NoteController</code>, <code>layouts/app.blade.php</code>, 운영 Nginx</td>
+            </tr>
+            <tr>
               <td class="fw-bold">공개 URL 범위</td>
               <td>메인, 소개, 공지 목록, 블로그 전체/활성 카테고리, 포트폴리오와 공개 블로그 상세 URL을 sitemap 대상에 포함</td>
               <td><code>config/sitemap.php</code>, <code>NoteRepository::getSitemapBlogs()</code></td>

@@ -87,3 +87,23 @@
 - AJAX는 `response()->json()`으로 기능에 필요한 값과 `message`를 반환한다. JSON 공통 envelope는 현재 모든 API에 통일되어 있지 않다.
 - MCP/API 응답은 해당 Controller, Resource, OpenAPI 정의의 기존 형식을 따른다.
 - 현재 tests는 Laravel 기본 예제 수준이며 도메인별 테스트 패턴은 정립되어 있지 않다. 새 테스트 구조를 임의로 규칙화하지 않는다.
+
+## 12. 운영 Nginx 설정과 검증
+
+- 운영 Nginx 설정은 `/etc/nginx/sites-available/th-study`와 `/etc/nginx/sites-enabled/th-study`의 활성화 상태를 함께 확인한다. 로컬 개발용 Docker Nginx 설정은 사용자가 별도로 요청하지 않는 한 수정하지 않는다.
+- 기준 도메인이 `https://www.th-study.com`인 경우 HTTP의 apex/www는 HTTPS www로 이동하고, HTTPS apex는 HTTPS www로 이동하며, 실제 Laravel 서비스 블록의 `server_name`에는 `www.th-study.com`만 둔다.
+- 기존 서버 블록에 새 블록을 무조건 추가하지 않는다. `sudo nginx -T`로 전체 활성 설정을 확인하고 동일한 listen 주소에서 `th-study.com` 또는 `www.th-study.com`이 중복 선언되지 않도록 최종 구성을 검토한다.
+- 설정 변경 후에는 반드시 `sudo nginx -t`가 성공한 뒤 `sudo systemctl reload nginx`를 실행한다. 문법 검증이 실패하면 reload하지 않는다.
+- 반영 후 HTTP apex와 HTTPS apex가 정확히 `301`인지, `Location`이 동일한 path/query를 포함한 HTTPS www인지, HTTPS www가 정상 응답하는지 각각 확인한다.
+- `curl`의 리다이렉트 추적 결과에서 apex 요청이 불필요한 다단계 이동 없이 한 번의 리다이렉트로 www에 도달하는지 확인한다.
+- Cloudflare 등 프록시를 사용하는 운영 환경에서는 Nginx 검사 성공만으로 완료 처리하지 않는다. 외부 도메인의 실제 상태 코드, `Location`, 최종 URL까지 확인한 뒤 결과를 보고한다.
+
+## 13. SEO Canonical 정책
+
+- 현재 canonical 적용 범위는 블로그 전체·카테고리 목록과 블로그 상세 페이지다. `NoteController`가 `APP_URL` 기준의 완성된 canonical URL을 만들고 블로그 Blade에 전달한다.
+- 목록 검색어와 주제 필터 query는 canonical에서 제거한다. 필터가 없는 순수 페이지네이션은 2페이지부터 `page` query를 유지하고, 상세 페이지의 query는 canonical에서 제거한다.
+- 블로그 외 공개 메뉴에 canonical을 자동으로 추가하지 않는다. 요청이 들어오면 해당 메뉴의 공개 여부, 검색·필터 query, 페이지네이션, 중복 URL, sitemap, robots, `og:url` 정책과 공통화 필요성을 먼저 확인한다.
+- 블로그 외 범위의 canonical 구현은 분석 결과와 수정 대상, 중앙화 구조 도입 여부를 계획으로 보고하고 사용자가 명시적으로 `진행`이라고 승인한 뒤에만 작업한다.
+- canonical 대상이 여러 메뉴로 확대되면 공통 Service와 View Composer 등 중앙 생성 구조를 우선 검토한다. 다만 현재 블로그 구현을 승인 없이 전역 구조로 변경하지 않는다.
+- canonical URL 조립과 query 정책은 백엔드에서 처리한다. Blade에는 바로 출력할 수 있는 최종 URL만 전달한다.
+- 구현 후 기준 도메인, path/query 정책, 페이지당 canonical 1개, `og:url` 충돌 여부, apex → www 301, sitemap·robots 영향을 함께 검증한다.
