@@ -28,6 +28,7 @@
   - Controller: FormRequest 입력 수신, `validated()`/`safe()` 값 추출, Policy 호출, view/redirect/JSON 응답 조립
   - Service: 도메인 로직, 감사 사용자 정보, 트랜잭션, 로그, Event/Job 호출
   - Repository: Model 생성·수정, 조회·검색·정렬·페이지네이션 쿼리
+- Controller가 Blade를 반환할 때는 화면에서 바로 출력할 수 있도록 fallback, 형변환, URL, 날짜, 상태 문구, CSS class, 표시 여부, JSON/Base64 값 등을 최종 형태로 조립한다. Blade에 데이터 가공 책임을 넘기지 않는다.
 - Service와 Repository는 생성자 주입을 사용한다.
 - 예외도 존재한다. 인증/비밀번호 재설정 등 일부 Controller는 모델 직접 조회나 Job dispatch를 수행하고, API/MCP는 별도 `Services/Api`, `Repositories/Api`, Resource 계층을 사용한다. 유사 기능의 현재 구조를 확인한 뒤 같은 범위에서 따른다.
 

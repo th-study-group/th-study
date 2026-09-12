@@ -1332,6 +1332,18 @@
     overflow: hidden;
   }
 
+  .blog-item-subject-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .blog-item-subject-link:hover,
+  .blog-item-subject-link:focus-visible {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
   .blog-item-category {
     margin: 0 0 8px;
     color: #6c757d;

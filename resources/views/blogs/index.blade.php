@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
-@section('title', '블로그 목록')
+@section('title', $seoTitle)
+@section('meta_description', $seoDescription)
+@section('og_title', $ogTitle)
+@section('og_description', $seoDescription)
+@section('og_url', $canonicalUrl)
+@section('og_type', 'website')
+@section('canonical_url', $canonicalUrl)
 
 @section('style')
   <style>
@@ -14,7 +20,7 @@
 @endsection
 
 @push('styles')
-  <link href="{{ asset('css/blog.css') }}?v={{ filemtime(public_path('css/blog.css')) }}" rel="stylesheet" />
+  <link href="{{ $blogCssUrl }}" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -24,8 +30,8 @@
         <div class="blog-list-head">
         <div class="d-flex align-items-center justify-content-between gap-2 blog-list-title-row">
           <div class="blog-list-title-wrap">
-            <h1 class="blog-list-title">{{ $listTitle ?? '전체 글' }}</h1>
-            @if (!empty($listDescription))
+            <h1 class="blog-list-title">{{ $listTitle }}</h1>
+            @if ($hasListDescription)
               <p class="blog-list-description-inline d-none d-md-inline-block mb-0">{{ $listDescription }}</p>
               <div class="blog-list-description-mobile d-md-none">
                 <button
@@ -55,11 +61,11 @@
           id="form_search"
           name="form_search"
           class="blog-search-wrap"
-          action="{{ route("{$group}.index", ['slug' => $slug]) }}"
+          action="{{ $listUrl }}"
           method="GET"
           autocomplete="off"
         >
-          <input type="hidden" id="topic_filter" name="search_topic" value="{{ $selectedTopic ?? '' }}">
+          <input type="hidden" id="topic_filter" name="search_topic" value="{{ $selectedTopic }}">
 
           <div class="blog-search-panel">
             <button type="button" id="btn_filter_sheet" class="blog-filter-sheet-trigger">
@@ -90,7 +96,7 @@
                   type="hidden"
                   id="search_select_type"
                   name="search_select_type"
-                  value="{{ $filters['search_select_type'] ?? 'title' }}"
+                  value="{{ $searchSelectType }}"
                 >
               </div>
               <input
@@ -98,7 +104,7 @@
                 id="search_keyword"
                 name="search_keyword"
                 class="blog-search-input"
-                value="{{ $filters['search_keyword'] ?? '' }}"
+                value="{{ $searchKeyword }}"
                 placeholder="검색어를 입력해 주세요."
               >
             </div>
@@ -134,22 +140,94 @@
 
         <div class="text-center my-3 d-none d-md-block">
           <x-adfit
-            :unit="config('adfit.pc.rectangle.unit')"
-            :width="config('adfit.pc.rectangle.width')"
-            :height="config('adfit.pc.rectangle.height')" />
+            :unit="$adfitPcRectangleUnit"
+            :width="$adfitPcRectangleWidth"
+            :height="$adfitPcRectangleHeight" />
         </div>
 
         <div class="text-center my-3 d-block d-md-none">
           <x-adfit
-            :unit="config('adfit.mobile.rectangle.unit')"
-            :width="config('adfit.mobile.rectangle.width')"
-            :height="config('adfit.mobile.rectangle.height')" />
+            :unit="$adfitMobileRectangleUnit"
+            :width="$adfitMobileRectangleWidth"
+            :height="$adfitMobileRectangleHeight" />
         </div>
 
-        <p class="blog-list-total" id="blog_list_total">총 0건</p>
+        <p class="blog-list-total" id="blog_list_total">총 {{ $initialTotal }}건</p>
         </div>
 
-        <div id="blogItems" class="blog-items"></div>
+        <div id="blogItems" class="blog-items" data-ssr-rendered="true">
+          @forelse($initialItems as $item)
+            <article
+              class="blog-item"
+              data-note-idx="{{ $item['idx'] }}"
+              data-show-url="{{ $item['show_url'] }}"
+              data-use-flag="{{ $item['use_flag'] }}"
+            >
+              <div class="blog-item-left">
+                <h3 class="blog-item-subject">
+                  <a href="{{ $item['show_url'] }}" class="blog-item-subject-link">{{ $item['subject'] }}</a>
+                </h3>
+                <p class="blog-item-category">{{ $item['group_topic_name'] }}</p>
+                <p class="blog-item-desc">{{ $item['desc'] }}</p>
+                <div class="blog-item-meta">
+                  <span class="blog-item-more">{{ $item['relative_time'] }}</span>
+                  @if ($canManageVisibility)
+                    <span
+                      class="blog-item-visibility {{ $item['visibility_class'] }}"
+                      title="{{ $item['use_flag_label'] }}"
+                      aria-label="{{ $item['use_flag_label'] }}"
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        @if ($item['is_public'])
+                          <path d="M9 10V7.75a3.75 3.75 0 017.1-1.7"></path>
+                          <path d="M16.5 10H18a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6a2 2 0 012-2h8"></path>
+                        @else
+                          <path d="M8 10V7.5a4 4 0 118 0V10"></path>
+                          <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                        @endif
+                      </svg>
+                      <span>{{ $item['use_flag_label'] }}</span>
+                    </span>
+                  @endif
+                  <a
+                    href="{{ $item['show_url'] }}"
+                    class="blog-item-more-btn"
+                    data-show-url="{{ $item['show_url'] }}"
+                    aria-label="{{ $item['show_aria_label'] }}"
+                    title="상세보기"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="6" cy="12" r="1.8"></circle>
+                      <circle cx="12" cy="12" r="1.8"></circle>
+                      <circle cx="18" cy="12" r="1.8"></circle>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              <div class="blog-item-right">
+                @if ($item['has_thumbnail'])
+                  <a
+                    href="{{ $item['thumbnail_url'] }}"
+                    class="blog-item-image-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="이미지 보기"
+                    title="이미지 보기"
+                  >
+                    <img src="{{ $item['thumbnail_url'] }}" alt="" class="blog-item-thumb" data-pwa-image-preview>
+                    <span class="blog-item-image-zoom" aria-hidden="true">
+                      <i class="bi bi-zoom-in"></i>
+                    </span>
+                  </a>
+                @else
+                  <img src="{{ $item['thumbnail_url'] }}" alt="" class="blog-item-thumb is-placeholder">
+                @endif
+              </div>
+            </article>
+          @empty
+            <p class="blog-empty">등록된 글이 없습니다.</p>
+          @endforelse
+        </div>
 
         <div class="blog-more-wrap">
           <button type="button" class="btn_more blog-more-btn">+ 목록 더보기</button>
@@ -191,9 +269,9 @@
 
         <div class="blog-detail-adfit text-center my-3">
           <x-adfit
-            :unit="config('adfit.common.square.unit')"
-            :width="config('adfit.common.square.width')"
-            :height="config('adfit.common.square.height')" />
+            :unit="$adfitCommonSquareUnit"
+            :width="$adfitCommonSquareWidth"
+            :height="$adfitCommonSquareHeight" />
         </div>
 
         <div id="blogDetailContent" class="blog-detail-content"></div>
@@ -250,7 +328,7 @@
             <!--<span class="blog-filter-sheet__hint">주제는 선택하지 않아도 됩니다.</span>-->
           </div>
           <div id="blogTopicOptions" class="blog-filter-sheet__grid is-topic"></div>
-          <p id="blogTopicEmpty" class="blog-filter-sheet__empty" hidden>선택 가능한 주제가 없습니다.</p>
+          <p id="blogTopicEmpty" class="blog-filter-sheet__empty" hidden>카테고리를 선택하면 관련 주제를 확인할 수 있습니다.</p>
         </section>
       </div>
       <div class="blog-filter-sheet__foot">
@@ -261,24 +339,24 @@
 @endsection
 
 @push('scripts')
-  <script src="{{ asset('js/blog.js') }}?v={{ filemtime(public_path('js/blog.js')) }}" defer></script>  
+  <script src="{{ $blogJsUrl }}" defer></script>
 @endpush
 
 
 @section('script')
   <script>
     $(function() {
-      const listUrl = "{{ route("{$group}.index", ['slug' => $slug]) }}";
-      const writeUrl = "{{ $writeUrl ?? '' }}";
-      const filterBaseUrl = "{{ url($group) }}";
-      const topicsByCategoryUrl = "{{ route("{$group}.topics.category") }}";
-      const csrfToken = "{{ csrf_token() }}";
-      const initialCategoryCode = "{{ $slug ?? '' }}";
-      const initialTopicValue = "{{ $selectedTopic ?? '' }}";
+      const listUrl = "{{ $listUrl }}";
+      const writeUrl = "{{ $writeUrl }}";
+      const filterBaseUrl = "{{ $filterBaseUrl }}";
+      const topicsByCategoryUrl = "{{ $topicsByCategoryUrl }}";
+      const csrfToken = "{{ $csrfToken }}";
+      const initialCategoryCode = "{{ $slug }}";
+      const initialTopicValue = "{{ $selectedTopic }}";
       const categoryItems = JSON.parse(
         new TextDecoder().decode(
           Uint8Array.from(
-            atob("{{ base64_encode(json_encode($categoryItems ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) }}"),
+            atob("{{ $encodedCategoryItems }}"),
             c => c.charCodeAt(0)
           )
         )
@@ -286,12 +364,12 @@
       const initialData = JSON.parse(
         new TextDecoder().decode(
           Uint8Array.from(
-            atob("{{ base64_encode(json_encode($initialPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) }}"),
+            atob("{{ $encodedInitialPayload }}"),
             c => c.charCodeAt(0)
           )
         )
       );
-      const canManageVisibility = {{ auth()->check() && auth()->user()?->level === 'admin' ? 'true' : 'false' }};
+      const canManageVisibility = {{ $canManageVisibilityJavascript }};
       window.blogCanManageVisibility = canManageVisibility;
 
 
@@ -518,7 +596,9 @@
 
         if (!state.pendingCategoryCode || topics.length === 0) {
           $topicOptions.empty();
-          $topicEmpty.prop("hidden", false);
+          $topicEmpty
+            .text(state.pendingCategoryCode ? "선택 가능한 주제가 없습니다." : "카테고리를 선택하면 관련 주제를 확인할 수 있습니다.")
+            .prop("hidden", false);
           return;
         }
 
@@ -620,7 +700,9 @@
       applyRefreshGuideState();
       updateRefreshTime(new Date());
 
-      renderBlogListItems($items, initialData?.items || [], false);
+      if ($items.attr('data-ssr-rendered') !== 'true') {
+        renderBlogListItems($items, initialData?.items || [], false);
+      }
       updateBlogMoreButton($moreWrap, state.pagination);
       $("#blog_list_total").text(`총 ${Number(state.pagination?.total || 0)}건`);
 

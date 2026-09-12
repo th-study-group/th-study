@@ -84,22 +84,75 @@ class NoteController extends Controller
 
         $initialPayload = $this->buildNoteListResponse($noteGroup, $resolvedSlug, $notes, $filters);
 
+        $categoryTitles = collect($categoryConfig)
+            ->pluck('title')
+            ->filter(static fn ($title): bool => is_string($title) && trim($title) !== '')
+            ->values()
+            ->all();
+        $seoTitle = $resolvedSlug !== '' && $categoryTitle !== ''
+            ? "{$categoryTitle} 블로그"
+            : implode('·', $categoryTitles) . ' 블로그';
+        $canonicalPath = route("{$noteGroup}.index", ['slug' => $resolvedSlug], false);
+        $hasSearchFilter = $filters['search_keyword'] !== '' || $filters['search_topic'] !== '';
+
+        if (! $hasSearchFilter && $notes->currentPage() > 1) {
+            $canonicalPath .= '?page=' . $notes->currentPage();
+        }
+
+        $canonicalUrl = $this->buildCanonicalUrl($canonicalPath);
+
         $writeUrl = route("{$noteGroup}.create.blank");
         if ($resolvedSlug !== '') {
             $writeUrl = route("{$noteGroup}.create", ['slug' => $resolvedSlug]);
         }
 
+        $listUrl = route("{$noteGroup}.index", ['slug' => $resolvedSlug]);
+        $canManageVisibility = Auth::check() && Auth::user()?->level === 'admin';
+        $initialItems = $initialPayload['items'];
+        $initialTotal = $initialPayload['pagination']['total'];
+        $encodedCategoryItems = base64_encode((string) json_encode(
+            $categoryItems,
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        ));
+        $encodedInitialPayload = base64_encode((string) json_encode(
+            $initialPayload,
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        ));
+
         return view("{$noteGroup}.index", [
-            'group' => $noteGroup,
             'slug' => $resolvedSlug,
-            'notes' => $notes,
-            'filters' => $filters,
             'listTitle' => $listTitle,
             'listDescription' => $listDescription,
+            'seoTitle' => $seoTitle,
+            'seoDescription' => $listDescription,
+            'ogTitle' => config('app.name') . ' ' . $seoTitle,
+            'canonicalUrl' => $canonicalUrl,
+            'hasListDescription' => $listDescription !== '',
+            'listUrl' => $listUrl,
             'writeUrl' => $writeUrl,
-            'initialPayload' => $initialPayload,
-            'categoryItems' => $categoryItems,
+            'initialItems' => $initialItems,
+            'initialTotal' => $initialTotal,
+            'encodedCategoryItems' => $encodedCategoryItems,
+            'encodedInitialPayload' => $encodedInitialPayload,
+            'filterBaseUrl' => url($noteGroup),
+            'topicsByCategoryUrl' => route("{$noteGroup}.topics.category"),
+            'csrfToken' => csrf_token(),
+            'canManageVisibility' => $canManageVisibility,
+            'canManageVisibilityJavascript' => $canManageVisibility ? 'true' : 'false',
+            'searchSelectType' => $filters['search_select_type'],
+            'searchKeyword' => $filters['search_keyword'],
             'selectedTopic' => $selectedTopic,
+            'blogCssUrl' => $this->buildVersionedAssetUrl('css/blog.css'),
+            'blogJsUrl' => $this->buildVersionedAssetUrl('js/blog.js'),
+            'adfitPcRectangleUnit' => config('adfit.pc.rectangle.unit'),
+            'adfitPcRectangleWidth' => config('adfit.pc.rectangle.width'),
+            'adfitPcRectangleHeight' => config('adfit.pc.rectangle.height'),
+            'adfitMobileRectangleUnit' => config('adfit.mobile.rectangle.unit'),
+            'adfitMobileRectangleWidth' => config('adfit.mobile.rectangle.width'),
+            'adfitMobileRectangleHeight' => config('adfit.mobile.rectangle.height'),
+            'adfitCommonSquareUnit' => config('adfit.common.square.unit'),
+            'adfitCommonSquareWidth' => config('adfit.common.square.width'),
+            'adfitCommonSquareHeight' => config('adfit.common.square.height'),
         ]);
     }
 
@@ -161,6 +214,19 @@ class NoteController extends Controller
         // OG 이미지 URL은 서비스에서 생성하고, 캐시 우회를 위한 v 파라미터까지 포함해서 받습니다.
         $metaImage = $this->noteService->buildMetaImageUrl($note);
         $relatedNoteItems = $this->buildRelatedNoteItems($noteGroup, $slug, $relatedNotes);
+        $canonicalUrl = $this->buildCanonicalUrl(route("{$noteGroup}.show", [
+            'slug' => $slug,
+            'idx' => $note->idx,
+        ], false));
+        $useFlag = (string) ($note->use_flag ?? 'N');
+        $isPublic = $useFlag === 'Y';
+        $tagNames = ($note->tags ?? collect())
+            ->pluck('name')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+        $listUrl = route("{$noteGroup}.index", ['slug' => $slug]);
 
         if ($request->ajax()) {
             return response()->json(
@@ -176,19 +242,41 @@ class NoteController extends Controller
         }
 
         return view("{$noteGroup}.show", [
-            'group' => $noteGroup,
-            'slug' => $slug,
             'note' => $note,
             'relatedNotes' => $relatedNoteItems,
             'contentHtml' => $contentHtml,
-            'useFlag' => $note->use_flag ?? 'N',
+            'useFlag' => $useFlag,
+            'isPublic' => $isPublic,
+            'canManageVisibility' => Auth::check() && Auth::user()?->level === 'admin',
+            'visibilityClass' => $isPublic ? 'is-public' : '',
+            'useFlagLabel' => (string) config("const.use_flag.{$useFlag}", '-'),
+            'displayCreateDatetime' => $note->create_datetime?->format('Y-m-d H:i:s') ?? '-',
+            'topicName' => (string) ($note->topic?->name ?? '-'),
+            'tagNames' => $tagNames,
+            'hasTags' => $tagNames !== [],
+            'canDeleteByVisibility' => ! $isPublic,
             'metaTitle' => $metaTitle,
             'metaDescription' => $metaDescription,
+            'metaKeywords' => implode(',', $tagNames),
             'metaImage' => $metaImage,
             'metaImageWidth' => 1200,
             'metaImageHeight' => 630,
-            'metaUrl' => url()->current(),
+            'metaUrl' => $canonicalUrl,
+            'canonicalUrl' => $canonicalUrl,
             'metaType' => 'article',
+            'listUrl' => $listUrl,
+            'editUrl' => route("{$noteGroup}.edit", ['slug' => $slug, 'idx' => $note->idx]),
+            'deleteUrl' => route("{$noteGroup}.soft.delete", ['slug' => $slug, 'idx' => $note->idx]),
+            'useFlagUrl' => route("{$noteGroup}.use_flag.update", ['slug' => $slug, 'idx' => $note->idx]),
+            'csrfToken' => csrf_token(),
+            'blogCssUrl' => $this->buildVersionedAssetUrl('css/blog.css'),
+            'blogJsUrl' => $this->buildVersionedAssetUrl('js/blog.js'),
+            'adfitPcRectangleUnit' => config('adfit.pc.rectangle.unit'),
+            'adfitPcRectangleWidth' => config('adfit.pc.rectangle.width'),
+            'adfitPcRectangleHeight' => config('adfit.pc.rectangle.height'),
+            'adfitMobileRectangleUnit' => config('adfit.mobile.rectangle.unit'),
+            'adfitMobileRectangleWidth' => config('adfit.mobile.rectangle.width'),
+            'adfitMobileRectangleHeight' => config('adfit.mobile.rectangle.height'),
         ]);
     }
 
@@ -421,20 +509,37 @@ class NoteController extends Controller
             $thumbnailUrl = ! empty($note->thumbnail_path)
                 ? Storage::url((string) $note->thumbnail_path)
                 : asset('images/no_image.png');
+            $normalizedThumbnailUrl = strtolower((string) parse_url($thumbnailUrl, PHP_URL_PATH));
+            $hasThumbnail = $normalizedThumbnailUrl !== ''
+                && ! str_ends_with($normalizedThumbnailUrl, '/images/no_image.png')
+                && ! str_ends_with($normalizedThumbnailUrl, '/no_image.png');
+            $subject = (string) ($note->subject ?? '');
+            $useFlag = (string) ($note->use_flag ?? 'N');
+            $isPublic = $useFlag === 'Y';
+            $useFlagLabel = (string) config(
+                "const.use_flag.{$useFlag}",
+                $isPublic ? '공개' : '비공개'
+            );
+            $showUrl = route("{$group}.show", [
+                'slug' => $slug !== '' ? $slug : (string) ($note->categories_code ?? ''),
+                'idx' => $note->idx,
+            ]);
 
             return [
                 'idx' => (int) $note->idx,
-                'subject' => (string) ($note->subject ?? ''),
+                'subject' => $subject,
                 'group_topic_name' => (string) ($note->group_topic_name ?? '-'),
                 'create_datetime' => $note->create_datetime?->format('Y-m-d H:i:s') ?? '-',
+                'relative_time' => $this->formatRelativeTimeKorean($note->create_datetime),
                 'desc' => Str::limit($plainContent, 120),
                 'thumbnail_url' => $thumbnailUrl,
-                'use_flag' => (string) ($note->use_flag ?? 'N'),
-                'use_flag_label' => (string) config("const.use_flag.{$note->use_flag}", (($note->use_flag ?? 'N') === 'Y' ? '공개' : '비공개')),
-                'show_url' => route("{$group}.show", [
-                    'slug' => $slug !== '' ? $slug : (string) ($note->categories_code ?? ''),
-                    'idx' => $note->idx,
-                ]),
+                'has_thumbnail' => $hasThumbnail,
+                'use_flag' => $useFlag,
+                'use_flag_label' => $useFlagLabel,
+                'is_public' => $isPublic,
+                'visibility_class' => $isPublic ? 'is-public' : 'is-private',
+                'show_url' => $showUrl,
+                'show_aria_label' => $subject . ' 상세보기',
             ];
         })->values()->all();
 
@@ -532,7 +637,7 @@ class NoteController extends Controller
             return '-';
         }
 
-        $diffSec = max(0, $dateTime->diffInSeconds(now(), false));
+        $diffSec = max(0, (int) $dateTime->diffInSeconds(now(), false));
 
         if ($diffSec < 60) {
             return '방금 전';
@@ -560,6 +665,22 @@ class NoteController extends Controller
 
         $diffYear = intdiv($diffMonth, 12);
         return $diffYear . '년 전';
+    }
+
+    /**
+     * APP_URL을 기준으로 canonical 절대 URL을 생성한다.
+     */
+    private function buildCanonicalUrl(string $path): string
+    {
+        return rtrim((string) config('app.url'), '/') . '/' . ltrim($path, '/');
+    }
+
+    /**
+     * 캐시 무효화 버전이 포함된 정적 자산 URL을 생성한다.
+     */
+    private function buildVersionedAssetUrl(string $path): string
+    {
+        return asset($path) . '?v=' . filemtime(public_path($path));
     }
 
     /**

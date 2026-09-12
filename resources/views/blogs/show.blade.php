@@ -1,20 +1,19 @@
 @extends('layouts.app')
 
-@section('title', $metaTitle ?? '상세내역')
-@section('meta_description', $metaDescription ?? '')
-@section('meta_keywords', (($note->tags ?? collect())->isNotEmpty()
-  ? ($note->tags ?? collect())->pluck('name')->filter()->unique()->implode(',')
-  : ''))
-@section('og_title', $metaTitle ?? '')
-@section('og_description', $metaDescription ?? '')
-@section('og_image', $metaImage ?? asset('images/og/001.png'))
-@section('og_image_width', $metaImageWidth ?? 1200)
-@section('og_image_height', $metaImageHeight ?? 630)
-@section('og_url', $metaUrl ?? url()->current())
-@section('og_type', $metaType ?? 'article')
+@section('title', $metaTitle)
+@section('meta_description', $metaDescription)
+@section('meta_keywords', $metaKeywords)
+@section('og_title', $metaTitle)
+@section('og_description', $metaDescription)
+@section('og_image', $metaImage)
+@section('og_image_width', $metaImageWidth)
+@section('og_image_height', $metaImageHeight)
+@section('og_url', $metaUrl)
+@section('og_type', $metaType)
+@section('canonical_url', $canonicalUrl)
 
 @push('styles')
-  <link href="{{ asset('css/blog.css') }}?v={{ filemtime(public_path('css/blog.css')) }}" rel="stylesheet" />
+  <link href="{{ $blogCssUrl }}" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -27,38 +26,38 @@
       <h1 class="blog-show-title">{{ $note->subject }}</h1>
 
       <div class="blog-show-meta">
-        <span class="blog-show-meta-date">{{ $note->create_datetime?->format('Y-m-d H:i:s') ?? '-' }}</span>
+        <span class="blog-show-meta-date">{{ $displayCreateDatetime }}</span>
       </div>
 
-      @if (auth()->check() && auth()->user()?->level === 'admin')
+      @if ($canManageVisibility)
         <div class="blog-show-visibility">
-          <span class="blog-show-visibility-badge {{ $useFlag === 'Y' ? 'is-public' : '' }}">{{ config("const.use_flag.{$useFlag}", '-') }}</span>
+          <span class="blog-show-visibility-badge {{ $visibilityClass }}">{{ $useFlagLabel }}</span>
         </div>
       @endif
 
       <div class="text-center my-3 d-none d-md-block">
         <x-adfit
-          :unit="config('adfit.pc.rectangle.unit')"
-          :width="config('adfit.pc.rectangle.width')"
-          :height="config('adfit.pc.rectangle.height')" />
+          :unit="$adfitPcRectangleUnit"
+          :width="$adfitPcRectangleWidth"
+          :height="$adfitPcRectangleHeight" />
       </div>
 
       <div class="text-center my-3 d-block d-md-none">
         <x-adfit
-          :unit="config('adfit.mobile.rectangle.unit')"
-          :width="config('adfit.mobile.rectangle.width')"
-          :height="config('adfit.mobile.rectangle.height')" />
+          :unit="$adfitMobileRectangleUnit"
+          :width="$adfitMobileRectangleWidth"
+          :height="$adfitMobileRectangleHeight" />
       </div>
 
       <article class="blog-show-content">{!! $contentHtml !!}</article>
 
       <section class="blog-show-related" aria-label="관련 글 목록">
         <h2 class="blog-show-related-title">
-          <span class="blog-show-related-topic">{{ $note->topic?->name ?? '-' }}</span>
+          <span class="blog-show-related-topic">{{ $topicName }}</span>
           <span>관련 글</span>
         </h2>
         <ul class="blog-show-related-list">
-          @forelse(($relatedNotes ?? []) as $related)
+          @forelse($relatedNotes as $related)
             <li class="blog-show-related-item">
               <a href="{{ $related['show_url'] }}" class="blog-show-related-subject">{{ $related['subject'] }}</a>
               <span class="blog-show-related-date">{{ $related['relative_time'] }}</span>
@@ -72,10 +71,10 @@
         </ul>
       </section>
 
-      @if (($note->tags ?? collect())->isNotEmpty())
+      @if ($hasTags)
         <ul class="blog-show-tags">
-          @foreach ($note->tags as $tag)
-            <li>#{{ $tag->name }}</li>
+          @foreach ($tagNames as $tagName)
+            <li>#{{ $tagName }}</li>
           @endforeach
         </ul>
       @endif
@@ -84,7 +83,7 @@
         @can('update', $note)
           <button type="button" id="btn_note_modify" class="btn btn-outline-secondary">수정</button>
         @endcan
-        @if (($note->use_flag ?? 'N') !== 'Y')
+        @if ($canDeleteByVisibility)
           @can('delete', $note)
             <button type="button" id="btn_note_delete" class="btn btn-outline-danger">삭제</button>
           @endcan
@@ -122,18 +121,18 @@
 @endsection
 
 @push('scripts')
-  <script src="{{ asset('js/blog.js') }}?v={{ filemtime(public_path('js/blog.js')) }}" defer></script>  
+  <script src="{{ $blogJsUrl }}" defer></script>
 @endpush
 
 @section('script')
   <script>
     $(function() {
 
-      const listUrl = "{{ route("{$group}.index", ['slug' => $slug]) }}";
-      const editUrl = "{{ route("{$group}.edit", ['slug' => $slug, 'idx' => $note->idx]) }}";
-      const deleteUrl = "{{ route("{$group}.soft.delete", ['slug' => $slug, 'idx' => $note->idx]) }}";
-      const useFlagUrl = "{{ route("{$group}.use_flag.update", ['slug' => $slug, 'idx' => $note->idx]) }}";
-      const useFlag = "{{ $note->use_flag ?? 'N' }}";
+      const listUrl = "{{ $listUrl }}";
+      const editUrl = "{{ $editUrl }}";
+      const deleteUrl = "{{ $deleteUrl }}";
+      const useFlagUrl = "{{ $useFlagUrl }}";
+      const useFlag = "{{ $useFlag }}";
 
       initBlogDetailContentEnhancements();
 
@@ -163,7 +162,7 @@
             url: deleteUrl,
             dataType: 'json',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': '{{ $csrfToken }}',
             },
             onSuccess: function () {
                 alert('노트가 삭제되었습니다.');
@@ -193,7 +192,7 @@
           url: useFlagUrl,
           dataType: 'json',
           headers: {
-              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              'X-CSRF-TOKEN': '{{ $csrfToken }}',
           },
           onSuccess: function () {
               alert('공개 여부가 변경되었습니다.');

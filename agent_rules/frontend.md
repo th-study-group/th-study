@@ -13,6 +13,10 @@
 - 페이지 제목은 `@section('title', '...')`로 설정한다. SEO/OG 값이 필요한 화면은 Layout에 있는 `meta_*`, `og_*` section을 사용한다.
 - 페이지별 stylesheet/script 외부 파일은 `@push('styles')`, `@push('scripts')`로 추가한다. Layout의 `@stack()` 위치를 따른다.
 - 화면별 동작은 `@section('script')` inline script로도 구현되어 있다. 기존 화면을 수정할 때는 해당 화면의 방식과 기능 복잡도를 기준으로 유지한다.
+- Blade는 Controller 또는 Service에서 완성해 전달한 값을 출력하는 역할에 집중한다. Blade에서는 `{{ $value }}` 형태의 값 출력과 `@if`/`@else`, `@foreach`/`@forelse` 같은 단순 조건·반복만 사용한다.
+- Blade 안에 `@php` 블록을 작성하지 않는다. 형변환, `data_get()`, null fallback, 삼항연산자, URL 조립, 문자열 결합·정규화, 상태값·표시 문구·CSS class 변환, 이미지 여부 판단, 날짜 포맷, JSON/Base64 변환 등의 PHP 로직은 Controller 또는 Service에서 처리한다.
+- Blade에 전달하는 view data는 별도 가공 없이 바로 출력하거나 단순 조건식에 사용할 수 있는 최종 형태여야 한다. 예를 들어 total은 `{{ $total }}`, URL은 `{{ $showUrl }}`, 상태 class는 `{{ $visibilityClass }}`처럼 출력한다.
+- 기존 Blade에 PHP 가공 로직이 있더라도 새 작업에서 그대로 복사하지 않는다. 수정 범위와 관련된 로직은 백엔드 계층으로 이동하고, 범위를 크게 넓혀야 한다면 계획에 별도로 명시한다.
 
 ## 3. 공통 자산과 CSS / JS 파일
 

@@ -182,19 +182,21 @@ function createBlogListItemHtml(item) {
   return `
     <article class="blog-item" data-note-idx="${Number(item.idx || 0)}" data-show-url="${showUrl}" data-use-flag="${escapeHtmlText(useFlag)}">
       <div class="blog-item-left">
-        <h3 class="blog-item-subject">${escapeHtmlText(item.subject)}</h3>
+        <h3 class="blog-item-subject">
+          <a href="${showUrl}" class="blog-item-subject-link">${escapeHtmlText(item.subject)}</a>
+        </h3>
         <p class="blog-item-category">${escapeHtmlText(item.group_topic_name)}</p>
         <p class="blog-item-desc">${escapeHtmlText(item.desc)}</p>
         <div class="blog-item-meta">
-          <span class="blog-item-more">${escapeHtmlText(formatRelativeTimeKorean(item.create_datetime))}</span>
+          <span class="blog-item-more">${escapeHtmlText(item.relative_time || formatRelativeTimeKorean(item.create_datetime))}</span>
           ${visibilityBadgeHtml}
-          <button type="button" class="blog-item-more-btn" data-show-url="${showUrl}" aria-label="더보기" title="더보기">
+          <a href="${showUrl}" class="blog-item-more-btn" data-show-url="${showUrl}" aria-label="${escapeHtmlText(item.subject)} 상세보기" title="상세보기">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="6" cy="12" r="1.8"></circle>
               <circle cx="12" cy="12" r="1.8"></circle>
               <circle cx="18" cy="12" r="1.8"></circle>
             </svg>
-          </button>
+          </a>
         </div>
       </div>
       <div class="blog-item-right">${thumbnailHtml}</div>
