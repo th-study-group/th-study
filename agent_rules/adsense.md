@@ -1,0 +1,41 @@
+# TH-STUDY Google AdSense 운영 규칙
+
+## 1. 적용 범위
+
+Google AdSense 로더, 자동광고, 앵커·전면광고, 자동 in-page 광고, iOS Safari 및 standalone PWA에서 광고와 레이아웃이 충돌하는 작업에 적용한다.
+
+화면·CSS·JavaScript 변경이 있으면 `agent_rules/frontend.md`도 함께 확인한다.
+
+## 2. 현재 구조
+
+- AdSense 공통 스크립트는 `resources/views/layouts/app.blade.php`에서 `ADSENSE_ID` 설정값이 있을 때 로드한다.
+- 개별 Blade에 Google 광고 코드를 중복 삽입하거나 SPA 이동마다 다시 초기화하지 않는다.
+- `resources/views/components/adfit.blade.php`의 광고는 Kakao AdFit이므로 AdSense 자동광고와 혼동하지 않는다.
+
+## 3. 금지 사항
+
+- Google이 생성한 iframe, 광고 DOM, 광고의 닫기·접기 버튼을 CSS 또는 JavaScript로 숨기거나 이동·크기 변경·클릭 영역 변경하지 않는다.
+- 광고 표시 여부나 위치를 추측해 `z-index`, `overflow`, 고정 여백을 전역으로 강제하지 않는다.
+- 광고 종료 이벤트를 대상으로 body 스크롤을 제어하지 않는다.
+
+## 4. iOS/PWA 레이아웃 기준
+
+- `viewport-fit=cover`를 사용하는 화면은 top/bottom safe-area 처리가 이미 있는지 먼저 확인하고 중복 적용하지 않는다.
+- fixed header는 `env(safe-area-inset-top)`과 실제 헤더 높이만큼 본문 시작 위치를 확보한다.
+- 하단 fixed UI는 `env(safe-area-inset-bottom)`을 반영한다.
+- 일반 문서 화면의 최소 높이는 `100vh` fallback과 `100svh`, `100dvh`를 함께 검토한다. 전체 화면 전용 UI의 `overflow: hidden`은 별도로 검증한다.
+- 회전, Safari 주소창 변화, BFCache 복원 뒤 header offset과 자체 modal/offcanvas의 body overflow 잔류를 확인한다.
+
+## 5. 자동광고 배치 관리
+
+- 표, 코드블록, 네비게이션, 검색·버튼 등 중요한 영역의 자동 in-page 광고는 AdSense 콘솔 `Excluded areas`에서 제외한다.
+- 특정 화면의 자동광고 정책은 AdSense 콘솔 `Page exclusions`에서 관리한다. 코드로 Google 광고를 숨기는 방식은 사용하지 않는다.
+- 앵커·전면광고의 노출 여부, 위치, 동적 크기, 빈도는 AdSense 콘솔의 Auto ads 설정에서 조정한다.
+- 하단 앵커광고가 만드는 외부 배경·접힘 영역은 사이트 CSS로 수정하지 않는다. 사이트 자체 fixed UI만 safe-area 기준으로 배치한다.
+
+## 6. 검증
+
+- AdSense 스크립트가 한 페이지에 한 번만 로드되는지 확인한다.
+- iPhone Safari와 standalone PWA에서 status bar/header, home indicator/fixed UI, 세로·가로 회전을 확인한다.
+- 광고 표시·종료 뒤에도 사이트 자체 modal/offcanvas가 없으면 body의 `overflow`, `touch-action`, `modal-open`이 남지 않는지 확인한다.
+- 데스크톱에서 footer와 하단 앵커광고가 동시에 보일 때 사이트 UI가 가려지지 않는지 확인한다.

@@ -123,6 +123,7 @@
 - `agent_rules/note.md`
 - `agent_rules/mcp.md`
 - `agent_rules/database_schema.md`
+- `agent_rules/adsense.md`
 
 작업을 시작하기 전에 요청과 관련된 규칙 문서를 반드시 확인한다.
 
@@ -173,6 +174,18 @@
 - 목록 화면
 - 등록/수정 화면
 - Modal
+
+---
+
+## AdSense 작업
+
+Google AdSense, 자동광고, 앵커/전면광고, 광고와 PWA·모바일 레이아웃 충돌을 다루는 작업이면 반드시 아래 문서를 확인한다.
+
+`agent_rules/adsense.md`
+
+화면, safe-area, fixed/sticky UI, viewport 관련 변경이 포함되면 다음 문서도 함께 확인한다.
+
+`agent_rules/frontend.md`
 
 ---
 
