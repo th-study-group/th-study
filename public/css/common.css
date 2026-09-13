@@ -111,7 +111,12 @@ footer {
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 1040;
+    /*
+     * Keep the site header at Bootstrap's ordinary sticky-layer level.
+     * Overlay providers (including AdSense vignette UI) must remain above
+     * site navigation, especially in iOS viewport-fit=cover safe areas.
+     */
+    z-index: var(--bs-zindex-sticky, 1020);
     padding-top: env(safe-area-inset-top);
 }
 
