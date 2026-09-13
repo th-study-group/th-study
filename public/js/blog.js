@@ -183,7 +183,7 @@ function createBlogListItemHtml(item) {
     <article class="blog-item" data-note-idx="${Number(item.idx || 0)}" data-show-url="${showUrl}" data-use-flag="${escapeHtmlText(useFlag)}">
       <div class="blog-item-left">
         <h3 class="blog-item-subject">
-          <a href="${showUrl}" class="blog-item-subject-link">${escapeHtmlText(item.subject)}</a>
+          <button type="button" class="blog-item-subject-open" data-show-url="${showUrl}" aria-label="${escapeHtmlText(item.subject)} 상세 모달 열기">${escapeHtmlText(item.subject)}</button>
         </h3>
         <p class="blog-item-category">${escapeHtmlText(item.group_topic_name)}</p>
         <p class="blog-item-desc">${escapeHtmlText(item.desc)}</p>

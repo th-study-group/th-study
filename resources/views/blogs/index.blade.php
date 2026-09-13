@@ -165,7 +165,12 @@
             >
               <div class="blog-item-left">
                 <h3 class="blog-item-subject">
-                  <a href="{{ $item['show_url'] }}" class="blog-item-subject-link">{{ $item['subject'] }}</a>
+                  <button
+                    type="button"
+                    class="blog-item-subject-open"
+                    data-show-url="{{ $item['show_url'] }}"
+                    aria-label="{{ $item['show_aria_label'] }}"
+                  >{{ $item['subject'] }}</button>
                 </h3>
                 <p class="blog-item-category">{{ $item['group_topic_name'] }}</p>
                 <p class="blog-item-desc">{{ $item['desc'] }}</p>
@@ -829,12 +834,13 @@
         fetchBlogListPage(state, nextPage, true);
       });
 
-      $items.on("click", ".blog-item-more-btn", function(e) {
+      $items.on("click", ".blog-item-subject-open", function(e) {
         e.stopPropagation();
-        const showUrl = String($(this).data("show-url") || '');
-        if (showUrl) {
-          location.href = showUrl;
+        const detailUrl = String($(this).data("show-url") || '');
+        if (!detailUrl) {
+          return;
         }
+        fetchBlogDetail(state, detailUrl);
       });
 
       $items.on("click", ".blog-item", function(e) {
