@@ -293,14 +293,19 @@ function initFixedHeaderOffset()
 
     const syncHeaderHeight = function () {
         const rect = navbar.getBoundingClientRect();
-        const height = Math.max(0, Math.ceil(rect.height));
-        document.documentElement.style.setProperty('--app-header-height', `${height}px`);
+        // standalone PWA에서는 header가 상단 터치 안전 영역 아래에서 시작한다.
+        // 본문은 높이만큼이 아니라 viewport 상단부터 header 하단까지 비운다.
+        const bottomOffset = Math.max(0, Math.ceil(rect.bottom));
+        document.documentElement.style.setProperty('--app-header-height', `${bottomOffset}px`);
     };
 
     syncHeaderHeight();
     window.addEventListener('resize', syncHeaderHeight);
     window.addEventListener('orientationchange', syncHeaderHeight);
     window.addEventListener('pageshow', syncHeaderHeight);
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', syncHeaderHeight);
+    }
     setTimeout(syncHeaderHeight, 60);
 }
 

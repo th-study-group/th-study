@@ -120,6 +120,39 @@ footer {
     padding-top: env(safe-area-inset-top);
 }
 
+/*
+ * iPhone standalone PWA에서 viewport-fit=cover는 문서를 status bar 뒤까지
+ * 확장한다. 이때 사이트의 메뉴 조작 영역을 status bar에 두지 않아야 외부
+ * overlay의 상단 조작 UI와 hit-test가 겹치지 않는다.
+ */
+@media (max-width: 575.98px) {
+    html.is-standalone-pwa {
+        --pwa-top-interaction-clearance: calc(env(safe-area-inset-top, 0px) + 44px);
+    }
+
+    html.is-standalone-pwa .navbar.sticky-top {
+        top: var(--pwa-top-interaction-clearance);
+        padding-top: 0;
+    }
+
+    html.is-standalone-pwa .navbar.sticky-top::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: var(--pwa-top-interaction-clearance);
+        z-index: 0;
+        pointer-events: none;
+        background-color: inherit;
+    }
+
+    html.is-standalone-pwa .navbar.sticky-top > .container-fluid {
+        position: relative;
+        z-index: 1;
+    }
+}
+
 .navbar .navbar-toggler:focus{
     box-shadow: none;
 }
