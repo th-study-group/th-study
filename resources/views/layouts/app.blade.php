@@ -32,7 +32,7 @@
 
         {{-- PWA 설정 --}}
         <meta name="apple-mobile-web-app-capable" content="yes"> {{-- iOS standalone --}}
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> {{-- 상태바 --}}
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"> {{-- 상태바 --}}
 
         {{-- og image --}}
         <meta name="description" content="@yield('meta_description', config('app.name') . '은 성장하는 개발자가 기록과 실험을 통해 실력을 확장하고, 서비스 운영과 수익화를 경험하는 개발자 성장 플랫폼입니다.')">

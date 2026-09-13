@@ -1,10 +1,3 @@
-(function markStandalonePwaDocument() {
-    // CSS가 header를 배치하기 전에 standalone 전용 safe-area 규칙을 적용한다.
-    if (isStandalonePwa()) {
-        document.documentElement.classList.add('is-standalone-pwa');
-    }
-}());
-
 $(function () {
     if (isStandalonePwa()) {
         document.body.classList.add('is-standalone-pwa');
