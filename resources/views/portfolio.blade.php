@@ -7,7 +7,7 @@
 @endsection
 
 @push('styles')
-    <link href="{{ asset('css/intro/portfolio.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/portfolio.css') }}?v={{ filemtime(public_path('css/portfolio.css')) }}" rel="stylesheet" />
 @endpush
 
 @section('content')
