@@ -31,6 +31,15 @@ body:has(.portfolio-page) > .container-fluid > .row > *{padding-left:0 !importan
 .copybtn{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.10);color:#fff;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer;}
 .codeblock pre{padding:18px 18px 20px;color:#e5e7eb;font-size:14px;line-height:1.75;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;overflow:auto;white-space:pre;margin:0;tab-size: 2;}
 .table thead th{background:#f8fafc;}
+.portfolio-detail-list{margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.portfolio-detail-list > div{display:grid;grid-template-columns:minmax(9rem,24%) minmax(0,1fr);}
+.portfolio-detail-list > div + div{border-top:1px solid var(--line);}
+.portfolio-detail-list dt,.portfolio-detail-list dd{margin:0;padding:14px 16px;min-width:0;}
+.portfolio-detail-list dt{font-weight:700;background:#f8fafc;border-right:1px solid var(--line);}
+.portfolio-detail-list dd{overflow-wrap:anywhere;}
+.portfolio-detail-list--three > div{grid-template-columns:minmax(8rem,20%) minmax(0,1fr) minmax(12rem,34%);}
+.portfolio-detail-list--four > div{grid-template-columns:minmax(6rem,18%) minmax(0,1fr) minmax(6rem,18%) minmax(6rem,18%);}
+.portfolio-detail-list--three dd + dd,.portfolio-detail-list--four dd + dd{border-left:1px solid var(--line);}
 .callout{border-left:6px solid var(--accent);background:#eff6ff;border-radius:14px;padding:16px 18px;color:var(--ink);}
 .callout ul{margin:10px 0 0 1.1rem;padding:0;}
 .callout li{margin:.35rem 0;line-height:1.6;}
@@ -101,6 +110,10 @@ body:has(.portfolio-page) > .container-fluid > .row > *{padding-left:0 !importan
 .readme-toggle[open] > summary::before{content:"▼";}
 blockquote{border-left:4px solid #cbd5e1;padding-left:12px;color:#334155;}
 @media (max-width: 768px){
+    .portfolio-detail-list > div,.portfolio-detail-list--three > div,.portfolio-detail-list--four > div{display:block;}
+    .portfolio-detail-list dt{border-right:0;padding-bottom:8px;}
+    .portfolio-detail-list dd{padding-top:6px;}
+    .portfolio-detail-list dd + dd{border-left:0;border-top:1px solid var(--line);}
     .readme > h1{font-size:2.2rem !important;}
     .readme h2{font-size:1.62rem !important;}
     .readme h3{font-size:1.3rem !important;}

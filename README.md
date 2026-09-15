@@ -251,7 +251,9 @@ MCP의 개별 조회 도구 10종은 컨트롤러 OpenAPI 속성으로 문서화
 - AdSense 공통 로더는 `resources/views/layouts/app.blade.php`에서 환경 설정값(`ADSENSE_ID`)이 있을 때만 한 번 로드합니다.
 - Google이 생성한 iframe, 광고 DOM, 닫기·접기 UI는 사이트 CSS/JavaScript로 수정하지 않습니다.
 - iOS Safari/PWA의 광고 레이아웃 점검은 `agent_rules/adsense.md`의 safe-area·viewport·fixed UI 기준을 따릅니다.
-- 표·코드블록 안의 자동 in-page 광고 배치는 사이트 CSS가 아니라 AdSense 콘솔의 `Excluded areas`에서 관리합니다. 앵커/전면광고의 위치와 빈도도 AdSense 콘솔에서 조정합니다.
+- `/portfolio`의 상세 정보는 자동 in-page 광고가 표 셀 레이아웃을 밀어내는 문제를 줄이기 위해 `table` 대신 `dl/dt/dd` 정보 목록으로 구성합니다.
+- AdSense 콘솔의 `Excluded areas`는 미리보기에서 Google이 제시한 광고 후보 영역만 제외할 수 있으며, 임의의 표·콘텐츠 블록을 직접 선택하는 기능은 아닙니다.
+- 자동광고 위치를 완전히 통제해야 하는 화면은 AdSense 콘솔 `Page exclusions`에 해당 URL을 등록합니다. 앵커/전면광고의 위치와 빈도도 AdSense 콘솔에서 조정합니다.
 
 ## 2.2 MCP 연동 메모
 

@@ -114,7 +114,7 @@
   <div class="container">
     <h2 class="h2x mb-3">2. 버전</h2>
     <div class="box pad">
-      <div class="table-responsive">
+      <div>
         <div class="text-center my-3 d-block d-md-none">
           <x-adfit
               :unit="config('adfit.mobile.slim.unit')"
@@ -129,27 +129,14 @@
             :height="config('adfit.pc.slim.height')" />
         </div>
 
-        <table class="table table-bordered align-middle mb-0">
-          <thead><tr><th style="width:28%">항목</th><th>버전</th></tr></thead>
-          <tbody>
-            <tr><td class='fw-bold'>Laravel</td><td>12</td></tr>
-            <tr><td class='fw-bold'>PHP</td><td>8.2</td></tr>
-            <tr><td class='fw-bold'>MySQL</td><td>8.0.45</td></tr>
-            <tr><td class='fw-bold'>MongoDB</td><td>8.3.3 기준 문서화, macOS는 Homebrew 기반 8.3.x 패치 차이까지 정리</td></tr>
-            <tr><td class='fw-bold'>Ubuntu</td><td>Ubuntu 22.04</td></tr>
-            <tr><td class='fw-bold'>Nginx</td><td>1.18.0</td></tr>
-            <tr><td class='fw-bold'>Node.js</td><td>20.20.0</td></tr>
-            <tr><td class='fw-bold'>Vite</td><td>5.4.21</td></tr>
-            <tr><td class='fw-bold'>Bootstrap</td><td>5</td></tr>
-            <tr><td class='fw-bold'>Docker</td><td>27.5.1</td></tr>
-            <tr><td class='fw-bold'>Python</td><td>3.x</td></tr>
-            <tr><td class='fw-bold'>FastAPI</td><td>학습용 로컬 API 구성</td></tr>
-            <tr>
-              <td class="fw-bold">OG 이미지 확장</td>
-              <td>공유용 OG 이미지를 큐 작업으로 분리하고, 사진 방향 보정 관련 PHP <code>gd</code>, <code>exif</code> 확장 확인</td>
-            </tr>
-          </tbody>
-        </table>
+        <dl class="portfolio-detail-list">
+          <div><dt>Laravel</dt><dd>12</dd></div><div><dt>PHP</dt><dd>8.2</dd></div><div><dt>MySQL</dt><dd>8.0.45</dd></div>
+          <div><dt>MongoDB</dt><dd>8.3.3 기준 문서화, macOS는 Homebrew 기반 8.3.x 패치 차이까지 정리</dd></div>
+          <div><dt>Ubuntu</dt><dd>Ubuntu 22.04</dd></div><div><dt>Nginx</dt><dd>1.18.0</dd></div><div><dt>Node.js</dt><dd>20.20.0</dd></div>
+          <div><dt>Vite</dt><dd>5.4.21</dd></div><div><dt>Bootstrap</dt><dd>5</dd></div><div><dt>Docker</dt><dd>27.5.1</dd></div>
+          <div><dt>Python</dt><dd>3.x</dd></div><div><dt>FastAPI</dt><dd>학습용 로컬 API 구성</dd></div>
+          <div><dt>OG 이미지 확장</dt><dd>공유용 OG 이미지를 큐 작업으로 분리하고, 사진 방향 보정 관련 PHP <code>gd</code>, <code>exif</code> 확장 확인</dd></div>
+        </dl>
       </div>
       <div class="callout mt-4">
         <strong>프론트 라이브러리 구성</strong><br>
@@ -177,66 +164,20 @@
     <h2 class="h2x mb-3">3. 블로그 서비스 모듈 구축</h2>
     <div class="box pad">
       <p class="leadx mb-3">블로그 서비스 기능은 단순 입력 화면이 아니라 운영 가능한 모듈로 설계했습니다. 검증, 권한, 파일 업로드, 이력, 태그 매핑을 분리 구조로 구현했습니다.</p>
-      <div class="table-responsive">
-        <table class="table table-bordered align-middle mb-0">
-          <thead>
-            <tr>
-              <th style="width:24%">영역</th>
-              <th>구현 내용</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="fw-bold">아키텍처</td>
-              <td>Controller - Service - Repository 구조로 분리, FormRequest 기반 검증, Policy 기반 권한 제어(admin 전용 작성/수정/삭제)</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">주제 조회</td>
-              <td>그룹-카테고리-토픽 관계를 with 조회로 연결하고 <code>use_flag=1</code> 토픽만 노출</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">썸네일/OG 처리</td>
-              <td>일반 썸네일은 즉시 저장하고, 공유용 OG 이미지는 <code>NoteImageProcessingJob</code>으로 분리해 <code>afterCommit()</code> 후 비동기 생성. Job 내부에서 썸네일 원본 경로를 재검사해 stale 작업을 차단하고 성공 시에만 기존 OG 파일 정리</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">해시태그</td>
-              <td>최대 10개, 항목당 20자 검증. <code>note_tags</code>와 <code>note_tag_map</code> 다대다 저장</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">공개/삭제 정책</td>
-              <td>일반 사용자는 공개 글만 조회 가능하고 비공개 상세는 404 처리. 삭제는 admin만 가능하며 비공개 상태에서만 허용</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">홈 최신글 캐시</td>
-              <td><code>ContentCacheService</code>로 공개 블로그 최신 5건을 60분 캐시. <code>content:blog:home:public:v{version}:limit:5</code> 버전형 키를 사용하며, 글 등록·수정·삭제·공개 전환이 커밋된 뒤 버전을 올려 다음 홈 요청에서 최신 데이터를 생성</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">편집 UX</td>
-              <td>등록/수정 단일 뷰 재사용, 수정 시 기존 썸네일/태그 preload, 썸네일 삭제와 태그 삭제는 AJAX로 즉시 반영</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">콘텐츠 저장/출력</td>
-              <td>Toast UI 저장 포맷을 Markdown에서 HTML로 전환하고, 상세 화면은 기존 Markdown 데이터도 자동 변환해 호환 렌더링</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">보안 정제</td>
-              <td>서버 저장 전 sanitize 적용(허용 태그 중심), 위험 태그/이벤트 속성 제거 및 <code>javascript:</code> 링크 차단</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">히스토리</td>
-              <td>블로그 글 등록 시 이벤트 기반으로 <code>note_histories</code> 기록(작업구분, IP, UA, referer 포함). 프록시 환경에서는 <code>RequestIp</code> 기준(<code>CF-Connecting-IP</code> -&gt; <code>X-Forwarded-For</code> -&gt; <code>X-Real-IP</code>)으로 실클라이언트 IP를 저장</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">태그/파일 정리</td>
-              <td>orphan 태그는 soft delete 후 재사용 시 restore, 글 삭제 시 썸네일 파일과 태그 매핑도 함께 정리</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">운영 이슈 대응</td>
-              <td>로컬 업로드 실패 원인 분석 후 php.ini 업로드 한도(2M/8M -> 50M/50M) 조정</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <dl class="portfolio-detail-list">
+        <div><dt>아키텍처</dt><dd>Controller - Service - Repository 구조로 분리, FormRequest 기반 검증, Policy 기반 권한 제어(admin 전용 작성/수정/삭제)</dd></div>
+        <div><dt>주제 조회</dt><dd>그룹-카테고리-토픽 관계를 with 조회로 연결하고 <code>use_flag=1</code> 토픽만 노출</dd></div>
+        <div><dt>썸네일/OG 처리</dt><dd>일반 썸네일은 즉시 저장하고, 공유용 OG 이미지는 <code>NoteImageProcessingJob</code>으로 분리해 <code>afterCommit()</code> 후 비동기 생성. Job 내부에서 썸네일 원본 경로를 재검사해 stale 작업을 차단하고 성공 시에만 기존 OG 파일 정리</dd></div>
+        <div><dt>해시태그</dt><dd>최대 10개, 항목당 20자 검증. <code>note_tags</code>와 <code>note_tag_map</code> 다대다 저장</dd></div>
+        <div><dt>공개/삭제 정책</dt><dd>일반 사용자는 공개 글만 조회 가능하고 비공개 상세는 404 처리. 삭제는 admin만 가능하며 비공개 상태에서만 허용</dd></div>
+        <div><dt>홈 최신글 캐시</dt><dd><code>ContentCacheService</code>로 공개 블로그 최신 5건을 60분 캐시. <code>content:blog:home:public:v{version}:limit:5</code> 버전형 키를 사용하며, 글 등록·수정·삭제·공개 전환이 커밋된 뒤 버전을 올려 다음 홈 요청에서 최신 데이터를 생성</dd></div>
+        <div><dt>편집 UX</dt><dd>등록/수정 단일 뷰 재사용, 수정 시 기존 썸네일/태그 preload, 썸네일 삭제와 태그 삭제는 AJAX로 즉시 반영</dd></div>
+        <div><dt>콘텐츠 저장/출력</dt><dd>Toast UI 저장 포맷을 Markdown에서 HTML로 전환하고, 상세 화면은 기존 Markdown 데이터도 자동 변환해 호환 렌더링</dd></div>
+        <div><dt>보안 정제</dt><dd>서버 저장 전 sanitize 적용(허용 태그 중심), 위험 태그/이벤트 속성 제거 및 <code>javascript:</code> 링크 차단</dd></div>
+        <div><dt>히스토리</dt><dd>블로그 글 등록 시 이벤트 기반으로 <code>note_histories</code> 기록(작업구분, IP, UA, referer 포함). 프록시 환경에서는 <code>RequestIp</code> 기준(<code>CF-Connecting-IP</code> -&gt; <code>X-Forwarded-For</code> -&gt; <code>X-Real-IP</code>)으로 실클라이언트 IP를 저장</dd></div>
+        <div><dt>태그/파일 정리</dt><dd>orphan 태그는 soft delete 후 재사용 시 restore, 글 삭제 시 썸네일 파일과 태그 매핑도 함께 정리</dd></div>
+        <div><dt>운영 이슈 대응</dt><dd>로컬 업로드 실패 원인 분석 후 php.ini 업로드 한도(2M/8M -> 50M/50M) 조정</dd></div>
+      </dl>
       <div class="callout mt-4">
         <strong>최근 고도화 핵심</strong>
         <ul class="mb-0 mt-2">
@@ -317,69 +258,18 @@
         <li><code>ping</code>은 로그인 직후 1회만 수행해 최근접속시각을 갱신</li>
         <li>발송 이력에 성공/실패와 실패 사유 JSON을 함께 기록</li>
       </ul>
-      <div class="table-responsive">
-        <table class="table table-bordered align-middle mb-0">
-          <thead>
-            <tr>
-              <th style="width:20%">단계</th>
-              <th>설명</th>
-              <th style="width:34%">기준 코드</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="fw-bold">1. 설치</td>
-              <td>서비스워커 등록 후 PWA 앱 설치 컨텍스트에서 실행</td>
-              <td><code>resources/views/layouts/app.blade.php</code>, <code>public/service-worker.js</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">2. 구독 동기화</td>
-              <td>로그인 시 <code>exists</code>로 서버 상태를 확인하고, 없으면 재등록. 구독 미존재+권한 허용 시 생성하며 <code>ping</code>은 로그인 직후 1회만 갱신</td>
-              <td><code>public/js/pwa_push.js</code> (<code>autoSyncOnLogin</code>)</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">2-1. 허용 팝업</td>
-              <td>로그인 + 홈화면 추가(standalone) 앱에서만 허용 팝업 노출, 허용 클릭 시 권한 요청 실행</td>
-              <td><code>public/js/pwa_push.js</code> (<code>openNativePushPermissionPrompt</code>), <code>resources/views/layouts/header.blade.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">2-2. OS 설정 위치</td>
-              <td>iOS: 설정 &gt; 알림 &gt; 티에이치스터디 / Android: 설정 &gt; 앱(또는 Chrome 사이트 설정) &gt; 알림에서 수동 허용 가능</td>
-              <td><code>README.md</code> (운영 가이드), 사용자 디바이스 OS 알림 설정</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">3. 발송</td>
-              <td>서비스에서 사용자별 Job 등록, Job에서 WebPush 전송</td>
-              <td><code>app/Services/PushService.php</code>, <code>app/Jobs/SendWebPushJob.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">4. 이력 기록</td>
-              <td>발송/클릭 토큰/대상 URL/테이블명 + 성공여부(<code>success_flag</code>) + 실패사유 JSON(<code>send_error_message</code>) 기록</td>
-              <td><code>web_push_messages</code>, <code>app/Models/WebPushMessage.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">5. 클릭 이동</td>
-              <td><code>/push/open/{token}</code>으로 클릭률 기록 후 <code>target_url</code>로 이동</td>
-              <td><code>app/Http/Controllers/PushController.php</code>, <code>app/Services/PushService.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">5-1. PWA 링크/이미지 예외 처리</td>
-              <td>Standalone PWA에서는 외부 URL을 안내 모달로 한 번 감싸고, 이미지 파일 URL/본문 이미지는 앱 내부 미리보기 모달로 열어 닫기 UI 부재 문제를 완화</td>
-              <td><code>public/js/pwa.js</code>, <code>resources/views/partials/pwa-popup.blade.php</code>, <code>public/css/pwa-modal.css</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">6. iPhone 캐시 대응</td>
-              <td>정적 JS/CSS와 서비스워커 URL에 <code>filemtime</code> 기반 버전 쿼리를 붙여 운영 캐시 고착을 방지</td>
-              <td><code>resources/views/partials/head-scripts.blade.php</code>, <code>resources/views/partials/head-styles.blade.php</code>, <code>resources/views/layouts/app.blade.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">7. VAPID / 문의 메일 주소</td>
-              <td>공개 주소 <code>admin@th-study.com</code>은 Cloudflare Email Routing으로 예시 전달 주소에 포워딩하고, 웹에서는 <code>mailto:</code> 링크와 VAPID subject 식별자로 사용</td>
-              <td><code>config/services.php</code>, <code>resources/views/intro.blade.php</code>, Cloudflare Email Routing</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <dl class="portfolio-detail-list portfolio-detail-list--three">
+<div><dt>1. 설치</dt><dd>서비스워커 등록 후 PWA 앱 설치 컨텍스트에서 실행</dd><dd><code>resources/views/layouts/app.blade.php</code>, <code>public/service-worker.js</code></dd></div>
+<div><dt>2. 구독 동기화</dt><dd>로그인 시 <code>exists</code>로 서버 상태를 확인하고, 없으면 재등록. 구독 미존재+권한 허용 시 생성하며 <code>ping</code>은 로그인 직후 1회만 갱신</dd><dd><code>public/js/pwa_push.js</code> (<code>autoSyncOnLogin</code>)</dd></div>
+<div><dt>2-1. 허용 팝업</dt><dd>로그인 + 홈화면 추가(standalone) 앱에서만 허용 팝업 노출, 허용 클릭 시 권한 요청 실행</dd><dd><code>public/js/pwa_push.js</code> (<code>openNativePushPermissionPrompt</code>), <code>resources/views/layouts/header.blade.php</code></dd></div>
+<div><dt>2-2. OS 설정 위치</dt><dd>iOS: 설정 &gt; 알림 &gt; 티에이치스터디 / Android: 설정 &gt; 앱(또는 Chrome 사이트 설정) &gt; 알림에서 수동 허용 가능</dd><dd><code>README.md</code> (운영 가이드), 사용자 디바이스 OS 알림 설정</dd></div>
+<div><dt>3. 발송</dt><dd>서비스에서 사용자별 Job 등록, Job에서 WebPush 전송</dd><dd><code>app/Services/PushService.php</code>, <code>app/Jobs/SendWebPushJob.php</code></dd></div>
+<div><dt>4. 이력 기록</dt><dd>발송/클릭 토큰/대상 URL/테이블명 + 성공여부(<code>success_flag</code>) + 실패사유 JSON(<code>send_error_message</code>) 기록</dd><dd><code>web_push_messages</code>, <code>app/Models/WebPushMessage.php</code></dd></div>
+<div><dt>5. 클릭 이동</dt><dd><code>/push/open/{token}</code>으로 클릭률 기록 후 <code>target_url</code>로 이동</dd><dd><code>app/Http/Controllers/PushController.php</code>, <code>app/Services/PushService.php</code></dd></div>
+<div><dt>5-1. PWA 링크/이미지 예외 처리</dt><dd>Standalone PWA에서는 외부 URL을 안내 모달로 한 번 감싸고, 이미지 파일 URL/본문 이미지는 앱 내부 미리보기 모달로 열어 닫기 UI 부재 문제를 완화</dd><dd><code>public/js/pwa.js</code>, <code>resources/views/partials/pwa-popup.blade.php</code>, <code>public/css/pwa-modal.css</code></dd></div>
+<div><dt>6. iPhone 캐시 대응</dt><dd>정적 JS/CSS와 서비스워커 URL에 <code>filemtime</code> 기반 버전 쿼리를 붙여 운영 캐시 고착을 방지</dd><dd><code>resources/views/partials/head-scripts.blade.php</code>, <code>resources/views/partials/head-styles.blade.php</code>, <code>resources/views/layouts/app.blade.php</code></dd></div>
+<div><dt>7. VAPID / 문의 메일 주소</dt><dd>공개 주소 <code>admin@th-study.com</code>은 Cloudflare Email Routing으로 예시 전달 주소에 포워딩하고, 웹에서는 <code>mailto:</code> 링크와 VAPID subject 식별자로 사용</dd><dd><code>config/services.php</code>, <code>resources/views/intro.blade.php</code>, Cloudflare Email Routing</dd></div>
+</dl>
       <div class="callout mt-4">
         <strong>운영 메일 구조</strong><br>
         도메인은 가비아에서 등록하고, 네임서버는 Cloudflare(<code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code>)로 위임했습니다.
@@ -397,79 +287,20 @@
     <h2 class="h2x mb-3">6. 검색엔진 최적화</h2>
     <div class="box pad">
       <p class="leadx mb-3">공개 페이지가 검색엔진에 안정적으로 수집되도록 sitemap, robots, 웹마스터 인증 메타 코드를 정적 메모가 아니라 코드 기준으로 관리합니다.</p>
-      <div class="table-responsive">
-        <table class="table table-bordered align-middle mb-0">
-          <thead>
-            <tr>
-              <th style="width:22%">영역</th>
-              <th>구현 내용</th>
-              <th style="width:32%">기준 코드</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="fw-bold">Sitemap 생성</td>
-              <td><code>spatie/laravel-sitemap</code> 기반으로 `/sitemap.xml` 요청 시 XML 생성. 정적 URL은 설정에서, 공개 블로그 상세 URL은 DB에서 조립하며 <code>lastmod</code>는 수정일 또는 등록일을 사용</td>
-              <td><code>app/Http/Controllers/SitemapController.php</code>, <code>app/Services/SitemapService.php</code>, <code>app/Repositories/NoteRepository.php</code>, <code>config/sitemap.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">robots.txt 운영</td>
-              <td>정적 <code>public/robots.txt</code>를 제거하고 라우트 기반 동적 응답으로 전환. 크롤링 차단 경로와 sitemap 위치를 뷰에서 관리</td>
-              <td><code>routes/web.php</code>, <code>resources/views/robots.blade.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">대표 URL 통합</td>
-              <td>블로그 목록·상세의 canonical을 HTTPS www 주소로 통일하고, 검색·필터로 생기는 중복 URL 신호를 정리. apex 도메인은 동일 경로의 www 주소로 301 연결</td>
-              <td><code>NoteController</code>, <code>layouts/app.blade.php</code>, 운영 Nginx</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">공개 URL 범위</td>
-              <td>메인, 소개, 공지 목록, 블로그 전체/활성 카테고리, 포트폴리오와 공개 블로그 상세 URL을 sitemap 대상에 포함</td>
-              <td><code>config/sitemap.php</code>, <code>NoteRepository::getSitemapBlogs()</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">Sitemap 캐시</td>
-              <td>sitemap XML은 공개 <code>blog</code> 캐시 버전을 사용해 24시간 저장. 블로그 등록·수정·삭제·공개 전환이 커밋되면 버전을 올려 다음 요청에서 최신 URL과 수정일 기준으로 다시 생성</td>
-              <td><code>app/Services/SitemapService.php</code>, <code>app/Services/ContentCacheService.php</code>, <code>app/Services/NoteService.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">차단 정책</td>
-              <td><code>/admin</code>, <code>/dashboard</code>, <code>/users</code>, <code>/inquiries</code>, <code>/push</code>, 비밀번호/계정 복구 관련 경로는 robots에서 비노출 처리</td>
-              <td><code>resources/views/robots.blade.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">카테고리 표현 정리</td>
-              <td>사용자 노출 명칭을 기존 <code>음식</code>에서 <code>맛집</code>으로 통일해 블로그 카테고리 의미와 검색 표현을 맞춤</td>
-              <td><code>config/note.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">네이버 서치어드바이저</td>
-              <td>네이버 서치어드바이저에 사이트를 등록해 국내 검색엔진 수집 경로를 추가하고, 운영 기준 URL은 <code>/robots.txt</code>와 <code>/sitemap.xml</code>로 통일</td>
-              <td>네이버 서치어드바이저, <code>routes/web.php</code>, <code>config/sitemap.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">웹마스터 인증 코드</td>
-              <td>소유권 확인용 메타 코드를 공통 레이아웃 <code>&lt;head&gt;</code>에 두어 전체 페이지에 일관되게 반영하고, Git 이력으로 변경 내역을 추적</td>
-              <td><code>resources/views/layouts/app.blade.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">ads.txt 운영</td>
-              <td>애드센스 크롤러 인증용 <code>ads.txt</code>를 공개 루트(<code>/ads.txt</code>)로 노출해 검색/광고 검증 경로를 운영 코드와 함께 관리</td>
-              <td><code>public/ads.txt</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">카카오 애드핏 운영</td>
-              <td><code>config/adfit.php</code>에서 광고 단위를 분리하고 <code>&lt;x-adfit&gt;</code> 공통 컴포넌트로 블로그, 메인, 소개, 공지, 포트폴리오에 같은 기준으로 적용. 동적 화면은 광고 스크립트를 재호출해 노출 안정성을 맞춤</td>
-              <td><code>config/adfit.php</code>, <code>resources/views/components/adfit.blade.php</code>, <code>resources/views/partials/head-scripts.blade.php</code></td>
-            </tr>
-            <tr>
-              <td class="fw-bold">내부 유입 구조</td>
-              <td>외부 유입 점검(네이버/구글)과 별도로 내부 유입 원천은 사용자/봇 raw 로그로 분리 저장하고, 전환 raw 로그는 <code>conversion_logs</code>로 별도 저장. 블로그 외부 링크는 <code>/outbound</code> 경유로 전환을 기록하며, 일 집계는 페이지/디바이스 기준으로 <code>conversion_count</code>까지 누적. <code>admin</code> 계정은 공통 가드로 유입/전환 수집에서 제외</td>
-              <td><code>app/Http/Middleware/TrackAccessLog.php</code>, <code>app/Services/TrafficAnalyticsService.php</code>, <code>app/Support/TrafficTrackingGuard.php</code>, <code>app/Repositories/TrafficLogRepository.php</code>, <code>app/Repositories/TrafficStatRepository.php</code></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <dl class="portfolio-detail-list portfolio-detail-list--three">
+<div><dt>Sitemap 생성</dt><dd><code>spatie/laravel-sitemap</code> 기반으로 `/sitemap.xml` 요청 시 XML 생성. 정적 URL은 설정에서, 공개 블로그 상세 URL은 DB에서 조립하며 <code>lastmod</code>는 수정일 또는 등록일을 사용</dd><dd><code>app/Http/Controllers/SitemapController.php</code>, <code>app/Services/SitemapService.php</code>, <code>app/Repositories/NoteRepository.php</code>, <code>config/sitemap.php</code></dd></div>
+<div><dt>robots.txt 운영</dt><dd>정적 <code>public/robots.txt</code>를 제거하고 라우트 기반 동적 응답으로 전환. 크롤링 차단 경로와 sitemap 위치를 뷰에서 관리</dd><dd><code>routes/web.php</code>, <code>resources/views/robots.blade.php</code></dd></div>
+<div><dt>대표 URL 통합</dt><dd>블로그 목록·상세의 canonical을 HTTPS www 주소로 통일하고, 검색·필터로 생기는 중복 URL 신호를 정리. apex 도메인은 동일 경로의 www 주소로 301 연결</dd><dd><code>NoteController</code>, <code>layouts/app.blade.php</code>, 운영 Nginx</dd></div>
+<div><dt>공개 URL 범위</dt><dd>메인, 소개, 공지 목록, 블로그 전체/활성 카테고리, 포트폴리오와 공개 블로그 상세 URL을 sitemap 대상에 포함</dd><dd><code>config/sitemap.php</code>, <code>NoteRepository::getSitemapBlogs()</code></dd></div>
+<div><dt>Sitemap 캐시</dt><dd>sitemap XML은 공개 <code>blog</code> 캐시 버전을 사용해 24시간 저장. 블로그 등록·수정·삭제·공개 전환이 커밋되면 버전을 올려 다음 요청에서 최신 URL과 수정일 기준으로 다시 생성</dd><dd><code>app/Services/SitemapService.php</code>, <code>app/Services/ContentCacheService.php</code>, <code>app/Services/NoteService.php</code></dd></div>
+<div><dt>차단 정책</dt><dd><code>/admin</code>, <code>/dashboard</code>, <code>/users</code>, <code>/inquiries</code>, <code>/push</code>, 비밀번호/계정 복구 관련 경로는 robots에서 비노출 처리</dd><dd><code>resources/views/robots.blade.php</code></dd></div>
+<div><dt>카테고리 표현 정리</dt><dd>사용자 노출 명칭을 기존 <code>음식</code>에서 <code>맛집</code>으로 통일해 블로그 카테고리 의미와 검색 표현을 맞춤</dd><dd><code>config/note.php</code></dd></div>
+<div><dt>네이버 서치어드바이저</dt><dd>네이버 서치어드바이저에 사이트를 등록해 국내 검색엔진 수집 경로를 추가하고, 운영 기준 URL은 <code>/robots.txt</code>와 <code>/sitemap.xml</code>로 통일</dd><dd>네이버 서치어드바이저, <code>routes/web.php</code>, <code>config/sitemap.php</code></dd></div>
+<div><dt>웹마스터 인증 코드</dt><dd>소유권 확인용 메타 코드를 공통 레이아웃 <code>&lt;head&gt;</code>에 두어 전체 페이지에 일관되게 반영하고, Git 이력으로 변경 내역을 추적</dd><dd><code>resources/views/layouts/app.blade.php</code></dd></div>
+<div><dt>ads.txt 운영</dt><dd>애드센스 크롤러 인증용 <code>ads.txt</code>를 공개 루트(<code>/ads.txt</code>)로 노출해 검색/광고 검증 경로를 운영 코드와 함께 관리</dd><dd><code>public/ads.txt</code></dd></div>
+<div><dt>카카오 애드핏 운영</dt><dd><code>config/adfit.php</code>에서 광고 단위를 분리하고 <code>&lt;x-adfit&gt;</code> 공통 컴포넌트로 블로그, 메인, 소개, 공지, 포트폴리오에 같은 기준으로 적용. 동적 화면은 광고 스크립트를 재호출해 노출 안정성을 맞춤</dd><dd><code>config/adfit.php</code>, <code>resources/views/components/adfit.blade.php</code>, <code>resources/views/partials/head-scripts.blade.php</code></dd></div>
+<div><dt>내부 유입 구조</dt><dd>외부 유입 점검(네이버/구글)과 별도로 내부 유입 원천은 사용자/봇 raw 로그로 분리 저장하고, 전환 raw 로그는 <code>conversion_logs</code>로 별도 저장. 블로그 외부 링크는 <code>/outbound</code> 경유로 전환을 기록하며, 일 집계는 페이지/디바이스 기준으로 <code>conversion_count</code>까지 누적. <code>admin</code> 계정은 공통 가드로 유입/전환 수집에서 제외</dd><dd><code>app/Http/Middleware/TrackAccessLog.php</code>, <code>app/Services/TrafficAnalyticsService.php</code>, <code>app/Support/TrafficTrackingGuard.php</code>, <code>app/Repositories/TrafficLogRepository.php</code>, <code>app/Repositories/TrafficStatRepository.php</code></dd></div>
+</dl>
       <div class="callout mt-4">
         <strong>운영 기준</strong>
         <ul class="mb-0 mt-2">
@@ -478,6 +309,7 @@
           <li>정적 sitemap 설정만 변경하는 배포는 sitemap 캐시가 최대 24시간 남을 수 있으므로, 관련 캐시 무효화 또는 재생성 시점을 함께 확인</li>
           <li>검색 유입 관리는 Google 색인만 보지 않고 네이버 서치어드바이저 수집 상태도 함께 확인</li>
           <li>광고 운영은 <code>config/adfit.php</code> 단위 구성과 <code>&lt;x-adfit&gt;</code> 컴포넌트 기준으로 통일하고, 공통 스크립트는 head에서 한 번만 로드</li>
+          <li>AdSense 자동광고는 콘텐츠 구조와 화면 폭에 따라 위치가 달라질 수 있으므로, 복잡한 정보는 독립 정보 목록으로 구성하고 위치 제어가 필요한 페이지는 AdSense의 제외 영역 또는 페이지 제외 설정으로 관리</li>
           <li>내부 유입 데이터는 <code>access_logs/bot_access_logs</code> raw, 전환 데이터는 <code>conversion_logs</code> raw로 분리하고, 집계는 <code>daily_page_stats(conversion_count 포함)</code>를 기준으로 조회/확장(월/연 단위)</li>
           <li><code>user.level=admin</code>은 <code>TrafficTrackingGuard</code> 기준으로 유입/전환 로그를 모두 스킵</li>
           <li>로그 정리(<code>logs:cleanup</code>)는 매일 실행하며 초기 운영 단계 분석을 위해 <code>access_logs</code> 365일, <code>bot_access_logs</code> 365일, <code>conversion_logs</code> 500일 기준으로 보관 후 삭제</li>
@@ -665,20 +497,15 @@ php artisan db:seed --class=NoteMasterSeeder --force</code></pre>
   <div class="container">
     <h2 class="h2x mb-3">9. 운영 인프라 AWS Lightsail</h2>
     <div class="box pad">
-      <div class="table-responsive">
-        <table class="table table-bordered align-middle mb-0">
-          <thead><tr><th style="width:22%">항목</th><th>값</th></tr></thead>
-          <tbody>
-            <tr><td class="fw-bold">서버</td><td>AWS Lightsail / Ubuntu</td></tr>
-            <tr><td class="fw-bold">웹</td><td>Nginx + PHP-FPM</td></tr>
-            <tr><td class="fw-bold">DB</td><td>MySQL</td></tr>
-            <tr><td class="fw-bold">도메인/DNS</td><td>가비아 등록 도메인 + Cloudflare 네임서버/DNS 운영 (<code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code>)</td></tr>
-            <tr><td class="fw-bold">대표 메일</td><td><code>admin@th-study.com</code> -> Cloudflare Email Routing -> <code>inbox@example.com</code> (예시)</td></tr>
-            <tr><td class="fw-bold">실클라이언트 IP</td><td><code>TrustProxies</code> + <code>RequestIp</code> 적용으로 로그인/게시판/히스토리에 프록시 IP가 아닌 사용자 IP 저장</td></tr>
-            <tr><td class="fw-bold">운영 특징</td><td>도커 없이 직접 설치 운영</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <dl class="portfolio-detail-list">
+<div><dt>서버</dt><dd>AWS Lightsail / Ubuntu</dd></div>
+<div><dt>웹</dt><dd>Nginx + PHP-FPM</dd></div>
+<div><dt>DB</dt><dd>MySQL</dd></div>
+<div><dt>도메인/DNS</dt><dd>가비아 등록 도메인 + Cloudflare 네임서버/DNS 운영 (<code>earl.ns.cloudflare.com</code>, <code>maeve.ns.cloudflare.com</code>)</dd></div>
+<div><dt>대표 메일</dt><dd><code>admin@th-study.com</code> -> Cloudflare Email Routing -> <code>inbox@example.com</code> (예시)</dd></div>
+<div><dt>실클라이언트 IP</dt><dd><code>TrustProxies</code> + <code>RequestIp</code> 적용으로 로그인/게시판/히스토리에 프록시 IP가 아닌 사용자 IP 저장</dd></div>
+<div><dt>운영 특징</dt><dd>도커 없이 직접 설치 운영</dd></div>
+</dl>
       <div class="mt-4">
     <div class="codeblock">
       <div class="codehdr"><span>bash · Swap 2GB(메모리 보강)</span><button class="copybtn no-print" onclick="copyFrom('#swapCmd', this)">복사</button></div>
@@ -734,16 +561,11 @@ sudo systemctl status th-study-queue</code></pre>
   <div class="container">
     <h2 class="h2x mb-3">10. DB / 파일 백업</h2>
     <div class="box pad">
-      <div class="table-responsive">
-        <table class="table table-bordered align-middle mb-0">
-          <thead><tr><th style="width:18%">구분</th><th>경로</th><th style="width:22%">주기</th><th style="width:22%">보관</th></tr></thead>
-          <tbody>
-            <tr><td class="fw-bold">Full</td><td><code>/backup/mysql/full</code></td><td>1일 1회</td><td>14일</td></tr>
-            <tr><td class="fw-bold">Binlog</td><td><code>/backup/mysql/binlog</code></td><td>매시간</td><td>14일</td></tr>
-            <tr><td class="fw-bold">Files</td><td><code>/backup/laravel_files</code></td><td>매일 03:30</td><td>14일</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <dl class="portfolio-detail-list portfolio-detail-list--four">
+<div><dt>Full</dt><dd><code>/backup/mysql/full</code></dd><dd>1일 1회</dd><dd>14일</dd></div>
+<div><dt>Binlog</dt><dd><code>/backup/mysql/binlog</code></dd><dd>매시간</dd><dd>14일</dd></div>
+<div><dt>Files</dt><dd><code>/backup/laravel_files</code></dd><dd>매일 03:30</dd><dd>14일</dd></div>
+</dl>
       <div class="callout mt-4">
         <strong>파일 백업 기준</strong><br>
         <ul class="mb-0" style="margin-left:18px;">
@@ -925,22 +747,9 @@ sudo systemctl status th-study-queue</code></pre>
         요청에 맞는 <code>agent_rules/</code> 규칙을 함께 확인해 일관된 방식으로 작업합니다.
       </p>
 
-      <div class="table-responsive">
-        <table class="table table-bordered align-middle mb-0">
-          <thead>
-            <tr>
-              <th style="width:24%">파일</th>
-              <th>역할</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="fw-bold"><code>AGENTS.md</code></td>
-              <td>공통 작업 절차, 규칙 파일 선택 기준, 사용자 확인 및 작업 완료 보고 기준을 안내</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <dl class="portfolio-detail-list">
+<div><dt><code>AGENTS.md</code></dt><dd>공통 작업 절차, 규칙 파일 선택 기준, 사용자 확인 및 작업 완료 보고 기준을 안내</dd></div>
+</dl>
 
       <div class="callout mt-4">
         <strong>작업 규칙 적용 순서</strong>
@@ -960,38 +769,13 @@ sudo systemctl status th-study-queue</code></pre>
         기능 전용 정책은 <code>board.md</code>, <code>note.md</code>에 유지합니다.
       </div>
 
-      <div class="table-responsive mt-4">
-        <table class="table table-bordered align-middle mb-0">
-          <thead>
-            <tr>
-              <th style="width:24%">현재 규칙 파일</th>
-              <th>종류 / 역할</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="fw-bold"><code>agent_rules/board.md</code></td>
-              <td>게시판 CRUD, 권한, 히스토리, 로그, 페이징, 메일 규칙 정의</td>
-            </tr>
-            <tr>
-              <td class="fw-bold"><code>agent_rules/note.md</code></td>
-              <td>노트 메뉴 구조, 라우팅, 권한, 썸네일, 해시태그, 히스토리 규칙 정의</td>
-            </tr>
-            <tr>
-              <td class="fw-bold"><code>agent_rules/backend.md</code></td>
-              <td>Route/Middleware, Controller-Service-Repository, FormRequest/Policy, DB·Model, 트랜잭션·이력·Queue 공통 규칙</td>
-            </tr>
-            <tr>
-              <td class="fw-bold"><code>agent_rules/frontend.md</code></td>
-              <td>Blade/Layout, Bootstrap 5, 공통 CSS/JS, 목록·폼·반응형 UI, jQuery/AJAX 공통 규칙</td>
-            </tr>
-            <tr>
-              <td class="fw-bold"><code>agent_rules/mcp.md</code></td>
-              <td>MCP Tool/API, OAuth/JWT 인증, Tool 정의, 권한, Validation, Logging, Pagination 규칙</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <dl class="portfolio-detail-list">
+<div><dt><code>agent_rules/board.md</code></dt><dd>게시판 CRUD, 권한, 히스토리, 로그, 페이징, 메일 규칙 정의</dd></div>
+<div><dt><code>agent_rules/note.md</code></dt><dd>노트 메뉴 구조, 라우팅, 권한, 썸네일, 해시태그, 히스토리 규칙 정의</dd></div>
+<div><dt><code>agent_rules/backend.md</code></dt><dd>Route/Middleware, Controller-Service-Repository, FormRequest/Policy, DB·Model, 트랜잭션·이력·Queue 공통 규칙</dd></div>
+<div><dt><code>agent_rules/frontend.md</code></dt><dd>Blade/Layout, Bootstrap 5, 공통 CSS/JS, 목록·폼·반응형 UI, jQuery/AJAX 공통 규칙</dd></div>
+<div><dt><code>agent_rules/mcp.md</code></dt><dd>MCP Tool/API, OAuth/JWT 인증, Tool 정의, 권한, Validation, Logging, Pagination 규칙</dd></div>
+</dl>
     </div>
   </div>
 </section>
@@ -1044,46 +828,15 @@ sudo systemctl status th-study-queue</code></pre>
           </div>
         </div>
       </div>
-      <div class="table-responsive mt-4">
-        <table class="table table-bordered align-middle mb-0">
-          <thead>
-            <tr>
-              <th style="width:24%">구성 요소</th>
-              <th>정리</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="fw-bold">인증 진입점</td>
-              <td><code>McpOAuthController</code>에서 <code>client_id</code>, <code>redirect_uri</code>, PKCE 파라미터를 검증하고 로그인 화면을 제공합니다.</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">토큰 발급</td>
-              <td>authorization code를 캐시에 짧게 저장한 뒤 access / refresh JWT를 발급하고, refresh token으로 access token 재발급까지 처리합니다.</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">보호 API</td>
-              <td><code>McpJwtAuthenticate</code>에서 Bearer 토큰 존재 여부, <code>token_type=access</code>, 이메일 인증 완료 여부와 <code>api_access_status=approved</code> 상태를 검증합니다. 승인 시각은 <code>api_access_approved_datetime</code>에 기록합니다.</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">MCP 메서드</td>
-              <td><code>McpApiController</code>에서 <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>을 JSON-RPC 형식으로 응답하고, tool 정의는 <code>mcp/tool.json</code> 기준으로 조회합니다.</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">툴 라우팅</td>
-              <td><code>ToolRunner</code>가 <code>mcp/tool.json</code> 정의를 읽고 로그인 계정의 <code>user.level</code>이 tool의 <code>levels</code>에 포함되는지 확인한 뒤, 허용된 경우에만 내부 서브 요청으로 개별 Laravel 컨트롤러/서비스에 연결합니다.</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">현재 tool 구성</td>
-              <td>노트 계열 5개 tool(<code>note_group_search</code>, <code>note_category_search</code>, <code>note_topic_search</code>, <code>note_search</code>, <code>note_tag_search</code>)은 <code>normal</code>, <code>admin</code> 계정에서 조회 가능하고, <code>user_search</code>, <code>access_log_search</code>, <code>bot_access_log_search</code>, <code>conversion_log_search</code>, <code>daily_page_stat_search</code>는 개인정보 또는 식별 가능 정보가 포함될 수 있어 <code>admin</code> 전용으로 분리했습니다.</td>
-            </tr>
-            <tr>
-              <td class="fw-bold">심사 대응 포인트</td>
-              <td>모든 MCP tool에 <code>readOnlyHint=true</code>, <code>openWorldHint=false</code>, <code>destructiveHint=false</code>를 적용했고, 도메인 인증과 심사용 read-only 계정도 별도로 준비했습니다.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <dl class="portfolio-detail-list">
+<div><dt>인증 진입점</dt><dd><code>McpOAuthController</code>에서 <code>client_id</code>, <code>redirect_uri</code>, PKCE 파라미터를 검증하고 로그인 화면을 제공합니다.</dd></div>
+<div><dt>토큰 발급</dt><dd>authorization code를 캐시에 짧게 저장한 뒤 access / refresh JWT를 발급하고, refresh token으로 access token 재발급까지 처리합니다.</dd></div>
+<div><dt>보호 API</dt><dd><code>McpJwtAuthenticate</code>에서 Bearer 토큰 존재 여부, <code>token_type=access</code>, 이메일 인증 완료 여부와 <code>api_access_status=approved</code> 상태를 검증합니다. 승인 시각은 <code>api_access_approved_datetime</code>에 기록합니다.</dd></div>
+<div><dt>MCP 메서드</dt><dd><code>McpApiController</code>에서 <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>을 JSON-RPC 형식으로 응답하고, tool 정의는 <code>mcp/tool.json</code> 기준으로 조회합니다.</dd></div>
+<div><dt>툴 라우팅</dt><dd><code>ToolRunner</code>가 <code>mcp/tool.json</code> 정의를 읽고 로그인 계정의 <code>user.level</code>이 tool의 <code>levels</code>에 포함되는지 확인한 뒤, 허용된 경우에만 내부 서브 요청으로 개별 Laravel 컨트롤러/서비스에 연결합니다.</dd></div>
+<div><dt>현재 tool 구성</dt><dd>노트 계열 5개 tool(<code>note_group_search</code>, <code>note_category_search</code>, <code>note_topic_search</code>, <code>note_search</code>, <code>note_tag_search</code>)은 <code>normal</code>, <code>admin</code> 계정에서 조회 가능하고, <code>user_search</code>, <code>access_log_search</code>, <code>bot_access_log_search</code>, <code>conversion_log_search</code>, <code>daily_page_stat_search</code>는 개인정보 또는 식별 가능 정보가 포함될 수 있어 <code>admin</code> 전용으로 분리했습니다.</dd></div>
+<div><dt>심사 대응 포인트</dt><dd>모든 MCP tool에 <code>readOnlyHint=true</code>, <code>openWorldHint=false</code>, <code>destructiveHint=false</code>를 적용했고, 도메인 인증과 심사용 read-only 계정도 별도로 준비했습니다.</dd></div>
+</dl>
       <div class="p-3 border rounded-4 mt-4">
         <div class="fw-bold mb-2">OpenAI Apps 심사 반영 핵심</div>
         <ul class="mb-0" style="margin-left:18px;">

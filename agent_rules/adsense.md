@@ -28,7 +28,7 @@ Google AdSense 로더, 자동광고, 앵커·전면광고, 자동 in-page 광고
 
 ## 5. 자동광고 배치 관리
 
-- 표, 코드블록, 네비게이션, 검색·버튼 등 중요한 영역의 자동 in-page 광고는 AdSense 콘솔 `Excluded areas`에서 제외한다.
+- AdSense 콘솔 `Excluded areas`는 미리보기에서 Google이 제시한 광고 후보 영역만 제외할 수 있다. 표·코드블록처럼 임의의 콘텐츠 블록을 직접 선택할 수 없는 경우에는 해당 화면의 정보 구조를 단순화하거나 `Page exclusions`를 사용한다.
 - 특정 화면의 자동광고 정책은 AdSense 콘솔 `Page exclusions`에서 관리한다. 코드로 Google 광고를 숨기는 방식은 사용하지 않는다.
 - 앵커·전면광고의 노출 여부, 위치, 동적 크기, 빈도는 AdSense 콘솔의 Auto ads 설정에서 조정한다.
 - 하단 앵커광고가 만드는 외부 배경·접힘 영역은 사이트 CSS로 수정하지 않는다. 사이트 자체 fixed UI만 safe-area 기준으로 배치한다.
