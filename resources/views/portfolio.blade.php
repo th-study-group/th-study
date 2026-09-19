@@ -767,6 +767,7 @@ sudo systemctl status th-study-queue</code></pre>
         <code>backend.md</code>에는 Route/Middleware, 계층 분리, 검증·권한, DB/Model, 트랜잭션·이력·Queue 흐름을 정리하고,
         <code>frontend.md</code>에는 Blade/Layout, Bootstrap 5, 공통 CSS/JS, 목록·폼·반응형 UI, jQuery/AJAX 패턴을 정리합니다.
         기능 전용 정책은 <code>board.md</code>, <code>note.md</code>에 유지합니다.
+        긴 콘텐츠의 맨 위로 이동은 거리 기반 애니메이션으로 탐색 흐름을 유지합니다.
       </div>
 
       <dl class="portfolio-detail-list">

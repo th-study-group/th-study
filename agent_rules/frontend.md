@@ -57,6 +57,7 @@
 - 저장 form은 화면별 `isSubmitting` 상태와 submit button disable로 중복 제출을 막는 구현이 있다. 유사한 저장 form에는 기존 패턴을 따른다.
 - 삭제·공개 여부 변경 등 위험한 동작은 기존 화면처럼 `confirm()` 후 AJAX 또는 form submit을 수행한다.
 - `common.js`에는 loading modal, table 가로 드래그, 날짜 선택기, offcanvas/overlay 정리, 공유 기능이 있다. 같은 동작은 새 중복 구현보다 기존 helper 사용을 우선 검토한다.
+- 공통 맨 위로 버튼은 `common.js`의 거리 기반 애니메이션을 사용하고, `prefers-reduced-motion` 환경에서는 즉시 이동한다.
 
 ## 8. 이미지와 기능 전용 UI
 

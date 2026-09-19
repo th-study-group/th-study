@@ -1568,6 +1568,10 @@ sudo systemctl status th-study-queue
 - `agent_rules/adsense.md`
   - AdSense 로더, 자동광고, iOS PWA safe-area, 광고 DOM 비개입, 콘솔 기반 배치 제어 및 검증 규칙
 
+### 19.3 공통 상단 이동
+
+- 맨 위로 버튼은 스크롤 거리에 따라 0.7~1.6초 동안 이동하며, 동작 줄이기 설정에서는 즉시 이동합니다.
+
 ## 라라벨 크론탭 등록(통계 집계)
 
 ### 서버 크론 등록 (Ubuntu)

@@ -549,13 +549,48 @@ function initBirthDatePicker(selector, options = {})
 function initGlobalBackToTop()
 {
     const btn = document.getElementById('globalBackToTop');
+    let animationFrameId = null;
+
     if (!btn) {
         return;
     }
     btn.classList.add('is-visible');
 
     btn.addEventListener('click', function () {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (animationFrameId !== null) {
+            window.cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+
+        const startY = window.scrollY;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (startY === 0 || prefersReducedMotion) {
+            window.scrollTo(0, 0);
+            return;
+        }
+
+        const duration = Math.min(1600, Math.max(700, startY / 7));
+        const startTime = window.performance.now();
+        const easeInOutCubic = function (progress) {
+            return progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        };
+
+        const scrollStep = function (currentTime) {
+            const progress = Math.min((currentTime - startTime) / duration, 1);
+            window.scrollTo(0, startY * (1 - easeInOutCubic(progress)));
+
+            if (progress < 1) {
+                animationFrameId = window.requestAnimationFrame(scrollStep);
+                return;
+            }
+
+            animationFrameId = null;
+        };
+
+        animationFrameId = window.requestAnimationFrame(scrollStep);
     });
 }
 
