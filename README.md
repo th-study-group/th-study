@@ -243,12 +243,13 @@ MCP의 개별 조회 도구 10종은 컨트롤러 OpenAPI 속성으로 문서화
 - 공통 광고 마크업은 `resources/views/components/adfit.blade.php`의 `<x-adfit>` 컴포넌트로 통일했습니다.
 - 카카오 스크립트는 페이지별 중복 삽입 대신 `resources/views/partials/head-scripts.blade.php`에서 전역 로드합니다.
 - 적용 위치는 블로그 목록/상세, 메인, 소개, 공지 목록/상세, 포트폴리오입니다.
-- 블로그 목록 모달처럼 동적으로 열리는 화면은 `reloadAdfit()`으로 스크립트를 재호출해 광고를 다시 그립니다.
 - 구현/운영 문서는 `document/카카왜드핏 적용방법.md`에 정리했습니다.
 
 ### Google AdSense 운영 메모
 
 - AdSense 공통 로더는 `resources/views/layouts/app.blade.php`에서 환경 설정값(`ADSENSE_ID`)이 있을 때만 한 번 로드합니다.
+- 수동 광고는 `resources/views/components/adsense.blade.php`의 `<x-adsense>`로 출력합니다. 디스플레이 광고는 `slot`과 `format`을 사용하며, 인피드·멀티플렉스 광고는 AdSense에서 발급한 `data-ad-layout`, `data-ad-layout-key` 등 추가 속성을 함께 전달합니다.
+- 블로그 목록의 상세 모달은 관련 글 아래·태그 위에 `note_modal_top_display` 디스플레이 슬롯을 둡니다. 모달을 연 뒤 아직 초기화되지 않은 슬롯만 `public/js/blog.js`에서 한 번 처리하므로 로더·슬롯을 중복 초기화하지 않습니다.
 - Google이 생성한 iframe, 광고 DOM, 닫기·접기 UI는 사이트 CSS/JavaScript로 수정하지 않습니다.
 - iOS Safari/PWA의 광고 레이아웃 점검은 `agent_rules/adsense.md`의 safe-area·viewport·fixed UI 기준을 따릅니다.
 - `/portfolio`의 상세 정보는 자동 in-page 광고가 표 셀 레이아웃을 밀어내는 문제를 줄이기 위해 `table` 대신 `dl/dt/dd` 정보 목록으로 구성합니다.

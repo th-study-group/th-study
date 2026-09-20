@@ -848,7 +848,7 @@ function fetchBlogDetail(state, detailUrl) {
       applyBlogDetailState(state, res || {});
       openBlogDetailModal(state);
       setTimeout(function() {
-        reloadAdfit();
+        initializeAdsense();
     }, 100);
     },
     onError: function () {
@@ -857,16 +857,14 @@ function fetchBlogDetail(state, detailUrl) {
   });
 }
 
-function reloadAdfit() {
+function initializeAdsense() {
   document
-    .querySelectorAll('script[src*="kakaocdn.net/kas/static/ba.min.js"]')
-    .forEach(function(el) {
-      el.remove();
+    .querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])')
+    .forEach(function(ad) {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (error) {
+        console.warn('AdSense 광고 초기화에 실패했습니다.', error);
+      }
     });
-
-  var script = document.createElement('script');
-  script.src = '//t1.kakaocdn.net/kas/static/ba.min.js';
-  script.async = true;
-
-  document.body.appendChild(script);
 }

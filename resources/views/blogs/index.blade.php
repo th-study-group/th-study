@@ -10,7 +10,7 @@
 
 @section('style')
   <style>
-    .blog-detail-adfit {
+    .blog-detail-ad {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -272,18 +272,16 @@
           <span id="blogDetailVisibility" class="blog-detail-visibility-badge"></span>
         </div>
 
-        <div class="blog-detail-adfit text-center my-3">
-          <x-adfit
-            :unit="$adfitCommonSquareUnit"
-            :width="$adfitCommonSquareWidth"
-            :height="$adfitCommonSquareHeight" />
-        </div>
-
         <div id="blogDetailContent" class="blog-detail-content"></div>
         <section id="blogDetailRelatedWrap" class="blog-detail-related" aria-label="관련 글 목록">
           <h3 id="blogDetailRelatedTitle" class="blog-detail-related-title"></h3>
           <ul id="blogDetailRelatedList" class="blog-detail-related-list"></ul>
         </section>
+        <div class="blog-detail-ad text-center my-3">
+          <x-adsense
+            slot="1141167136"
+            :full-width-responsive="true" />
+        </div>
         <ul id="blogDetailTags" class="blog-detail-tags"></ul>
       </div>
       <div class="blog-detail-footer">

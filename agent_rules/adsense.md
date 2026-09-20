@@ -9,7 +9,8 @@ Google AdSense 로더, 자동광고, 앵커·전면광고, 자동 in-page 광고
 ## 2. 현재 구조
 
 - AdSense 공통 스크립트는 `resources/views/layouts/app.blade.php`에서 `ADSENSE_ID` 설정값이 있을 때 로드한다.
-- 개별 Blade에 Google 광고 코드를 중복 삽입하거나 SPA 이동마다 다시 초기화하지 않는다.
+- 수동 광고 슬롯은 `resources/views/components/adsense.blade.php`의 `<x-adsense>` 컴포넌트로 출력한다. `slot`, `format`을 기본으로 사용하고, 인피드·멀티플렉스에 필요한 `data-ad-layout`, `data-ad-layout-key` 등의 추가 속성은 컴포넌트 호출부에서 전달한다.
+- 개별 Blade에 Google 로더 스크립트를 중복 삽입하지 않는다. 모달 등 동적 영역은 표시된 뒤 `data-adsbygoogle-status`가 없는 새 슬롯만 1회 초기화하며, 초기화된 슬롯이나 Google 로더를 다시 초기화하지 않는다.
 - `resources/views/components/adfit.blade.php`의 광고는 Kakao AdFit이므로 AdSense 자동광고와 혼동하지 않는다.
 
 ## 3. 금지 사항
@@ -36,6 +37,7 @@ Google AdSense 로더, 자동광고, 앵커·전면광고, 자동 in-page 광고
 ## 6. 검증
 
 - AdSense 스크립트가 한 페이지에 한 번만 로드되는지 확인한다.
+- 모달·동적 영역의 수동 광고는 최초 표시와 다른 콘텐츠를 연속으로 열 때 콘솔 오류나 동일 슬롯의 중복 초기화가 없는지 확인한다.
 - iPhone Safari와 standalone PWA에서 status bar/header, home indicator/fixed UI, 세로·가로 회전을 확인한다.
 - 광고 표시·종료 뒤에도 사이트 자체 modal/offcanvas가 없으면 body의 `overflow`, `touch-action`, `modal-open`이 남지 않는지 확인한다.
 - 데스크톱에서 footer와 하단 앵커광고가 동시에 보일 때 사이트 UI가 가려지지 않는지 확인한다.
