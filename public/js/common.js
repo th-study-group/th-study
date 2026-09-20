@@ -93,6 +93,7 @@ $(function () {
         visibleSince: 0,
         hideTimer: null,
         watchdogTimer: null,
+        scrollLock: null,
     };
 
     const LOADING_WATCHDOG_MS = 15000;
@@ -113,6 +114,49 @@ $(function () {
         return blocker;
     }
 
+    function lockPageScroll() {
+        if (loadingState.scrollLock) {
+            return;
+        }
+
+        const body = document.body;
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+
+        loadingState.scrollLock = {
+            scrollY: scrollY,
+            position: body.style.position,
+            top: body.style.top,
+            left: body.style.left,
+            right: body.style.right,
+            width: body.style.width,
+            overflow: body.style.overflow,
+        };
+
+        body.style.position = 'fixed';
+        body.style.top = '-' + scrollY + 'px';
+        body.style.left = '0';
+        body.style.right = '0';
+        body.style.width = '100%';
+        body.style.overflow = 'hidden';
+    }
+
+    function unlockPageScroll() {
+        const scrollLock = loadingState.scrollLock;
+        if (!scrollLock) {
+            return;
+        }
+
+        const body = document.body;
+        body.style.position = scrollLock.position;
+        body.style.top = scrollLock.top;
+        body.style.left = scrollLock.left;
+        body.style.right = scrollLock.right;
+        body.style.width = scrollLock.width;
+        body.style.overflow = scrollLock.overflow;
+        loadingState.scrollLock = null;
+        window.scrollTo(0, scrollLock.scrollY);
+    }
+
     function showLoadingUi() {
         if (loadingState.hideTimer) {
             clearTimeout(loadingState.hideTimer);
@@ -126,6 +170,7 @@ $(function () {
         const blocker = getLoadingBlockerElement();
         blocker.classList.add('is-active');
         document.body.classList.add('loading-active');
+        lockPageScroll();
         loadingModal.show();
 
         setTimeout(function () {
@@ -174,6 +219,7 @@ $(function () {
             loadingState.blockerEl.classList.remove('is-active');
         }
         document.body.classList.remove('loading-active');
+        unlockPageScroll();
         loadingState.isVisible = false;
         loadingState.visibleSince = 0;
     }
