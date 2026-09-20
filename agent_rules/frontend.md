@@ -84,6 +84,10 @@
 - standalone PWA에서는 PWA splash와 공통 초기 loading modal을 중복 표시하지 않는다. 초기 화면을 담당하는 UI가 터치 입력을 불필요하게 차단하지 않는지 확인한다.
 - 목록 화면의 이동은 일반 웹 브라우저와 standalone PWA에서 각각 첫 클릭, 빠른 연속 클릭, 링크 직접 클릭, row 빈 영역 클릭, 뒤로가기 복원 후 재클릭을 테스트한다.
 
+### 공통 링크 전역 로딩
+
+- 일반 웹과 standalone PWA의 동일 출처 페이지 링크 이동은 `common.js`의 공통 전역 로딩을 사용한다. 해시, Bootstrap 토글, 새 탭, 다운로드, 외부·특수 프로토콜, PWA 이미지 미리보기 링크는 제외하고, BFCache `pageshow`에서 이동 상태와 로딩을 초기화한다.
+
 ## 11. SEO Canonical 출력
 
 - 공통 `layouts.app`은 자식 화면이 `canonical_url` section을 제공할 때 canonical 태그를 출력한다. 현재 실제 적용 화면은 블로그 목록과 블로그 상세다.

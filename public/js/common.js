@@ -273,6 +273,7 @@ $(function () {
     };
 
     initInitialEntryLoading(loadingModal);
+    initGlobalNavigationLoading();
 });
 
 function initInitialEntryLoading(loadingModal)
@@ -331,6 +332,74 @@ function runInitialEntryLoading(loadingModal)
             loadingModal.hide();
         }
     }, 700);
+}
+
+function initGlobalNavigationLoading()
+{
+    let navigationStarted = false;
+
+    function resetNavigationLoading() {
+        navigationStarted = false;
+
+        if (typeof window.hideLoading === 'function') {
+            window.hideLoading({ force: true });
+        }
+    }
+
+    function isInternalPageLink(anchor, event) {
+        if (!anchor || event.defaultPrevented || event.button !== 0
+            || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return false;
+        }
+
+        if (anchor.hasAttribute('download') || anchor.target === '_blank'
+            || anchor.hasAttribute('data-bs-toggle')
+            || anchor.hasAttribute('data-push-logout')) {
+            return false;
+        }
+
+        const rawHref = String(anchor.getAttribute('href') || '').trim();
+        if (!rawHref || rawHref === '#' || rawHref.startsWith('#')
+            || rawHref.toLowerCase().startsWith('javascript:')) {
+            return false;
+        }
+
+        let url;
+        try {
+            url = new URL(rawHref, window.location.href);
+        } catch (error) {
+            return false;
+        }
+
+        if (!['http:', 'https:'].includes(url.protocol) || url.origin !== window.location.origin) {
+            return false;
+        }
+
+        if (url.pathname === window.location.pathname && url.search === window.location.search) {
+            return false;
+        }
+
+        return !/\.(?:avif|bmp|gif|jpe?g|png|svg|webp)$/i.test(url.pathname);
+    }
+
+    document.addEventListener('click', function (event) {
+        const anchor = event.target.closest ? event.target.closest('a[href]') : null;
+        if (!isInternalPageLink(anchor, event)) {
+            return;
+        }
+
+        if (navigationStarted) {
+            event.preventDefault();
+            return;
+        }
+
+        navigationStarted = true;
+        if (typeof window.showLoading === 'function') {
+            window.showLoading();
+        }
+    });
+
+    window.addEventListener('pageshow', resetNavigationLoading);
 }
 
 function initFixedHeaderOffset()
