@@ -22,6 +22,14 @@
                     <div class="board-field bg-light rounded-3 px-3 py-2">{{ $post->user?->nick_name ?? $post->user?->name ?? '-' }}</div>
                 </div>
 
+                <div class="notice-show-ad notice-show-display-ad">
+                    <x-adsense
+                        class="notice-show-ad-slot"
+                        :ad-slot="$adsenseNoticeShowTopDisplayAdSlot"
+                        :format="$adsenseNoticeShowTopDisplayFormat"
+                        :full-width-responsive="$adsenseNoticeShowTopDisplayFullWidthResponsive" />
+                </div>
+
                 {{-- 카카오 애드핏 --}}
                 <div class="text-center my-3 d-block d-md-none">
                     <x-adfit
@@ -38,6 +46,14 @@
                 </div>
                 {{-- 카카오 애드핏 --}}
 
+                <div class="notice-show-ad notice-show-in-article-ad">
+                    <x-adsense
+                        class="notice-show-ad-slot"
+                        :ad-slot="$adsenseNoticeShowContentInArticleAdSlot"
+                        :format="$adsenseNoticeShowContentInArticleFormat"
+                        :data-ad-layout="$adsenseNoticeShowContentInArticleLayout" />
+                </div>
+
                 <div class="mb-3">
                     <span class="form-label small text-secondary d-block mb-1">내용</span>
                     <div class="board-field board-content bg-light rounded-3 px-3 py-2">
@@ -50,8 +66,38 @@
             </div>
         </div>
 
+        <div class="notice-show-ad notice-show-bottom-multiplex-ad">
+            <x-adsense
+                class="notice-show-ad-slot"
+                :ad-slot="$adsenseNoticeShowBottomMultiplexAdSlot"
+                :format="$adsenseNoticeShowBottomMultiplexFormat" />
+        </div>
+        <div class="notice-show-bottom-ad-tail" aria-hidden="true"></div>
+
         <div class="d-flex justify-content-end mt-3">
             <a href="{{ route('posts.index', ['post_type' => 'notice']) }}" class="btn btn-secondary">목록</a>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script>
+        $(function () {
+            window.requestAnimationFrame(function () {
+                document.querySelectorAll('.notice-show-ad .adsbygoogle').forEach(function (ad) {
+                    if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
+                        return;
+                    }
+
+                    ad.dataset.adsensePushQueued = 'true';
+
+                    try {
+                        (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    } catch (error) {
+                        console.warn('AdSense notice ad initialization failed.', error);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

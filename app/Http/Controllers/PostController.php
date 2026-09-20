@@ -49,6 +49,14 @@ class PostController extends Controller
 
         return view("{$postType}.show", [
             'post' => $post,
+            'adsenseNoticeShowTopDisplayAdSlot' => config('adsense.units.common_top_display.ad_slot'),
+            'adsenseNoticeShowTopDisplayFormat' => config('adsense.units.common_top_display.format'),
+            'adsenseNoticeShowTopDisplayFullWidthResponsive' => config('adsense.units.common_top_display.full_width_responsive'),
+            'adsenseNoticeShowContentInArticleAdSlot' => config('adsense.units.common_content_in_article.ad_slot'),
+            'adsenseNoticeShowContentInArticleFormat' => config('adsense.units.common_content_in_article.format'),
+            'adsenseNoticeShowContentInArticleLayout' => config('adsense.units.common_content_in_article.layout'),
+            'adsenseNoticeShowBottomMultiplexAdSlot' => config('adsense.units.common_bottom_multiplex.ad_slot'),
+            'adsenseNoticeShowBottomMultiplexFormat' => config('adsense.units.common_bottom_multiplex.format'),
         ]);
     }
 

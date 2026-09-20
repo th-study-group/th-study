@@ -81,6 +81,33 @@
     text-align: left;
 }
 
+.notice-show-ad {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.notice-show-display-ad {
+    margin: 12px 0;
+}
+
+.notice-show-in-article-ad,
+.notice-show-bottom-multiplex-ad {
+    margin-top: 16px;
+}
+
+.notice-show-ad-slot {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.notice-show-bottom-ad-tail {
+    min-height: calc(132px + env(safe-area-inset-bottom, 0px));
+}
+
 @media (max-width: 767.98px) {
     .board-status-actions {
         flex-direction: row;

@@ -30,5 +30,19 @@ return [
             'ad_slot' => '8243516128',
             'format' => 'autorelaxed',
         ],
+        'common_top_display' => [
+            'ad_slot' => '3546557361',
+            'format' => 'auto',
+            'full_width_responsive' => true,
+        ],
+        'common_content_in_article' => [
+            'ad_slot' => '3553551367',
+            'format' => 'fluid',
+            'layout' => 'in-article',
+        ],
+        'common_bottom_multiplex' => [
+            'ad_slot' => '7301224689',
+            'format' => 'autorelaxed',
+        ],
     ],
 ];
