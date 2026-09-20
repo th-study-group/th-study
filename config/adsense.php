@@ -7,5 +7,10 @@ return [
             'format' => null,
             'full_width_responsive' => false,
         ],
+        'note_modal_related_in_article' => [
+            'ad_slot' => '4300401682',
+            'format' => 'fluid',
+            'layout' => 'in-article',
+        ],
     ],
 ];

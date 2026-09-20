@@ -1594,6 +1594,21 @@
     height: 100px;
   }
 
+  .blog-detail-related-ad {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .blog-detail-related-in-article-slot {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
   @media (min-width: 500px) {
     .blog-detail-adsense-slot {
       width: 468px;

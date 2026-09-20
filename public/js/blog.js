@@ -601,6 +601,7 @@ function applyBlogDetailState(state, payload) {
   enhanceBlogDetailContent('#blogDetailContent');
 
   const $relatedWrap = $('#blogDetailRelatedWrap');
+  const $relatedAd = $('#blogDetailRelatedAd');
   const $relatedTitle = $('#blogDetailRelatedTitle');
   const $relatedList = $('#blogDetailRelatedList');
   const resolvedTopicName = topicName !== ''
@@ -625,8 +626,10 @@ function applyBlogDetailState(state, payload) {
       );
     });
     $relatedWrap.show();
+    $relatedAd.show();
   } else {
     $relatedWrap.hide();
+    $relatedAd.hide();
   }
 
   const $visibility = $('#blogDetailVisibility');

@@ -270,6 +270,13 @@
         </div>
 
         <div id="blogDetailContent" class="blog-detail-content"></div>
+        <div id="blogDetailRelatedAd" class="blog-detail-related-ad text-center my-3" style="display: none;">
+          <x-adsense
+            class="blog-detail-related-in-article-slot"
+            :ad-slot="$adsenseNoteModalRelatedInArticleAdSlot"
+            :format="$adsenseNoteModalRelatedInArticleFormat"
+            :data-ad-layout="$adsenseNoteModalRelatedInArticleLayout" />
+        </div>
         <section id="blogDetailRelatedWrap" class="blog-detail-related" aria-label="관련 글 목록">
           <h3 id="blogDetailRelatedTitle" class="blog-detail-related-title"></h3>
           <ul id="blogDetailRelatedList" class="blog-detail-related-list"></ul>
