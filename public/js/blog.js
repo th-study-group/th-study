@@ -946,3 +946,40 @@ function reloadAdfit() {
 
   document.body.appendChild(script);
 }
+
+function resetBlogScrollOnReload() {
+  const navigationEntry = window.performance?.getEntriesByType
+    ? window.performance.getEntriesByType('navigation')[0]
+    : null;
+
+  if (!navigationEntry || navigationEntry.type !== 'reload') {
+    return;
+  }
+
+  const scrollRestoration = window.history?.scrollRestoration;
+  if (typeof scrollRestoration === 'string') {
+    window.history.scrollRestoration = 'manual';
+  }
+
+  const scrollToTop = function() {
+    window.scrollTo(0, 0);
+  };
+
+  scrollToTop();
+  window.addEventListener('pageshow', function() {
+    scrollToTop();
+    window.requestAnimationFrame(function() {
+      scrollToTop();
+
+      if (typeof scrollRestoration === 'string') {
+        window.history.scrollRestoration = scrollRestoration;
+      }
+    });
+  }, { once: true });
+}
+
+$(function() {
+  if (document.getElementById('blogItems')) {
+    resetBlogScrollOnReload();
+  }
+});
