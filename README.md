@@ -249,7 +249,7 @@ MCP의 개별 조회 도구 10종은 컨트롤러 OpenAPI 속성으로 문서화
 
 - AdSense 공통 로더는 `resources/views/layouts/app.blade.php`에서 환경 설정값(`ADSENSE_ID`)이 있을 때만 한 번 로드합니다.
 - 수동 광고는 `resources/views/components/adsense.blade.php`의 `<x-adsense>`로 출력합니다. 디스플레이 광고는 `slot`과 `format`을 사용하며, 인피드·멀티플렉스 광고는 AdSense에서 발급한 `data-ad-layout`, `data-ad-layout-key` 등 추가 속성을 함께 전달합니다.
-- 블로그 목록의 상세 모달은 관련 글 아래·태그 위에 `note_modal_top_display` 디스플레이 슬롯을 둡니다. 모달을 연 뒤 아직 초기화되지 않은 슬롯만 `public/js/blog.js`에서 한 번 처리하므로 로더·슬롯을 중복 초기화하지 않습니다.
+- 블로그 목록의 상세 모달은 제목·작성일 아래, 본문 위에 `note_modal_top_display` 디스플레이 슬롯을 둡니다. 모달을 연 뒤 아직 초기화되지 않은 슬롯만 `public/js/blog.js`에서 한 번 처리하므로 로더·슬롯을 중복 초기화하지 않습니다.
 - Google이 생성한 iframe, 광고 DOM, 닫기·접기 UI는 사이트 CSS/JavaScript로 수정하지 않습니다.
 - iOS Safari/PWA의 광고 레이아웃 점검은 `agent_rules/adsense.md`의 safe-area·viewport·fixed UI 기준을 따릅니다.
 - `/portfolio`의 상세 정보는 자동 in-page 광고가 표 셀 레이아웃을 밀어내는 문제를 줄이기 위해 `table` 대신 `dl/dt/dd` 정보 목록으로 구성합니다.

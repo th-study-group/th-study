@@ -849,6 +849,7 @@ function fetchBlogDetail(state, detailUrl) {
       openBlogDetailModal(state);
       setTimeout(function() {
         initializeAdsense();
+        reloadAdfit();
     }, 100);
     },
     onError: function () {
@@ -867,4 +868,18 @@ function initializeAdsense() {
         console.warn('AdSense 광고 초기화에 실패했습니다.', error);
       }
     });
+}
+
+function reloadAdfit() {
+  document
+    .querySelectorAll('script[src*="kakaocdn.net/kas/static/ba.min.js"]')
+    .forEach(function(el) {
+      el.remove();
+    });
+
+  var script = document.createElement('script');
+  script.src = '//t1.kakaocdn.net/kas/static/ba.min.js';
+  script.async = true;
+
+  document.body.appendChild(script);
 }
