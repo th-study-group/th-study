@@ -963,28 +963,42 @@ function initializeAdsenseWhenVisibleInDetailBody(ad) {
 
 function reportAdsenseModalStatus(ad) {
   var report = function() {
+    var adStatus = ad.dataset.adStatus || 'uninitialized';
     console.info('[AdSense][Note Modal]', {
       offsetWidth: ad.offsetWidth,
       offsetHeight: ad.offsetHeight,
-      adStatus: ad.dataset.adStatus || 'uninitialized',
+      adStatus: adStatus,
       adsbygoogleStatus: ad.dataset.adsbygoogleStatus || 'uninitialized',
     });
+
+    if (adStatus === 'unfilled' || adStatus === 'unfill-optimized') {
+      var multiplexWrapper = ad.closest('#blogDetailTagsMultiplexAd');
+      if (multiplexWrapper) {
+        multiplexWrapper.hidden = true;
+      }
+    }
+
+    return adStatus;
   };
 
   var observer = new MutationObserver(function() {
-    report();
-    observer.disconnect();
-    window.clearTimeout(timeoutId);
+    var adStatus = report();
+    if (adStatus === 'filled' || adStatus === 'unfilled' || adStatus === 'unfill-optimized') {
+      observer.disconnect();
+      window.clearTimeout(timeoutId);
+    }
   });
   var timeoutId = window.setTimeout(function() {
     observer.disconnect();
     report();
-  }, 2000);
+  }, 10000);
 
   observer.observe(ad, {
     attributes: true,
     attributeFilter: ['data-ad-status', 'data-adsbygoogle-status'],
   });
+
+  report();
 }
 
 function reloadAdfit() {

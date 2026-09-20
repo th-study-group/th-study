@@ -151,6 +151,39 @@
   <script>
     $(function() {
 
+      function hideUnfilledBottomMultiplexAd(ad) {
+        var wrapper = ad.closest('.blog-show-bottom-multiplex-ad');
+        if (!wrapper) {
+          return;
+        }
+
+        var reportStatus = function () {
+          var adStatus = ad.dataset.adStatus || '';
+          if (adStatus === 'unfilled' || adStatus === 'unfill-optimized') {
+            wrapper.hidden = true;
+          }
+          return adStatus;
+        };
+
+        var observer = new MutationObserver(function () {
+          var adStatus = reportStatus();
+          if (adStatus === 'filled' || adStatus === 'unfilled' || adStatus === 'unfill-optimized') {
+            observer.disconnect();
+            window.clearTimeout(timeoutId);
+          }
+        });
+        var timeoutId = window.setTimeout(function () {
+          observer.disconnect();
+          reportStatus();
+        }, 10000);
+
+        observer.observe(ad, {
+          attributes: true,
+          attributeFilter: ['data-ad-status', 'data-adsbygoogle-status'],
+        });
+        reportStatus();
+      }
+
       window.requestAnimationFrame(function () {
         document.querySelectorAll('.blog-show-ad .adsbygoogle').forEach(function (ad) {
           if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus) {
@@ -177,6 +210,9 @@
 
             try {
               (window.adsbygoogle = window.adsbygoogle || []).push({});
+              if (ad.matches('.blog-show-bottom-multiplex-ad .adsbygoogle')) {
+                hideUnfilledBottomMultiplexAd(ad);
+              }
             } catch (error) {
               console.warn('AdSense 광고 초기화에 실패했습니다.', error);
             }
