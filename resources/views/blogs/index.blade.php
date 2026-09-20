@@ -16,6 +16,15 @@
       align-items: center;
       width: 100%;
     }
+
+    .blog-detail-adsense {
+      display: block;
+    }
+
+    .blog-detail-adsense .adsbygoogle {
+      display: block;
+      width: 100%;
+    }
   </style>
 @endsection
 
@@ -272,7 +281,7 @@
           <span id="blogDetailVisibility" class="blog-detail-visibility-badge"></span>
         </div>
 
-        <div class="blog-detail-ad text-center my-3">
+        <div class="blog-detail-ad blog-detail-adsense text-center my-3">
           <x-adsense
             :ad-slot="$adsenseNoteModalTopDisplayAdSlot"
             :format="$adsenseNoteModalTopDisplayFormat"

@@ -888,6 +888,7 @@ function initializeAdsenseWhenReady(container) {
 
         try {
           (window.adsbygoogle = window.adsbygoogle || []).push({});
+          reportAdsenseModalStatus(ad);
         } catch (error) {
           console.warn('AdSense 광고 초기화에 실패했습니다.', error);
         }
@@ -895,6 +896,32 @@ function initializeAdsenseWhenReady(container) {
 
       window.requestAnimationFrame(pushWhenWidthIsReady);
     });
+}
+
+function reportAdsenseModalStatus(ad) {
+  var report = function() {
+    console.info('[AdSense][Note Modal]', {
+      offsetWidth: ad.offsetWidth,
+      offsetHeight: ad.offsetHeight,
+      adStatus: ad.dataset.adStatus || 'uninitialized',
+      adsbygoogleStatus: ad.dataset.adsbygoogleStatus || 'uninitialized',
+    });
+  };
+
+  var observer = new MutationObserver(function() {
+    report();
+    observer.disconnect();
+    window.clearTimeout(timeoutId);
+  });
+  var timeoutId = window.setTimeout(function() {
+    observer.disconnect();
+    report();
+  }, 2000);
+
+  observer.observe(ad, {
+    attributes: true,
+    attributeFilter: ['data-ad-status', 'data-adsbygoogle-status'],
+  });
 }
 
 function reloadAdfit() {
