@@ -119,25 +119,34 @@ $(function () {
             return;
         }
 
-        const body = document.body;
-        const scrollY = window.scrollY || window.pageYOffset || 0;
+        const preventScroll = function (event) {
+            event.preventDefault();
+        };
+        const preventScrollByKey = function (event) {
+            const scrollKeys = [
+                ' ',
+                'Spacebar',
+                'ArrowUp',
+                'ArrowDown',
+                'PageUp',
+                'PageDown',
+                'Home',
+                'End',
+            ];
 
-        loadingState.scrollLock = {
-            scrollY: scrollY,
-            position: body.style.position,
-            top: body.style.top,
-            left: body.style.left,
-            right: body.style.right,
-            width: body.style.width,
-            overflow: body.style.overflow,
+            if (scrollKeys.includes(event.key)) {
+                event.preventDefault();
+            }
         };
 
-        body.style.position = 'fixed';
-        body.style.top = '-' + scrollY + 'px';
-        body.style.left = '0';
-        body.style.right = '0';
-        body.style.width = '100%';
-        body.style.overflow = 'hidden';
+        loadingState.scrollLock = {
+            preventScroll: preventScroll,
+            preventScrollByKey: preventScrollByKey,
+        };
+
+        document.addEventListener('wheel', preventScroll, { passive: false });
+        document.addEventListener('touchmove', preventScroll, { passive: false });
+        document.addEventListener('keydown', preventScrollByKey);
     }
 
     function unlockPageScroll() {
@@ -146,15 +155,10 @@ $(function () {
             return;
         }
 
-        const body = document.body;
-        body.style.position = scrollLock.position;
-        body.style.top = scrollLock.top;
-        body.style.left = scrollLock.left;
-        body.style.right = scrollLock.right;
-        body.style.width = scrollLock.width;
-        body.style.overflow = scrollLock.overflow;
+        document.removeEventListener('wheel', scrollLock.preventScroll);
+        document.removeEventListener('touchmove', scrollLock.preventScroll);
+        document.removeEventListener('keydown', scrollLock.preventScrollByKey);
         loadingState.scrollLock = null;
-        window.scrollTo(0, scrollLock.scrollY);
     }
 
     function showLoadingUi() {

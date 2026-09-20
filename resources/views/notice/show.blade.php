@@ -4,6 +4,14 @@
 
 @section('content')
     <section class="col-12 col-lg-8 mx-auto">
+        <div class="notice-show-ad notice-show-display-ad">
+            <x-adsense
+                class="notice-show-ad-slot"
+                :ad-slot="$adsenseNoticeShowTopDisplayAdSlot"
+                :format="$adsenseNoticeShowTopDisplayFormat"
+                :full-width-responsive="$adsenseNoticeShowTopDisplayFullWidthResponsive" />
+        </div>
+
         <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm">
             <div class="board-head d-flex flex-column gap-2 gap-lg-3">
                 <div>
@@ -20,14 +28,6 @@
                 <div class="mb-3">
                     <span class="form-label small text-secondary d-block mb-1">작성자</span>
                     <div class="board-field bg-light rounded-3 px-3 py-2">{{ $post->user?->nick_name ?? $post->user?->name ?? '-' }}</div>
-                </div>
-
-                <div class="notice-show-ad notice-show-display-ad">
-                    <x-adsense
-                        class="notice-show-ad-slot"
-                        :ad-slot="$adsenseNoticeShowTopDisplayAdSlot"
-                        :format="$adsenseNoticeShowTopDisplayFormat"
-                        :full-width-responsive="$adsenseNoticeShowTopDisplayFullWidthResponsive" />
                 </div>
 
                 {{-- 카카오 애드핏 --}}

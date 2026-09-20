@@ -849,7 +849,6 @@ function fetchBlogDetail(state, detailUrl) {
     method: 'GET',
     url: detailUrl,
     dataType: 'json',
-    showLoading: false,
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
       'Accept': 'application/json',
