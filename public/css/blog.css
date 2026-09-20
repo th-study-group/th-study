@@ -1737,7 +1737,7 @@
   }
 
   .blog-detail-tags-multiplex-tail {
-    min-height: max(180px, calc(env(safe-area-inset-bottom, 0px) + 140px));
+    min-height: max(12px, env(safe-area-inset-bottom, 0px));
   }
 
   .blog-detail-related {

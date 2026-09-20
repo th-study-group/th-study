@@ -849,6 +849,7 @@ function fetchBlogDetail(state, detailUrl) {
     method: 'GET',
     url: detailUrl,
     dataType: 'json',
+    showLoading: false,
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
       'Accept': 'application/json',
@@ -968,13 +969,17 @@ function resetBlogScrollOnReload() {
   scrollToTop();
   window.addEventListener('pageshow', function() {
     scrollToTop();
-    window.requestAnimationFrame(function() {
+    window.setTimeout(function() {
       scrollToTop();
 
-      if (typeof scrollRestoration === 'string') {
-        window.history.scrollRestoration = scrollRestoration;
-      }
-    });
+      window.setTimeout(function() {
+        scrollToTop();
+
+        if (typeof scrollRestoration === 'string') {
+          window.history.scrollRestoration = scrollRestoration;
+        }
+      }, 150);
+    }, 0);
   }, { once: true });
 }
 
