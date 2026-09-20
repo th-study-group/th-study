@@ -35,21 +35,23 @@
         </div>
       @endif
 
-      <div class="text-center my-3 d-none d-md-block">
-        <x-adfit
-          :unit="$adfitPcRectangleUnit"
-          :width="$adfitPcRectangleWidth"
-          :height="$adfitPcRectangleHeight" />
-      </div>
-
-      <div class="text-center my-3 d-block d-md-none">
-        <x-adfit
-          :unit="$adfitMobileRectangleUnit"
-          :width="$adfitMobileRectangleWidth"
-          :height="$adfitMobileRectangleHeight" />
+      <div class="blog-show-ad blog-show-display-ad">
+        <x-adsense
+          class="blog-show-display-ad-slot"
+          :ad-slot="$adsenseNotePageTopDisplayAdSlot"
+          :format="$adsenseNotePageTopDisplayFormat"
+          :full-width-responsive="$adsenseNotePageTopDisplayFullWidthResponsive" />
       </div>
 
       <article class="blog-show-content">{!! $contentHtml !!}</article>
+
+      <div class="blog-show-ad blog-show-in-article-ad">
+        <x-adsense
+          class="blog-show-in-article-ad-slot"
+          :ad-slot="$adsenseNotePageContentInArticleAdSlot"
+          :format="$adsenseNotePageContentInArticleFormat"
+          :data-ad-layout="$adsenseNotePageContentInArticleLayout" />
+      </div>
 
       <section class="blog-show-related" aria-label="관련 글 목록">
         <h2 class="blog-show-related-title">
@@ -71,12 +73,33 @@
         </ul>
       </section>
 
+      <div class="blog-show-ad blog-show-adfit-ad d-none d-md-block">
+        <x-adfit
+          :unit="$adfitPcRectangleUnit"
+          :width="$adfitPcRectangleWidth"
+          :height="$adfitPcRectangleHeight" />
+      </div>
+
+      <div class="blog-show-ad blog-show-adfit-ad d-block d-md-none">
+        <x-adfit
+          :unit="$adfitMobileRectangleUnit"
+          :width="$adfitMobileRectangleWidth"
+          :height="$adfitMobileRectangleHeight" />
+      </div>
+
       @if ($hasTags)
         <ul class="blog-show-tags">
           @foreach ($tagNames as $tagName)
             <li>#{{ $tagName }}</li>
           @endforeach
         </ul>
+
+        <div class="blog-show-ad blog-show-bottom-multiplex-ad">
+          <x-adsense
+            class="blog-show-bottom-multiplex-ad-slot"
+            :ad-slot="$adsenseNotePageBottomMultiplexAdSlot"
+            :format="$adsenseNotePageBottomMultiplexFormat" />
+        </div>
       @endif
 
       <div class="blog-show-actions">
@@ -127,6 +150,20 @@
 @section('script')
   <script>
     $(function() {
+
+      document.querySelectorAll('.blog-show-ad .adsbygoogle').forEach(function (ad) {
+        if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus) {
+          return;
+        }
+
+        ad.dataset.adsensePushQueued = 'true';
+
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (error) {
+          console.warn('AdSense 광고 초기화에 실패했습니다.', error);
+        }
+      });
 
       const listUrl = "{{ $listUrl }}";
       const editUrl = "{{ $editUrl }}";

@@ -446,6 +446,32 @@
     color: var(--bs-success-text-emphasis);
   }
 
+  .blog-show-ad {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .blog-show-display-ad {
+    margin: 12px 0;
+  }
+
+  .blog-show-in-article-ad,
+  .blog-show-adfit-ad,
+  .blog-show-bottom-multiplex-ad {
+    margin-top: 16px;
+  }
+
+  .blog-show-display-ad-slot,
+  .blog-show-in-article-ad-slot,
+  .blog-show-bottom-multiplex-ad-slot {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
   .blog-show-content {
     color: #1f2937;
     font-size: 16px;

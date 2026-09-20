@@ -285,6 +285,14 @@ class NoteController extends Controller
             'adfitMobileRectangleUnit' => config('adfit.mobile.rectangle.unit'),
             'adfitMobileRectangleWidth' => config('adfit.mobile.rectangle.width'),
             'adfitMobileRectangleHeight' => config('adfit.mobile.rectangle.height'),
+            'adsenseNotePageTopDisplayAdSlot' => config('adsense.units.note_page_top_display.ad_slot'),
+            'adsenseNotePageTopDisplayFormat' => config('adsense.units.note_page_top_display.format'),
+            'adsenseNotePageTopDisplayFullWidthResponsive' => config('adsense.units.note_page_top_display.full_width_responsive'),
+            'adsenseNotePageContentInArticleAdSlot' => config('adsense.units.note_page_content_in_article.ad_slot'),
+            'adsenseNotePageContentInArticleFormat' => config('adsense.units.note_page_content_in_article.format'),
+            'adsenseNotePageContentInArticleLayout' => config('adsense.units.note_page_content_in_article.layout'),
+            'adsenseNotePageBottomMultiplexAdSlot' => config('adsense.units.note_page_bottom_multiplex.ad_slot'),
+            'adsenseNotePageBottomMultiplexFormat' => config('adsense.units.note_page_bottom_multiplex.format'),
         ]);
     }
 
