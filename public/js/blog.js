@@ -1050,8 +1050,48 @@ function resetBlogScrollOnReload() {
   }, { once: true });
 }
 
+function initBlogDetailHorizontalTouchLock() {
+  const modal = document.getElementById('blogDetailModal');
+  if (!modal) {
+    return;
+  }
+
+  let startX = 0;
+  let startY = 0;
+  let isHorizontalGesture = false;
+
+  modal.addEventListener('touchstart', function(event) {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    startX = touch.clientX;
+    startY = touch.clientY;
+    isHorizontalGesture = false;
+  }, { passive: true });
+
+  modal.addEventListener('touchmove', function(event) {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    const distanceX = touch.clientX - startX;
+    const distanceY = touch.clientY - startY;
+    if (!isHorizontalGesture && Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > 4) {
+      isHorizontalGesture = true;
+    }
+
+    if (isHorizontalGesture && event.cancelable) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+}
+
 $(function() {
   if (document.getElementById('blogItems')) {
     resetBlogScrollOnReload();
+    initBlogDetailHorizontalTouchLock();
   }
 });

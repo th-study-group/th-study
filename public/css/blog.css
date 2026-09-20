@@ -1520,6 +1520,8 @@
       max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px))
       max(24px, calc(env(safe-area-inset-left, 0px) + 12px));
     overscroll-behavior: none;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
   }
 
   body.blog-modal-open #loadingModal {
@@ -1537,6 +1539,7 @@
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
+    overflow-x: hidden;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
@@ -1593,6 +1596,9 @@
     flex: 1 1 auto;
     background: #fff;
     overscroll-behavior: contain;
+    overscroll-behavior-x: none;
+    overflow-x: hidden;
+    touch-action: pan-y;
   }
 
   .blog-detail-ad {
