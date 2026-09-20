@@ -847,10 +847,8 @@ function fetchBlogDetail(state, detailUrl) {
     onSuccess: function (res) {
       applyBlogDetailState(state, res || {});
       openBlogDetailModal(state);
-      setTimeout(function() {
-        initializeAdsense();
-        reloadAdfit();
-    }, 100);
+      initializeAdsenseWhenReady(document.getElementById('blogDetailModal'));
+      reloadAdfit();
     },
     onError: function () {
       alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
@@ -858,15 +856,44 @@ function fetchBlogDetail(state, detailUrl) {
   });
 }
 
-function initializeAdsense() {
-  document
+function initializeAdsenseWhenReady(container) {
+  if (!container) {
+    return;
+  }
+
+  container
     .querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])')
     .forEach(function(ad) {
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      } catch (error) {
-        console.warn('AdSense 광고 초기화에 실패했습니다.', error);
+      if (ad.dataset.adsensePushQueued === 'true') {
+        return;
       }
+
+      var attempts = 0;
+      var maxAttempts = 30;
+
+      function pushWhenWidthIsReady() {
+        if (ad.dataset.adsbygoogleStatus || ad.dataset.adsensePushQueued === 'true') {
+          return;
+        }
+
+        if (ad.getBoundingClientRect().width <= 0) {
+          attempts += 1;
+          if (attempts < maxAttempts) {
+            window.requestAnimationFrame(pushWhenWidthIsReady);
+          }
+          return;
+        }
+
+        ad.dataset.adsensePushQueued = 'true';
+
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (error) {
+          console.warn('AdSense 광고 초기화에 실패했습니다.', error);
+        }
+      }
+
+      window.requestAnimationFrame(pushWhenWidthIsReady);
     });
 }
 
