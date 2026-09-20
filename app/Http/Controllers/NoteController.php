@@ -159,6 +159,8 @@ class NoteController extends Controller
             'adsenseNoteModalRelatedInArticleAdSlot' => config('adsense.units.note_modal_related_in_article.ad_slot'),
             'adsenseNoteModalRelatedInArticleFormat' => config('adsense.units.note_modal_related_in_article.format'),
             'adsenseNoteModalRelatedInArticleLayout' => config('adsense.units.note_modal_related_in_article.layout'),
+            'adsenseNoteModalTagsMultiplexAdSlot' => config('adsense.units.note_modal_tags_multiplex.ad_slot'),
+            'adsenseNoteModalTagsMultiplexFormat' => config('adsense.units.note_modal_tags_multiplex.format'),
         ]);
     }
 

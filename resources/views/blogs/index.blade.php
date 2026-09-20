@@ -288,6 +288,13 @@
             :height="$adfitCommonSquareHeight" />
         </div>
         <ul id="blogDetailTags" class="blog-detail-tags"></ul>
+        <div id="blogDetailTagsMultiplexAd" class="blog-detail-tags-multiplex-ad text-center my-3">
+          <x-adsense
+            class="blog-detail-tags-multiplex-slot"
+            :ad-slot="$adsenseNoteModalTagsMultiplexAdSlot"
+            :format="$adsenseNoteModalTagsMultiplexFormat" />
+        </div>
+        <div class="blog-detail-tags-multiplex-tail" aria-hidden="true"></div>
       </div>
       <div class="blog-detail-footer">
         <div class="blog-detail-actions">

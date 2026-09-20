@@ -1697,6 +1697,23 @@
     border: 1px solid #dee2e6;
   }
 
+  .blog-detail-tags-multiplex-ad {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .blog-detail-tags-multiplex-slot {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .blog-detail-tags-multiplex-tail {
+    min-height: max(180px, calc(env(safe-area-inset-bottom, 0px) + 140px));
+  }
+
   .blog-detail-related {
     margin-top: 18px;
     padding: 10px 12px;

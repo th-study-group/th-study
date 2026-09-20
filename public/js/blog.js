@@ -646,14 +646,20 @@ function applyBlogDetailState(state, payload) {
   }
 
   const $tags = $('#blogDetailTags');
+  const $tagsMultiplexAd = $('#blogDetailTagsMultiplexAd');
+  const $tagsMultiplexTail = $('.blog-detail-tags-multiplex-tail');
   $tags.empty();
   if (tags.length > 0) {
     tags.forEach(function (tagName) {
       $tags.append(`<li>#${escapeHtmlText(tagName)}</li>`);
     });
     $tags.show();
+    $tagsMultiplexAd.show();
+    $tagsMultiplexTail.show();
   } else {
     $tags.hide();
+    $tagsMultiplexAd.hide();
+    $tagsMultiplexTail.hide();
   }
 
   $('#blogDetailEditBtn').toggle(!!permissions.can_update);

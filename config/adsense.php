@@ -12,5 +12,9 @@ return [
             'format' => 'fluid',
             'layout' => 'in-article',
         ],
+        'note_modal_tags_multiplex' => [
+            'ad_slot' => '8243516128',
+            'format' => 'autorelaxed',
+        ],
     ],
 ];
