@@ -274,8 +274,9 @@
 
         <div class="blog-detail-ad text-center my-3">
           <x-adsense
-            slot="1141167136"
-            :full-width-responsive="true" />
+            :ad-slot="$adsenseNoteModalTopDisplayAdSlot"
+            :format="$adsenseNoteModalTopDisplayFormat"
+            :full-width-responsive="$adsenseNoteModalTopDisplayFullWidthResponsive" />
         </div>
 
         <div id="blogDetailContent" class="blog-detail-content"></div>

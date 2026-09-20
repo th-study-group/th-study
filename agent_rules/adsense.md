@@ -9,7 +9,7 @@ Google AdSense 로더, 자동광고, 앵커·전면광고, 자동 in-page 광고
 ## 2. 현재 구조
 
 - AdSense 공통 스크립트는 `resources/views/layouts/app.blade.php`에서 `ADSENSE_ID` 설정값이 있을 때 로드한다.
-- 수동 광고 슬롯은 `resources/views/components/adsense.blade.php`의 `<x-adsense>` 컴포넌트로 출력한다. `slot`, `format`을 기본으로 사용하고, 인피드·멀티플렉스에 필요한 `data-ad-layout`, `data-ad-layout-key` 등의 추가 속성은 컴포넌트 호출부에서 전달한다.
+- AdSense 발급자 ID는 `config/services.php`의 `ADSENSE_ID`로, 광고 단위는 `config/adsense.php`의 `units`에서 AdSense 화면의 이름을 키로 관리한다. 수동 광고 슬롯은 Controller가 해당 키의 최종 값을 전달하고, `resources/views/components/adsense.blade.php`의 `<x-adsense>`가 `ad-slot`, `format`으로 출력한다. 인피드·멀티플렉스에 필요한 `data-ad-layout`, `data-ad-layout-key` 등의 추가 속성은 컴포넌트 호출부에서 전달한다.
 - 개별 Blade에 Google 로더 스크립트를 중복 삽입하지 않는다. 모달 등 동적 영역은 표시된 뒤 `data-adsbygoogle-status`가 없는 새 슬롯만 1회 초기화하며, 초기화된 슬롯이나 Google 로더를 다시 초기화하지 않는다.
 - `resources/views/components/adfit.blade.php`의 광고는 Kakao AdFit이므로 AdSense 자동광고와 혼동하지 않는다.
 

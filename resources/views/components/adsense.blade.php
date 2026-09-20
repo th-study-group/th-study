@@ -1,5 +1,5 @@
 @props([
-    'slot',
+    'adSlot',
     'format' => 'auto',
     'fullWidthResponsive' => false,
 ])
@@ -9,7 +9,7 @@
         {{ $attributes->merge(['class' => 'adsbygoogle']) }}
         style="display: block;"
         data-ad-client="{{ config('services.adsense.id') }}"
-        data-ad-slot="{{ $slot }}"
+        data-ad-slot="{{ $adSlot }}"
         data-ad-format="{{ $format }}"
         @if ($fullWidthResponsive) data-full-width-responsive="true" @endif></ins>
 @endif

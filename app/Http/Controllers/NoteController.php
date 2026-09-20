@@ -153,6 +153,9 @@ class NoteController extends Controller
             'adfitCommonSquareUnit' => config('adfit.common.square.unit'),
             'adfitCommonSquareWidth' => config('adfit.common.square.width'),
             'adfitCommonSquareHeight' => config('adfit.common.square.height'),
+            'adsenseNoteModalTopDisplayAdSlot' => config('adsense.units.note_modal_top_display.ad_slot'),
+            'adsenseNoteModalTopDisplayFormat' => config('adsense.units.note_modal_top_display.format'),
+            'adsenseNoteModalTopDisplayFullWidthResponsive' => config('adsense.units.note_modal_top_display.full_width_responsive'),
         ]);
     }
 
