@@ -873,6 +873,14 @@ function initializeAdsenseWhenReady(container) {
   container
     .querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])')
     .forEach(function(ad) {
+      if (
+        ad.matches('#blogDetailTagsMultiplexAd .adsbygoogle') &&
+        ad.dataset.adsenseVisibilityReady !== 'true'
+      ) {
+        initializeAdsenseWhenVisibleInDetailBody(ad);
+        return;
+      }
+
       if (ad.dataset.adsensePushQueued === 'true') {
         return;
       }
@@ -905,6 +913,52 @@ function initializeAdsenseWhenReady(container) {
 
       window.requestAnimationFrame(pushWhenWidthIsReady);
     });
+}
+
+function initializeAdsenseWhenVisibleInDetailBody(ad) {
+  if (!ad || ad.dataset.adsbygoogleStatus || ad.dataset.adsensePushQueued === 'true') {
+    return;
+  }
+
+  var detailBody = getBlogDetailBody().get(0);
+  if (!detailBody || ad.dataset.adsenseVisibilityWaiting === 'true') {
+    return;
+  }
+
+  function initialize() {
+    if (ad.dataset.adsbygoogleStatus || ad.dataset.adsensePushQueued === 'true') {
+      return;
+    }
+
+    ad.dataset.adsenseVisibilityWaiting = 'false';
+    ad.dataset.adsenseVisibilityReady = 'true';
+    initializeAdsenseWhenReady({
+      querySelectorAll: function() {
+        return [ad];
+      },
+    });
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    window.requestAnimationFrame(initialize);
+    return;
+  }
+
+  ad.dataset.adsenseVisibilityWaiting = 'true';
+  var observer = new IntersectionObserver(function(entries) {
+    if (!entries.some(function(entry) { return entry.isIntersecting; })) {
+      return;
+    }
+
+    observer.disconnect();
+    window.requestAnimationFrame(initialize);
+  }, {
+    root: detailBody,
+    rootMargin: '0px 0px 120px 0px',
+    threshold: 0.01,
+  });
+
+  observer.observe(ad);
 }
 
 function reportAdsenseModalStatus(ad) {

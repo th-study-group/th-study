@@ -151,18 +151,39 @@
   <script>
     $(function() {
 
-      document.querySelectorAll('.blog-show-ad .adsbygoogle').forEach(function (ad) {
-        if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus) {
-          return;
-        }
+      window.requestAnimationFrame(function () {
+        document.querySelectorAll('.blog-show-ad .adsbygoogle').forEach(function (ad) {
+          if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus) {
+            return;
+          }
 
-        ad.dataset.adsensePushQueued = 'true';
+          var attempts = 0;
+          var maxAttempts = 30;
 
-        try {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (error) {
-          console.warn('AdSense 광고 초기화에 실패했습니다.', error);
-        }
+          function pushWhenWidthIsReady() {
+            if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus) {
+              return;
+            }
+
+            if (ad.getBoundingClientRect().width <= 0) {
+              attempts += 1;
+              if (attempts < maxAttempts) {
+                window.requestAnimationFrame(pushWhenWidthIsReady);
+              }
+              return;
+            }
+
+            ad.dataset.adsensePushQueued = 'true';
+
+            try {
+              (window.adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (error) {
+              console.warn('AdSense 광고 초기화에 실패했습니다.', error);
+            }
+          }
+
+          pushWhenWidthIsReady();
+        });
       });
 
       const listUrl = "{{ $listUrl }}";
