@@ -249,7 +249,8 @@ MCP의 개별 조회 도구 10종은 컨트롤러 OpenAPI 속성으로 문서화
 
 - AdSense 공통 로더는 `resources/views/layouts/app.blade.php`에서 환경 설정값(`ADSENSE_ID`)이 있을 때만 한 번 로드합니다.
 - AdSense 발급자 ID는 `config/services.php`의 `ADSENSE_ID`로, 광고 단위는 `config/adsense.php`의 `units`에서 AdSense 화면의 이름을 키로 관리합니다. 수동 광고는 Controller가 해당 키의 최종 값을 전달해 `resources/views/components/adsense.blade.php`의 `<x-adsense>`로 출력합니다. 디스플레이 광고는 `ad-slot`과 `format`을 사용하며, 인피드·멀티플렉스 광고는 AdSense에서 발급한 `data-ad-layout`, `data-ad-layout-key` 등 추가 속성을 함께 전달합니다.
-- 블로그 목록의 상세 모달은 제목·작성일 아래, 본문 위에 `note_modal_top_display` 디스플레이 슬롯을 둡니다. 커스텀 모달이 열린 뒤 `public/js/blog.js`가 슬롯의 실제 폭을 확인해 0보다 클 때만 한 번 초기화하므로, 로더·슬롯을 중복 초기화하거나 폭 0 상태에서 push하지 않습니다.
+- 블로그 목록의 상세 모달은 제목·작성일 아래, 본문 위에 `note_modal_top_display` 디스플레이 슬롯을 둡니다. 애드센스 전용 래퍼와 `<ins>`에 `width: 100%`를 적용해 flex 레이아웃에서 폭 0으로 축소되지 않게 하고, 커스텀 모달이 열린 뒤 `public/js/blog.js`가 실제 폭을 확인해 0보다 클 때만 한 번 초기화합니다. 광고가 보이지 않으면 콘솔의 `[AdSense][Note Modal]` 로그에서 `offsetWidth`, `offsetHeight`, `data-ad-status`, `data-adsbygoogle-status`로 렌더링·미배정·미초기화 상태를 구분합니다.
+- 이 모달의 디스플레이 슬롯은 화면 폭별 가로형 크기를 사용합니다: 모바일은 가용 폭·100px 높이, 500px 이상은 468×60px, 800px 이상은 728×90px입니다. 자동 포맷 속성은 사용하지 않습니다.
 - Google이 생성한 iframe, 광고 DOM, 닫기·접기 UI는 사이트 CSS/JavaScript로 수정하지 않습니다.
 - iOS Safari/PWA의 광고 레이아웃 점검은 `agent_rules/adsense.md`의 safe-area·viewport·fixed UI 기준을 따릅니다.
 - `/portfolio`의 상세 정보는 자동 in-page 광고가 표 셀 레이아웃을 밀어내는 문제를 줄이기 위해 `table` 대신 `dl/dt/dd` 정보 목록으로 구성합니다.

@@ -10,7 +10,8 @@ Google AdSense 로더, 자동광고, 앵커·전면광고, 자동 in-page 광고
 
 - AdSense 공통 스크립트는 `resources/views/layouts/app.blade.php`에서 `ADSENSE_ID` 설정값이 있을 때 로드한다.
 - AdSense 발급자 ID는 `config/services.php`의 `ADSENSE_ID`로, 광고 단위는 `config/adsense.php`의 `units`에서 AdSense 화면의 이름을 키로 관리한다. 수동 광고 슬롯은 Controller가 해당 키의 최종 값을 전달하고, `resources/views/components/adsense.blade.php`의 `<x-adsense>`가 `ad-slot`, `format`으로 출력한다. 인피드·멀티플렉스에 필요한 `data-ad-layout`, `data-ad-layout-key` 등의 추가 속성은 컴포넌트 호출부에서 전달한다.
-- 개별 Blade에 Google 로더 스크립트를 중복 삽입하지 않는다. 커스텀 모달 등 동적 영역은 표시된 뒤 `requestAnimationFrame` 기준으로 광고 `<ins>`의 실제 폭이 0보다 큰 것을 확인한 뒤에만 초기화한다. `data-adsbygoogle-status` 또는 별도 초기화 표시가 있는 슬롯은 다시 push하지 않으며, 초기화된 슬롯이나 Google 로더를 다시 초기화하지 않는다.
+- 개별 Blade에 Google 로더 스크립트를 중복 삽입하지 않는다. 커스텀 모달 등 동적 영역은 표시된 뒤 `requestAnimationFrame` 기준으로 광고 `<ins>`의 실제 폭이 0보다 큰 것을 확인한 뒤에만 초기화한다. flex 레이아웃 안의 수동 광고는 전용 래퍼와 광고 `<ins>`에 `width: 100%`를 적용해 빈 flex item이 폭 0으로 축소되지 않게 한다. `data-adsbygoogle-status` 또는 별도 초기화 표시가 있는 슬롯은 다시 push하지 않으며, 초기화된 슬롯이나 Google 로더를 다시 초기화하지 않는다.
+- 모달에서 큰 자동 포맷이 부적절하면 `<ins>` 슬롯 자체에 화면 폭별 가로형 크기를 지정하고 `data-ad-format="auto"` 및 `data-full-width-responsive`를 함께 제거한다. iframe을 CSS로 자르거나 변형하지 않으며, 배너형 슬롯의 폭·높이는 광고 슬롯 자체에만 적용한다.
 - `resources/views/components/adfit.blade.php`의 광고는 Kakao AdFit이므로 AdSense 자동광고와 혼동하지 않는다.
 
 ## 3. 금지 사항
@@ -38,6 +39,7 @@ Google AdSense 로더, 자동광고, 앵커·전면광고, 자동 in-page 광고
 
 - AdSense 스크립트가 한 페이지에 한 번만 로드되는지 확인한다.
 - 모달·동적 영역의 수동 광고는 최초 표시와 다른 콘텐츠를 연속으로 열 때 콘솔 오류나 동일 슬롯의 중복 초기화가 없는지 확인한다.
+- 수동 광고가 보이지 않으면 해당 `<ins>`의 `offsetWidth`, `offsetHeight`, `data-ad-status`, `data-adsbygoogle-status`를 함께 확인한다. `filled`는 Google 렌더링 완료, `unfilled`는 광고 미배정, 상태 속성 부재는 미초기화 또는 초기화 대기 상태로 구분한다.
 - iPhone Safari와 standalone PWA에서 status bar/header, home indicator/fixed UI, 세로·가로 회전을 확인한다.
 - 광고 표시·종료 뒤에도 사이트 자체 modal/offcanvas가 없으면 body의 `overflow`, `touch-action`, `modal-open`이 남지 않는지 확인한다.
 - 데스크톱에서 footer와 하단 앵커광고가 동시에 보일 때 사이트 UI가 가려지지 않는지 확인한다.

@@ -1,6 +1,6 @@
 @props([
     'adSlot',
-    'format' => 'auto',
+    'format' => null,
     'fullWidthResponsive' => false,
 ])
 
@@ -10,6 +10,6 @@
         style="display: block;"
         data-ad-client="{{ config('services.adsense.id') }}"
         data-ad-slot="{{ $adSlot }}"
-        data-ad-format="{{ $format }}"
+        @if ($format) data-ad-format="{{ $format }}" @endif
         @if ($fullWidthResponsive) data-full-width-responsive="true" @endif></ins>
 @endif

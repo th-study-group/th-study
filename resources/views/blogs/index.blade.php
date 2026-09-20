@@ -8,26 +8,6 @@
 @section('og_type', 'website')
 @section('canonical_url', $canonicalUrl)
 
-@section('style')
-  <style>
-    .blog-detail-ad {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-    }
-
-    .blog-detail-adsense {
-      display: block;
-    }
-
-    .blog-detail-adsense .adsbygoogle {
-      display: block;
-      width: 100%;
-    }
-  </style>
-@endsection
-
 @push('styles')
   <link href="{{ $blogCssUrl }}" rel="stylesheet" />
 @endpush
@@ -283,6 +263,7 @@
 
         <div class="blog-detail-ad blog-detail-adsense text-center my-3">
           <x-adsense
+            class="blog-detail-adsense-slot"
             :ad-slot="$adsenseNoteModalTopDisplayAdSlot"
             :format="$adsenseNoteModalTopDisplayFormat"
             :full-width-responsive="$adsenseNoteModalTopDisplayFullWidthResponsive" />

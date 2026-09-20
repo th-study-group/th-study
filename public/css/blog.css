@@ -1569,6 +1569,45 @@
     overscroll-behavior: contain;
   }
 
+  .blog-detail-ad {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .blog-detail-adsense {
+    display: block;
+  }
+
+  .blog-detail-adsense .adsbygoogle {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .blog-detail-adsense-slot {
+    width: 100%;
+    height: 100px;
+  }
+
+  @media (min-width: 500px) {
+    .blog-detail-adsense-slot {
+      width: 468px;
+      height: 60px;
+    }
+  }
+
+  @media (min-width: 800px) {
+    .blog-detail-adsense-slot {
+      width: 728px;
+      height: 90px;
+    }
+  }
+
   .blog-detail-title-row {
     display: flex;
     align-items: flex-start;
