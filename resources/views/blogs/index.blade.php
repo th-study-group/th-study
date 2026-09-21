@@ -386,6 +386,11 @@
       );
       const canManageVisibility = {{ $canManageVisibilityJavascript }};
       window.blogCanManageVisibility = canManageVisibility;
+      window.blogLoadMoreDisplayAd = {
+        enabled: {{ $adsenseBlogLoadMoreDisplayEnabled ? 'true' : 'false' }},
+        client: @json($adsenseClientId),
+        slot: @json($adsenseBlogLoadMoreDisplayAdSlot),
+      };
 
 
       const formatRefreshDateTime = function(date) {

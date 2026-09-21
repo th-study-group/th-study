@@ -30,6 +30,11 @@ return [
             'ad_slot' => '8243516128',
             'format' => 'autorelaxed',
         ],
+        'blog_load_more_display' => [
+            'ad_slot' => '1153020246',
+            'format' => 'auto',
+            'full_width_responsive' => true,
+        ],
         'common_top_display' => [
             'ad_slot' => '3546557361',
             'format' => 'auto',

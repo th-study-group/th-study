@@ -204,6 +204,34 @@ function createBlogListItemHtml(item) {
   `;
 }
 
+function getBlogLoadMoreDisplayAdHtml(items) {
+  const adConfig = window.blogLoadMoreDisplayAd || {};
+  const client = String(adConfig.client || '').trim();
+  const slot = String(adConfig.slot || '').trim();
+
+  if (adConfig.enabled !== true || !client || !slot || !Array.isArray(items) || items.length < 4) {
+    return null;
+  }
+
+  const lastEligiblePosition = Math.min(7, items.length);
+  const position = Math.floor(Math.random() * (lastEligiblePosition - 4 + 1)) + 4;
+
+  return {
+    position: position,
+    html: `
+      <div class="blog-load-more-display-ad text-center my-3">
+        <ins
+          class="adsbygoogle blog-load-more-display-slot"
+          style="display: block;"
+          data-ad-client="${escapeHtmlText(client)}"
+          data-ad-slot="${escapeHtmlText(slot)}"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      </div>
+    `,
+  };
+}
+
 function renderBlogListItems($container, items, shouldAppend) {
   if (!shouldAppend) {
     $container.empty();
@@ -216,7 +244,13 @@ function renderBlogListItems($container, items, shouldAppend) {
     return;
   }
 
-  const html = items.map(createBlogListItemHtml).join('');
+  const loadMoreAd = shouldAppend ? getBlogLoadMoreDisplayAdHtml(items) : null;
+  const html = items.map(function(item, index) {
+    const position = index + 1;
+    const adHtml = loadMoreAd && position === loadMoreAd.position ? loadMoreAd.html : '';
+
+    return adHtml + createBlogListItemHtml(item);
+  }).join('');
   if (shouldAppend) {
     $container.append(html);
     return;
@@ -812,6 +846,9 @@ function fetchBlogListPage(state, page, shouldAppend) {
       state.pagination = pagination;
 
       renderBlogListItems(state.$items, items, shouldAppend);
+      if (isAppendLoad) {
+        initializeAdsenseWhenReady(state.$items.get(0));
+      }
       updateBlogMoreButton(state.$moreWrap, pagination);
       $('#blog_list_total').text(`총 ${Number(pagination.total || 0)}건`);
       $('#blogRefreshTime')

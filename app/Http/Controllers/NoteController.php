@@ -161,6 +161,9 @@ class NoteController extends Controller
             'adsenseNoteModalRelatedInArticleLayout' => config('adsense.units.note_modal_related_in_article.layout'),
             'adsenseNoteModalTagsMultiplexAdSlot' => config('adsense.units.note_modal_tags_multiplex.ad_slot'),
             'adsenseNoteModalTagsMultiplexFormat' => config('adsense.units.note_modal_tags_multiplex.format'),
+            'adsenseClientId' => config('services.adsense.id'),
+            'adsenseBlogLoadMoreDisplayEnabled' => (bool) config('services.adsense.id'),
+            'adsenseBlogLoadMoreDisplayAdSlot' => config('adsense.units.blog_load_more_display.ad_slot'),
         ]);
     }
 
