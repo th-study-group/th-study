@@ -52,6 +52,12 @@ function thShowPwaSplash() {
         return;
     }
 
+    // 로그인 직후 대시보드는 로그인 화면의 전환 로딩을 이어받으므로
+    // 1.2초 지연되는 PWA splash를 다시 표시하지 않는다.
+    if (window.JUST_LOGGED_IN === true) {
+        return;
+    }
+
     if (!thShouldShowSplashInSession()) {
         return;
     }
