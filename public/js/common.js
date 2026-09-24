@@ -336,6 +336,7 @@ function runInitialEntryLoading(loadingModal)
     // DOMContentLoaded 이후 실제 DOM 반영과 첫 페인트가 끝난 다음 종료한다.
     // 고정 지연으로 화면을 가리거나 데이터 반영 전에 숨기지 않는다.
     const finishInitialLoading = function () {
+        document.documentElement.classList.remove('login-transition-loading');
         if (typeof window.hideLoading === 'function') {
             window.hideLoading();
         } else {

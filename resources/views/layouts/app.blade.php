@@ -73,6 +73,43 @@
             window.JUST_LOGGED_IN = {{ session('just_logged_in') ? 'true' : 'false' }};
         </script>
 
+        @if (session('just_logged_in'))
+            <style>
+                html.login-transition-loading body > * {
+                    visibility: hidden;
+                }
+
+                html.login-transition-loading::before {
+                    content: '';
+                    position: fixed;
+                    z-index: 2147483647;
+                    inset: 0;
+                    background: rgba(255, 255, 255, .82);
+                    backdrop-filter: blur(4px);
+                }
+
+                html.login-transition-loading::after {
+                    content: '';
+                    position: fixed;
+                    z-index: 2147483648;
+                    top: 50%;
+                    left: 50%;
+                    width: 2rem;
+                    height: 2rem;
+                    margin: -1rem;
+                    border: .25rem solid rgba(13, 110, 253, .25);
+                    border-top-color: #0d6efd;
+                    border-radius: 50%;
+                    animation: login-transition-spin .75s linear infinite;
+                }
+
+                @keyframes login-transition-spin {
+                    to { transform: rotate(360deg); }
+                }
+            </style>
+            <script>document.documentElement.classList.add('login-transition-loading');</script>
+        @endif
+
         {{-- 공통 및 외부 라이브러리 스크립트 --}}
         @include('partials.head-scripts')
 
