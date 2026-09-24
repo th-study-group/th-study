@@ -292,7 +292,7 @@ function initInitialEntryLoading(loadingModal)
     } catch (e) {}
 
     // PWA splash가 초기 진입을 담당하는 동안 공통 로딩을 겹쳐 표시하지 않는다.
-    if (window.__thSplashVisible === true && window.JUST_LOGGED_IN !== true) {
+    if (window.__thSplashVisible === true) {
         return;
     }
 
@@ -314,7 +314,7 @@ function runInitialEntryLoading(loadingModal)
 
     // 로그인 직후 대시보드는 splash 종료 후에도 서버 렌더링 결과가
     // 화면에 반영될 때까지 공통 로딩을 유지한다.
-    if (isStandalonePwa && window.JUST_LOGGED_IN !== true) {
+    if (isStandalonePwa) {
         return;
     }
 
@@ -333,24 +333,13 @@ function runInitialEntryLoading(loadingModal)
         return;
     }
 
-    // DOMContentLoaded 이후 실제 DOM 반영과 첫 페인트가 끝난 다음 종료한다.
-    // 고정 지연으로 화면을 가리거나 데이터 반영 전에 숨기지 않는다.
-    const finishInitialLoading = function () {
-        document.documentElement.classList.remove('login-transition-loading');
+    setTimeout(function () {
         if (typeof window.hideLoading === 'function') {
             window.hideLoading();
         } else {
             loadingModal.hide();
         }
-    };
-
-    if (typeof window.requestAnimationFrame === 'function') {
-        window.requestAnimationFrame(function () {
-            window.requestAnimationFrame(finishInitialLoading);
-        });
-    } else {
-        finishInitialLoading();
-    }
+    }, 700);
 }
 
 function initGlobalNavigationLoading()
