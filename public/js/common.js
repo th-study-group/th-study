@@ -282,11 +282,17 @@ function initInitialEntryLoading(loadingModal)
         return;
     }
 
-    // PWA 스플래시가 표시 중이면 끝난 뒤에 짧게 로딩 표시
-    if (window.__thSplashVisible === true) {
-        window.addEventListener('th:splash:hidden', function () {
-            runInitialEntryLoading(loadingModal);
-        }, { once: true });
+    // 출발 페이지에서 이미 전환 로딩을 표시한 경우 도착 페이지에서는
+    // 초기 로딩을 다시 표시하지 않는다.
+    try {
+        if (sessionStorage.getItem('th_navigation_loading_started') === '1') {
+            sessionStorage.removeItem('th_navigation_loading_started');
+            return;
+        }
+    } catch (e) {}
+
+    // PWA splash가 초기 진입을 담당하는 동안 공통 로딩을 겹쳐 표시하지 않는다.
+    if (window.__thSplashVisible === true && window.JUST_LOGGED_IN !== true) {
         return;
     }
 
@@ -306,7 +312,9 @@ function runInitialEntryLoading(loadingModal)
         || !!(window.matchMedia
             && window.matchMedia('(display-mode: standalone)').matches);
 
-    if (isStandalonePwa) {
+    // 로그인 직후 대시보드는 splash 종료 후에도 서버 렌더링 결과가
+    // 화면에 반영될 때까지 공통 로딩을 유지한다.
+    if (isStandalonePwa && window.JUST_LOGGED_IN !== true) {
         return;
     }
 
@@ -325,13 +333,23 @@ function runInitialEntryLoading(loadingModal)
         return;
     }
 
-    setTimeout(function () {
+    // DOMContentLoaded 이후 실제 DOM 반영과 첫 페인트가 끝난 다음 종료한다.
+    // 고정 지연으로 화면을 가리거나 데이터 반영 전에 숨기지 않는다.
+    const finishInitialLoading = function () {
         if (typeof window.hideLoading === 'function') {
             window.hideLoading();
         } else {
             loadingModal.hide();
         }
-    }, 700);
+    };
+
+    if (typeof window.requestAnimationFrame === 'function') {
+        window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(finishInitialLoading);
+        });
+    } else {
+        finishInitialLoading();
+    }
 }
 
 function initGlobalNavigationLoading()
@@ -394,6 +412,9 @@ function initGlobalNavigationLoading()
         }
 
         navigationStarted = true;
+        try {
+            sessionStorage.setItem('th_navigation_loading_started', '1');
+        } catch (e) {}
         if (typeof window.showLoading === 'function') {
             window.showLoading();
         }
