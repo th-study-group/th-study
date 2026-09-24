@@ -674,15 +674,6 @@
       };
 
       const startBlogPageNavigation = function() {
-        const isStandalonePwa = (typeof window.navigator.standalone !== 'undefined'
-          && window.navigator.standalone === true)
-          || !!(window.matchMedia
-            && window.matchMedia('(display-mode: standalone)').matches);
-
-        if (!isStandalonePwa) {
-          return;
-        }
-
         if (typeof window.showLoading === 'function') {
           window.showLoading();
         }
