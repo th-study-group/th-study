@@ -375,10 +375,6 @@ function initGlobalNavigationLoading()
             return false;
         }
 
-        if (url.pathname === window.location.pathname && url.search === window.location.search) {
-            return false;
-        }
-
         return !/\.(?:avif|bmp|gif|jpe?g|png|svg|webp)$/i.test(url.pathname);
     }
 
