@@ -118,9 +118,6 @@
             });
 
             $("#form_login").on('submit', function() {
-                if (typeof window.showLoading === 'function') {
-                    window.showLoading();
-                }
                 $("#btn_login").prop('disabled', true);
             });
         });

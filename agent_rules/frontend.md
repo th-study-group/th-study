@@ -57,6 +57,8 @@
 - 저장 form은 화면별 `isSubmitting` 상태와 submit button disable로 중복 제출을 막는 구현이 있다. 유사한 저장 form에는 기존 패턴을 따른다.
 - 삭제·공개 여부 변경 등 위험한 동작은 기존 화면처럼 `confirm()` 후 AJAX 또는 form submit을 수행한다.
 - `common.js`에는 loading modal, table 가로 드래그, 날짜 선택기, offcanvas/overlay 정리, 공유 기능이 있다. 같은 동작은 새 중복 구현보다 기존 helper 사용을 우선 검토한다.
+- 로그인 form 제출과 도착 페이지의 초기화에서 loading UI를 동시에 시작하지 않는다. 로그인→대시보드처럼 도착 페이지의 렌더링 완료를 기준으로 종료해야 하는 전환은 도착 페이지 초기 로딩을 단일 담당으로 사용한다.
+- `showLoading()`과 `hideLoading()`은 호출 수와 소유 흐름을 함께 확인하여 중복 표시나 로딩 고착을 방지한다. 중복 제출 방지는 submit 버튼 비활성화로 처리하되, 별도의 중복 loading 호출을 추가하지 않는다.
 - 공통 맨 위로 버튼은 `common.js`의 거리 기반 애니메이션을 사용하고, `prefers-reduced-motion` 환경에서는 즉시 이동한다.
 
 ## 8. 이미지와 기능 전용 UI
