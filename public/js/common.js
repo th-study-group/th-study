@@ -306,9 +306,7 @@ function runInitialEntryLoading(loadingModal)
         || !!(window.matchMedia
             && window.matchMedia('(display-mode: standalone)').matches);
 
-    // 로그인 직후 대시보드는 splash 종료 후에도 서버 렌더링 결과가
-    // 화면에 반영될 때까지 공통 로딩을 유지한다.
-    if (isStandalonePwa && window.JUST_LOGGED_IN !== true) {
+    if (isStandalonePwa) {
         return;
     }
 
