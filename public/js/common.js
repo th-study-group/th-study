@@ -282,17 +282,11 @@ function initInitialEntryLoading(loadingModal)
         return;
     }
 
-    // 출발 페이지에서 이미 전환 로딩을 표시한 경우 도착 페이지에서는
-    // 초기 로딩을 다시 표시하지 않는다.
-    try {
-        if (sessionStorage.getItem('th_navigation_loading_started') === '1') {
-            sessionStorage.removeItem('th_navigation_loading_started');
-            return;
-        }
-    } catch (e) {}
-
-    // PWA splash가 초기 진입을 담당하는 동안 공통 로딩을 겹쳐 표시하지 않는다.
+    // PWA 스플래시가 표시 중이면 끝난 뒤에 짧게 로딩 표시
     if (window.__thSplashVisible === true) {
+        window.addEventListener('th:splash:hidden', function () {
+            runInitialEntryLoading(loadingModal);
+        }, { once: true });
         return;
     }
 
@@ -402,12 +396,6 @@ function initGlobalNavigationLoading()
         }
 
         navigationStarted = true;
-        try {
-            sessionStorage.setItem('th_navigation_loading_started', '1');
-        } catch (e) {}
-        if (typeof window.showLoading === 'function') {
-            window.showLoading();
-        }
     });
 
     window.addEventListener('pageshow', resetNavigationLoading);

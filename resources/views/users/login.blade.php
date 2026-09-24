@@ -118,12 +118,6 @@
             });
 
             $("#form_login").on('submit', function() {
-                try {
-                    sessionStorage.setItem('th_navigation_loading_started', '1');
-                } catch (e) {}
-                if (typeof window.showLoading === 'function') {
-                    window.showLoading();
-                }
                 $("#btn_login").prop('disabled', true);
             });
         });
