@@ -673,12 +673,6 @@
         return nextUrl;
       };
 
-      const startBlogPageNavigation = function() {
-        if (typeof window.showLoading === 'function') {
-          window.showLoading();
-        }
-      };
-
       const $descToggle = $("#blogDescToggle");
       const $descTooltip = $("#blogDescTooltip");
       if ($descToggle.length && $descTooltip.length) {
@@ -765,17 +759,12 @@
         closeFilterSheet();
 
         if (nextUrl !== currentUrl) {
-          startBlogPageNavigation();
           window.location.href = nextUrl;
         }
       });
 
       $("#btn_search").on("click", function() {
         $("#form_search").trigger("submit");
-      });
-
-      $("#form_search").on("submit", function() {
-        startBlogPageNavigation();
       });
 
       $searchTypeToggle.on("click", function(e) {
@@ -817,7 +806,6 @@
         $("#topic_filter").val("");
         $("#search_keyword").val("");
         updateFilterSummary();
-        startBlogPageNavigation();
         window.location.href = buildCategoryUrl('', '');
       });
 
