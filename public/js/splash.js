@@ -52,9 +52,9 @@ function thShowPwaSplash() {
         return;
     }
 
-    // 로그인 직후 대시보드는 로그인 화면의 전환 로딩을 이어받으므로
-    // 1.2초 지연되는 PWA splash를 다시 표시하지 않는다.
-    if (window.JUST_LOGGED_IN === true) {
+    // 인증 전환은 앱 최초 실행이 아니므로 앱 시작용 splash를 표시하지 않는다.
+    // 로그인/로그아웃은 공통 전환 로딩이 담당한다.
+    if (window.JUST_LOGGED_IN === true || window.JUST_LOGGED_OUT === true) {
         return;
     }
 
