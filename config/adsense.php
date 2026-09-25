@@ -4,6 +4,7 @@ return [
     'disabled_route_name_patterns' => [
         '*.create*',
         '*.edit',
+        'admins.*',
     ],
     'units' => [
         'note_page_top_display' => [
