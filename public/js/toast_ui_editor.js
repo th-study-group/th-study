@@ -85,13 +85,23 @@ window.initToastUiEditor = function (options) {
         toolbarItems: config.toolbarItems || getToastEditorDefaultToolbarItems()
     });
 
+    var isSanitizing = false;
+
     function syncEditorSource() {
-        if (!sourceEl) {
+        if (!sourceEl || isSanitizing) {
             return;
         }
 
         var currentHtml = editor.getHTML();
-        sourceEl.value = sanitizeToastEditorHtml(currentHtml);
+        var sanitizedHtml = sanitizeToastEditorHtml(currentHtml);
+
+        if (sanitizedHtml !== currentHtml && typeof editor.setHTML === 'function') {
+            isSanitizing = true;
+            editor.setHTML(sanitizedHtml, false);
+            isSanitizing = false;
+        }
+
+        sourceEl.value = sanitizedHtml;
     }
 
     if (hasInitialHtml && typeof editor.setHTML === 'function') {
@@ -110,6 +120,14 @@ window.initToastUiEditor = function (options) {
                 syncEditorSource();
             }, true);
         }
+
+        var editorObserver = new MutationObserver(function () {
+            syncEditorSource();
+        });
+        editorObserver.observe(editorEl, {
+            childList: true,
+            subtree: true,
+        });
     }
 
     return editor;
