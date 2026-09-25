@@ -5,6 +5,10 @@ return [
         '*.create*',
         '*.edit',
         'admins.*',
+        'login',
+        'register.form',
+        'password.find.account',
+        'password.reset.mail',
     ],
     'units' => [
         'note_page_top_display' => [
