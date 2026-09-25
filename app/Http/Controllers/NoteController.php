@@ -11,7 +11,6 @@ use App\Http\Requests\Notes\UpdateNoteRequest;
 use App\Http\Requests\Notes\UpdateNoteUseFlagRequest;
 use App\Models\Note;
 use App\Services\NoteService;
-use App\Support\EditorContentProcessor;
 use Illuminate\Support\Str;
 use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
@@ -25,8 +24,7 @@ use Illuminate\View\View;
 class NoteController extends Controller
 {
     public function __construct(
-        private NoteService $noteService,
-        private EditorContentProcessor $editorContentProcessor
+        private NoteService $noteService
     ) {}
 
     /**
@@ -376,10 +374,6 @@ class NoteController extends Controller
         $hasSavedThumbnail = $savedThumbnailPath !== '';
         $existingTags = ($note->tags ?? collect())->pluck('name')->values()->all();
         $initialTagsValue = old('tags', implode(',', $existingTags));
-        $editorContent = $this->editorContentProcessor->sanitizeForEditor(
-            (string) old('content', $note->content ?? '')
-        );
-        $note->content = $editorContent;
 
         return view("{$noteGroup}.create", [
             'group' => $noteGroup,
