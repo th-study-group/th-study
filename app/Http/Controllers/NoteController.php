@@ -320,9 +320,6 @@ class NoteController extends Controller
             'group' => $noteGroup,
             'slug' => $slug,
             'note' => null,
-            'editorContent' => $this->editorContentProcessor->sanitizeForEditor(
-                (string) old('content', '')
-            ),
             'formAction' => route("{$noteGroup}.store", ['slug' => $slug]),
             'categories' => $categories,
             'topics' => $topics,
@@ -382,12 +379,12 @@ class NoteController extends Controller
         $editorContent = $this->editorContentProcessor->sanitizeForEditor(
             (string) old('content', $note->content ?? '')
         );
+        $note->content = $editorContent;
 
         return view("{$noteGroup}.create", [
             'group' => $noteGroup,
             'slug' => $slug,
             'note' => $note,
-            'editorContent' => $editorContent,
             'categories' => $categories,
             'topics' => $topics,
             'formAction' => route("{$noteGroup}.update", ['slug' => $slug, 'idx' => $idx]),
