@@ -5,19 +5,19 @@
 @section('content')
     <section class="col-12 col-lg-8 mx-auto">
         <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm">
-            <div class="board-head d-flex flex-column gap-2 gap-lg-3">
-                <div>
-                    <h2 class="board-title h5 mb-1">상세내역</h2>
-                    <p class="text-secondary small mb-0">문의 내용을 확인할 수 있습니다.</p>
-                </div>
-            </div>
-
             <div class="inquiry-show-top-display-ad text-center my-3">
                 <x-adsense
                     class="inquiry-show-top-display-ad-slot"
                     :ad-slot="config('adsense.units.common_top_display.ad_slot')"
                     :format="config('adsense.units.common_top_display.format')"
                     :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+            </div>
+
+            <div class="board-head d-flex flex-column gap-2 gap-lg-3">
+                <div>
+                    <h2 class="board-title h5 mb-1">상세내역</h2>
+                    <p class="text-secondary small mb-0">문의 내용을 확인할 수 있습니다.</p>
+                </div>
             </div>
 
             <div class="mt-3">

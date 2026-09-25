@@ -5,6 +5,14 @@
 @section('content')
     <section class="col-12 col-lg-8 mx-auto">
         <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm">
+            <div class="inquiry-top-display-ad text-center my-3">
+                <x-adsense
+                    class="inquiry-top-display-ad-slot"
+                    :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+                    :format="config('adsense.units.common_top_display.format')"
+                    :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+            </div>
+
             <div class="board-head d-flex flex-column gap-2 gap-lg-3">
                 <div class="d-flex align-items-start justify-content-between gap-2 board-head-top">
                     <div class="flex-grow-1 board-min-w-0 board-head-text">
@@ -14,15 +22,9 @@
                     <a href="{{ route('inquiries.create') }}" class="btn btn-dark btn-sm text-nowrap">문의하기</a>
                 </div>
 
-                <div class="inquiry-top-display-ad text-center my-3">
-                    <x-adsense
-                        class="inquiry-top-display-ad-slot"
-                        :ad-slot="config('adsense.units.common_top_display.ad_slot')"
-                        :format="config('adsense.units.common_top_display.format')"
-                        :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
-                </div>
+            </div>
 
-                <div class="board-filter-box">
+            <div class="board-filter-box">
                     <div class="d-flex align-items-center justify-content-between gap-2">
                         <h3 class="board-filter-title small text-secondary mb-0">검색조건 설정</h3>
                         <button class="board-filter-toggle btn btn-outline-secondary btn-sm collapsed"
@@ -68,7 +70,6 @@
                         </form>
                     </div>
                 </div>
-            </div>
 
             <div class="board-table-wrap mt-3">
                 <table id="inquiry_table" class="table table-bordered table-hover align-middle mb-0 board-table">
