@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'disabled_route_name_patterns' => [
+        '*.create*',
+        '*.edit',
+    ],
     'units' => [
         'note_page_top_display' => [
             'ad_slot' => '5114045045',

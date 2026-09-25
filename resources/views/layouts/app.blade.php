@@ -8,7 +8,7 @@
         <meta name="naver-site-verification" content="2a350b8a4be67f3a443b1eafc451fe588a8ee0b5" />
 
         {{-- 구글 애드센스 --}}
-        @if (config('services.adsense.id'))
+        @if (config('services.adsense.id') && ! request()->routeIs(...config('adsense.disabled_route_name_patterns', [])))
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ config('services.adsense.id') }}" crossorigin="anonymous"></script>
         @endif
 

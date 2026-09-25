@@ -22,6 +22,55 @@ class EditorContentProcessor
         return $this->sanitizeHtml($this->normalizeUtf8($content));
     }
 
+    public function sanitizeForEditor(string $content): string
+    {
+        $content = trim($this->normalizeUtf8($content));
+
+        if ($content === '' || ! class_exists(\DOMDocument::class)) {
+            return $content;
+        }
+
+        $doc = new \DOMDocument('1.0', 'UTF-8');
+        $previousInternalErrors = libxml_use_internal_errors(true);
+        $loadHtml = '<?xml encoding="UTF-8"><!doctype html><html><body>' . $content . '</body></html>';
+        if (function_exists('mb_convert_encoding')) {
+            $loadHtml = mb_convert_encoding($loadHtml, 'HTML-ENTITIES', 'UTF-8');
+        }
+        $doc->loadHTML($loadHtml, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previousInternalErrors);
+
+        $xpath = new \DOMXPath($doc);
+        $nodes = $xpath->query(
+            '//iframe | //script | //ins[contains(concat(" ", normalize-space(@class), " "), " adsbygoogle ")]'
+            . ' | //*[@data-ad-client or @data-ad-slot or @data-ad-format or @data-ad-layout]'
+            . ' | //*[@id and (contains(translate(@id, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "adsense")'
+            . ' or contains(translate(@id, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "adfit"))]'
+            . ' | //*[@class and (contains(concat(" ", normalize-space(@class), " "), " adsbygoogle ")'
+            . ' or contains(concat(" ", normalize-space(@class), " "), " google-auto-placed ")'
+            . ' or contains(concat(" ", normalize-space(@class), " "), " adsense ")'
+            . ' or contains(concat(" ", normalize-space(@class), " "), " adfit "))]'
+        );
+
+        if ($nodes) {
+            foreach ($nodes as $node) {
+                $node->parentNode?->removeChild($node);
+            }
+        }
+
+        $body = $doc->getElementsByTagName('body')->item(0);
+        if (! $body) {
+            return '';
+        }
+
+        $result = '';
+        foreach ($body->childNodes as $childNode) {
+            $result .= $doc->saveHTML($childNode);
+        }
+
+        return trim($result);
+    }
+
     public function toRenderableHtml(string $content): string
     {
         $content = $this->normalizeUtf8($content);
