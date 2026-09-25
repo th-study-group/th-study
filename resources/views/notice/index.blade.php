@@ -4,6 +4,14 @@
 
 @section('content')
     <section class="col-12 col-lg-8 mx-auto">
+        <div class="notice-index-top-display-ad text-center my-3">
+            <x-adsense
+                class="notice-index-top-display-ad-slot"
+                :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+                :format="config('adsense.units.common_top_display.format')"
+                :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+        </div>
+
         <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm">
             <div class="board-head d-flex flex-column gap-2 gap-lg-3">
                 <div class="d-flex align-items-start justify-content-between gap-2 board-head-top">
@@ -12,20 +20,6 @@
                         <p class="text-secondary small mb-0 board-ellipsis-mobile">{{ config('app.name') }} 공지사항 전달해드려요</p>
                     </div>
                 </div>
-            </div>
-
-            <div class="text-center my-3 d-block d-md-none">
-                <x-adfit
-                    :unit="config('adfit.mobile.rectangle.unit')"
-                    :width="config('adfit.mobile.rectangle.width')"
-                    :height="config('adfit.mobile.rectangle.height')" />
-            </div>
-
-            <div class="text-center my-3 d-none d-md-block">
-                <x-adfit
-                    :unit="config('adfit.pc.rectangle.unit')"
-                    :width="config('adfit.pc.rectangle.width')"
-                    :height="config('adfit.pc.rectangle.height')" />
             </div>
 
             <div class="board-table-wrap mt-3">
@@ -81,7 +75,7 @@
     <script>
         $(function(){
             window.requestAnimationFrame(function () {
-                document.querySelectorAll('.notice-index-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
+                document.querySelectorAll('.notice-index-top-display-ad .adsbygoogle, .notice-index-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
                     if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
                         return;
                     }

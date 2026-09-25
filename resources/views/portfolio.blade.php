@@ -50,6 +50,14 @@
   </div>
 </header>
 
+<div class="portfolio-top-display-ad text-center my-3">
+  <x-adsense
+    class="portfolio-top-display-ad-slot"
+    :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+    :format="config('adsense.units.common_top_display.format')"
+    :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+</div>
+
 <section class="section">
   <div class="container">
     <div class="row g-4">
@@ -158,6 +166,14 @@
     </div>
   </div>
 </section>
+
+<div class="portfolio-in-article-ad text-center my-3">
+  <x-adsense
+    class="portfolio-in-article-ad-slot"
+    :ad-slot="config('adsense.units.common_content_in_article.ad_slot')"
+    :format="config('adsense.units.common_content_in_article.format')"
+    :data-ad-layout="config('adsense.units.common_content_in_article.layout')" />
+</div>
 
 <section id="note-module" class="section">
   <div class="container">
@@ -998,8 +1014,32 @@ php artisan l5-swagger:generate</code></pre>
 </section>
 
 </main>
+
+<div class="portfolio-bottom-multiplex-ad text-center my-3">
+  <x-adsense
+    class="portfolio-bottom-multiplex-ad-slot"
+    :ad-slot="config('adsense.units.common_bottom_multiplex.ad_slot')"
+    :format="config('adsense.units.common_bottom_multiplex.format')" />
+</div>
 @endsection
 
 @push('scripts')
     <script src="{{ asset('js/intro/portfolio.js') }}" defer></script>
+    <script>
+        window.requestAnimationFrame(function () {
+            document.querySelectorAll('.portfolio-top-display-ad .adsbygoogle, .portfolio-in-article-ad .adsbygoogle, .portfolio-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
+                if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
+                    return;
+                }
+
+                ad.dataset.adsensePushQueued = 'true';
+
+                try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                } catch (error) {
+                    console.warn('AdSense portfolio display ad initialization failed.', error);
+                }
+            });
+        });
+    </script>
 @endpush
