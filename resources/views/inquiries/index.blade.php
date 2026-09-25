@@ -3,6 +3,14 @@
 @section('title', '문의내역')
 
 @section('content')
+    <div class="inquiry-top-display-ad text-center my-3">
+        <x-adsense
+            class="inquiry-top-display-ad-slot"
+            :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+            :format="config('adsense.units.common_top_display.format')"
+            :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+    </div>
+
     <section class="col-12 col-lg-8 mx-auto">
         <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm">
             <div class="board-head d-flex flex-column gap-2 gap-lg-3">
@@ -116,6 +124,14 @@
             </nav>
         </div>
     </section>
+
+    <div class="inquiry-bottom-in-article-ad text-center my-3">
+        <x-adsense
+            class="inquiry-bottom-in-article-ad-slot"
+            :ad-slot="config('adsense.units.common_content_in_article.ad_slot')"
+            :format="config('adsense.units.common_content_in_article.format')"
+            :data-ad-layout="config('adsense.units.common_content_in_article.layout')" />
+    </div>
 @endsection
 
 @push('scripts')
@@ -124,6 +140,22 @@
 
 @section('script')
     <script>
+        window.requestAnimationFrame(function () {
+            document.querySelectorAll('.inquiry-top-display-ad .adsbygoogle, .inquiry-bottom-in-article-ad .adsbygoogle').forEach(function (ad) {
+                if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
+                    return;
+                }
+
+                ad.dataset.adsensePushQueued = 'true';
+
+                try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                } catch (error) {
+                    console.warn('AdSense inquiry page ad initialization failed.', error);
+                }
+            });
+        });
+
         $(function(){
             const today = new Date();
             const oneYearAgo = new Date();
