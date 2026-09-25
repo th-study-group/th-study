@@ -16,6 +16,13 @@
   <div id="blogIndexPageShell" class="blog-index-page-shell col-lg-10 content-col blog-page-scope">
     <main>
       <section class="board-card blog-list-page p-3 p-lg-4 rounded-3 shadow-sm">
+        <div class="blog-index-top-display-ad text-center mb-3">
+          <x-adsense
+            class="blog-index-top-display-ad-slot"
+            :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+            :format="config('adsense.units.common_top_display.format')"
+            :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+        </div>
         <div class="blog-list-head">
         <div class="d-flex align-items-center justify-content-between gap-2 blog-list-title-row">
           <div class="blog-list-title-wrap">
@@ -212,6 +219,12 @@
         <div class="blog-more-wrap">
           <button type="button" class="btn_more blog-more-btn">+ 목록 더보기</button>
         </div>
+        <div class="blog-index-bottom-multiplex-ad text-center mt-3">
+          <x-adsense
+            class="blog-index-bottom-multiplex-ad-slot"
+            :ad-slot="config('adsense.units.common_bottom_multiplex.ad_slot')"
+            :format="config('adsense.units.common_bottom_multiplex.format')" />
+        </div>
       </section>
 
       <div class="blog-fab-wrap" id="blogFabWrap">
@@ -226,13 +239,6 @@
         </button>
       </div>
     </main>
-  </div>
-
-  <div class="blog-index-bottom-multiplex-ad text-center my-3">
-    <x-adsense
-      class="blog-index-bottom-multiplex-ad-slot"
-      :ad-slot="config('adsense.units.common_bottom_multiplex.ad_slot')"
-      :format="config('adsense.units.common_bottom_multiplex.format')" />
   </div>
 
   <div id="blogDetailModal" class="blog-detail-modal" role="dialog" aria-modal="true" aria-labelledby="blogDetailTitle" aria-hidden="true">
@@ -355,7 +361,7 @@
   <script>
     $(function() {
       window.requestAnimationFrame(function () {
-        document.querySelectorAll('.blog-index-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
+        document.querySelectorAll('.blog-index-top-display-ad .adsbygoogle, .blog-index-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
           if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
             return;
           }
