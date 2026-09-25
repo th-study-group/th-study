@@ -13,6 +13,14 @@
 @endpush
 
 @section('content')
+  <div class="blog-index-top-in-article-ad text-center my-3">
+    <x-adsense
+      class="blog-index-top-in-article-ad-slot"
+      :ad-slot="config('adsense.units.common_content_in_article.ad_slot')"
+      :format="config('adsense.units.common_content_in_article.format')"
+      :data-ad-layout="config('adsense.units.common_content_in_article.layout')" />
+  </div>
+
   <div id="blogIndexPageShell" class="blog-index-page-shell col-lg-10 content-col blog-page-scope">
     <main>
       <section class="board-card blog-list-page p-3 p-lg-4 rounded-3 shadow-sm">
@@ -127,20 +135,6 @@
           </p>
         </div>
 
-        <div class="text-center my-3 d-none d-md-block">
-          <x-adfit
-            :unit="$adfitPcRectangleUnit"
-            :width="$adfitPcRectangleWidth"
-            :height="$adfitPcRectangleHeight" />
-        </div>
-
-        <div class="text-center my-3 d-block d-md-none">
-          <x-adfit
-            :unit="$adfitMobileRectangleUnit"
-            :width="$adfitMobileRectangleWidth"
-            :height="$adfitMobileRectangleHeight" />
-        </div>
-
         <p class="blog-list-total" id="blog_list_total">총 {{ $initialTotal }}건</p>
         </div>
 
@@ -240,6 +234,13 @@
         </button>
       </div>
     </main>
+  </div>
+
+  <div class="blog-index-bottom-multiplex-ad text-center my-3">
+    <x-adsense
+      class="blog-index-bottom-multiplex-ad-slot"
+      :ad-slot="config('adsense.units.common_bottom_multiplex.ad_slot')"
+      :format="config('adsense.units.common_bottom_multiplex.format')" />
   </div>
 
   <div id="blogDetailModal" class="blog-detail-modal" role="dialog" aria-modal="true" aria-labelledby="blogDetailTitle" aria-hidden="true">
@@ -361,6 +362,22 @@
 @section('script')
   <script>
     $(function() {
+      window.requestAnimationFrame(function () {
+        document.querySelectorAll('.blog-index-top-in-article-ad .adsbygoogle, .blog-index-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
+          if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
+            return;
+          }
+
+          ad.dataset.adsensePushQueued = 'true';
+
+          try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          } catch (error) {
+            console.warn('AdSense blog index ad initialization failed.', error);
+          }
+        });
+      });
+
       const listUrl = "{{ $listUrl }}";
       const writeUrl = "{{ $writeUrl }}";
       const filterBaseUrl = "{{ $filterBaseUrl }}";
