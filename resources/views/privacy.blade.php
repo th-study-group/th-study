@@ -3,6 +3,14 @@
 @section('title', '개인정보방침')
 
 @section('content')
+    <div class="policy-top-display-ad text-center my-3">
+        <x-adsense
+            class="policy-top-display-ad-slot"
+            :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+            :format="config('adsense.units.common_top_display.format')"
+            :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+    </div>
+
     <main class="container-fluid px-3 px-lg-4 py-4 flex-grow-1">
         <section class="p-4 p-lg-5 rounded-3 shadow-sm" style="background:#f1e8dd; border:1px solid #e2d4c3;">
             <h1 class="h3 fw-bold mb-3">개인정보처리방침</h1>
@@ -70,4 +78,30 @@
             <p class="mb-0 text-muted">시행일자: 2026년 2월 10일</p>
         </section>
     </main>
+    <div class="policy-bottom-multiplex-ad text-center my-3">
+        <x-adsense
+            class="policy-bottom-multiplex-ad-slot"
+            :ad-slot="config('adsense.units.common_bottom_multiplex.ad_slot')"
+            :format="config('adsense.units.common_bottom_multiplex.format')" />
+    </div>
+@endsection
+
+@section('script')
+    <script>
+        window.requestAnimationFrame(function () {
+            document.querySelectorAll('.policy-top-display-ad .adsbygoogle, .policy-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
+                if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
+                    return;
+                }
+
+                ad.dataset.adsensePushQueued = 'true';
+
+                try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                } catch (error) {
+                    console.warn('AdSense privacy policy ad initialization failed.', error);
+                }
+            });
+        });
+    </script>
 @endsection
