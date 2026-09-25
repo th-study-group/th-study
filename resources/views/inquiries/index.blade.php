@@ -24,7 +24,7 @@
 
             </div>
 
-            <div class="board-filter-box">
+            <div class="board-filter-box mt-3">
                     <div class="d-flex align-items-center justify-content-between gap-2">
                         <h3 class="board-filter-title small text-secondary mb-0">검색조건 설정</h3>
                         <button class="board-filter-toggle btn btn-outline-secondary btn-sm collapsed"
