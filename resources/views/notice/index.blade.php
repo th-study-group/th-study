@@ -65,6 +65,14 @@
             <nav class="board-pagination d-flex justify-content-center mt-4" aria-label="공지사항 페이지네이션">
                 {{ $posts->links() }}
             </nav>
+
+        </div>
+
+        <div class="notice-index-bottom-multiplex-ad text-center my-3">
+            <x-adsense
+                class="notice-index-bottom-multiplex-ad-slot"
+                :ad-slot="config('adsense.units.common_bottom_multiplex.ad_slot')"
+                :format="config('adsense.units.common_bottom_multiplex.format')" />
         </div>
     </section>
 @endsection
@@ -72,6 +80,22 @@
 @section('script')
     <script>
         $(function(){
+            window.requestAnimationFrame(function () {
+                document.querySelectorAll('.notice-index-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
+                    if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
+                        return;
+                    }
+
+                    ad.dataset.adsensePushQueued = 'true';
+
+                    try {
+                        (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    } catch (error) {
+                        console.warn('AdSense notice index multiplex ad initialization failed.', error);
+                    }
+                });
+            });
+
             let noticeNavigationStarted = false;
 
             window.addEventListener('pageshow', function(){
