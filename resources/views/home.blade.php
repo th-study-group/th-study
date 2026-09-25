@@ -322,13 +322,6 @@
                               <p class="mb-0 muted">
                                   빠르게 끝내는 개발보다, 오래 남는 구조를 만든다. 기록과 운영을 통해 스스로를 업그레이드한다.
                               </p>
-                              <div class="home-slogan-in-article-ad my-3">
-                                  <x-adsense
-                                      class="home-slogan-in-article-ad-slot"
-                                      :ad-slot="config('adsense.units.common_content_in_article.ad_slot')"
-                                      :format="config('adsense.units.common_content_in_article.format')"
-                                      :data-ad-layout="config('adsense.units.common_content_in_article.layout')" />
-                              </div>
                           </div>
 
                           <div class="col-lg-4">
@@ -341,6 +334,14 @@
                   </div>
               </div>
           </section>
+
+          <div class="home-slogan-in-article-ad container text-center my-3">
+              <x-adsense
+                  class="home-slogan-in-article-ad-slot"
+                  :ad-slot="config('adsense.units.common_content_in_article.ad_slot')"
+                  :format="config('adsense.units.common_content_in_article.format')"
+                  :data-ad-layout="config('adsense.units.common_content_in_article.layout')" />
+          </div>
 
           <section id="keywords" class="section-pad anchor-offset">
               <div class="container reveal">
