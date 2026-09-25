@@ -28,6 +28,35 @@ function looksLikeHtmlContent(value) {
     return /<\s*\/?\s*(p|br|strong|b|em|i|u|s|h[1-6]|ul|ol|li|blockquote|pre|code|a|div|span)\b/i.test(value);
 }
 
+function sanitizeToastEditorHtml(value) {
+    if (typeof value !== 'string' || value === '') {
+        return value || '';
+    }
+
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(value, 'text/html');
+    var adSelector = [
+        'iframe',
+        'script',
+        'ins.adsbygoogle',
+        '[data-ad-client]',
+        '[data-ad-slot]',
+        '[data-ad-format]',
+        '[data-ad-layout]',
+        '[id*="adsense" i]',
+        '[id*="adfit" i]',
+        '[class~="adsbygoogle"]',
+        '[class~="adsense"]',
+        '[class~="adfit"]'
+    ].join(',');
+
+    doc.body.querySelectorAll(adSelector).forEach(function (node) {
+        node.remove();
+    });
+
+    return doc.body.innerHTML;
+}
+
 window.initToastUiEditor = function (options) {
     var config = options || {};
     var Editor = window.toastui && window.toastui.Editor;
@@ -53,14 +82,41 @@ window.initToastUiEditor = function (options) {
         toolbarItems: config.toolbarItems || getToastEditorDefaultToolbarItems()
     });
 
+    var isSanitizing = false;
+
+    function syncEditorSource() {
+        if (!sourceEl || isSanitizing) {
+            return;
+        }
+
+        var currentHtml = editor.getHTML();
+        var sanitizedHtml = sanitizeToastEditorHtml(currentHtml);
+
+        if (sanitizedHtml !== currentHtml && typeof editor.setHTML === 'function') {
+            isSanitizing = true;
+            editor.setHTML(sanitizedHtml, false);
+            isSanitizing = false;
+        }
+
+        sourceEl.value = sanitizedHtml;
+    }
+
     if (hasInitialHtml && typeof editor.setHTML === 'function') {
-        editor.setHTML(initialValue, false);
+        editor.setHTML(sanitizeToastEditorHtml(initialValue), false);
     }
 
     if (sourceEl && syncOnChange) {
-        sourceEl.value = editor.getHTML();
+        syncEditorSource();
         editor.on('change', function () {
-            sourceEl.value = editor.getHTML();
+            syncEditorSource();
+        });
+
+        var editorObserver = new MutationObserver(function () {
+            syncEditorSource();
+        });
+        editorObserver.observe(editorEl, {
+            childList: true,
+            subtree: true,
         });
     }
 
