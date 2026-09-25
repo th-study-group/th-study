@@ -13,14 +13,6 @@
 @endpush
 
 @section('content')
-  <div class="blog-index-top-in-article-ad text-center my-3">
-    <x-adsense
-      class="blog-index-top-in-article-ad-slot"
-      :ad-slot="config('adsense.units.common_content_in_article.ad_slot')"
-      :format="config('adsense.units.common_content_in_article.format')"
-      :data-ad-layout="config('adsense.units.common_content_in_article.layout')" />
-  </div>
-
   <div id="blogIndexPageShell" class="blog-index-page-shell col-lg-10 content-col blog-page-scope">
     <main>
       <section class="board-card blog-list-page p-3 p-lg-4 rounded-3 shadow-sm">
@@ -363,7 +355,7 @@
   <script>
     $(function() {
       window.requestAnimationFrame(function () {
-        document.querySelectorAll('.blog-index-top-in-article-ad .adsbygoogle, .blog-index-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
+        document.querySelectorAll('.blog-index-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
           if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
             return;
           }

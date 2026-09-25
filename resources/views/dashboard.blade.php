@@ -267,6 +267,13 @@
     </div>
 </div>
 
+<div class="dashboard-bottom-multiplex-ad text-center my-3">
+    <x-adsense
+        class="dashboard-bottom-multiplex-ad-slot"
+        :ad-slot="config('adsense.units.common_bottom_multiplex.ad_slot')"
+        :format="config('adsense.units.common_bottom_multiplex.format')" />
+</div>
+
 <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content">
@@ -314,4 +321,24 @@
     </div>
 </div>
 
+@endsection
+
+@section('script')
+    <script>
+        window.requestAnimationFrame(function () {
+            document.querySelectorAll('.dashboard-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
+                if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
+                    return;
+                }
+
+                ad.dataset.adsensePushQueued = 'true';
+
+                try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                } catch (error) {
+                    console.warn('AdSense dashboard multiplex ad initialization failed.', error);
+                }
+            });
+        });
+    </script>
 @endsection
