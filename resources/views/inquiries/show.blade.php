@@ -12,6 +12,14 @@
                 </div>
             </div>
 
+            <div class="inquiry-show-top-display-ad text-center my-3">
+                <x-adsense
+                    class="inquiry-show-top-display-ad-slot"
+                    :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+                    :format="config('adsense.units.common_top_display.format')"
+                    :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+            </div>
+
             <div class="mt-3">
                 <div class="mb-3">
                     <span class="form-label small text-secondary d-block mb-1">제목</span>
@@ -42,6 +50,13 @@
                 </div>
             </div>
 
+            <div class="inquiry-show-bottom-multiplex-ad text-center my-3">
+                <x-adsense
+                    class="inquiry-show-bottom-multiplex-ad-slot"
+                    :ad-slot="config('adsense.units.common_bottom_multiplex.ad_slot')"
+                    :format="config('adsense.units.common_bottom_multiplex.format')" />
+            </div>
+
         </div>
 
         <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mt-3 board-status-actions">
@@ -64,6 +79,22 @@
 
 @section('script')
     <script>
+        window.requestAnimationFrame(function () {
+            document.querySelectorAll('.inquiry-show-top-display-ad .adsbygoogle, .inquiry-show-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
+                if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
+                    return;
+                }
+
+                ad.dataset.adsensePushQueued = 'true';
+
+                try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                } catch (error) {
+                    console.warn('AdSense inquiry detail ad initialization failed.', error);
+                }
+            });
+        });
+
         $(function(){
             const editUrl = "{{ route('inquiries.edit', ['idx' => $post->idx]) }}";
             const deleteUrl = "{{ route('inquiries.soft.delete', ['idx' => $post->idx]) }}";
