@@ -1025,6 +1025,9 @@ php artisan l5-swagger:generate</code></pre>
 
 @push('scripts')
     <script src="{{ asset('js/intro/portfolio.js') }}" defer></script>
+@endpush
+
+@section('script')
     <script>
         window.requestAnimationFrame(function () {
             document.querySelectorAll('.portfolio-top-display-ad .adsbygoogle, .portfolio-in-article-ad .adsbygoogle, .portfolio-bottom-multiplex-ad .adsbygoogle').forEach(function (ad) {
@@ -1042,4 +1045,4 @@ php artisan l5-swagger:generate</code></pre>
             });
         });
     </script>
-@endpush
+@endsection
