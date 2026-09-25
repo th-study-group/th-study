@@ -156,7 +156,7 @@ class UserService
     {
         $page = $filters['page'] ?? 1;
 
-        $members = $this->userRepository->paginate($filters, 20);
+        $members = $this->userRepository->paginate($filters, 10);
 
         Log::info('[Admin][Member][List] 조회 완료', [
             'user_idx' => Auth::id(),

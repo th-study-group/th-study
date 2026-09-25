@@ -77,7 +77,7 @@ class InquiryService
             $userIdx,
             'inquiries',
             $filters,
-            20
+            10
         );
 
         Log::info('[Inquiry][List] 조회 완료', [
@@ -103,7 +103,7 @@ class InquiryService
         $posts = $this->postRepository->paginateByType(
             'inquiries',
             $filters,
-            20
+            10
         );
 
         Log::info('[Admin][Inquiry][List] 조회 완료', [
