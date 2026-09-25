@@ -3,14 +3,6 @@
 @section('title', '문의내역')
 
 @section('content')
-    <div class="inquiry-top-display-ad text-center my-3">
-        <x-adsense
-            class="inquiry-top-display-ad-slot"
-            :ad-slot="config('adsense.units.common_top_display.ad_slot')"
-            :format="config('adsense.units.common_top_display.format')"
-            :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
-    </div>
-
     <section class="col-12 col-lg-8 mx-auto">
         <div class="board-card bg-white rounded-3 p-3 p-lg-4 shadow-sm">
             <div class="board-head d-flex flex-column gap-2 gap-lg-3">
@@ -20,6 +12,14 @@
                         <p class="text-secondary small mb-0 board-ellipsis-mobile">현재까지 등록하신 문의사항을 조회 할 수 있습니다.</p>
                     </div>
                     <a href="{{ route('inquiries.create') }}" class="btn btn-dark btn-sm text-nowrap">문의하기</a>
+                </div>
+
+                <div class="inquiry-top-display-ad text-center my-3">
+                    <x-adsense
+                        class="inquiry-top-display-ad-slot"
+                        :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+                        :format="config('adsense.units.common_top_display.format')"
+                        :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
                 </div>
 
                 <div class="board-filter-box">
@@ -119,19 +119,19 @@
                 <a href="{{ route('inquiries.create') }}" class="btn btn-dark btn-sm text-nowrap">문의하기</a>
             </div>
 
+            <div class="inquiry-bottom-in-article-ad text-center my-3">
+                <x-adsense
+                    class="inquiry-bottom-in-article-ad-slot"
+                    :ad-slot="config('adsense.units.common_content_in_article.ad_slot')"
+                    :format="config('adsense.units.common_content_in_article.format')"
+                    :data-ad-layout="config('adsense.units.common_content_in_article.layout')" />
+            </div>
+
             <nav class="board-pagination d-flex justify-content-center mt-4" aria-label="문의내역 페이지네이션">
                 {{ $posts->links() }}
             </nav>
         </div>
     </section>
-
-    <div class="inquiry-bottom-in-article-ad text-center my-3">
-        <x-adsense
-            class="inquiry-bottom-in-article-ad-slot"
-            :ad-slot="config('adsense.units.common_content_in_article.ad_slot')"
-            :format="config('adsense.units.common_content_in_article.format')"
-            :data-ad-layout="config('adsense.units.common_content_in_article.layout')" />
-    </div>
 @endsection
 
 @push('scripts')
