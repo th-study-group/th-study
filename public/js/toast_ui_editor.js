@@ -39,10 +39,13 @@ function sanitizeToastEditorHtml(value) {
         'iframe',
         'script',
         'ins.adsbygoogle',
+        '.adsbygoogle',
+        '.google-auto-placed',
         '[data-ad-client]',
         '[data-ad-slot]',
         '[data-ad-format]',
         '[data-ad-layout]',
+        '[data-ad-status]',
         '[id*="adsense" i]',
         '[id*="adfit" i]',
         '[class~="adsbygoogle"]',
@@ -110,6 +113,13 @@ window.initToastUiEditor = function (options) {
         editor.on('change', function () {
             syncEditorSource();
         });
+
+        var editorForm = sourceEl.form;
+        if (editorForm) {
+            editorForm.addEventListener('submit', function () {
+                syncEditorSource();
+            }, true);
+        }
 
         var editorObserver = new MutationObserver(function () {
             syncEditorSource();
