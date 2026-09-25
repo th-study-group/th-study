@@ -97,7 +97,7 @@
 
         <div class="mb-3">
           <label for="content" class="form-label blog-create-label">내용</label>
-          <textarea id="content" name="content" class="d-none" rows="16" placeholder="내용을 입력하세요.">{{ old('content', $note->content ?? '') }}</textarea>
+          <textarea id="content" name="content" class="d-none" rows="16" placeholder="내용을 입력하세요.">{{ $editorContent ?? '' }}</textarea>
           <div id="blogContentEditor" class="js-toast-ui-editor" data-source-selector="#content"></div>
           @error('content')
             <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
