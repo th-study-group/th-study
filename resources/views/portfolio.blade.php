@@ -48,15 +48,14 @@
       </div>
     </div>
   </div>
+  <div class="portfolio-top-display-ad container text-center mt-4 pb-4">
+    <x-adsense
+      class="portfolio-top-display-ad-slot"
+      :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+      :format="config('adsense.units.common_top_display.format')"
+      :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+  </div>
 </header>
-
-<div class="portfolio-top-display-ad text-center my-3">
-  <x-adsense
-    class="portfolio-top-display-ad-slot"
-    :ad-slot="config('adsense.units.common_top_display.ad_slot')"
-    :format="config('adsense.units.common_top_display.format')"
-    :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
-</div>
 
 <section class="section">
   <div class="container">
