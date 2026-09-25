@@ -67,11 +67,13 @@
 
         <section class="py-4">
             <div class="container text-center">
-                <x-adfit
-                    :unit="config('adfit.common.square.unit')"
-                    :width="config('adfit.common.square.width')"
-                    :height="config('adfit.common.square.height')" 
-                />
+                <div class="home-top-display-ad">
+                    <x-adsense
+                        class="home-top-display-ad-slot"
+                        :ad-slot="config('adsense.units.common_top_display.ad_slot')"
+                        :format="config('adsense.units.common_top_display.format')"
+                        :full-width-responsive="config('adsense.units.common_top_display.full_width_responsive')" />
+                </div>
             </div>
         </section>
 
@@ -320,6 +322,13 @@
                               <p class="mb-0 muted">
                                   빠르게 끝내는 개발보다, 오래 남는 구조를 만든다. 기록과 운영을 통해 스스로를 업그레이드한다.
                               </p>
+                              <div class="home-slogan-in-article-ad my-3">
+                                  <x-adsense
+                                      class="home-slogan-in-article-ad-slot"
+                                      :ad-slot="config('adsense.units.common_content_in_article.ad_slot')"
+                                      :format="config('adsense.units.common_content_in_article.format')"
+                                      :data-ad-layout="config('adsense.units.common_content_in_article.layout')" />
+                              </div>
                           </div>
 
                           <div class="col-lg-4">
@@ -691,6 +700,13 @@
                     :height="config('adfit.pc.rectangle.height')" />
             </div>
 
+            <div class="home-bottom-multiplex-ad text-center my-3">
+                <x-adsense
+                    class="home-bottom-multiplex-ad-slot"
+                    :ad-slot="config('adsense.units.common_bottom_multiplex.ad_slot')"
+                    :format="config('adsense.units.common_bottom_multiplex.format')" />
+            </div>
+
         </section>
 
           <div class="modal fade" id="contactConfirmModal" tabindex="-1" aria-hidden="true">
@@ -740,6 +756,21 @@
     <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey={{ config('services.kakao.app_key') }}"></script>
     <script>
         $(function(){
+            window.requestAnimationFrame(function () {
+                document.querySelectorAll('.home-top-display-ad .adsbygoogle, .home-bottom-multiplex-ad .adsbygoogle, .home-slogan-in-article-ad .adsbygoogle').forEach(function (ad) {
+                    if (ad.dataset.adsensePushQueued === 'true' || ad.dataset.adsbygoogleStatus || ad.offsetWidth <= 0) {
+                        return;
+                    }
+
+                    ad.dataset.adsensePushQueued = 'true';
+
+                    try {
+                        (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    } catch (error) {
+                        console.warn('AdSense home multiplex ad initialization failed.', error);
+                    }
+                });
+            });
 
             $('input[name="contact_method"]').on('change', updateContactMethodVisibility);
 
