@@ -38,6 +38,6 @@ foreach (array_keys($noteGroups) as $group) {
         Route::get('/{slug?}', [NoteController::class, 'index'])
             ->name('index')
             ->defaults('group', $group)
-            ->defaults('showSide', true);
+            ->defaults('showSide', false);
     });
 }

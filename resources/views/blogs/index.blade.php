@@ -13,7 +13,7 @@
 @endpush
 
 @section('content')
-  <div id="blogIndexPageShell" class="blog-index-page-shell col-lg-10 content-col blog-page-scope">
+  <div id="blogIndexPageShell" class="blog-index-page-shell {{ request()->route('showSide') ? 'col-lg-10 content-col' : 'col-12 col-lg-8 mx-auto' }} blog-page-scope">
     <main>
       <section class="board-card blog-list-page p-3 p-lg-4 rounded-3 shadow-sm">
         <div class="blog-index-top-display-ad text-center mb-3">
