@@ -10,7 +10,7 @@
 
 1. 사용자 요청 분석
 2. 관련 프로젝트 구조 및 기존 코드 확인
-3. 관련 `agent_rules` 문서 확인
+3. 작업 유형에 해당하는 `agent_rules` 문서만 확인
 4. 필요한 경우 데이터베이스 구조 확인
 5. 작업 목표 및 수정 범위 정의
 6. 작업 계획 작성
@@ -82,7 +82,7 @@
 - 디렉터리 구조 확인
 - 기존 코드 읽기
 - `AGENTS.md` 읽기
-- `agent_rules/*.md` 읽기
+- 작업에 해당하는 `agent_rules` 문서 읽기
 - Migration 읽기
 - 설정 파일 읽기
 - Route 확인
@@ -109,264 +109,247 @@
 
 ---
 
-# 4. 규칙 문서 위치
+# 4. 규칙 문서 선택 원칙
 
-프로젝트별 세부 개발 규칙은 다음 디렉터리에 존재한다.
+프로젝트의 상세 규칙은 `agent_rules/`에 있다.
+이 문서는 어떤 규칙을 언제 읽을지 안내한다.
 
-`agent_rules/`
+- 작업 요청과 실제 수정 범위를 먼저 분류한다.
+- 해당 영역의 문서만 열고, 무관한 문서는 열지 않는다.
+- `agent_rules/*.md`를 일괄 출력하거나 순서대로 모두 읽지 않는다.
+- 파일명이 언급됐다는 이유만으로 연관 문서를 모두 읽지 않는다.
+- 요청이 여러 영역을 실제로 건드리면 필요한 문서만 추가한다.
+- 처음 예상과 달리 수정 범위가 넓어지면 새로 관련된 문서를 읽는다.
+- 규칙 문서를 읽은 뒤에도 전체 프로젝트를 일괄 탐색하지 않는다.
+- 작업 대상 파일과 가장 가까운 기존 구현부터 조사한다.
+- 문서에 없는 사실은 기존 코드와 설정에서 검증한다.
 
-현재 규칙 문서:
+## 규칙 파일 선택표
 
-- `agent_rules/backend.md`
-- `agent_rules/frontend.md`
-- `agent_rules/board.md`
-- `agent_rules/note.md`
-- `agent_rules/mcp.md`
-- `agent_rules/database_schema.md`
-- `agent_rules/adsense.md`
+| 작업 범위 | 먼저 읽을 문서 | 함께 읽는 조건 |
+| --- | --- | --- |
+| Laravel 서버 로직, Route, API, 인증, Validation | `agent_rules/backend.md` | 기능별·DB·화면 변경이 실제로 있으면 해당 문서 |
+| Blade, HTML, CSS, JavaScript, 반응형 UI | `agent_rules/frontend.md` | 게시판·노트·광고 UI면 해당 기능 문서 |
+| 게시판, 게시글, 댓글, 문의 | `agent_rules/board.md` | 서버 수정 시 backend, 화면 수정 시 frontend |
+| Note, 블로그, 사진·지도·문서·영상 그룹 | `agent_rules/note.md` | 서버 수정 시 backend, 화면 수정 시 frontend |
+| MCP Tool, Tool Schema, MCP API | `agent_rules/mcp.md` | MCP 문서의 작업 전 확인에 따라 backend·database_schema; 기능/화면 변경 시 해당 문서 |
+| 테이블, 컬럼, 관계, Migration, DB 쿼리 | `agent_rules/database_schema.md` | 서버 구현까지 수정하면 backend |
+| AdSense 로더·수동/자동광고·광고 레이아웃 | `agent_rules/adsense.md` | Blade/CSS/JS·safe-area 변경 시 frontend |
 
-작업을 시작하기 전에 요청과 관련된 규칙 문서를 반드시 확인한다.
-
----
-
-# 5. 작업별 규칙 적용
-
-## 백엔드 작업
-
-다음 작업이 포함되면 반드시 아래 문서를 확인한다.
-
-`agent_rules/backend.md`
-
-대상 예시:
-
-- Controller
-- Service
-- Repository
-- Model
-- FormRequest
-- Policy
-- Middleware
-- Route
-- API
-- 인증/인가
-- 서버 로직
-- CRUD
-- Validation
+표의 `backend`, `frontend`, `database_schema` 등 축약어는 모두
+`agent_rules/` 아래의 동일한 이름을 가진 `.md` 파일을 뜻한다.
 
 ---
 
-## 프론트엔드 작업
+# 5. 분야별 문서 읽기 기준
 
-다음 작업이 포함되면 반드시 아래 문서를 확인한다.
+## 5.1 백엔드
 
-`agent_rules/frontend.md`
+`agent_rules/backend.md`를 읽는 경우:
 
-대상 예시:
+- Route, Controller, Service, Repository, Resource 또는 API 변경
+- Model, FormRequest, Policy, Middleware 및 인증·권한 변경
+- 서버 측 검증, CRUD, 큐, 이벤트, 파일 처리, SEO URL 생성 변경
+- Nginx 또는 서버 설정처럼 backend 문서의 운영 규칙이 적용되는 작업
 
-- Blade
-- HTML
-- CSS
-- Bootstrap
-- JavaScript
-- 화면 구성
-- UI/UX
-- 반응형
-- 목록 화면
-- 등록/수정 화면
-- Modal
+읽은 뒤에는 수정하려는 기능의 실제 Route와 관련 계층을 확인한다.
+단일 Service 수정에 무관한 모든 Controller를 조사하지 않는다.
+Model·Migration 확인이 필요한 데이터 처리에서는 관련 테이블로 범위를 좁힌다.
 
----
+## 5.2 프론트엔드
 
-## AdSense 작업
+`agent_rules/frontend.md`를 읽는 경우:
 
-Google AdSense, 자동광고, 앵커/전면광고, 광고와 PWA·모바일 레이아웃 충돌을 다루는 작업이면 반드시 아래 문서를 확인한다.
+- Blade, CSS, 공통/페이지 JavaScript, Bootstrap 화면 변경
+- 폼·목록·모달의 표시, 상호작용 또는 반응형 변경
+- PWA 화면 UI, viewport, safe-area, fixed UI 변경
 
-`agent_rules/adsense.md`
+이 프로젝트의 공통 화면 구현은 Blade와 public JS/CSS 중심이다.
+Vue나 React가 있다고 가정하지 않는다.
+프론트 변경만 하는 경우 서버·DB 문서를 자동으로 읽지 않는다.
+Blade에 넘기는 값의 가공이 새로 필요하면 backend도 읽는다.
 
-화면, safe-area, fixed/sticky UI, viewport 관련 변경이 포함되면 다음 문서도 함께 확인한다.
+## 5.3 게시판
 
-`agent_rules/frontend.md`
+`agent_rules/board.md`는 게시글, 댓글, 문의, 게시판 상태·이력·알림을
+수정할 때 읽는다.
 
----
+- 서버 로직이면 `agent_rules/backend.md`도 읽는다.
+- 게시판 Blade/CSS/JS면 `agent_rules/frontend.md`도 읽는다.
+- 테이블·쿼리·Migration이 관련되면 `agent_rules/database_schema.md`에서
+  게시판 테이블만 찾는다.
+- 댓글을 게시글 상세에 포함하는 작업과 댓글 단독 페이지는
+  조회 이력 규칙이 다르므로 해당 경로를 구분한다.
 
-## 게시판 작업
+게시판과 무관한 일반 목록 화면은 `board.md`를 읽지 않는다.
 
-게시판 관련 작업이면 반드시 아래 문서를 확인한다.
+## 5.4 노트와 블로그
 
-`agent_rules/board.md`
+`agent_rules/note.md`는 Note 그룹, 블로그, 노트 태그·썸네일·이력·공개
+정책에 관한 작업에서 읽는다.
 
-게시판 작업에 백엔드 또는 프론트엔드 변경이 포함되면 관련 문서를 함께 확인한다.
+- Note Controller/Service/Repository 변경이면 backend도 읽는다.
+- Note/블로그 Blade·CSS·JS 변경이면 frontend도 읽는다.
+- 노트 테이블이나 조회 조건 변경이면 database_schema의 노트 영역을 찾는다.
+- 블로그 광고 슬롯까지 수정할 때만 adsense도 읽는다.
+- 검색 노출과 URL을 바꾸면 현재 Route, canonical, sitemap, robots 정책 중
+  영향받는 부분을 확인한다.
+
+일반 게시판 규칙을 노트에 무조건 덧씌우지 않는다.
+`note.md`에 게시판 패턴을 따르라고 명시된 기능은 실제 구현을 대조한다.
+
+## 5.5 MCP
+
+`agent_rules/mcp.md`는 MCP Tool 정의, Schema, API 또는 연동 변경 시 읽는다.
+해당 문서의 작업 전 확인 항목에 따라 다음을 확인한다.
+
+- `agent_rules/backend.md`: 기존 MCP Route·Controller·Service·Repository와
+  인증, 응답 및 Validation 규칙
+- `agent_rules/database_schema.md`: 관련 테이블과 컬럼만 검색하고
+  실제 Model·Migration·Repository와 대조
+- 게시판 MCP면 `agent_rules/board.md`, 노트 MCP면 `agent_rules/note.md`
+- MCP 화면도 바꾸는 경우에만 `agent_rules/frontend.md`
+
+기존 Tool 중 가장 가까운 예시를 먼저 찾는다.
+Tool 정의만 바꿔도 실제 API 지원 필드·권한·응답과 맞는지 확인한다.
+MCP라는 이유만으로 모든 게시판·노트·광고 문서를 읽지 않는다.
+
+## 5.6 데이터베이스
+
+`agent_rules/database_schema.md`를 확인하는 경우:
+
+- 테이블·컬럼·인덱스·관계·Migration을 설계하거나 변경
+- 쿼리, 필터, 정렬, 집계의 실제 컬럼을 확인해야 함
+- Model 매핑, 키, 삭제 방식, 날짜 컬럼의 확인이 필요함
+- MCP가 테이블 데이터를 조회·변경하여 MCP 규칙의 확인 대상이 됨
+
+스키마 문서는 길다. 다음 순서로 필요한 부분만 읽는다.
+
+1. `## 2. 요약`과 `## 3. 관계 요약`에서 관련 테이블을 식별한다.
+2. 테이블명으로 `## 4. 테이블 상세`의 해당 구간만 찾는다.
+3. 관련 Migration, Model 및 현재 쿼리에서 실제 구현을 확인한다.
+4. 다른 테이블과 관계가 필요할 때 그 부분만 추가로 읽는다.
 
 예:
 
-`agent_rules/board.md`
-`agent_rules/backend.md`
-`agent_rules/frontend.md`
+- 로그인·권한 → users, sessions 등 관련 인증 테이블
+- 게시글·댓글 → posts, comments, post_histories
+- Note·태그 → note_groups, note_categories, note_topics, notes,
+  note_tags, note_tag_map, note_histories 중 대상만
+- 사람·봇 유입 → access_logs, bot_access_logs 중 대상만
+- 일별 통계·전환 → daily_page_stats, conversion_logs 중 대상만
+- 큐 장애 → jobs, failed_jobs 중 대상만
+
+문서를 처음부터 끝까지 출력하여 스키마 전체를 읽지 않는다.
+작업과 무관한 모든 Migration을 열지 않는다.
+
+## 5.7 광고
+
+`agent_rules/adsense.md`는 Google AdSense 로더, 수동 슬롯,
+자동광고, 앵커·전면광고, 광고 초기화, iOS/PWA 광고 충돌에 적용한다.
+
+- Blade, CSS, JS, viewport, safe-area 또는 fixed UI를 바꾸면 frontend도 읽는다.
+- 블로그 광고의 표시·콘텐츠 전환을 바꾸면 note도 읽는다.
+- 광고 ID나 서버에서 전달하는 설정을 바꾸면 해당 backend 구현도 확인한다.
+- Kakao AdFit만 다루는 경우 AdSense 규칙의 적용 여부를 구분한다.
+
+광고 작업이 아닌 일반 PWA·모바일 UI 작업에는 adsense를 자동 추가하지 않는다.
 
 ---
 
-## 노트 작업
+# 6. 요청별 선택 예시
 
-노트 관련 작업이면 반드시 아래 문서를 확인한다.
+아래는 최초 탐색의 예시다. 실제 수정 범위가 드러나면 조정한다.
 
-`agent_rules/note.md`
+| 요청 | 규칙 문서 | 확인할 기존 구현 |
+| --- | --- | --- |
+| 일반 Blade 폼 문구·배치 수정 | frontend | 대상 Blade, 관련 CSS/JS |
+| 게시글 목록 UI 수정 | board, frontend | 게시판 목록 Blade, 스타일, 페이지 동작 |
+| 댓글 저장 로직 수정 | board, backend, database_schema | 해당 Route, Service, Model, 댓글·이력 테이블 |
+| 블로그 모달 광고 초기화 수정 | note, adsense, frontend | 대상 모달 JS, 광고 컴포넌트, 슬롯 사용처 |
+| Note 검색 조건 추가 | note, backend, database_schema | 검색 Route/Service/Repository, 대상 컬럼 |
+| MCP access_log 날짜 필터 추가 | mcp, backend, database_schema | 유사 Tool, inputSchema, Route/API, 관련 로그 테이블 |
+| DB 컬럼 추가 | database_schema, backend | 대상 Migration/Model, 컬럼 사용처 |
+| 서버의 Nginx 리다이렉트 수정 | backend | 활성 서버 블록, 검증 명령 및 외부 응답 |
 
-노트 작업에 백엔드 또는 프론트엔드 변경이 포함되면 관련 문서를 함께 확인한다.
-
-예:
-
-`agent_rules/note.md`
-`agent_rules/backend.md`
-`agent_rules/frontend.md`
-
-## MCP 작업
-
-MCP Tool, MCP API 및 MCP 연동과 관련된 작업이면 반드시 아래 문서를 확인한다.
-
-`agent_rules/mcp.md`
-
-MCP Backend 변경이 포함되면 다음 문서를 함께 확인한다.
-
-`agent_rules/backend.md`
-
-Database 조회 또는 변경이 포함되면 다음 문서를 함께 확인한다.
-
-`agent_rules/database_schema.md`
-
-화면 변경이 포함되면 다음 문서를 함께 확인한다.
-
-`agent_rules/frontend.md`
-
-게시판 또는 노트 등 특정 기능의 MCP 작업이면 해당 기능 규칙도 함께 확인한다.
-
-예:
-
-게시판 MCP Tool:
-
-- `agent_rules/mcp.md`
-- `agent_rules/backend.md`
-- `agent_rules/board.md`
-- `agent_rules/database_schema.md`
-
-노트 MCP Tool:
-
-- `agent_rules/mcp.md`
-- `agent_rules/backend.md`
-- `agent_rules/note.md`
-- `agent_rules/database_schema.md`
+예시의 문서 목록이 실제 작업에 필요 없는 계층까지 읽으라는 뜻은 아니다.
+작업 범위가 UI로 끝나면 DB 전체를 조사하지 않는다.
+서버 입력과 저장이 바뀌면 화면 요청이어도 백엔드와 DB 관련 부분을 추가한다.
 
 ---
 
-# 6. 데이터베이스 규칙
+# 7. 사실 확인과 충돌 처리
 
-데이터베이스 관련 작업에서는
-`agent_rules/database_schema.md`를 참조한다.
+규칙 문서는 구현을 이해하기 위한 기준이지만 실제 파일과 다를 수 있다.
 
-단, 작업과 관련 없는 전체 스키마를 불필요하게 모두 읽지 않는다.
+- 테이블·컬럼은 실제 Migration, Model, 쿼리에서 확인한다.
+- URL과 이름은 현재 Route 정의에서 확인한다.
+- 화면 동작은 현재 Blade/JS/CSS에서 확인한다.
+- 사용 패키지는 현재 의존성 선언과 사용처에서 확인한다.
+- 문서의 경로가 오래됐거나 존재하지 않으면 현재 저장소에서 찾는다.
+- 찾지 못한 파일, 클래스, 컬럼을 추정하여 만들어 쓰지 않는다.
 
-먼저 테이블 요약 및 관계 정보를 확인하고,
-현재 작업과 관련된 테이블만 검색하여 상세 컬럼을 확인한다.
+스키마 문서와 실제 구현이 충돌할 때는 다음을 우선한다.
 
-예:
-- 회원 기능 → users 및 관련 인증 테이블
-- 게시판 기능 → posts, comments, post_histories
-- 노트 기능 → note_* 관련 테이블
-- 유입 통계 → access_logs, bot_access_logs, daily_page_stats, conversion_logs
-
-신규 테이블 또는 컬럼이 필요한 경우에는
-관련 기존 테이블과 관계를 먼저 확인한 뒤 설계한다.
-
-스키마 문서와 실제 구현이 충돌하면 다음 순위를 따른다.
-
-1. 실제 Migration
-2. 현재 프로젝트 코드
+1. 실제 Migration의 최종 상태
+2. 현재 Model·Repository 등 실행 코드
 3. `agent_rules/database_schema.md`
 
----
-
-# 7. 데이터베이스 판단 기준
-
-`agent_rules/database_schema.md`는 프로젝트 데이터베이스 구조를 이해하기 위한 참조 문서다.
-
-다만 실제 구현과 문서가 충돌하는 경우 다음 우선순위를 따른다.
-
-1. 실제 Migration
-2. 현재 프로젝트 코드
-3. `agent_rules/database_schema.md`
-
-문서와 실제 코드가 다른 경우 임의로 수정하지 않는다.
-
-차이를 사용자에게 보고하고 작업 계획에 포함한다.
+실행 코드와 Migration이 서로 어긋나면 단정하지 않고 차이를 보고한다.
+기존 문서의 미래 계획과 현재 동작도 구분한다.
+관련 없는 오래된 문서를 이번 요청에 맞춘다는 이유로 수정하지 않는다.
 
 ---
 
-# 8. 기존 프로젝트 구조 우선
+# 8. 기존 구현 탐색
 
-새로운 기능을 구현할 때 에이전트가 선호하는 구조를 임의로 도입하지 않는다.
+새 기능이나 수정 작업은 관련된 기존 코드의 가장 가까운 사례부터 찾는다.
 
-반드시 기존 프로젝트의 구현 방식을 먼저 조사한다.
+- 먼저 요청 용어, 메뉴명, Route, Tool name 또는 파일명으로 좁혀 검색한다.
+- 이름이 확실하지 않으면 관련 디렉터리와 참조 관계를 확인한다.
+- 같은 도메인의 유사 흐름을 찾아 데이터와 응답 형태를 비교한다.
+- 해당 기능이 사용하는 계층만 따라간다.
+- 복사할 패턴이 없으면 새 구조가 필요한 이유를 계획에 적는다.
 
-예를 들어 CRUD 기능을 추가한다면 기존 CRUD 기능에서 다음 구조를 먼저 확인한다.
+변경 종류별 기본 탐색 범위:
 
-- Route
-- Controller
-- FormRequest
-- Service
-- Repository
-- Model
-- Blade
-- JavaScript
-- CSS
-- Validation
-- 권한 처리
-- 로그 처리
-- 테스트
+- 화면만 변경: 대상 Blade → 관련 CSS/JS → 전달 view data가 필요하면 Controller
+- API 동작 변경: Route → Controller → Service/Repository 중 사용 계층
+- 저장 필드 변경: 입력 화면/FormRequest → Service/Repository → Model/Migration
+- DB 구조 변경: 관련 Migration → Model/쿼리 → 연결된 화면/API
+- MCP Tool 변경: Tool 정의 → MCP Route/API → 실제 구현 및 관련 DB
+- 광고 변경: 광고 컴포넌트·호출부 → 초기화 코드 → 관련 레이아웃
 
-기존 프로젝트에 동일하거나 유사한 구현이 있다면 해당 패턴을 우선 사용한다.
+기능 하나를 수정한다고 Route부터 모든 Blade, Model, Migration, 테스트까지
+무조건 열지 않는다. 영향 경로가 확인되면 필요한 다음 파일만 읽는다.
 
 ---
 
-# 9. 추측 구현 금지
+# 9. 신규 기능 작업 절차
 
-확인하지 않은 내용을 사실처럼 가정하지 않는다.
+1. 요청의 기능, 대상 화면·API 및 기대 동작을 정리한다.
+2. 4~6절의 선택 기준으로 관련 규칙 문서만 읽는다.
+3. 유사 기능과 실제 호출·저장 경로를 좁혀서 찾는다.
+4. 확인한 범위에서 재사용할 구조와 새로 만들 부분을 구분한다.
+5. 데이터 저장·조회가 바뀌면 관련 테이블, Model, Migration을 확인한다.
+6. 권한·검증·응답·화면·운영 영향 중 해당하는 것만 확인한다.
+7. 수정 대상, 검증 방법, 문서 동기화 필요 여부를 계획에 적는다.
+8. 2절의 승인 기준에 따라 실제 변경을 시작한다.
 
-예:
-
-- 존재하지 않는 테이블을 있다고 가정
-- 존재하지 않는 컬럼을 사용
-- 존재하지 않는 Service 호출
-- 존재하지 않는 Route 사용
-- 존재하지 않는 CSS 클래스 사용
-- 프로젝트에 없는 라이브러리를 사용
-- 기존 구조를 확인하지 않고 새로운 아키텍처 도입
-
-모르는 부분이 있다면 먼저 프로젝트에서 검색한다.
-
-검색해도 확인할 수 없는 경우 작업 계획에서 명확하게 표시한다.
+이 절차는 기존 기능 수정에도 범위에 맞게 적용한다.
+불필요한 계층을 확인하기 위해 탐색을 확장하지 않는다.
 
 ---
 
-# 10. 신규 기능 작업 절차
+# 10. 추측 구현 금지
 
-신규 기능 요청을 받으면 다음 순서로 분석한다.
-
-1. `AGENTS.md` 확인
-2. 관련 `agent_rules/*.md` 확인
-3. MCP 관련 작업이면 `agent_rules/mcp.md` 및 기존 유사 MCP Tool 확인
-4. 기존 유사 기능 검색
-5. Route 확인
-6. Controller 구조 확인
-7. Service / Repository 구조 확인
-8. Model 확인
-9. 관련 Blade 및 프론트 구조 확인
-10. `agent_rules/database_schema.md` 확인
-11. 관련 Migration 확인
-12. 재사용 가능한 기존 구조 확인
-13. 신규 구현이 필요한 부분 정의
-14. 작업 계획 작성
-15. 사용자 승인 대기
-
-이 단계에서는 실제 코드를 수정하지 않는다.
+- 존재하지 않는 테이블·컬럼·Route·Service·CSS 클래스를 가정하지 않는다.
+- Laravel 기본 컬럼명이나 기본 키를 TH-STUDY의 모든 테이블에 적용하지 않는다.
+- 게시판 상태값과 Note 공개값을 서로 바꿔 사용하지 않는다.
+- MCP Schema에 실제 API가 지원하지 않는 입력을 노출하지 않는다.
+- AdSense 슬롯과 다른 광고 네트워크의 동작 규칙을 혼동하지 않는다.
+- 기존 구조를 확인하지 않고 새 패키지나 아키텍처를 도입하지 않는다.
+- 확인이 안 된 사항은 계획에서 가정과 확인 필요 항목으로 표시한다.
 
 ---
 
