@@ -109,20 +109,14 @@
             </ul>
         
             @guest
-            <div class="dropdown auth-dropdown">
-                <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center auth-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>Start
-                </button>
-                <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>로그인</a></li>
-                <li><a class="dropdown-item" href="{{ route('register.form') }}"><i class="bi bi-person-plus me-2" aria-hidden="true"></i>회원가입</a></li>
-                </ul>
-            </div>
+            <a class="btn btn-outline-light d-flex align-items-center auth-btn" href="{{ route('login') }}">
+                <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>로그인
+            </a>
             @endguest
 
             @auth
                 @if (auth()->user()?->email_verify_datetime)
-                <a class="btn btn-outline-light d-flex align-items-center auth-btn" href="{{ route('logout') }}" data-push-logout="1">
+                <a id="btn_logout" class="btn btn-outline-light d-flex align-items-center auth-btn" href="{{ route('logout') }}" data-push-logout="1">
                     <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>로그아웃
                 </a>
                 @endif

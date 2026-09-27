@@ -9,6 +9,12 @@ $(function () {
         e.preventDefault();
     });
 
+    $('#btn_logout').on('click', function (event) {
+        if (!window.confirm('로그아웃하시겠습니까?')) {
+            event.preventDefault();
+        }
+    });
+
     const modalEl = document.getElementById('loadingModal');
     if (!modalEl || typeof bootstrap === 'undefined') {
         console.warn('[loading] modal or bootstrap missing', {

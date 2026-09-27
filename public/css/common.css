@@ -112,16 +112,12 @@ footer {
     right: 0;
     width: 100%;
     /*
-     * Keep the site header above page-level advertising overlays so the
-     * authentication controls remain available while an ad is displayed.
+     * Keep the site header at Bootstrap's ordinary sticky-layer level.
+     * Overlay providers (including AdSense vignette UI) must remain above
+     * site navigation, especially in iOS viewport-fit=cover safe areas.
      */
-    z-index: 2147483646;
+    z-index: var(--bs-zindex-sticky, 1020);
     padding-top: env(safe-area-inset-top);
-}
-
-.navbar .auth-dropdown {
-    position: relative;
-    z-index: 2147483647;
 }
 
 .navbar .navbar-toggler:focus{
