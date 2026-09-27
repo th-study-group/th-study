@@ -23,12 +23,26 @@ foreach (array_keys($noteGroups) as $group) {
                 ->where('rest', '.*');
         }
 
-        Route::get('/create', [NoteController::class, 'create'])->middleware('auth')->name('create.blank')->defaults('group', $group);
+        Route::get('/create', [NoteController::class, 'create'])
+            ->middleware('auth')
+            ->name('create.blank')
+            ->defaults('group', $group)
+            ->defaults('showSide', false);
         Route::post('/create', [NoteController::class, 'store'])->middleware('auth')->name('store.blank')->defaults('group', $group);
-        Route::get('/{slug}/create', [NoteController::class, 'create'])->middleware('auth')->name('create')->defaults('group', $group);
+        Route::get('/{slug}/create', [NoteController::class, 'create'])
+            ->middleware('auth')
+            ->name('create')
+            ->defaults('group', $group)
+            ->defaults('showSide', false);
         Route::post("/{slug}", [NoteController::class, 'store'])->middleware('auth')->name('store')->defaults('group', $group);
-        Route::get('/{slug}/{idx}/show', [NoteController::class, 'show'])->name('show')->defaults('group', $group);
-        Route::get('/{slug}/{idx}/edit', [NoteController::class, 'edit'])->name('edit')->defaults('group', $group);
+        Route::get('/{slug}/{idx}/show', [NoteController::class, 'show'])
+            ->name('show')
+            ->defaults('group', $group)
+            ->defaults('showSide', false);
+        Route::get('/{slug}/{idx}/edit', [NoteController::class, 'edit'])
+            ->name('edit')
+            ->defaults('group', $group)
+            ->defaults('showSide', false);
         Route::put("/{slug}/{idx}", [NoteController::class, 'update'])->name('update')->defaults('group', $group);
         Route::delete("/{slug}/{idx}", [NoteController::class, 'destroy'])->name('soft.delete')->defaults('group', $group);
         Route::patch("/{slug}/{idx}/use-flag", [NoteController::class, 'updateUseFlag'])->name('use_flag.update')->defaults('group', $group);
