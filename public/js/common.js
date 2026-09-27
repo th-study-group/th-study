@@ -12,6 +12,7 @@ $(function () {
     $('#btn_logout').on('click', function (event) {
         if (!window.confirm('로그아웃하시겠습니까?')) {
             event.preventDefault();
+            event.stopPropagation();
         }
     });
 
