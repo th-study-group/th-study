@@ -124,6 +124,19 @@ footer {
     z-index: 1031;
 }
 
+/*
+ * AdSense fixed/anchor ads can create a separate high-level layer in a
+ * standalone PWA. Keep the site header and its authentication menu above
+ * that layer without changing the ad itself or covering page content.
+ */
+body.is-standalone-pwa .navbar.sticky-top {
+    z-index: 2147483646;
+}
+
+body.is-standalone-pwa .navbar .auth-dropdown {
+    z-index: 2147483647;
+}
+
 .navbar .navbar-toggler:focus{
     box-shadow: none;
 }
