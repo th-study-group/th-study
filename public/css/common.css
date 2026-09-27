@@ -115,25 +115,12 @@ footer {
      * Keep the site header above page-level advertising overlays so the
      * authentication controls remain available while an ad is displayed.
      */
-    z-index: 1030;
+    z-index: 2147483646;
     padding-top: env(safe-area-inset-top);
 }
 
 .navbar .auth-dropdown {
     position: relative;
-    z-index: 1031;
-}
-
-/*
- * AdSense fixed/anchor ads can create a separate high-level layer in a
- * standalone PWA. Keep the site header and its authentication menu above
- * that layer without changing the ad itself or covering page content.
- */
-body.is-standalone-pwa .navbar.sticky-top {
-    z-index: 2147483646;
-}
-
-body.is-standalone-pwa .navbar .auth-dropdown {
     z-index: 2147483647;
 }
 
