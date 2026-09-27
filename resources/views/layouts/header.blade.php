@@ -38,7 +38,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid px-3 px-lg-4">
         <div class="d-flex align-items-center w-100 d-lg-none">
-            @if (request()->route('hideSide'))
+            @if (request()->route('hideSide') || (($isNoteRoute ?? false) && request()->route('showSide') === false))
                 <a
                     class="navbar-toggler border-0 text-decoration-none"
                     href="{{ config('app.url') }}"

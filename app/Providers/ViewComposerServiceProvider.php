@@ -18,6 +18,7 @@ class ViewComposerServiceProvider extends ServiceProvider
             $route = request()->route();
             $routeName = $route?->getName();
             $noteGroup = $route?->parameter('group');
+            $isNoteRoute = $noteGroup !== null;
 
             $notes = config('note', []);
            
@@ -43,6 +44,7 @@ class ViewComposerServiceProvider extends ServiceProvider
                 'sideMenuFlag' => $userLevel,
                 'sideMenuAuth' => array_keys($menuAuths),
                 'sideMenus' => $menuFlag,
+                'isNoteRoute' => $isNoteRoute,
                 'accountIdx' => Auth::user()?->idx,
             ]);
         });
