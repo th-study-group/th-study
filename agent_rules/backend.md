@@ -30,6 +30,8 @@
   - Repository: Model 생성·수정, 조회·검색·정렬·페이지네이션 쿼리
 - Repository가 조회한 Model·Collection은 원본 데이터로 유지하고, URL·날짜·표시값·응답 필드처럼 사용 목적에 맞는 형태로 변환해야 할 경우 Service에서 `map()` 등으로 가공한다. 예를 들어 sitemap은 Repository가 공개 노트의 조회만 담당하고, Service가 각 노트를 `loc`, `lastmod` 값으로 조립한다.
 - 단순히 원본 Model 또는 Collection을 전달하는 조회에는 불필요한 `map()`을 강제하지 않는다. Controller와 Blade에는 해당 사용처에서 바로 쓸 수 있는 최종 데이터를 전달하며, 가공 책임을 Repository 또는 Blade로 넘기지 않는다.
+- Repository 조회 쿼리는 필요한 컬럼만 `select([...])` 또는 명시적인 `select()`로 지정한다. `select *`에 해당하는 전체 컬럼 조회, `select()` 없이 Eloquent Model의 전체 컬럼을 가져오는 ORM 구성, 사용처와 무관하게 Model 전체를 반환하는 조회는 사용하지 않는다.
+- 조회 컬럼이 명시되어 있지 않거나 전체 컬럼을 조회하는 기존 Repository를 발견하면 먼저 사용자에게 알린다. 해당 Repository의 Service, Controller, Resource, Blade/API 등 실제 사용처를 확인하여 필요한 컬럼만 식별하고 `select`에 반영한다. 사용처만으로 필요한 컬럼을 확정할 수 없으면 임의로 전체 컬럼을 허용하지 말고 사용자에게 확인을 요청한다.
 - Controller가 Blade를 반환할 때는 화면에서 바로 출력할 수 있도록 fallback, 형변환, URL, 날짜, 상태 문구, CSS class, 표시 여부, JSON/Base64 값 등을 최종 형태로 조립한다. Blade에 데이터 가공 책임을 넘기지 않는다.
 - Service와 Repository는 생성자 주입을 사용한다.
 - 예외도 존재한다. 인증/비밀번호 재설정 등 일부 Controller는 모델 직접 조회나 Job dispatch를 수행하고, API/MCP는 별도 `Services/Api`, `Repositories/Api`, Resource 계층을 사용한다. 유사 기능의 현재 구조를 확인한 뒤 같은 범위에서 따른다.
