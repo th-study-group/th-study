@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="ko">
     <head>
+        {{-- Google Funding Choices Offerwall control --}}
+        @if (config('services.adsense.id') && ! request()->routeIs(...config('adsense.disabled_route_name_patterns', [])))
+            <script>
+                window.googlefc = window.googlefc || {};
+                googlefc.controlledMessagingFunction = function (message) {
+                    @if ($offerwallBlocked ?? false)
+                        const applicableMessageTypes = [
+                            window.googlefc.MessageTypeEnum.OFFERWALL
+                        ];
+                        message.proceed(false, applicableMessageTypes);
+                    @else
+                        message.proceed(true);
+                    @endif
+                };
+            </script>
+        @endif
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 

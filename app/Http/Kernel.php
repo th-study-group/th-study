@@ -39,6 +39,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\CheckSessionVersion::class,
             \App\Http\Middleware\TrackAccessLog::class,
             \App\Http\Middleware\ShareGoogleAnalytics::class,
+            \App\Http\Middleware\ShareOfferwallSettings::class,
         ],
 
         'api' => [
