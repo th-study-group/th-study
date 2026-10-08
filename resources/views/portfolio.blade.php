@@ -1026,6 +1026,11 @@ php artisan l5-swagger:generate</code></pre>
     <script src="{{ asset('js/intro/portfolio.js') }}" defer></script>
 @endpush
 
+<div class="callout mt-4">
+    <strong>Offerwall 선택 제어</strong><br>
+    Google Funding Choices API의 <code>controlledMessagingFunction</code>과 <code>MessageTypeEnum.OFFERWALL</code>을 사용해 최고관리자와 지정 IP에서 Offerwall만 제어하고, 일반 AdSense 광고와 일반 회원의 광고 경험은 유지합니다.
+</div>
+
 @section('script')
     <script>
         window.requestAnimationFrame(function () {
