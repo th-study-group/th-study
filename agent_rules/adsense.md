@@ -45,3 +45,5 @@ Google AdSense 로더, 자동광고, 앵커·전면광고, 자동 in-page 광고
 - iPhone Safari와 standalone PWA에서 status bar/header, home indicator/fixed UI, 세로·가로 회전을 확인한다.
 - 광고 표시·종료 뒤에도 사이트 자체 modal/offcanvas가 없으면 body의 `overflow`, `touch-action`, `modal-open`이 남지 않는지 확인한다.
 - 데스크톱에서 footer와 하단 앵커광고가 동시에 보일 때 사이트 UI가 가려지지 않는지 확인한다.
+- Offerwall: Google Funding Choices의 `googlefc.controlledMessagingFunction`을 AdSense 스크립트보다 먼저 정의하고, 차단 시 `message.proceed(false, [window.googlefc.MessageTypeEnum.OFFERWALL])`을 사용한다. `OfferwallGuard`는 최고관리자와 `config('traffic.access_log_excluded_ips')`의 지정 IP만 차단 대상으로 판별하며, 일반 AdSense 광고·GA4·유입 로그는 변경하지 않는다.
+- 관련 구현: `app/Support/OfferwallGuard.php`, `app/Http/Middleware/ShareOfferwallSettings.php`, `resources/views/layouts/app.blade.php`.
