@@ -247,6 +247,8 @@ MCP의 개별 조회 도구 10종은 컨트롤러 OpenAPI 속성으로 문서화
 
 ### Google AdSense 운영 메모
 
+- Offerwall은 `googlefc.controlledMessagingFunction`으로 제어하며, 최고관리자와 `config/traffic.php` 지정 IP에서는 `MessageTypeEnum.OFFERWALL`만 제외하고 일반 AdSense 광고는 유지합니다. 관련 구현은 `OfferwallGuard`, `ShareOfferwallSettings`, `layouts/app.blade.php`입니다.
+
 - AdSense 공통 로더는 `resources/views/layouts/app.blade.php`에서 환경 설정값(`ADSENSE_ID`)이 있을 때만 한 번 로드합니다.
 - AdSense 발급자 ID는 `config/services.php`의 `ADSENSE_ID`로, 광고 단위는 `config/adsense.php`의 `units`에서 AdSense 화면의 이름을 키로 관리합니다. 수동 광고는 Controller가 해당 키의 최종 값을 전달해 `resources/views/components/adsense.blade.php`의 `<x-adsense>`로 출력합니다. 디스플레이 광고는 `ad-slot`과 `format`을 사용하며, 인아티클·인피드·멀티플렉스 광고는 AdSense에서 발급한 `data-ad-layout`, `data-ad-layout-key` 등 추가 속성을 함께 전달합니다.
 - 공지 상세는 작성자 아래에 `common_top_display` 디스플레이, 기존 AdFit 아래에 `common_content_in_article` 인아티클, 목록 버튼 위에 `common_bottom_multiplex` 멀티플렉스를 출력합니다. 멀티플렉스 뒤의 safe-area 포함 여백으로 하단 앵커가 떠도 마지막 광고를 앵커 위로 스크롤해 볼 수 있게 하며, 앵커 자체의 위치와 노출은 AdSense Auto ads 설정에서 관리합니다.

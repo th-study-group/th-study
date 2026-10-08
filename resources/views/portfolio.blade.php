@@ -303,6 +303,7 @@
     <div class="box pad">
       <p class="leadx mb-3">공개 페이지가 검색엔진에 안정적으로 수집되도록 sitemap, robots, 웹마스터 인증 메타 코드를 정적 메모가 아니라 코드 기준으로 관리합니다.</p>
       <dl class="portfolio-detail-list portfolio-detail-list--three">
+<div><dt>Offerwall 제어</dt><dd>Google Funding Choices API로 최고관리자와 지정 IP에서는 Offerwall만 제외하고, 일반 AdSense 광고는 유지</dd><dd><code>app/Support/OfferwallGuard.php</code>, <code>app/Http/Middleware/ShareOfferwallSettings.php</code>, <code>resources/views/layouts/app.blade.php</code></dd></div>
 <div><dt>Sitemap 생성</dt><dd><code>spatie/laravel-sitemap</code> 기반으로 `/sitemap.xml` 요청 시 XML 생성. 정적 URL은 설정에서, 공개 블로그 상세 URL은 DB에서 조립하며 <code>lastmod</code>는 수정일 또는 등록일을 사용</dd><dd><code>app/Http/Controllers/SitemapController.php</code>, <code>app/Services/SitemapService.php</code>, <code>app/Repositories/NoteRepository.php</code>, <code>config/sitemap.php</code></dd></div>
 <div><dt>robots.txt 운영</dt><dd>정적 <code>public/robots.txt</code>를 제거하고 라우트 기반 동적 응답으로 전환. 크롤링 차단 경로와 sitemap 위치를 뷰에서 관리</dd><dd><code>routes/web.php</code>, <code>resources/views/robots.blade.php</code></dd></div>
 <div><dt>대표 URL 통합</dt><dd>블로그 목록·상세의 canonical을 HTTPS www 주소로 통일하고, 검색·필터로 생기는 중복 URL 신호를 정리. apex 도메인은 동일 경로의 www 주소로 301 연결</dd><dd><code>NoteController</code>, <code>layouts/app.blade.php</code>, 운영 Nginx</dd></div>
