@@ -240,7 +240,34 @@ class TrafficLogController extends Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: '봇 유입 조회 성공'
+                description: '봇 유입 조회 성공',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string'),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'access_datetime', type: 'string'),
+                                    new OA\Property(property: 'subject', type: 'string', description: '연결된 노트 제목. 연결된 노트가 없으면 -'),
+                                    new OA\Property(property: 'group_name', type: 'string'),
+                                    new OA\Property(property: 'categories_name', type: 'string'),
+                                    new OA\Property(property: 'topic_name', type: 'string'),
+                                    new OA\Property(property: 'access_page', type: 'string'),
+                                    new OA\Property(property: 'referer_host', type: 'string'),
+                                    new OA\Property(property: 'bot_name', type: 'string'),
+                                    new OA\Property(property: 'referer_url', type: 'string'),
+                                    new OA\Property(property: 'user_agent', type: 'string'),
+                                ],
+                                type: 'object'
+                            )
+                        ),
+                        new OA\Property(property: 'pagination', type: 'object'),
+                    ],
+                    type: 'object'
+                )
             ),
             new OA\Response(
                 response: 401,

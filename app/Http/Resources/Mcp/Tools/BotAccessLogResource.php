@@ -22,6 +22,7 @@ class BotAccessLogResource extends JsonResource
             'group_name' => $this->note?->group?->name ?? '-',
             'categories_name' => $this->note?->category?->name ?? '-',
             'topic_name' => $this->note?->topic?->name ?? '-',
+            'subject' => $this->note?->subject ?? '-',
             'access_page' => $this->access_page ?? '-',
             'referer_host' => $this->referer_host ?? '-',
             'bot_name' => $this->bot_name ?? '-',

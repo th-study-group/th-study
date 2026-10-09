@@ -1010,7 +1010,65 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "봇 유입 조회 성공"
+                        "description": "봇 유입 조회 성공",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "access_datetime": {
+                                                        "type": "string"
+                                                    },
+                                                    "subject": {
+                                                        "description": "연결된 노트 제목. 연결된 노트가 없으면 -",
+                                                        "type": "string"
+                                                    },
+                                                    "group_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "categories_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "topic_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "access_page": {
+                                                        "type": "string"
+                                                    },
+                                                    "referer_host": {
+                                                        "type": "string"
+                                                    },
+                                                    "bot_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "referer_url": {
+                                                        "type": "string"
+                                                    },
+                                                    "user_agent": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "401": {
                         "description": "인증 실패"
