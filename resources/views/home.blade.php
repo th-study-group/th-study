@@ -403,21 +403,42 @@
 
                   <div class="row g-3">
                       <div class="col-md-4">
-                          <div class="stat h-100">
-                              <div class="num">No Data</div>
-                              <div class="label">월 방문자(예정)</div>
+                          <div class="stat stat-prep h-100">
+                              <div class="stat-prep-head">
+                                  <span class="stat-icon" aria-hidden="true">↗</span>
+                                  <span class="stat-status">기반 정리 중</span>
+                              </div>
+                              <div class="stat-prep-title">방문 흐름</div>
+                              <div class="stat-prep-copy">유입을 읽을 수 있는 기준을 정리하고 있습니다.</div>
+                              <div class="stat-visual stat-visual-flow" aria-hidden="true">
+                                  <span></span><span></span><span></span><span></span><span></span>
+                              </div>
                           </div>
                       </div>
                       <div class="col-md-4">
-                          <div class="stat h-100">
-                              <div class="num">No Data</div>
-                              <div class="label">콘텐츠 수(예정)</div>
+                          <div class="stat stat-prep h-100">
+                              <div class="stat-prep-head">
+                                  <span class="stat-icon" aria-hidden="true">▦</span>
+                                  <span class="stat-status">구조 정리 중</span>
+                              </div>
+                              <div class="stat-prep-title">콘텐츠 흐름</div>
+                              <div class="stat-prep-copy">콘텐츠가 쌓이고 연결되는 과정을 살펴봅니다.</div>
+                              <div class="stat-visual stat-visual-content" aria-hidden="true">
+                                  <span></span><span></span><span></span>
+                              </div>
                           </div>
                       </div>
                       <div class="col-md-4">
-                          <div class="stat h-100">
-                              <div class="num">No Data</div>
-                              <div class="label">운영 로그/지표(예정)</div>
+                          <div class="stat stat-prep h-100">
+                              <div class="stat-prep-head">
+                                  <span class="stat-icon" aria-hidden="true">⌁</span>
+                                  <span class="stat-status">관찰 준비 중</span>
+                              </div>
+                              <div class="stat-prep-title">운영 로그</div>
+                              <div class="stat-prep-copy">더 나은 운영을 위한 기록의 흐름을 준비합니다.</div>
+                              <div class="stat-visual stat-visual-log" aria-hidden="true">
+                                  <span></span><span></span><span></span><span></span>
+                              </div>
                           </div>
                       </div>
                   </div>
