@@ -3,6 +3,45 @@
 @section('title', '대시보드')
 
 @section('content')
+@push('styles')
+<style>
+    .dashboard-empty-card {
+        border: 1px solid #dbe7f5;
+        border-radius: 1rem;
+        background: linear-gradient(135deg, #f8fbff, #fff 58%, #eef5ff);
+    }
+    .dashboard-empty-card .empty-visual {
+        position: relative;
+        height: 74px;
+        overflow: hidden;
+        border: 1px solid #e0eaf6;
+        border-radius: .8rem;
+        background: repeating-linear-gradient(0deg, transparent 0 17px, #e7eef8 18px), repeating-linear-gradient(90deg, transparent 0 39px, #e7eef8 40px);
+    }
+    .dashboard-empty-card .empty-visual::after {
+        position: absolute;
+        right: 18%;
+        bottom: 21px;
+        left: 18%;
+        height: 28px;
+        border-top: 3px solid #78aef0;
+        border-radius: 50%;
+        content: '';
+        transform: skewY(-8deg);
+    }
+    .dashboard-empty-card .empty-dot {
+        display: inline-block;
+        width: .5rem;
+        height: .5rem;
+        margin-right: .5rem;
+        border-radius: 50%;
+        background: #377de0;
+        box-shadow: 1rem 0 #b9d5f5, 2rem 0 #e0ebf8;
+    }
+    .dashboard-empty-card .empty-icon { color: #377de0; font-size: 1.4rem; }
+</style>
+@endpush
+
 <div class="col-12">
     <div class="d-flex flex-column gap-4">
         <div class="card border-0 shadow-sm text-bg-dark">
@@ -64,13 +103,13 @@
                             <div class="col-12 col-md-4">
                                 <div class="border rounded-3 p-2 bg-light">
                                     <div class="small text-muted">문의내역</div>
-                                    <div class="fw-semibold">- 건</div>
+                                    <div class="fw-semibold text-primary">활동 기록</div>
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <div class="border rounded-3 p-2 bg-light">
                                     <div class="small text-muted">작성글</div>
-                                    <div class="fw-semibold">- 개</div>
+                                    <div class="fw-semibold text-primary">콘텐츠 기록</div>
                                 </div>
                             </div>
                         </div>
@@ -105,17 +144,15 @@
                                     봄맞이 활동 이베트 진행 | 이벤트 상세 링크
                                     문의 히스토리 필터 기능 추가 | 업데이트 
                                 --}}
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <div>준비중!</div>
-                                    <span class="text-muted small">YY/MM/DD</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <div>준비중!</div>
-                                    <a class="text-muted small" href="#">이벤트 상세</a>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>준비중!</div>
-                                    <span class="text-muted small">업데이트</span>
+                                <div class="dashboard-empty-card rounded-3 p-3">
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+                                        <div>
+                                            <div class="fw-semibold">사이트 소식이 모이는 공간</div>
+                                            <div class="small text-muted mt-1">새로운 안내와 변화가 이곳에 기록됩니다.</div>
+                                        </div>
+                                        <i class="bi bi-megaphone text-primary fs-4" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="empty-visual mt-3" aria-hidden="true"></div>
                                 </div>
 
                             </div>
@@ -127,11 +164,19 @@
                                 <div class="text-muted small mb-1">알림 요약</div>
                                 <div class="fw-semibold mb-3">읽지 않은 알림</div>
                                 
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <div class="display-6 fw-bold">-</div>
-                                    {{-- #notificationModal 모달이름 --}}
-                                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="">알림 확인</button>
+                                <div class="dashboard-empty-card rounded-3 p-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <i class="bi bi-chat-square-text text-primary fs-3" aria-hidden="true"></i>
+                                        <div>
+                                            <div class="fw-semibold">문의 기록을 한곳에서</div>
+                                            <div class="small text-muted mt-1">문의와 답변의 흐름을 확인합니다.</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 small text-muted"><span class="empty-dot" aria-hidden="true"></span>문의 접수 · 확인 · 답변</div>
                                 </div>
+                                {{-- 알림 데이터 연결 시 아래 버튼과 모달을 다시 활성화합니다.
+                                <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#notificationModal">알림 확인</button>
+                                --}}
                             </div>
                         </div>
                     </div>
@@ -141,7 +186,7 @@
 
         <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
             <h4 class="mb-0">게시판 최신글</h4>
-            <span class="text-muted small">새 글이 없으면 “없음”으로 표시됩니다.</span>
+                            <span class="text-muted small">나의 기록과 사이트 소식을 한눈에 확인합니다.</span>
         </div>
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
@@ -150,7 +195,12 @@
                     <div class="card-body d-flex flex-column">
                         <div class="fw-semibold mb-3">공지사항</div>
                         <div class="list-group list-group-flush border rounded-3">
-                            <div class="list-group-item text-muted text-center">등록된 글이 없습니다.</div>
+                            {{-- 실제 공지사항 목록 출력 영역은 데이터 연결 시 아래 구조로 복원합니다. --}}
+                            <div class="dashboard-empty-card rounded-3 p-3">
+                                <div class="fw-semibold">새로운 소식이 모이는 공간</div>
+                                <div class="small text-muted mt-1">사이트의 중요한 안내를 이곳에서 확인합니다.</div>
+                                <div class="empty-visual mt-3" aria-hidden="true"></div>
+                            </div>
                         </div>
                         {{--
                         <div class="list-group list-group-flush border rounded-3">
@@ -177,7 +227,12 @@
                     <div class="card-body d-flex flex-column">
                         <div class="fw-semibold mb-3">문의게시판</div>
                         <div class="list-group list-group-flush border rounded-3">
-                            <div class="list-group-item text-muted text-center">등록된 글이 없습니다.</div>
+                            {{-- 실제 문의 목록 출력 영역은 데이터 연결 시 아래 구조로 복원합니다. --}}
+                            <div class="dashboard-empty-card rounded-3 p-3">
+                                <div class="fw-semibold">문의와 답변의 흐름</div>
+                                <div class="small text-muted mt-1">문의 기록이 쌓이면 이곳에서 확인합니다.</div>
+                                <div class="mt-3 small text-muted"><span class="empty-dot" aria-hidden="true"></span>접수 · 확인 · 답변</div>
+                            </div>
                         </div>
                         {{--
                         <div class="list-group list-group-flush border rounded-3">
@@ -196,7 +251,12 @@
                     <div class="card-body d-flex flex-column">
                         <div class="fw-semibold mb-3">콘텐츠게시판</div>
                         <div class="list-group list-group-flush border rounded-3">
-                            <div class="list-group-item text-muted text-center">등록된 글이 없습니다.</div>
+                            {{-- 실제 콘텐츠 목록 출력 영역은 데이터 연결 시 아래 구조로 복원합니다. --}}
+                            <div class="dashboard-empty-card rounded-3 p-3">
+                                <div class="fw-semibold">나의 콘텐츠 기록</div>
+                                <div class="small text-muted mt-1">작성한 글과 콘텐츠가 이곳에 모입니다.</div>
+                                <div class="empty-visual mt-3" aria-hidden="true"></div>
+                            </div>
                         </div>
                         {{--
                         <div class="list-group list-group-flush border rounded-3">
