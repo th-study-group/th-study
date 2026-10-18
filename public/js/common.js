@@ -848,7 +848,22 @@ function fallbackCopyText(text)
     return copied;
 }
 
-function initShareCopyButtons(selector, options)
+function copyTextToClipboard(text)
+{
+    const normalizedText = String(text || '');
+
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(normalizedText);
+    }
+
+    if (fallbackCopyText(normalizedText)) {
+        return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('copy failed'));
+}
+
+function initCopyButtons(selector, options)
 {
     const resolvedSelector = String(selector || '').trim();
     const resolvedOptions = options || {};
@@ -865,9 +880,9 @@ function initShareCopyButtons(selector, options)
     }
 
     $button.off('click.shareCopy').on('click.shareCopy', async function () {
-        const sharedUrl = typeof resolvedOptions.getUrl === 'function'
-            ? String(resolvedOptions.getUrl() || '').trim()
-            : String(window.location.href).trim();
+        const sharedUrl = typeof resolvedOptions.getText === 'function'
+            ? String(resolvedOptions.getText(this) || '').trim()
+            : String(this.getAttribute('data-copy-text') || window.location.href).trim();
 
         if (!sharedUrl) {
             alert('공유할 주소를 찾을 수 없습니다. 관리자에게 문의해주세요.');
@@ -884,16 +899,11 @@ function initShareCopyButtons(selector, options)
         }
 
         try {
-            if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(sharedUrl);
-            } else {
-                const copied = fallbackCopyText(sharedUrl);
-                if (!copied) {
-                    throw new Error('copy failed');
-                }
-            }
+            await copyTextToClipboard(sharedUrl);
 
-            trackShareConversion(sharedUrl, sourcePage);
+            if (resolvedOptions.trackConversion !== false) {
+                trackShareConversion(sharedUrl, sourcePage);
+            }
         } catch (e) {
             alert('주소 복사에 실패했습니다.');
         }

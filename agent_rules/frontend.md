@@ -95,3 +95,11 @@
 - canonical과 `og:url`은 서로 다른 대표 URL을 가리키지 않도록 함께 확인한다. 목록 페이지의 `og:type`과 상세 페이지의 메타 정책도 기존 화면 기준을 유지한다.
 - 블로그 외 새 메뉴에 canonical을 추가하는 요청은 해당 화면만 임의로 수정하지 않는다. 백엔드 canonical 정책과 sitemap·robots 범위를 먼저 분석하고 사용자에게 계획을 보고한 뒤 `진행` 승인을 받아 작업한다.
 - 향후 적용 메뉴가 많아지면 공통 레이아웃에 URL 생성 로직을 넣는 방식이 아니라, 백엔드 공통 Service/View Composer가 완성한 값을 레이아웃에서 출력하는 구조를 검토한다.
+
+## 공통 복사 기능
+
+- 화면별 복사 UI는 각 Blade에 두되, 실제 클립보드 처리와 복사 완료 상태 변경은 `public/js/common.js`의 `initCopyButtons(selector, options)`를 사용한다.
+- 일반 텍스트는 버튼의 `data-copy-text`, 대상 요소의 텍스트는 `data-copy-target`으로 연결하고, 화면마다 `navigator.clipboard`나 `execCommand('copy')`를 별도로 구현하지 않는다.
+- 블로그 목록 모달·상세의 주소 복사, 관리자 유입현황의 IP/유입경로 복사, 포트폴리오 코드 복사는 같은 helper를 사용한다. 화면별 차이는 selector, 복사 대상, 버튼 UI로 제한한다.
+- 주소 복사처럼 복사 후 전환 기록이 필요한 화면만 `options` callback 또는 기록 설정을 사용하며, 단순 텍스트 복사에서 전환 로그를 발생시키지 않는다.
+- 동적으로 렌더링되는 모달 버튼은 공통 helper의 위임 이벤트가 유지되도록 기존 초기화 위치와 selector를 확인한다.

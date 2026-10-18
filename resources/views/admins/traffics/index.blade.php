@@ -138,8 +138,28 @@
                                     <div class="traffic-access-info">
                                         <div><span class="traffic-access-info-label">분류:</span> {{ $log->category_path ?? '-' }}</div>
                                         <div><span class="traffic-access-info-label">접근시각:</span> {{ $log->access_datetime?->format('Y-m-d H:i:s') ?? '-' }}</div>
-                                        <div><span class="traffic-access-info-label">아이피:</span> {{ $log->ip ?? '-' }}</div>
-                                        <div><span class="traffic-access-info-label">유입경로:</span> {{ $log->referer_display ?? '-' }}</div>
+                                        @if (($log->referer_display ?? '') !== 'direct')
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span><span class="traffic-access-info-label">아이피:</span> {{ $log->ip ?? '-' }}</span>
+                                                @if (!empty($log->ip))
+                                                    <button type="button"
+                                                            class="btn btn-outline-secondary btn-sm py-0 px-1 js-copy-text"
+                                                            data-copy-text="{{ $log->ip }}"
+                                                            data-copy-label="복사"
+                                                            aria-label="아이피 복사">복사</button>
+                                                @endif
+                                            </div>
+                                        @endif
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="text-break"><span class="traffic-access-info-label">유입경로:</span> {{ $log->referer_display ?? '-' }}</span>
+                                            @if (!empty($log->referer_display) && $log->referer_display !== '-')
+                                                <button type="button"
+                                                        class="btn btn-outline-secondary btn-sm py-0 px-1 js-copy-text"
+                                                        data-copy-text="{{ $log->referer_display }}"
+                                                        data-copy-label="복사"
+                                                        aria-label="유입경로 복사">복사</button>
+                                            @endif
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="text-start">
@@ -193,6 +213,8 @@
 @section('script')
     <script>
         $(function(){
+            initCopyButtons('.js-copy-text', { trackConversion: false });
+
             initBirthDatePicker('#search_date', {
                 defaultDate: new Date(),
                 maxDate: new Date(),

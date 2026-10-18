@@ -468,8 +468,8 @@
         listUrl: listUrl,
       };
 
-      initShareCopyButtons('#blogDetailShareBtn', {
-        getUrl: function () {
+      initCopyButtons('#blogDetailShareBtn', {
+        getText: function () {
           return String(state.currentDetail?.actions?.show_url || '').trim();
         }
       });

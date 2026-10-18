@@ -230,8 +230,8 @@
 
       initBlogDetailContentEnhancements();
 
-      initShareCopyButtons('#btn_share_copy', {
-        getUrl: function () {
+      initCopyButtons('#btn_share_copy', {
+        getText: function () {
           return window.location.href;
         }
       });
