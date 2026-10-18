@@ -346,7 +346,10 @@
         </section>
       </div>
       <div class="blog-filter-sheet__foot">
-        <button type="button" id="btn_filter_apply" class="blog-filter-sheet__primary">적용</button>
+        <div class="blog-filter-sheet__actions">
+          <button type="button" id="btn_filter_reset" class="blog-filter-sheet__secondary">초기화</button>
+          <button type="button" id="btn_filter_apply" class="blog-filter-sheet__primary">적용</button>
+        </div>
       </div>
     </div>
   </div>
@@ -605,6 +608,26 @@
         $("#topic_filter").val(state.selectedTopicValue);
       };
 
+      const hasPendingFilterChanges = function() {
+        return state.pendingCategoryCode !== state.selectedCategoryCode
+          || state.pendingTopicValue !== state.selectedTopicValue;
+      };
+
+      const syncFilterActionButtons = function() {
+        const hasPendingSelection = state.pendingCategoryCode !== '' || state.pendingTopicValue !== '';
+        $("#btn_filter_reset").prop("disabled", !hasPendingSelection);
+        $("#btn_filter_apply").prop("disabled", !hasPendingFilterChanges());
+      };
+
+      const syncSearchActionButtons = function() {
+        const hasSearchKeyword = String($("#search_keyword").val() || '').trim() !== '';
+        const hasSearchHistory = hasSearchKeyword
+          || String(state.selectedCategoryCode || '').trim() !== ''
+          || String(state.selectedTopicValue || '').trim() !== '';
+        $("#btn_search").prop("disabled", !hasSearchKeyword);
+        $("#btn_search_reset").prop("disabled", !hasSearchHistory);
+      };
+
       const renderCategoryOptions = function() {
         const fragments = [];
         const isAllActive = state.pendingCategoryCode === '';
@@ -668,6 +691,7 @@
           renderTopicOptions();
           updateFilterSummary();
         });
+        syncFilterActionButtons();
         $filterSheet.attr("aria-hidden", "false").addClass("is-open");
         $("html, body").addClass("blog-filter-sheet-open");
       };
@@ -728,6 +752,8 @@
       syncSearchTypeUi(state.searchType);
       $("#search_keyword").val(state.searchKeyword);
       updateFilterSummary();
+      syncSearchActionButtons();
+      syncFilterActionButtons();
       loadTopicsByCategory(state.selectedCategoryCode).then(function() {
         updateFilterSummary();
       });
@@ -756,21 +782,36 @@
         renderTopicOptions();
         loadTopicsByCategory(state.pendingCategoryCode).then(function() {
           renderTopicOptions();
+          syncFilterActionButtons();
         });
+        syncFilterActionButtons();
       });
 
       $topicOptions.on("click", "[data-topic-value]", function() {
         state.pendingTopicValue = String($(this).data("topic-value") || '');
         renderTopicOptions();
+        syncFilterActionButtons();
+      });
+
+      $("#btn_filter_reset").on("click", function() {
+        state.pendingCategoryCode = '';
+        state.pendingTopicValue = '';
+        renderCategoryOptions();
+        renderTopicOptions();
+        syncFilterActionButtons();
       });
 
       $("#btn_filter_apply").on("click", function() {
+        if (!hasPendingFilterChanges()) {
+          return;
+        }
         const nextUrl = buildCategoryUrl(state.pendingCategoryCode, state.pendingTopicValue);
         const currentUrl = buildCategoryUrl(state.selectedCategoryCode, state.selectedTopicValue);
 
         state.selectedCategoryCode = state.pendingCategoryCode;
         state.selectedTopicValue = state.pendingTopicValue;
         updateFilterSummary();
+        syncSearchActionButtons();
         closeFilterSheet();
 
         if (nextUrl !== currentUrl) {
@@ -779,6 +820,9 @@
       });
 
       $("#btn_search").on("click", function() {
+        if ($(this).prop("disabled")) {
+          return;
+        }
         $("#form_search").trigger("submit");
       });
 
@@ -795,6 +839,7 @@
         e.preventDefault();
         const nextValue = String($(this).data("value") || 'title');
         syncSearchTypeUi(nextValue);
+        syncSearchActionButtons();
         closeSearchTypeMenu();
       });
 
@@ -821,11 +866,17 @@
         $("#topic_filter").val("");
         $("#search_keyword").val("");
         updateFilterSummary();
+        syncSearchActionButtons();
         window.location.href = buildCategoryUrl('', '');
       });
 
+      $("#search_keyword").on("input", function() {
+        state.searchKeyword = String($(this).val() || '');
+        syncSearchActionButtons();
+      });
+
       $("#search_keyword").on("keydown", function(e) {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !$("#btn_search").prop("disabled")) {
           $("#form_search").trigger("submit");
         }
       });
