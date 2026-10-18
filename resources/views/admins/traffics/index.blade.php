@@ -142,12 +142,15 @@
                                             <span><span class="traffic-access-info-label">아이피:</span> {{ $log->ip ?? '-' }}</span>
                                             @if (!empty($log->ip))
                                                 <button type="button"
-                                                        class="btn btn-outline-secondary btn-sm py-0 px-1 js-copy-text"
+                                                        class="btn p-0 border-0 bg-transparent text-secondary js-copy-text"
                                                         data-copy-text="{{ $log->ip }}"
                                                         data-copy-label=""
                                                         aria-label="아이피 복사"
                                                         title="아이피 복사">
-                                                    <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                                                        <rect x="4" y="3" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+                                                        <path d="M10 3V2.5C10 1.672 9.328 1 8.5 1H3.5C2.672 1 2 1.672 2 2.5V10.5C2 11.328 2.672 12 3.5 12H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                    </svg>
                                                 </button>
                                             @endif
                                         </div>
@@ -159,7 +162,13 @@
                                                        rel="noopener noreferrer"
                                                        class="text-decoration-none text-dark">
                                                         {{ $log->referer_display ?? '-' }}
-                                                        <i class="bi bi-box-arrow-up-right ms-1 text-secondary" aria-hidden="true"></i>
+                                                        <span class="ms-1 text-secondary" aria-hidden="true">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
+                                                                <path d="M10 2H14V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                <path d="M14 2L8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                <path d="M14 9V12.5C14 13.3284 13.3284 14 12.5 14H3.5C2.67157 14 2 13.3284 2 12.5V3.5C2 2.67157 2.67157 2 3.5 2H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            </svg>
+                                                        </span>
                                                     </a>
                                                 @else
                                                     {{ $log->referer_display ?? '-' }}
