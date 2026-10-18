@@ -808,11 +808,8 @@ function trackShareConversion(sharedUrl, sourcePage)
             conversion_type: 'share',
             source_page: String(sourcePage || (window.location.pathname + window.location.search) || '/'),
         },
-        onSuccess: function () {
-            alert('주소가 복사되었습니다.');
-        },
         onError: function () {
-            alert('주소 복사 후 전환 저장에 실패했습니다.');
+            console.warn('[share] conversion tracking failed');
         },
     });
 }
@@ -900,6 +897,7 @@ function initCopyButtons(selector, options)
 
         try {
             await copyTextToClipboard(sharedUrl);
+            alert('주소가 복사되었습니다.');
 
             if (resolvedOptions.trackConversion !== false) {
                 trackShareConversion(sharedUrl, sourcePage);
