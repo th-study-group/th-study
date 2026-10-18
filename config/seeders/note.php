@@ -45,6 +45,7 @@ return [
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'ERP/MES', 'memo' => 'ERP와 MES 개발에 대해 정리해드려요.'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'BEMS', 'memo' => '건물에너지관리시스템 BEMS 개발에 대해 정리해드려요.'],
         ['group_code' => 'blog', 'category_code' => 'develop', 'name' => '인프라', 'memo' => '인프라 AWS, Azure, GCP, Naver Cloud, KT Cloud, LG Cloud 등 클라우드 인프라에 대해 정리해드려요.'],
+        ['group_code' => 'blog', 'category_code' => 'develop', 'name' => 'PLC 및 산업자동화', 'memo' => 'PLC 기초부터 Modbus 통신, MES 연동, ESP32 등 산업자동화 기술을 정리해드려요.'],
         ['group_code' => 'blog', 'category_code' => 'life', 'name' => '국내여행', 'memo' => '국내 여행 후기 정리'],
         ['group_code' => 'blog', 'category_code' => 'life', 'name' => '국내맛집', 'memo' => '국내 맛집 후기 정리'],
         ['group_code' => 'blog', 'category_code' => 'life', 'name' => '국내카페', 'memo' => '국내 카페 후기 정리'],
