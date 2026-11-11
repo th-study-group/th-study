@@ -228,7 +228,9 @@
 @section('script')
     <script>
         $(function(){
-            initCopyButtons('.js-copy-text', { trackConversion: false });
+            if ($('.js-copy-text').length > 0) {
+                initCopyButtons('.js-copy-text', { trackConversion: false });
+            }
 
             initBirthDatePicker('#search_date', {
                 defaultDate: new Date(),
